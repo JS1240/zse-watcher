@@ -11,6 +11,7 @@ node_modules
 dist
 dist-ssr
 *.local
+.env
 .cache/
 _old_build/
 src/route-tree.gen.ts
