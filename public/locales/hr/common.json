@@ -56,7 +56,10 @@
   },
   "time": {
     "lastUpdated": "Zadnje azurirano",
-    "ago": "prije"
+    "ago": "prije",
+    "justNow": "upravo sada",
+    "secondsAgo": "prije {{count}} sek",
+    "minutesAgo": "prije {{count}} min"
   },
   "commandPalette": {
     "placeholder": "Pretrazi dionice, akcije...",

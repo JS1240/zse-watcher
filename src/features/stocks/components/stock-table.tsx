@@ -5,7 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { StockRow } from "@/features/stocks/components/stock-row";
 import { Skeleton } from "@/components/ui/skeleton";
+import { LiveDataIndicator } from "@/components/shared/live-data-indicator";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
+import { usePriceFlash } from "@/hooks/use-price-flash";
 import { useDebounce } from "@/hooks/use-debounce";
 import { useSubscription } from "@/features/premium/hooks/use-subscription";
 import { exportToCsv } from "@/lib/export";
@@ -15,12 +17,13 @@ type SortDir = "asc" | "desc";
 
 export function StockTable() {
   const { t } = useTranslation("stocks");
-  const { data: result, isLoading } = useStocksLive();
+  const { data: result, isLoading, dataUpdatedAt, isFetching } = useStocksLive();
   const stocks = result?.stocks ?? null;
   const [search, setSearch] = useState("");
   const [sortField, setSortField] = useState<SortField>("changePct");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
 
+  const flashMap = usePriceFlash(stocks);
   const debouncedSearch = useDebounce(search, 200);
 
   const filtered = useMemo(() => {
@@ -63,7 +66,8 @@ export function StockTable() {
   };
 
   const SortIcon = ({ field }: { field: SortField }) => {
-    if (sortField !== field) return <ArrowUpDown className="h-3 w-3 text-muted-foreground/50" />;
+    if (sortField !== field)
+      return <ArrowUpDown className="h-3 w-3 text-muted-foreground/50" />;
     return sortDir === "asc" ? (
       <ArrowUp className="h-3 w-3 text-foreground" />
     ) : (
@@ -95,7 +99,7 @@ export function StockTable() {
   return (
     <div className="flex flex-col gap-2">
       {/* Search + Export */}
-      <div className="flex gap-2">
+      <div className="flex items-center gap-2">
         <div className="relative flex-1">
           <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-muted-foreground" />
           <Input
@@ -106,8 +110,17 @@ export function StockTable() {
             className="pl-8"
           />
         </div>
+        <LiveDataIndicator
+          updatedAt={dataUpdatedAt}
+          isFetching={isFetching}
+        />
         {canAccess("dataExport") && (
-          <Button variant="outline" size="sm" onClick={handleExport} title="Export CSV">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExport}
+            title="Export CSV"
+          >
             <Download className="h-3.5 w-3.5" />
           </Button>
         )}
@@ -118,17 +131,63 @@ export function StockTable() {
         <table aria-label={t("table.label")} className="w-full text-xs">
           <thead>
             <tr className="border-b border-border bg-muted/50 text-[10px] uppercase tracking-wider text-muted-foreground">
-              <ColumnHeader field="ticker" label={t("table.ticker")} onClick={toggleSort} sortIcon={<SortIcon field="ticker" />} className="w-28 text-left" currentField={sortField} currentDir={sortDir} />
-              <th className="hidden px-3 py-2 text-left font-medium md:table-cell">{t("table.name")}</th>
-              <ColumnHeader field="price" label={t("table.price")} onClick={toggleSort} sortIcon={<SortIcon field="price" />} className="w-24 text-right" currentField={sortField} currentDir={sortDir} />
-              <ColumnHeader field="changePct" label={t("table.change")} onClick={toggleSort} sortIcon={<SortIcon field="changePct" />} className="w-24 text-right" currentField={sortField} currentDir={sortDir} />
-              <ColumnHeader field="volume" label={t("table.volume")} onClick={toggleSort} sortIcon={<SortIcon field="volume" />} className="hidden w-24 text-right lg:table-cell" currentField={sortField} currentDir={sortDir} />
-              <ColumnHeader field="turnover" label={t("table.turnover")} onClick={toggleSort} sortIcon={<SortIcon field="turnover" />} className="hidden w-28 text-right lg:table-cell" currentField={sortField} currentDir={sortDir} />
+              <ColumnHeader
+                field="ticker"
+                label={t("table.ticker")}
+                onClick={toggleSort}
+                sortIcon={<SortIcon field="ticker" />}
+                className="w-28 text-left"
+                currentField={sortField}
+                currentDir={sortDir}
+              />
+              <th className="hidden px-3 py-2 text-left font-medium md:table-cell">
+                {t("table.name")}
+              </th>
+              <ColumnHeader
+                field="price"
+                label={t("table.price")}
+                onClick={toggleSort}
+                sortIcon={<SortIcon field="price" />}
+                className="w-24 text-right"
+                currentField={sortField}
+                currentDir={sortDir}
+              />
+              <ColumnHeader
+                field="changePct"
+                label={t("table.change")}
+                onClick={toggleSort}
+                sortIcon={<SortIcon field="changePct" />}
+                className="w-24 text-right"
+                currentField={sortField}
+                currentDir={sortDir}
+              />
+              <ColumnHeader
+                field="volume"
+                label={t("table.volume")}
+                onClick={toggleSort}
+                sortIcon={<SortIcon field="volume" />}
+                className="hidden w-24 text-right lg:table-cell"
+                currentField={sortField}
+                currentDir={sortDir}
+              />
+              <ColumnHeader
+                field="turnover"
+                label={t("table.turnover")}
+                onClick={toggleSort}
+                sortIcon={<SortIcon field="turnover" />}
+                className="hidden w-28 text-right lg:table-cell"
+                currentField={sortField}
+                currentDir={sortDir}
+              />
             </tr>
           </thead>
           <tbody>
             {filtered.map((stock) => (
-              <StockRow key={stock.ticker} stock={stock} />
+              <StockRow
+                key={stock.ticker}
+                stock={stock}
+                flash={flashMap.get(stock.ticker) ?? null}
+              />
             ))}
           </tbody>
         </table>
@@ -157,9 +216,21 @@ interface ColumnHeaderProps {
   currentDir: SortDir;
 }
 
-function ColumnHeader({ field, label, onClick, sortIcon, className, currentField, currentDir }: ColumnHeaderProps & { currentField: SortField; currentDir: SortDir }) {
+function ColumnHeader({
+  field,
+  label,
+  onClick,
+  sortIcon,
+  className,
+  currentField,
+  currentDir,
+}: ColumnHeaderProps) {
   const sortDirection: "ascending" | "descending" | "none" =
-    currentField === field ? (currentDir === "asc" ? "ascending" : "descending") : "none";
+    currentField === field
+      ? currentDir === "asc"
+        ? "ascending"
+        : "descending"
+      : "none";
 
   return (
     <th

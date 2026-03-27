@@ -5,11 +5,14 @@ import { WatchlistToggle } from "@/features/watchlist/components/watchlist-toggl
 import { useSelectedStock } from "@/hooks/use-selected-stock";
 import type { Stock } from "@/types/stock";
 
+type FlashDirection = "up" | "down" | null;
+
 interface StockRowProps {
   stock: Stock;
+  flash?: FlashDirection;
 }
 
-export function StockRow({ stock }: StockRowProps) {
+export function StockRow({ stock, flash }: StockRowProps) {
   const { selectedTicker, select } = useSelectedStock();
   const isSelected = selectedTicker === stock.ticker;
 
@@ -32,6 +35,8 @@ export function StockRow({ stock }: StockRowProps) {
         "last:border-b-0",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         isSelected && "border-l-2 border-l-primary bg-accent/30",
+        flash === "up" && "price-flash-up",
+        flash === "down" && "price-flash-down",
       )}
     >
       {/* Star + Ticker */}

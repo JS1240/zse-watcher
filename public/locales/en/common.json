@@ -56,7 +56,10 @@
   },
   "time": {
     "lastUpdated": "Last updated",
-    "ago": "ago"
+    "ago": "ago",
+    "justNow": "just now",
+    "secondsAgo": "{{count}}s ago",
+    "minutesAgo": "{{count}}m ago"
   },
   "commandPalette": {
     "placeholder": "Search stocks, actions...",
