@@ -8,12 +8,15 @@ import { createLogger } from "@/lib/logger";
 
 const logger = createLogger("StockDetailQueries");
 
-async function fetchStockDetail(ticker: string): Promise<StockDetail | null> {
+async function fetchStockDetail(
+  ticker: string,
+): Promise<{ stock: StockDetail | null; isMockData: boolean }> {
   try {
-    return await apiFetch<StockDetail>(`/stock/${ticker}`);
+    const stock = await apiFetch<StockDetail>(`/stock/${ticker}`);
+    return { stock, isMockData: false };
   } catch (error) {
     logger.warn(`Using mock detail for ${ticker}`, error);
-    return getMockStockDetail(ticker);
+    return { stock: getMockStockDetail(ticker), isMockData: true };
   }
 }
 
@@ -41,6 +44,8 @@ export function useStockDetail(ticker: string | null) {
     staleTime: STALE_TIMES.STOCK_DETAIL,
   });
 }
+
+export type StockDetailResult = Awaited<ReturnType<typeof fetchStockDetail>>;
 
 export function useStockHistory(ticker: string | null, range: ChartRange) {
   return useQuery({

@@ -1,4 +1,5 @@
-import { X } from "lucide-react";
+import { X, Info } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useStockDetail } from "@/features/stocks/api/stock-detail-queries";
 import { StockHeader } from "@/features/stocks/components/stock-header";
 import { StockFundamentals } from "@/features/stocks/components/stock-fundamentals";
@@ -14,7 +15,10 @@ interface StockDetailDrawerProps {
 }
 
 export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
-  const { data: stock, isLoading } = useStockDetail(ticker);
+  const { t } = useTranslation("stocks");
+  const { data: result, isLoading } = useStockDetail(ticker);
+  const stock = result?.stock ?? null;
+  const isMockData = result?.isMockData ?? false;
 
   if (!ticker) return null;
 
@@ -53,6 +57,13 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
               <DrawerSkeleton />
             ) : (
               <>
+                {isMockData && (
+                  <div className="flex items-center gap-2 rounded-md border border-border bg-muted/60 px-3 py-2 text-[11px] text-muted-foreground">
+                    <Info className="h-3 w-3 shrink-0" />
+                    <span>{t("detail.demoData")}</span>
+                  </div>
+                )}
+
                 <StockHeader stock={stock} />
 
                 <Separator />

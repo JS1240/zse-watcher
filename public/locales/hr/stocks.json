@@ -10,6 +10,7 @@
     "chart": "Graf"
   },
   "detail": {
+    "demoData": "Priključak na ZSE nije dostupan — prikazujem ogledne podatke.",
     "fundamentals": "Temeljni podaci",
     "description": "Opis",
     "marketCap": "Trzisna kapitalizacija",
