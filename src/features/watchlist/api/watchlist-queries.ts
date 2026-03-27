@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/config/supabase";
 import { useAuth } from "@/hooks/use-auth";
 import { FREE_TIER_LIMITS } from "@/config/constants";
@@ -57,6 +58,7 @@ export function useWatchlistTickers(): Set<string> {
 }
 
 export function useAddToWatchlist() {
+  const { t } = useTranslation("watchlist");
   const queryClient = useQueryClient();
   const { user } = useAuth();
 
@@ -88,14 +90,16 @@ export function useAddToWatchlist() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["watchlist", user?.id] });
+      toast.success(t("toast.added"));
     },
     onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "Failed to add to watchlist");
+      toast.error(error instanceof Error ? error.message : t("toast.addFailed"));
     },
   });
 }
 
 export function useRemoveFromWatchlist() {
+  const { t } = useTranslation("watchlist");
   const queryClient = useQueryClient();
   const { user } = useAuth();
 
@@ -123,9 +127,10 @@ export function useRemoveFromWatchlist() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["watchlist", user?.id] });
+      toast.success(t("toast.removed"));
     },
     onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "Failed to remove from watchlist");
+      toast.error(error instanceof Error ? error.message : t("toast.removeFailed"));
     },
   });
 }

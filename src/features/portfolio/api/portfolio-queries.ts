@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/config/supabase";
 import { useAuth } from "@/hooks/use-auth";
 import { REFETCH_INTERVALS } from "@/config/constants";
@@ -98,6 +99,7 @@ export function usePortfolioHoldings(): Holding[] {
 }
 
 export function useAddTransaction() {
+  const { t } = useTranslation("portfolio");
   const queryClient = useQueryClient();
   const { user } = useAuth();
 
@@ -150,10 +152,10 @@ export function useAddTransaction() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["portfolio", user?.id] });
-      toast.success("Transaction added");
+      toast.success(t("toast.transactionAdded"));
     },
     onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "Failed to add transaction");
+      toast.error(error instanceof Error ? error.message : t("toast.transactionAddFailed"));
     },
   });
 }

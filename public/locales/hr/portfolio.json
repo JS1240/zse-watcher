@@ -20,5 +20,9 @@
     "sell": "Prodaja",
     "dividend": "Dividenda"
   },
+  "toast": {
+    "transactionAdded": "Transakcija dodana",
+    "transactionAddFailed": "Neuspjelo dodavanje transakcije"
+  },
   "empty": "Nemate pozicija u portfelju"
 }

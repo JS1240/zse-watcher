@@ -1,0 +1,12 @@
+{
+  "title": "Praćenje",
+  "empty": "Nema dionica u listi praćenja",
+  "add": "Dodaj u listu praćenja",
+  "remove": "Ukloni iz liste praćenja",
+  "toast": {
+    "added": "Dionica dodana u listu praćenja",
+    "removed": "Dionica uklonjena iz liste praćenja",
+    "addFailed": "Neuspjelo dodavanje u listu praćenja",
+    "removeFailed": "Neuspjelo uklanjanje iz liste praćenja"
+  }
+}

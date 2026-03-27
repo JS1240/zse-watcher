@@ -20,5 +20,9 @@
     "sell": "Sell",
     "dividend": "Dividend"
   },
+  "toast": {
+    "transactionAdded": "Transaction added",
+    "transactionAddFailed": "Failed to add transaction"
+  },
   "empty": "No positions in portfolio"
 }

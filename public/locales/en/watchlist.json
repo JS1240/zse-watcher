@@ -1,0 +1,12 @@
+{
+  "title": "Watchlist",
+  "empty": "No stocks in watchlist",
+  "add": "Add to watchlist",
+  "remove": "Remove from watchlist",
+  "toast": {
+    "added": "Added to watchlist",
+    "removed": "Removed from watchlist",
+    "addFailed": "Failed to add to watchlist",
+    "removeFailed": "Failed to remove from watchlist"
+  }
+}

@@ -20,6 +20,12 @@
     "created": "Created"
   },
   "empty": "No alerts configured",
+  "toast": {
+    "created": "Alert created",
+    "deleted": "Alert deleted",
+    "createFailed": "Failed to create alert",
+    "deleteFailed": "Failed to delete alert"
+  },
   "notification": {
     "title": "Notifications",
     "priceAbove": "Price above {{value}}",

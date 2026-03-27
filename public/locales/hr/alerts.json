@@ -20,6 +20,12 @@
     "created": "Stvoreno"
   },
   "empty": "Nemate postavljenih alarma",
+  "toast": {
+    "created": "Alarm stvoren",
+    "deleted": "Alarm obrisan",
+    "createFailed": "Neuspjelo stvaranje alarma",
+    "deleteFailed": "Neuspjelo brisanje alarma"
+  },
   "notification": {
     "title": "Obavijesti",
     "priceAbove": "Cijena iznad {{value}}",

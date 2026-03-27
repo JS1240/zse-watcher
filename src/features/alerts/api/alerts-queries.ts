@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/config/supabase";
 import { useAuth } from "@/hooks/use-auth";
 import { REFETCH_INTERVALS, FREE_TIER_LIMITS } from "@/config/constants";
@@ -72,6 +73,7 @@ export function useTriggeredAlerts(): PriceAlert[] {
 }
 
 export function useCreateAlert() {
+  const { t } = useTranslation("alerts");
   const queryClient = useQueryClient();
   const { user } = useAuth();
 
@@ -103,15 +105,16 @@ export function useCreateAlert() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["alerts", user?.id] });
-      toast.success("Alert created");
+      toast.success(t("toast.created"));
     },
     onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "Failed to create alert");
+      toast.error(error instanceof Error ? error.message : t("toast.createFailed"));
     },
   });
 }
 
 export function useDeleteAlert() {
+  const { t } = useTranslation("alerts");
   const queryClient = useQueryClient();
   const { user } = useAuth();
 
@@ -129,10 +132,10 @@ export function useDeleteAlert() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["alerts", user?.id] });
-      toast.success("Alert deleted");
+      toast.success(t("toast.deleted"));
     },
     onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "Failed to delete alert");
+      toast.error(error instanceof Error ? error.message : t("toast.deleteFailed"));
     },
   });
 }
