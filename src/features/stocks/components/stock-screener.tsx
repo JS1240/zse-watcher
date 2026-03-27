@@ -1,12 +1,13 @@
 import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Filter, RotateCcw } from "lucide-react";
+import { Filter, RotateCcw, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatPrice, formatVolume } from "@/lib/formatters";
+import type { Stock } from "@/types/stock";
 
 interface ScreenerFilters {
   sector: string;
@@ -17,6 +18,9 @@ interface ScreenerFilters {
   minTurnover: string;
 }
 
+type SortColumn = keyof Pick<Stock, "price" | "changePct" | "turnover" | "volume" | "name">;
+type SortDirection = "asc" | "desc";
+
 const INITIAL_FILTERS: ScreenerFilters = {
   sector: "",
   minPrice: "",
@@ -26,17 +30,55 @@ const INITIAL_FILTERS: ScreenerFilters = {
   minTurnover: "",
 };
 
+function SortHeader({
+  column,
+  label,
+  sort,
+  onSort,
+}: {
+  column: SortColumn;
+  label: string;
+  sort: { column: SortColumn; direction: SortDirection } | null;
+  onSort: (col: SortColumn) => void;
+}) {
+  const isActive = sort?.column === column;
+  const direction = isActive ? sort.direction : null;
+
+  return (
+    <button
+      onClick={() => onSort(column)}
+      className="flex items-center gap-1 px-3 py-2 text-left font-medium transition-colors hover:text-foreground data-[active=true]:text-foreground"
+      data-active={isActive || undefined}
+      aria-sort={isActive ? (direction === "asc" ? "ascending" : "descending") : "none"}
+    >
+      <span>{label}</span>
+      {direction === "asc" ? (
+        <ArrowUp className="h-3 w-3 shrink-0" />
+      ) : direction === "desc" ? (
+        <ArrowDown className="h-3 w-3 shrink-0" />
+      ) : (
+        <ArrowUpDown className="h-3 w-3 shrink-0 text-muted-foreground/50" />
+      )}
+    </button>
+  );
+}
+
 export function StockScreener() {
   const { t } = useTranslation("stocks");
+  const { t: tc } = useTranslation("common");
   const { data: stocks, isLoading } = useStocksLive();
   const [filters, setFilters] = useState<ScreenerFilters>(INITIAL_FILTERS);
+  const [sort, setSort] = useState<{ column: SortColumn; direction: SortDirection } | null>({
+    column: "turnover",
+    direction: "desc",
+  });
 
   const sectors = useMemo(() => {
     if (!stocks) return [];
     return [...new Set(stocks.map((s) => s.sector))].sort();
   }, [stocks]);
 
-  const results = useMemo(() => {
+  const filtered = useMemo(() => {
     if (!stocks) return [];
 
     return stocks.filter((s) => {
@@ -49,6 +91,33 @@ export function StockScreener() {
       return true;
     });
   }, [stocks, filters]);
+
+  const results = useMemo(() => {
+    if (!sort) return filtered;
+
+    return [...filtered].sort((a, b) => {
+      const aVal = a[sort.column];
+      const bVal = b[sort.column];
+
+      if (typeof aVal === "string" && typeof bVal === "string") {
+        return sort.direction === "asc"
+          ? aVal.localeCompare(bVal)
+          : bVal.localeCompare(aVal);
+      }
+
+      return sort.direction === "asc"
+        ? (aVal as number) - (bVal as number)
+        : (bVal as number) - (aVal as number);
+    });
+  }, [filtered, sort]);
+
+  const handleSort = (col: SortColumn) => {
+    setSort((prev) => {
+      if (prev?.column !== col) return { column: col, direction: "desc" };
+      if (prev.direction === "desc") return { column: col, direction: "asc" };
+      return null;
+    });
+  };
 
   const updateFilter = (key: keyof ScreenerFilters, value: string) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
@@ -63,16 +132,19 @@ export function StockScreener() {
         <div className="mb-2 flex items-center justify-between">
           <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
             <Filter className="h-3 w-3" />
-            Filters
+            {tc("common:actions.filter")}
           </div>
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setFilters(INITIAL_FILTERS)}
+            onClick={() => {
+              setFilters(INITIAL_FILTERS);
+              setSort({ column: "turnover", direction: "desc" });
+            }}
             className="h-6 text-[10px]"
           >
             <RotateCcw className="h-3 w-3" />
-            Reset
+            {tc("common:actions.reset")}
           </Button>
         </div>
 
@@ -94,7 +166,9 @@ export function StockScreener() {
           </div>
 
           <div>
-            <label className="mb-1 block text-[9px] uppercase text-muted-foreground">Min Price</label>
+            <label className="mb-1 block text-[9px] uppercase text-muted-foreground">
+              {t("screener.minPrice")}
+            </label>
             <Input
               type="number"
               step="0.01"
@@ -106,7 +180,9 @@ export function StockScreener() {
           </div>
 
           <div>
-            <label className="mb-1 block text-[9px] uppercase text-muted-foreground">Max Price</label>
+            <label className="mb-1 block text-[9px] uppercase text-muted-foreground">
+              {t("screener.maxPrice")}
+            </label>
             <Input
               type="number"
               step="0.01"
@@ -118,7 +194,9 @@ export function StockScreener() {
           </div>
 
           <div>
-            <label className="mb-1 block text-[9px] uppercase text-muted-foreground">Min Change %</label>
+            <label className="mb-1 block text-[9px] uppercase text-muted-foreground">
+              {t("screener.minChange")}
+            </label>
             <Input
               type="number"
               step="0.1"
@@ -130,7 +208,9 @@ export function StockScreener() {
           </div>
 
           <div>
-            <label className="mb-1 block text-[9px] uppercase text-muted-foreground">Max Change %</label>
+            <label className="mb-1 block text-[9px] uppercase text-muted-foreground">
+              {t("screener.maxChange")}
+            </label>
             <Input
               type="number"
               step="0.1"
@@ -142,7 +222,9 @@ export function StockScreener() {
           </div>
 
           <div>
-            <label className="mb-1 block text-[9px] uppercase text-muted-foreground">Min Turnover</label>
+            <label className="mb-1 block text-[9px] uppercase text-muted-foreground">
+              {t("screener.minTurnover")}
+            </label>
             <Input
               type="number"
               value={filters.minTurnover}
@@ -156,7 +238,7 @@ export function StockScreener() {
 
       {/* Results count */}
       <div className="text-[10px] text-muted-foreground">
-        {results.length} results from {stocks?.length ?? 0} stocks
+        {t("screener.results", { count: results.length, total: stocks?.length ?? 0 })}
       </div>
 
       {/* Results table */}
@@ -164,26 +246,80 @@ export function StockScreener() {
         <table className="w-full text-xs">
           <thead>
             <tr className="border-b border-border bg-muted/50 text-[10px] uppercase tracking-wider text-muted-foreground">
-              <th className="px-3 py-2 text-left font-medium">{t("table.ticker")}</th>
-              <th className="px-3 py-2 text-left font-medium">{t("table.name")}</th>
-              <th className="px-3 py-2 text-left font-medium">{t("table.sector")}</th>
-              <th className="px-3 py-2 text-right font-medium">{t("table.price")}</th>
-              <th className="px-3 py-2 text-right font-medium">{t("table.change")}</th>
-              <th className="hidden px-3 py-2 text-right font-medium lg:table-cell">{t("table.turnover")}</th>
+              <th className="py-2 pl-3 pr-1 text-left font-medium">
+                {t("table.ticker")}
+              </th>
+              <th className="px-1 py-2 text-left font-medium">
+                <SortHeader
+                  column="name"
+                  label={t("table.name")}
+                  sort={sort}
+                  onSort={handleSort}
+                />
+              </th>
+              <th className="px-1 py-2 text-left font-medium">
+                {t("table.sector")}
+              </th>
+              <th className="px-1 py-2 text-right font-medium">
+                <SortHeader
+                  column="price"
+                  label={t("table.price")}
+                  sort={sort}
+                  onSort={handleSort}
+                />
+              </th>
+              <th className="px-1 py-2 text-right font-medium">
+                <SortHeader
+                  column="changePct"
+                  label={t("table.change")}
+                  sort={sort}
+                  onSort={handleSort}
+                />
+              </th>
+              <th className="hidden px-1 py-2 text-right font-medium lg:table-cell">
+                <SortHeader
+                  column="turnover"
+                  label={t("table.turnover")}
+                  sort={sort}
+                  onSort={handleSort}
+                />
+              </th>
+              <th className="hidden px-1 py-2 text-right font-medium lg:table-cell">
+                <SortHeader
+                  column="volume"
+                  label={t("table.volume")}
+                  sort={sort}
+                  onSort={handleSort}
+                />
+              </th>
             </tr>
           </thead>
           <tbody>
             {results.map((s) => (
-              <tr key={s.ticker} className="border-b border-border/50 last:border-b-0 hover:bg-accent/50">
-                <td className="px-3 py-2 font-data font-semibold text-foreground">{s.ticker}</td>
-                <td className="px-3 py-2 text-muted-foreground">{s.name}</td>
-                <td className="px-3 py-2">
-                  <span className="rounded-sm bg-accent px-1.5 py-0.5 text-[10px]">{s.sector}</span>
+              <tr
+                key={s.ticker}
+                className="border-b border-border/50 last:border-b-0 hover:bg-accent/50"
+              >
+                <td className="px-3 py-2 font-data font-semibold text-foreground">
+                  {s.ticker}
                 </td>
-                <td className="px-3 py-2 text-right font-data tabular-nums text-foreground">{formatPrice(s.price)}</td>
-                <td className="px-3 py-2 text-right"><ChangeBadge value={s.changePct} showIcon={false} /></td>
-                <td className="hidden px-3 py-2 text-right font-data tabular-nums text-muted-foreground lg:table-cell">
+                <td className="px-1 py-2 text-muted-foreground">{s.name}</td>
+                <td className="px-1 py-2">
+                  <span className="rounded-sm bg-accent px-1.5 py-0.5 text-[10px]">
+                    {s.sector}
+                  </span>
+                </td>
+                <td className="px-1 py-2 text-right font-data tabular-nums text-foreground">
+                  {formatPrice(s.price)}
+                </td>
+                <td className="px-1 py-2 text-right">
+                  <ChangeBadge value={s.changePct} showIcon={false} />
+                </td>
+                <td className="hidden px-1 py-2 text-right font-data tabular-nums text-muted-foreground lg:table-cell">
                   {formatVolume(s.turnover)} EUR
+                </td>
+                <td className="hidden px-1 py-2 text-right font-data tabular-nums text-muted-foreground lg:table-cell">
+                  {formatVolume(s.volume)}
                 </td>
               </tr>
             ))}
@@ -192,7 +328,7 @@ export function StockScreener() {
 
         {results.length === 0 && (
           <div className="py-8 text-center text-xs text-muted-foreground">
-            No stocks match the filters
+            {t("screener.noResults")}
           </div>
         )}
       </div>

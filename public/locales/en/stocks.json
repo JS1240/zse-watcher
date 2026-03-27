@@ -34,5 +34,14 @@
     "title": "Market Movers",
     "gainers": "Gainers",
     "losers": "Losers"
+  },
+  "screener": {
+    "minPrice": "Min Price",
+    "maxPrice": "Max Price",
+    "minChange": "Min Change %",
+    "maxChange": "Max Change %",
+    "minTurnover": "Min Turnover",
+    "noResults": "No stocks match the current filters",
+    "results": "{{count}} results from {{total}} stocks"
   }
 }

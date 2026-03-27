@@ -28,6 +28,8 @@
     "add": "Dodaj",
     "edit": "Uredi",
     "close": "Zatvori",
+    "filter": "Filtriraj",
+    "reset": "Resetiraj",
     "login": "Prijava",
     "register": "Registracija",
     "logout": "Odjava",

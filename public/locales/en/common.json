@@ -28,6 +28,8 @@
     "add": "Add",
     "edit": "Edit",
     "close": "Close",
+    "filter": "Filter",
+    "reset": "Reset",
     "login": "Sign In",
     "register": "Sign Up",
     "logout": "Sign Out",

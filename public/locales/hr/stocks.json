@@ -34,5 +34,14 @@
     "title": "Pokretaci trzista",
     "gainers": "Dobitnici",
     "losers": "Gubitnici"
+  },
+  "screener": {
+    "minPrice": "Min cijena",
+    "maxPrice": "Max cijena",
+    "minChange": "Min promjena %",
+    "maxChange": "Max promjena %",
+    "minTurnover": "Min promet",
+    "noResults": "Nijedna dionica ne odgovara trenutnim filterima",
+    "results": "{{count}} rezultata od {{total}} dionica"
   }
 }
