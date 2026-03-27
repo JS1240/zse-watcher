@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { TradingChart } from "@/features/charts/components/trading-chart";
+import { LazyTradingChart } from "@/features/charts/components/lazy-trading-chart";
 import { useStockHistory } from "@/features/stocks/api/stock-detail-queries";
 import { CHART_RANGES, type ChartRange } from "@/config/constants";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -45,7 +45,7 @@ export function HistoryChart({
       {isLoading ? (
         <Skeleton className="w-full" style={{ height: `${height}px` }} />
       ) : history && history.length > 0 ? (
-        <TradingChart
+        <LazyTradingChart
           data={history}
           chartType={chartType}
           height={height}
