@@ -4,12 +4,16 @@ import { Sidebar } from "@/components/layout/sidebar";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { Footer } from "@/components/layout/footer";
 import { ErrorBoundary } from "@/components/shared/error-boundary";
+import { StockDetailDrawer } from "@/features/stocks/components/stock-detail-drawer";
+import { useSelectedStock } from "@/hooks/use-selected-stock";
 
 interface AppShellProps {
   children: ReactNode;
 }
 
 export function AppShell({ children }: AppShellProps) {
+  const { selectedTicker, clear } = useSelectedStock();
+
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-background text-foreground">
       <Header />
@@ -21,6 +25,7 @@ export function AppShell({ children }: AppShellProps) {
       </div>
       <Footer className="hidden lg:flex" />
       <MobileNav />
+      <StockDetailDrawer ticker={selectedTicker} onClose={clear} />
     </div>
   );
 }

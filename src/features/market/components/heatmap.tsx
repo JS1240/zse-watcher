@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
+import { useSelectedStock } from "@/hooks/use-selected-stock";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { formatPercent } from "@/lib/formatters";
@@ -16,6 +17,7 @@ export function Heatmap() {
   const { data: result, isLoading } = useStocksLive();
   const stocks = result?.stocks ?? null;
   const { t } = useTranslation("common");
+  const { select } = useSelectedStock();
 
   const sectors = useMemo(() => {
     if (!stocks) return [];
@@ -73,6 +75,7 @@ export function Heatmap() {
           key={sector.sector}
           sector={sector}
           maxTurnover={maxTurnover}
+          onSelectTicker={select}
         />
       ))}
     </div>
@@ -82,9 +85,11 @@ export function Heatmap() {
 function SectorCell({
   sector,
   maxTurnover,
+  onSelectTicker,
 }: {
   sector: SectorGroup;
   maxTurnover: number;
+  onSelectTicker: (ticker: string) => void;
 }) {
   const sizeRatio = sector.totalTurnover / maxTurnover;
   const minHeight = 80;
@@ -114,20 +119,22 @@ function SectorCell({
       </div>
       <div className="flex flex-wrap gap-0.5">
         {sector.stocks.map((stock) => (
-          <span
+          <button
             key={stock.ticker}
+            onClick={() => onSelectTicker(stock.ticker)}
             className={cn(
-              "rounded-sm px-1 py-0.5 font-data text-[9px] font-medium",
+              "rounded-sm px-1 py-0.5 font-data text-[9px] font-medium transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-1",
               stock.changePct > 0
-                ? "bg-price-up/20 text-price-up"
+                ? "bg-price-up/20 text-price-up focus-visible:ring-price-up"
                 : stock.changePct < 0
-                  ? "bg-price-down/20 text-price-down"
-                  : "bg-muted text-muted-foreground",
+                  ? "bg-price-down/20 text-price-down focus-visible:ring-price-down"
+                  : "bg-muted text-muted-foreground focus-visible:ring-muted-foreground",
             )}
             title={`${stock.ticker}: ${formatPercent(stock.changePct)}`}
+            aria-label={`${stock.ticker}, ${formatPercent(stock.changePct)}`}
           >
             {stock.ticker.split("-")[0]}
-          </span>
+          </button>
         ))}
       </div>
     </div>

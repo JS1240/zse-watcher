@@ -5,10 +5,8 @@ import { MarketOverview } from "@/features/market/components/market-overview";
 import { MarketStatus } from "@/features/market/components/market-status";
 import { MarketMovers } from "@/features/market/components/market-movers";
 import { StockTable } from "@/features/stocks/components/stock-table";
-import { StockDetailDrawer } from "@/features/stocks/components/stock-detail-drawer";
 import { NewsFeed } from "@/features/news/components/news-feed";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useSelectedStock } from "@/hooks/use-selected-stock";
 
 export const Route = createFileRoute("/")({
   component: StocksPage,
@@ -16,7 +14,6 @@ export const Route = createFileRoute("/")({
 
 function StocksPage() {
   const { t } = useTranslation("common");
-  const { selectedTicker, clear } = useSelectedStock();
 
   return (
     <div className="flex h-full">
@@ -49,9 +46,6 @@ function StocksPage() {
           </div>
         </ScrollArea>
       </aside>
-
-      {/* Stock detail drawer */}
-      <StockDetailDrawer ticker={selectedTicker} onClose={clear} />
     </div>
   );
 }
