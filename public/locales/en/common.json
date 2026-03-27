@@ -47,7 +47,8 @@
   "errors": {
     "generic": "Something went wrong",
     "network": "Network error. Please try again.",
-    "notFound": "Page not found"
+    "notFound": "Page not found",
+    "tryAgain": "Try again"
   },
   "empty": {
     "noData": "No data available",
