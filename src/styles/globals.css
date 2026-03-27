@@ -1,0 +1,74 @@
+@import "tailwindcss";
+@import "./themes/bloomberg-dark.css";
+@import "./themes/bloomberg-light.css";
+
+@theme {
+  --font-ui: "Inter", system-ui, sans-serif;
+  --font-data: "JetBrains Mono", monospace;
+}
+
+html {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+}
+
+/* Tabular numbers for financial data alignment */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Price flash animation */
+@keyframes flash-green {
+  0% { background-color: hsl(142 71% 45% / 0.25); }
+  100% { background-color: transparent; }
+}
+
+@keyframes flash-red {
+  0% { background-color: hsl(0 84% 60% / 0.25); }
+  100% { background-color: transparent; }
+}
+
+.price-flash-up {
+  animation: flash-green 0.8s ease-out;
+}
+
+.price-flash-down {
+  animation: flash-red 0.8s ease-out;
+}
+
+/* Custom scrollbar for Bloomberg aesthetic */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(220 8% 25%);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(220 8% 35%);
+}
+
+/* Drawer slide animation */
+@keyframes slide-in-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes slide-out-right {
+  from { transform: translateX(0); }
+  to { transform: translateX(100%); }
+}

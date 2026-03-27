@@ -1,0 +1,62 @@
+{
+  "app": {
+    "name": "ZSE Watcher",
+    "tagline": "Hrvatski burzovni terminal"
+  },
+  "nav": {
+    "stocks": "Dionice",
+    "macro": "Makro",
+    "heatmap": "Toplinska karta",
+    "portfolio": "Portfelj",
+    "dividends": "Dividende",
+    "alerts": "Alarmi",
+    "settings": "Postavke"
+  },
+  "market": {
+    "status": {
+      "open": "Trziste otvoreno",
+      "closed": "Trziste zatvoreno",
+      "premarket": "Pred-trzisno"
+    }
+  },
+  "actions": {
+    "search": "Pretrazi...",
+    "refresh": "Osvjezi",
+    "save": "Spremi",
+    "cancel": "Odustani",
+    "delete": "Obrisi",
+    "add": "Dodaj",
+    "edit": "Uredi",
+    "close": "Zatvori",
+    "login": "Prijava",
+    "register": "Registracija",
+    "logout": "Odjava",
+    "upgrade": "Nadogradi"
+  },
+  "theme": {
+    "dark": "Tamna tema",
+    "light": "Svijetla tema",
+    "system": "Sistemska tema"
+  },
+  "language": {
+    "hr": "Hrvatski",
+    "en": "English"
+  },
+  "errors": {
+    "generic": "Doslo je do pogreske",
+    "network": "Greska mreze. Pokusajte ponovo.",
+    "notFound": "Stranica nije pronadjena"
+  },
+  "empty": {
+    "noData": "Nema podataka",
+    "noResults": "Nema rezultata"
+  },
+  "time": {
+    "lastUpdated": "Zadnje azurirano",
+    "ago": "prije"
+  },
+  "commandPalette": {
+    "placeholder": "Pretrazi dionice, akcije...",
+    "noResults": "Nema rezultata"
+  }
+}

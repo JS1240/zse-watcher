@@ -1,0 +1,32 @@
+{
+  "title": "Alarmi cijena",
+  "create": "Stvori alarm",
+  "condition": {
+    "above": "Cijena iznad",
+    "below": "Cijena ispod",
+    "percentUp": "Porast za %",
+    "percentDown": "Pad za %"
+  },
+  "status": {
+    "active": "Aktivan",
+    "triggered": "Aktiviran",
+    "disabled": "Onemogucen"
+  },
+  "fields": {
+    "ticker": "Oznaka",
+    "condition": "Uvjet",
+    "target": "Ciljna vrijednost",
+    "status": "Status",
+    "created": "Stvoreno"
+  },
+  "empty": "Nemate postavljenih alarma",
+  "notification": {
+    "title": "Obavijesti",
+    "priceAbove": "Cijena iznad {{value}}",
+    "priceBelow": "Cijena ispod {{value}}",
+    "upBy": "Porast {{value}}%",
+    "downBy": "Pad {{value}}%",
+    "active": "{{count}} aktivnih alarma, jos nema okidanja",
+    "none": "Nema konfiguriranih alarma"
+  }
+}

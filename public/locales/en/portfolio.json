@@ -1,0 +1,24 @@
+{
+  "title": "Portfolio",
+  "addPosition": "Add Position",
+  "holdings": "Holdings",
+  "totalValue": "Total Value",
+  "totalGain": "Total Gain/Loss",
+  "allocation": "Allocation",
+  "fields": {
+    "ticker": "Ticker",
+    "shares": "Shares",
+    "avgPrice": "Avg Price",
+    "currentPrice": "Current Price",
+    "value": "Value",
+    "gain": "Gain/Loss",
+    "gainPercent": "Gain %",
+    "date": "Date"
+  },
+  "type": {
+    "buy": "Buy",
+    "sell": "Sell",
+    "dividend": "Dividend"
+  },
+  "empty": "No positions in portfolio"
+}

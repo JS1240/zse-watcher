@@ -1,0 +1,32 @@
+{
+  "title": "Price Alerts",
+  "create": "Create Alert",
+  "condition": {
+    "above": "Price Above",
+    "below": "Price Below",
+    "percentUp": "Up by %",
+    "percentDown": "Down by %"
+  },
+  "status": {
+    "active": "Active",
+    "triggered": "Triggered",
+    "disabled": "Disabled"
+  },
+  "fields": {
+    "ticker": "Ticker",
+    "condition": "Condition",
+    "target": "Target Value",
+    "status": "Status",
+    "created": "Created"
+  },
+  "empty": "No alerts configured",
+  "notification": {
+    "title": "Notifications",
+    "priceAbove": "Price above {{value}}",
+    "priceBelow": "Price below {{value}}",
+    "upBy": "Up {{value}}%",
+    "downBy": "Down {{value}}%",
+    "active": "{{count}} active alerts, no triggers yet",
+    "none": "No alerts configured"
+  }
+}

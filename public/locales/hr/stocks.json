@@ -1,0 +1,38 @@
+{
+  "table": {
+    "ticker": "Oznaka",
+    "name": "Naziv",
+    "price": "Cijena",
+    "change": "Promjena",
+    "volume": "Volumen",
+    "turnover": "Promet",
+    "sector": "Sektor",
+    "chart": "Graf"
+  },
+  "detail": {
+    "fundamentals": "Temeljni podaci",
+    "description": "Opis",
+    "marketCap": "Trzisna kapitalizacija",
+    "pe": "P/E omjer",
+    "dividendYield": "Dividendni prinos",
+    "high52w": "Najvisa (52t)",
+    "low52w": "Najniza (52t)",
+    "shares": "Broj dionica",
+    "founded": "Osnovan",
+    "website": "Web stranica",
+    "isin": "ISIN"
+  },
+  "ranges": {
+    "1D": "1D",
+    "1W": "1T",
+    "1M": "1M",
+    "3M": "3M",
+    "6M": "6M",
+    "1Y": "1G"
+  },
+  "movers": {
+    "title": "Pokretaci trzista",
+    "gainers": "Dobitnici",
+    "losers": "Gubitnici"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "table": {
+    "ticker": "Ticker",
+    "name": "Name",
+    "price": "Price",
+    "change": "Change",
+    "volume": "Volume",
+    "turnover": "Turnover",
+    "sector": "Sector",
+    "chart": "Chart"
+  },
+  "detail": {
+    "fundamentals": "Fundamentals",
+    "description": "Description",
+    "marketCap": "Market Cap",
+    "pe": "P/E Ratio",
+    "dividendYield": "Dividend Yield",
+    "high52w": "52W High",
+    "low52w": "52W Low",
+    "shares": "Shares Outstanding",
+    "founded": "Founded",
+    "website": "Website",
+    "isin": "ISIN"
+  },
+  "ranges": {
+    "1D": "1D",
+    "1W": "1W",
+    "1M": "1M",
+    "3M": "3M",
+    "6M": "6M",
+    "1Y": "1Y"
+  },
+  "movers": {
+    "title": "Market Movers",
+    "gainers": "Gainers",
+    "losers": "Losers"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "title": "Makroekonomski pokazatelji",
+  "indices": {
+    "crobex": "CROBEX",
+    "crobex10": "CROBEX10",
+    "euroStoxx": "Euro Stoxx 50"
+  },
+  "forex": {
+    "title": "Tecajevi",
+    "eurHrk": "EUR/HRK",
+    "eurUsd": "EUR/USD"
+  },
+  "factors": {
+    "title": "Investicijski faktori",
+    "gdp": "BDP rast",
+    "inflation": "Inflacija",
+    "unemployment": "Nezaposlenost",
+    "interestRate": "Kamatna stopa"
+  }
+}

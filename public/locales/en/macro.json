@@ -1,0 +1,20 @@
+{
+  "title": "Macroeconomic Indicators",
+  "indices": {
+    "crobex": "CROBEX",
+    "crobex10": "CROBEX10",
+    "euroStoxx": "Euro Stoxx 50"
+  },
+  "forex": {
+    "title": "Exchange Rates",
+    "eurHrk": "EUR/HRK",
+    "eurUsd": "EUR/USD"
+  },
+  "factors": {
+    "title": "Investment Factors",
+    "gdp": "GDP Growth",
+    "inflation": "Inflation",
+    "unemployment": "Unemployment",
+    "interestRate": "Interest Rate"
+  }
+}

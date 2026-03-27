@@ -1,0 +1,24 @@
+{
+  "title": "Portfelj",
+  "addPosition": "Dodaj poziciju",
+  "holdings": "Udjeli",
+  "totalValue": "Ukupna vrijednost",
+  "totalGain": "Ukupni dobitak/gubitak",
+  "allocation": "Alokacija",
+  "fields": {
+    "ticker": "Oznaka",
+    "shares": "Broj dionica",
+    "avgPrice": "Prosjecna cijena",
+    "currentPrice": "Trenutna cijena",
+    "value": "Vrijednost",
+    "gain": "Dobitak/Gubitak",
+    "gainPercent": "Dobitak %",
+    "date": "Datum"
+  },
+  "type": {
+    "buy": "Kupnja",
+    "sell": "Prodaja",
+    "dividend": "Dividenda"
+  },
+  "empty": "Nemate pozicija u portfelju"
+}

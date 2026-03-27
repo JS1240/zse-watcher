@@ -1,0 +1,62 @@
+{
+  "app": {
+    "name": "ZSE Watcher",
+    "tagline": "Croatian Stock Market Terminal"
+  },
+  "nav": {
+    "stocks": "Stocks",
+    "macro": "Macro",
+    "heatmap": "Heatmap",
+    "portfolio": "Portfolio",
+    "dividends": "Dividends",
+    "alerts": "Alerts",
+    "settings": "Settings"
+  },
+  "market": {
+    "status": {
+      "open": "Market Open",
+      "closed": "Market Closed",
+      "premarket": "Pre-Market"
+    }
+  },
+  "actions": {
+    "search": "Search...",
+    "refresh": "Refresh",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "add": "Add",
+    "edit": "Edit",
+    "close": "Close",
+    "login": "Sign In",
+    "register": "Sign Up",
+    "logout": "Sign Out",
+    "upgrade": "Upgrade"
+  },
+  "theme": {
+    "dark": "Dark Theme",
+    "light": "Light Theme",
+    "system": "System Theme"
+  },
+  "language": {
+    "hr": "Hrvatski",
+    "en": "English"
+  },
+  "errors": {
+    "generic": "Something went wrong",
+    "network": "Network error. Please try again.",
+    "notFound": "Page not found"
+  },
+  "empty": {
+    "noData": "No data available",
+    "noResults": "No results found"
+  },
+  "time": {
+    "lastUpdated": "Last updated",
+    "ago": "ago"
+  },
+  "commandPalette": {
+    "placeholder": "Search stocks, actions...",
+    "noResults": "No results found"
+  }
+}
