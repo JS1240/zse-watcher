@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { REFETCH_INTERVALS } from "@/config/constants";
 import { createLogger } from "@/lib/logger";
 import { toast } from "sonner";
+import { useLocalTransactions } from "@/features/portfolio/hooks/use-local-transactions";
 
 const logger = createLogger("PortfolioQueries");
 
@@ -70,17 +71,35 @@ export function usePortfolio() {
 
 export function usePortfolioHoldings(): Holding[] {
   const { data } = usePortfolio();
-  if (!data?.transactions.length) return [];
+  const { transactions: localTxs } = useLocalTransactions();
+
+  // Merge Supabase and local transactions
+  const allTransactions = [
+    ...(data?.transactions ?? []).map((tx) => ({
+      ticker: tx.ticker,
+      transactionType: tx.transaction_type as "buy" | "sell" | "dividend",
+      shares: tx.shares,
+      totalAmount: tx.total_amount,
+    })),
+    ...localTxs.map((tx) => ({
+      ticker: tx.ticker,
+      transactionType: tx.transactionType,
+      shares: tx.shares,
+      totalAmount: tx.totalAmount,
+    })),
+  ];
+
+  if (!allTransactions.length) return [];
 
   const holdingsMap = new Map<string, { totalShares: number; totalCost: number }>();
 
-  for (const txn of data.transactions) {
+  for (const txn of allTransactions) {
     const current = holdingsMap.get(txn.ticker) ?? { totalShares: 0, totalCost: 0 };
 
-    if (txn.transaction_type === "buy") {
+    if (txn.transactionType === "buy") {
       current.totalShares += txn.shares;
-      current.totalCost += txn.total_amount;
-    } else if (txn.transaction_type === "sell") {
+      current.totalCost += txn.totalAmount;
+    } else if (txn.transactionType === "sell") {
       current.totalShares -= txn.shares;
       current.totalCost -= txn.shares * (current.totalCost / (current.totalShares + txn.shares));
     }
@@ -102,6 +121,7 @@ export function useAddTransaction() {
   const { t } = useTranslation("portfolio");
   const queryClient = useQueryClient();
   const { user } = useAuth();
+  const { addTransaction: addLocalTransaction } = useLocalTransactions();
 
   return useMutation({
     mutationFn: async (data: {
@@ -112,7 +132,23 @@ export function useAddTransaction() {
       transactionDate: string;
       notes?: string;
     }) => {
-      if (!user) throw new Error("Not authenticated");
+      const totalAmount = data.shares * data.pricePerShare;
+
+      // Always persist locally first (works for authenticated and non-authenticated users)
+      addLocalTransaction({
+        ticker: data.ticker,
+        transactionType: data.transactionType,
+        shares: data.shares,
+        pricePerShare: data.pricePerShare,
+        totalAmount,
+        transactionDate: data.transactionDate,
+        notes: data.notes ?? null,
+      });
+
+      // If authenticated, also persist to Supabase
+      if (!user) {
+        return { localOnly: true };
+      }
 
       // Get or create portfolio
       const { data: portfolios } = await supabase
@@ -149,6 +185,7 @@ export function useAddTransaction() {
         });
 
       if (error) throw error;
+      return { localOnly: false };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["portfolio", user?.id] });

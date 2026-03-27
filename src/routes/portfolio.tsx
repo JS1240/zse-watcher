@@ -6,6 +6,7 @@ import { PortfolioDashboard } from "@/features/portfolio/components/portfolio-da
 import { PortfolioAnalytics } from "@/features/portfolio/components/portfolio-analytics";
 import { PremiumGate } from "@/features/premium/components/premium-gate";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/portfolio")({
   component: PortfolioPage,
@@ -16,6 +17,7 @@ type Tab = "holdings" | "analytics";
 function PortfolioPage() {
   const { t } = useTranslation("portfolio");
   const [tab, setTab] = useState<Tab>("holdings");
+  const { isAuthenticated } = useAuth();
 
   return (
     <div className="flex h-full flex-col gap-3 overflow-auto p-4">
@@ -39,10 +41,18 @@ function PortfolioPage() {
         </div>
       </div>
 
-      <AuthGuard>
-        {tab === "holdings" ? (
-          <PortfolioDashboard />
-        ) : (
+      {tab === "holdings" ? (
+        <PortfolioDashboard isLocal={!isAuthenticated} />
+      ) : (
+        <AuthGuard
+          fallback={
+            <div className="rounded-md border border-border bg-card py-12 text-center">
+              <p className="text-xs text-muted-foreground">
+                Sign in to access portfolio analytics.
+              </p>
+            </div>
+          }
+        >
           <PremiumGate
             feature="portfolioAnalytics"
             fallbackTitle="Portfolio Analytics"
@@ -50,8 +60,8 @@ function PortfolioPage() {
           >
             <PortfolioAnalytics />
           </PremiumGate>
-        )}
-      </AuthGuard>
+        </AuthGuard>
+      )}
     </div>
   );
 }

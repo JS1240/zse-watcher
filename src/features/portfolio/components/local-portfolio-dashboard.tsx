@@ -1,57 +1,80 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Plus } from "lucide-react";
-import { usePortfolioHoldings } from "@/features/portfolio/api/portfolio-queries";
-import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { useLocalTransactions } from "@/features/portfolio/hooks/use-local-transactions";
+import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { AddPositionForm } from "@/features/portfolio/components/add-position-form";
 import { Button } from "@/components/ui/button";
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { formatPrice, formatCurrency } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 
-interface PortfolioDashboardProps {
-  isLocal?: boolean;
-}
-
-export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps) {
+export function LocalPortfolioDashboard() {
   const { t } = useTranslation("portfolio");
-  const holdings = usePortfolioHoldings();
+  const { transactions, hasLocalTransactions } = useLocalTransactions();
   const { data: stocksResult } = useStocksLive();
   const stocks = stocksResult?.stocks ?? null;
   const [showAddForm, setShowAddForm] = useState(false);
-  const { hasLocalTransactions } = useLocalTransactions();
 
-  // Enrich holdings with live prices
-  const enrichedHoldings = holdings.map((h) => {
-    const stock = stocks?.find((s) => s.ticker === h.ticker);
-    const currentPrice = stock?.price ?? h.avgPrice;
-    const totalValue = h.totalShares * currentPrice;
-    const totalGain = totalValue - h.totalCost;
-    const gainPct = h.totalCost > 0 ? (totalGain / h.totalCost) * 100 : 0;
+  // Calculate holdings from local transactions
+  const holdingsMap = new Map<string, { totalShares: number; totalCost: number; name: string }>();
 
-    return { ...h, currentPrice, totalValue, totalGain, gainPct, name: stock?.name ?? h.ticker };
-  });
+  for (const tx of transactions) {
+    const stock = stocks?.find((s) => s.ticker === tx.ticker);
+    const current = holdingsMap.get(tx.ticker) ?? {
+      totalShares: 0,
+      totalCost: 0,
+      name: stock?.name ?? tx.ticker,
+    };
+
+    if (tx.transactionType === "buy") {
+      current.totalShares += tx.shares;
+      current.totalCost += tx.totalAmount;
+    } else if (tx.transactionType === "sell") {
+      current.totalShares -= tx.shares;
+      current.totalCost -= tx.shares * (current.totalCost / (current.totalShares + tx.shares));
+    }
+
+    holdingsMap.set(tx.ticker, current);
+  }
+
+  const enrichedHoldings = Array.from(holdingsMap.entries())
+    .filter(([_, h]) => h.totalShares > 0)
+    .map(([ticker, h]) => {
+      const stock = stocks?.find((s) => s.ticker === ticker);
+      const currentPrice = stock?.price ?? h.totalCost / h.totalShares;
+      const totalValue = h.totalShares * currentPrice;
+      const totalGain = totalValue - h.totalCost;
+      const gainPct = h.totalCost > 0 ? (totalGain / h.totalCost) * 100 : 0;
+
+      return {
+        ticker,
+        totalShares: h.totalShares,
+        avgPrice: h.totalCost / h.totalShares,
+        currentPrice,
+        totalValue,
+        totalGain,
+        gainPct,
+        name: h.name,
+      };
+    });
 
   const totalPortfolioValue = enrichedHoldings.reduce((sum, h) => sum + h.totalValue, 0);
   const totalPortfolioGain = enrichedHoldings.reduce((sum, h) => sum + h.totalGain, 0);
-  const totalGainPct = totalPortfolioValue > 0
-    ? (totalPortfolioGain / (totalPortfolioValue - totalPortfolioGain)) * 100
-    : 0;
+  const totalGainPct =
+    totalPortfolioValue > 0
+      ? (totalPortfolioGain / (totalPortfolioValue - totalPortfolioGain)) * 100
+      : 0;
 
   return (
     <div className="space-y-4">
       {/* Local indicator */}
-      {(isLocal || hasLocalTransactions) && (
-        <div className="flex items-center gap-2 rounded-sm bg-muted/50 px-2 py-1">
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-          <span className="text-[10px] text-muted-foreground">
-            {isLocal
-              ? "Portfolio saved locally — sign in to sync across devices"
-              : "Portfolio synced with your account"}
-          </span>
-        </div>
-      )}
+      <div className="flex items-center gap-2 rounded-sm bg-muted/50 px-2 py-1">
+        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+        <span className="text-[10px] text-muted-foreground">
+          Portfolio saved locally — sign in to sync across devices
+        </span>
+      </div>
 
       {/* Summary cards */}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
@@ -112,13 +135,18 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
                 <th className="px-3 py-2 text-right font-medium">{t("fields.shares")}</th>
                 <th className="px-3 py-2 text-right font-medium">{t("fields.avgPrice")}</th>
                 <th className="px-3 py-2 text-right font-medium">{t("fields.currentPrice")}</th>
-                <th className="hidden px-3 py-2 text-right font-medium md:table-cell">{t("fields.value")}</th>
+                <th className="hidden px-3 py-2 text-right font-medium md:table-cell">
+                  {t("fields.value")}
+                </th>
                 <th className="px-3 py-2 text-right font-medium">{t("fields.gain")}</th>
               </tr>
             </thead>
             <tbody>
               {enrichedHoldings.map((h) => (
-                <tr key={h.ticker} className="border-b border-border/50 last:border-b-0">
+                <tr
+                  key={h.ticker}
+                  className="border-b border-border/50 last:border-b-0"
+                >
                   <td className="px-3 py-2">
                     <div>
                       <span className="font-data font-semibold text-foreground">{h.ticker}</span>
@@ -147,7 +175,9 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
         </div>
       ) : (
         <div className="rounded-md border border-border bg-card py-12 text-center">
-          <p className="text-xs text-muted-foreground">{t("empty")}</p>
+          <p className="text-xs text-muted-foreground">
+            {hasLocalTransactions ? "No holdings after sells" : t("empty")}
+          </p>
         </div>
       )}
     </div>
