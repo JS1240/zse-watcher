@@ -7,6 +7,7 @@ export interface Stock {
   changePct: number;
   turnover: number;
   volume: number;
+  dividendYield: number | null;
 }
 
 export interface StockDetail extends Stock {

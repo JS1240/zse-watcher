@@ -7,7 +7,8 @@
     "volume": "Volumen",
     "turnover": "Promet",
     "sector": "Sektor",
-    "chart": "Graf"
+    "chart": "Graf",
+    "dividendYield": "Div. %"
   },
   "detail": {
     "demoData": "Priključak na ZSE nije dostupan — prikazujem ogledne podatke.",
@@ -42,6 +43,8 @@
     "minChange": "Min promjena %",
     "maxChange": "Max promjena %",
     "minTurnover": "Min promet",
+    "minDividend": "Min div. %",
+    "maxDividend": "Max div. %",
     "noResults": "Nijedna dionica ne odgovara trenutnim filterima",
     "results": "{{count}} rezultata od {{total}} dionica"
   }

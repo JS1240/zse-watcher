@@ -16,10 +16,10 @@ vi.mock("@/features/watchlist/api/watchlist-queries");
 vi.mock("@/lib/export", () => ({ exportToCsv: vi.fn() }));
 
 const MOCK_STOCKS: Stock[] = [
-  { ticker: "ADRS-P-A", name: "Adris grupa d.d.", sector: "Turizam", isin: "HRADRSPPA0", price: 44.80, changePct: 1.36, turnover: 125340, volume: 2800 },
-  { ticker: "ARNT-R-A", name: "Arena Hospitality Group d.d.", sector: "Turizam", isin: "HRARNTRAR7", price: 33.00, changePct: -0.60, turnover: 49500, volume: 1500 },
-  { ticker: "HT-R-A", name: "HT d.d.", sector: "Telekomunikacije", isin: "HRHTRARA00", price: 26.40, changePct: 0.76, turnover: 264000, volume: 10000 },
-  { ticker: "OPTE-R-A", name: "OT-Optima Telekom d.d.", sector: "Telekomunikacije", isin: "HROPTERA00", price: 0.42, changePct: -4.55, turnover: 2100, volume: 5000 },
+  { ticker: "ADRS-P-A", name: "Adris grupa d.d.", sector: "Turizam", isin: "HRADRSPPA0", price: 44.80, changePct: 1.36, turnover: 125340, volume: 2800, dividendYield: 3.2 },
+  { ticker: "ARNT-R-A", name: "Arena Hospitality Group d.d.", sector: "Turizam", isin: "HRARNTRAR7", price: 33.00, changePct: -0.60, turnover: 49500, volume: 1500, dividendYield: null },
+  { ticker: "HT-R-A", name: "HT d.d.", sector: "Telekomunikacije", isin: "HRHTRARA00", price: 26.40, changePct: 0.76, turnover: 264000, volume: 10000, dividendYield: 5.8 },
+  { ticker: "OPTE-R-A", name: "OT-Optima Telekom d.d.", sector: "Telekomunikacije", isin: "HROPTERA00", price: 0.42, changePct: -4.55, turnover: 2100, volume: 5000, dividendYield: null },
 ];
 
 const mockUseStocksLive = vi.mocked(useStocksLive);

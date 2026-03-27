@@ -7,7 +7,8 @@
     "volume": "Volume",
     "turnover": "Turnover",
     "sector": "Sector",
-    "chart": "Chart"
+    "chart": "Chart",
+    "dividendYield": "Div. %"
   },
   "detail": {
     "demoData": "ZSE feed unavailable — showing demo data.",
@@ -42,6 +43,8 @@
     "minChange": "Min Change %",
     "maxChange": "Max Change %",
     "minTurnover": "Min Turnover",
+    "minDividend": "Min Div. %",
+    "maxDividend": "Max Div. %",
     "noResults": "No stocks match the current filters",
     "results": "{{count}} results from {{total}} stocks"
   }

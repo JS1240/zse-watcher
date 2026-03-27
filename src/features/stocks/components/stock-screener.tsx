@@ -16,6 +16,8 @@ interface ScreenerFilters {
   minChange: string;
   maxChange: string;
   minTurnover: string;
+  minDividend: string;
+  maxDividend: string;
 }
 
 type SortColumn = keyof Pick<Stock, "price" | "changePct" | "turnover" | "volume" | "name">;
@@ -28,6 +30,8 @@ const INITIAL_FILTERS: ScreenerFilters = {
   minChange: "",
   maxChange: "",
   minTurnover: "",
+  minDividend: "",
+  maxDividend: "",
 };
 
 function SortHeader({
@@ -88,6 +92,8 @@ export function StockScreener() {
       if (filters.minChange && s.changePct < parseFloat(filters.minChange)) return false;
       if (filters.maxChange && s.changePct > parseFloat(filters.maxChange)) return false;
       if (filters.minTurnover && s.turnover < parseFloat(filters.minTurnover)) return false;
+      if (filters.minDividend && (s.dividendYield === null || s.dividendYield < parseFloat(filters.minDividend))) return false;
+      if (filters.maxDividend && (s.dividendYield === null || s.dividendYield > parseFloat(filters.maxDividend))) return false;
       return true;
     });
   }, [stocks, filters]);
@@ -148,7 +154,7 @@ export function StockScreener() {
           </Button>
         </div>
 
-        <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-6">
+        <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4">
           <div>
             <label className="mb-1 block text-[9px] uppercase text-muted-foreground">
               {t("table.sector")}
@@ -233,6 +239,34 @@ export function StockScreener() {
               placeholder="0"
             />
           </div>
+
+          <div>
+            <label className="mb-1 block text-[9px] uppercase text-muted-foreground">
+              {t("screener.minDividend")}
+            </label>
+            <Input
+              type="number"
+              step="0.1"
+              value={filters.minDividend}
+              onChange={(e) => updateFilter("minDividend", e.target.value)}
+              className="h-7 text-[11px]"
+              placeholder="0"
+            />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-[9px] uppercase text-muted-foreground">
+              {t("screener.maxDividend")}
+            </label>
+            <Input
+              type="number"
+              step="0.1"
+              value={filters.maxDividend}
+              onChange={(e) => updateFilter("maxDividend", e.target.value)}
+              className="h-7 text-[11px]"
+              placeholder="10"
+            />
+          </div>
         </div>
       </div>
 
@@ -285,6 +319,9 @@ export function StockScreener() {
                 />
               </th>
               <th className="hidden px-1 py-2 text-right font-medium lg:table-cell">
+                {t("table.dividendYield")}
+              </th>
+              <th className="hidden px-1 py-2 text-right font-medium lg:table-cell">
                 <SortHeader
                   column="volume"
                   label={t("table.volume")}
@@ -317,6 +354,9 @@ export function StockScreener() {
                 </td>
                 <td className="hidden px-1 py-2 text-right font-data tabular-nums text-muted-foreground lg:table-cell">
                   {formatVolume(s.turnover)} EUR
+                </td>
+                <td className="hidden px-1 py-2 text-right font-data tabular-nums text-muted-foreground lg:table-cell">
+                  {s.dividendYield !== null ? `${s.dividendYield.toFixed(1)}%` : "—"}
                 </td>
                 <td className="hidden px-1 py-2 text-right font-data tabular-nums text-muted-foreground lg:table-cell">
                   {formatVolume(s.volume)}
