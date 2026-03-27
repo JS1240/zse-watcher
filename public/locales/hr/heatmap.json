@@ -1,0 +1,17 @@
+{
+  "title": "Toplinska karta",
+  "legend": {
+    "title": "Prosjecna promjena sektora",
+    "strongGain": "+1% ili vise",
+    "mildGain": "0% do +1%",
+    "mildLoss": "0% do -1%",
+    "strongLoss": "-1% ili manje",
+    "neutral": "Bez promjene"
+  },
+  "empty": {
+    "noData": "Nema podataka — pokušajte kasnije"
+  },
+  "sector": {
+    "unknown": "Nepoznato"
+  }
+}

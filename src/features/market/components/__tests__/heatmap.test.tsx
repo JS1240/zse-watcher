@@ -7,9 +7,9 @@ import i18n from "@/config/i18n";
 import type { Stock } from "@/types/stock";
 
 const mockStocks: Stock[] = [
-  { ticker: "RIVP-ZAG", name: "Rijeka", price: 4.2, changePct: 1.5, volume: 12000, turnover: 50000, sector: "Finance", changeAbs: 0.06, lastUpdated: "", isin: "HRRIVP0001", dividendYield: 4.2 },
-  { ticker: "ARNT-ZAG", name: "Arnt", price: 3.1, changePct: -0.8, volume: 8000, turnover: 24000, sector: "Finance", changeAbs: -0.025, lastUpdated: "", isin: "HRARNT0001", dividendYield: 3.1 },
-  { ticker: "HPB-ZAG", name: "HPB", price: 80.0, changePct: 0.2, volume: 500, turnover: 40000, sector: "Banking", changeAbs: 0.16, lastUpdated: "", isin: "HRHPB00001", dividendYield: null },
+  { ticker: "RIVP-ZAG", name: "Rijeka", price: 4.2, changePct: 1.5, volume: 12000, turnover: 50000, sector: "Finance", isin: "HRRIVP0001", dividendYield: 4.2 },
+  { ticker: "ARNT-ZAG", name: "Arnt", price: 3.1, changePct: -0.8, volume: 8000, turnover: 24000, sector: "Finance", isin: "HRARNT0001", dividendYield: 3.1 },
+  { ticker: "HPB-ZAG", name: "HPB", price: 80.0, changePct: 0.2, volume: 500, turnover: 40000, sector: "Banking", isin: "HRHPB00001", dividendYield: null },
 ];
 
 const queryClient = new QueryClient({

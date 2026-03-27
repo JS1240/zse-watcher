@@ -8,12 +8,12 @@ export const Route = createFileRoute("/heatmap")({
 });
 
 function HeatmapPage() {
-  const { t } = useTranslation("common");
+  const { t } = useTranslation("heatmap");
 
   return (
     <div className="flex h-full flex-col gap-3 overflow-auto p-4">
       <div className="flex items-center justify-between">
-        <h1 className="font-data text-lg font-bold">{t("nav.heatmap")}</h1>
+        <h1 className="font-data text-lg font-bold">{t("title")}</h1>
         <MarketStatus />
       </div>
       <Heatmap />

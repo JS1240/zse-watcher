@@ -3,7 +3,7 @@ import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import HttpBackend from "i18next-http-backend";
 
-const NAMESPACES = ["common", "stocks", "portfolio", "alerts", "macro"] as const;
+const NAMESPACES = ["common", "stocks", "portfolio", "alerts", "macro", "heatmap"] as const;
 
 await i18n
   .use(HttpBackend)

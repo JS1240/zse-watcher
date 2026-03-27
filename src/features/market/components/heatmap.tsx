@@ -16,7 +16,7 @@ interface SectorGroup {
 export function Heatmap() {
   const { data: result, isLoading } = useStocksLive();
   const stocks = result?.stocks ?? null;
-  const { t } = useTranslation("common");
+  const { t } = useTranslation("heatmap");
   const { select } = useSelectedStock();
 
   const sectors = useMemo(() => {
@@ -25,7 +25,7 @@ export function Heatmap() {
     const grouped = new Map<string, SectorGroup>();
 
     for (const stock of stocks) {
-      const sector = stock.sector || "N/A";
+      const sector = stock.sector || t("sector.unknown");
       if (!grouped.has(sector)) {
         grouped.set(sector, {
           sector,
@@ -43,7 +43,6 @@ export function Heatmap() {
       group.totalTurnover += stock.turnover;
     }
 
-    // Calculate averages
     for (const group of grouped.values()) {
       group.avgChange =
         group.stocks.reduce((sum, s) => sum + s.changePct, 0) / group.stocks.length;
@@ -52,7 +51,7 @@ export function Heatmap() {
     return Array.from(grouped.values()).sort(
       (a, b) => b.totalTurnover - a.totalTurnover,
     );
-  }, [stocks]);
+  }, [stocks, t]);
 
   if (isLoading) {
     return <Skeleton className="h-96 w-full" />;
@@ -69,15 +68,94 @@ export function Heatmap() {
   const maxTurnover = Math.max(...sectors.map((s) => s.totalTurnover));
 
   return (
-    <div className="grid gap-1.5" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))" }}>
-      {sectors.map((sector) => (
-        <SectorCell
-          key={sector.sector}
-          sector={sector}
-          maxTurnover={maxTurnover}
-          onSelectTicker={select}
+    <div className="space-y-3">
+      <div
+        className="grid gap-1.5"
+        style={{ gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))" }}
+      >
+        {sectors.map((sector) => (
+          <SectorCell
+            key={sector.sector}
+            sector={sector}
+            maxTurnover={maxTurnover}
+            onSelectTicker={select}
+          />
+        ))}
+      </div>
+
+      <HeatmapLegend />
+    </div>
+  );
+}
+
+function HeatmapLegend() {
+  const { t } = useTranslation("heatmap");
+
+  return (
+    <div className="rounded-md border border-border bg-card px-3 py-2">
+      <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+        {t("legend.title")}
+      </p>
+      <div className="flex flex-wrap gap-3" role="list" aria-label={t("legend.title")}>
+        <LegendItem
+          colorClass="bg-price-up/20 border-price-up/40"
+          textClass="text-price-up"
+          label={t("legend.strongGain")}
+          value="+1%+"
         />
-      ))}
+        <LegendItem
+          colorClass="bg-price-up/10 border-price-up/20"
+          textClass="text-price-up"
+          label={t("legend.mildGain")}
+          value="0–+1%"
+        />
+        <LegendItem
+          colorClass="bg-card border-border"
+          textClass="text-muted-foreground"
+          label={t("legend.neutral")}
+          value="0%"
+        />
+        <LegendItem
+          colorClass="bg-price-down/10 border-price-down/20"
+          textClass="text-price-down"
+          label={t("legend.mildLoss")}
+          value="0–-1%"
+        />
+        <LegendItem
+          colorClass="bg-price-down/20 border-price-down/40"
+          textClass="text-price-down"
+          label={t("legend.strongLoss")}
+          value="-1%–"
+        />
+      </div>
+    </div>
+  );
+}
+
+function LegendItem({
+  colorClass,
+  textClass,
+  label,
+  value,
+}: {
+  colorClass: string;
+  textClass: string;
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="flex items-center gap-1.5" role="listitem">
+      <span
+        className={cn(
+          "inline-block h-3 w-3 rounded-sm border",
+          colorClass,
+        )}
+        aria-hidden="true"
+      />
+      <span className={cn("font-data text-[10px] tabular-nums font-semibold", textClass)}>
+        {value}
+      </span>
+      <span className="text-[10px] text-muted-foreground">{label}</span>
     </div>
   );
 }
@@ -111,7 +189,11 @@ function SectorCell({
         <span
           className={cn(
             "font-data text-[10px] font-bold tabular-nums",
-            sector.avgChange > 0 ? "text-price-up" : sector.avgChange < 0 ? "text-price-down" : "text-muted-foreground",
+            sector.avgChange > 0
+              ? "text-price-up"
+              : sector.avgChange < 0
+                ? "text-price-down"
+                : "text-muted-foreground",
           )}
         >
           {formatPercent(sector.avgChange)}

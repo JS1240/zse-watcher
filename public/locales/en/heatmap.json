@@ -1,0 +1,17 @@
+{
+  "title": "Sector Heatmap",
+  "legend": {
+    "title": "Average sector change",
+    "strongGain": "+1% or more",
+    "mildGain": "0% to +1%",
+    "mildLoss": "0% to -1%",
+    "strongLoss": "-1% or less",
+    "neutral": "No change"
+  },
+  "empty": {
+    "noData": "No data available — please try again later"
+  },
+  "sector": {
+    "unknown": "Unknown"
+  }
+}
