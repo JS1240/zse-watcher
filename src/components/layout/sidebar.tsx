@@ -26,7 +26,7 @@ export function Sidebar() {
   const matchRoute = useMatchRoute();
 
   return (
-    <nav className="flex w-14 shrink-0 flex-col items-center gap-1 border-r border-border bg-card py-2 lg:w-48 lg:items-stretch lg:px-2">
+    <nav className="hidden lg:flex w-14 shrink-0 flex-col items-center gap-1 border-r border-border bg-card py-2 lg:w-48 lg:items-stretch lg:px-2">
       {NAV_ITEMS.map((item) => {
         const isActive = matchRoute({ to: item.path, fuzzy: item.path !== "/" });
         const Icon = item.icon;
