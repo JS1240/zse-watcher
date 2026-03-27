@@ -12,7 +12,8 @@ import { cn } from "@/lib/utils";
 export function PortfolioDashboard() {
   const { t } = useTranslation("portfolio");
   const holdings = usePortfolioHoldings();
-  const { data: stocks } = useStocksLive();
+  const { data: stocksResult } = useStocksLive();
+  const stocks = stocksResult?.stocks ?? null;
   const [showAddForm, setShowAddForm] = useState(false);
 
   // Enrich holdings with live prices

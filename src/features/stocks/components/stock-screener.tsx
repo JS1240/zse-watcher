@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Filter, RotateCcw, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { Filter, RotateCcw, ArrowUpDown, ArrowUp, ArrowDown, Info } from "lucide-react";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -70,7 +70,9 @@ function SortHeader({
 export function StockScreener() {
   const { t } = useTranslation("stocks");
   const { t: tc } = useTranslation("common");
-  const { data: stocks, isLoading } = useStocksLive();
+  const { data: result, isLoading } = useStocksLive();
+  const stocks = result?.stocks ?? null;
+  const isMockData = result?.isMockData ?? false;
   const [filters, setFilters] = useState<ScreenerFilters>(INITIAL_FILTERS);
   const [sort, setSort] = useState<{ column: SortColumn; direction: SortDirection } | null>({
     column: "turnover",
@@ -133,6 +135,13 @@ export function StockScreener() {
 
   return (
     <div className="space-y-3">
+      {isMockData && (
+        <div className="flex items-center gap-2 rounded-md border border-border bg-muted/60 px-3 py-2 text-[11px] text-muted-foreground">
+          <Info className="h-3 w-3 shrink-0" />
+          <span>{t("detail.demoData")}</span>
+        </div>
+      )}
+
       {/* Filter bar */}
       <div className="rounded-md border border-border bg-card p-3">
         <div className="mb-2 flex items-center justify-between">

@@ -13,7 +13,8 @@ interface SectorGroup {
 }
 
 export function Heatmap() {
-  const { data: stocks, isLoading } = useStocksLive();
+  const { data: result, isLoading } = useStocksLive();
+  const stocks = result?.stocks ?? null;
   const { t } = useTranslation("common");
 
   const sectors = useMemo(() => {

@@ -29,7 +29,7 @@ const mockUseWatchlistTickers = vi.mocked(useWatchlistTickers);
 
 function setupMocks() {
   mockUseStocksLive.mockReturnValue({
-    data: MOCK_STOCKS,
+    data: { stocks: MOCK_STOCKS, isMockData: false },
     isLoading: false,
   } as ReturnType<typeof useStocksLive>);
 
@@ -97,7 +97,7 @@ describe("StockTable", () => {
       mockUseStocksLive.mockReturnValue({
         data: undefined,
         isLoading: true,
-      } as unknown as ReturnType<typeof useStocksLive>);
+      } as ReturnType<typeof useStocksLive>);
 
       const { container } = renderWithProviders(<StockTable />);
 

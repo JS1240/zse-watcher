@@ -7,13 +7,13 @@ import { createLogger } from "@/lib/logger";
 
 const logger = createLogger("StocksQueries");
 
-async function fetchStocksLive(): Promise<Stock[]> {
+async function fetchStocksLive(): Promise<{ stocks: Stock[]; isMockData: boolean }> {
   try {
     const data = await apiFetch<{ stocks: Stock[] }>("/stocks/live");
-    return data.stocks;
+    return { stocks: data.stocks, isMockData: false };
   } catch (error) {
     logger.warn("Using mock stock data", error);
-    return MOCK_STOCKS;
+    return { stocks: MOCK_STOCKS, isMockData: true };
   }
 }
 

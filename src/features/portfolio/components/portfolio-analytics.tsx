@@ -18,7 +18,8 @@ const SECTOR_COLORS = [
 
 export function PortfolioAnalytics() {
   const holdings = usePortfolioHoldings();
-  const { data: stocks } = useStocksLive();
+  const { data: stocksResult } = useStocksLive();
+  const stocks = stocksResult?.stocks ?? null;
 
   const analytics = useMemo(() => {
     if (!holdings.length || !stocks) return null;

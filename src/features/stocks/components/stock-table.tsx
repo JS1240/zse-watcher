@@ -15,7 +15,8 @@ type SortDir = "asc" | "desc";
 
 export function StockTable() {
   const { t } = useTranslation("stocks");
-  const { data: stocks, isLoading } = useStocksLive();
+  const { data: result, isLoading } = useStocksLive();
+  const stocks = result?.stocks ?? null;
   const [search, setSearch] = useState("");
   const [sortField, setSortField] = useState<SortField>("changePct");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
