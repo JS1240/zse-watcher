@@ -24,8 +24,17 @@ export interface EodhdEodRecord {
   volume: number;
 }
 
+function toIsoDate(date: Date): string {
+  return date.toISOString().slice(0, 10);
+}
+
+function buildEodhdUrl(path: string, apiKey: string): string {
+  const separator = path.includes("?") ? "&" : "?";
+  return `${EODHD_BASE}${path}${separator}api_token=${apiKey}&fmt=json`;
+}
+
 async function fetchEodhd<T>(path: string, apiKey: string): Promise<T> {
-  const url = `${EODHD_BASE}${path}&api_token=${apiKey}&fmt=json`;
+  const url = buildEodhdUrl(path, apiKey);
   const response = await fetch(url);
 
   if (response.status === 429) {
@@ -54,9 +63,16 @@ async function fetchOneEodhdStock(
 ): Promise<EodhdStock> {
   const eodhdTicker = toEodhdTicker(zseTicker);
 
-  // Fetch last 2 days to compute change
+  // Use from/to date range — eodhd API uses YYYY-MM-DD, returns newest first.
+  // Request 4 days to always capture today+yesterday even across weekends.
+  const now = new Date();
+  const fromDate = new Date(now);
+  fromDate.setDate(fromDate.getDate() - 4);
+  const from = toIsoDate(fromDate);
+  const to = toIsoDate(now);
+
   const records = await fetchEodhd<EodhdEodRecord[]>(
-    `/eod/${eodhdTicker}?period=2`,
+    `/eod/${eodhdTicker}?from=${from}&to=${to}&period=d`,
     apiKey,
   );
 
@@ -65,11 +81,11 @@ async function fetchOneEodhdStock(
   }
 
   // Records are newest first
-  const [today, yesterday] = records;
+  const [current, prior] = records;
 
   const changePct =
-    yesterday.close !== 0
-      ? parseFloat((((today.close - yesterday.close) / yesterday.close) * 100).toFixed(2))
+    prior.close !== 0
+      ? parseFloat((((current.close - prior.close) / prior.close) * 100).toFixed(2))
       : 0;
 
   return {
@@ -77,10 +93,10 @@ async function fetchOneEodhdStock(
     name: MOCK_STOCKS.find((s) => s.ticker === zseTicker)?.name ?? zseTicker,
     sector: MOCK_STOCKS.find((s) => s.ticker === zseTicker)?.sector ?? "Nepoznato",
     isin: MOCK_STOCKS.find((s) => s.ticker === zseTicker)?.isin ?? "",
-    price: today.adjusted_close,
+    price: current.adjusted_close,
     changePct,
-    turnover: today.volume * today.adjusted_close,
-    volume: today.volume,
+    turnover: current.volume * current.adjusted_close,
+    volume: current.volume,
     dividendYield: MOCK_STOCKS.find((s) => s.ticker === zseTicker)?.dividendYield ?? null,
   };
 }
