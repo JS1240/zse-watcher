@@ -8,6 +8,7 @@ const TEST_RESOURCES = {
   hr: {
     stocks: {
       table: {
+        label: "Popis dionica ZSE",
         ticker: "Oznaka",
         name: "Naziv",
         price: "Cijena",
@@ -24,6 +25,7 @@ const TEST_RESOURCES = {
   en: {
     stocks: {
       table: {
+        label: "ZSE stock listing",
         ticker: "Ticker",
         name: "Name",
         price: "Price",

@@ -98,6 +98,7 @@ export function StockTable() {
         <div className="relative flex-1">
           <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-muted-foreground" />
           <Input
+            aria-label={t("table.ticker") + " " + t("table.name")}
             placeholder={t("table.ticker") + ", " + t("table.name") + "..."}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -113,15 +114,15 @@ export function StockTable() {
 
       {/* Table */}
       <div className="overflow-hidden rounded-md border border-border">
-        <table className="w-full text-xs">
+        <table aria-label={t("table.label")} className="w-full text-xs">
           <thead>
             <tr className="border-b border-border bg-muted/50 text-[10px] uppercase tracking-wider text-muted-foreground">
-              <ColumnHeader field="ticker" label={t("table.ticker")} onClick={toggleSort} sortIcon={<SortIcon field="ticker" />} className="w-28 text-left" />
+              <ColumnHeader field="ticker" label={t("table.ticker")} onClick={toggleSort} sortIcon={<SortIcon field="ticker" />} className="w-28 text-left" currentField={sortField} currentDir={sortDir} />
               <th className="hidden px-3 py-2 text-left font-medium md:table-cell">{t("table.name")}</th>
-              <ColumnHeader field="price" label={t("table.price")} onClick={toggleSort} sortIcon={<SortIcon field="price" />} className="w-24 text-right" />
-              <ColumnHeader field="changePct" label={t("table.change")} onClick={toggleSort} sortIcon={<SortIcon field="changePct" />} className="w-24 text-right" />
-              <ColumnHeader field="volume" label={t("table.volume")} onClick={toggleSort} sortIcon={<SortIcon field="volume" />} className="hidden w-24 text-right lg:table-cell" />
-              <ColumnHeader field="turnover" label={t("table.turnover")} onClick={toggleSort} sortIcon={<SortIcon field="turnover" />} className="hidden w-28 text-right lg:table-cell" />
+              <ColumnHeader field="price" label={t("table.price")} onClick={toggleSort} sortIcon={<SortIcon field="price" />} className="w-24 text-right" currentField={sortField} currentDir={sortDir} />
+              <ColumnHeader field="changePct" label={t("table.change")} onClick={toggleSort} sortIcon={<SortIcon field="changePct" />} className="w-24 text-right" currentField={sortField} currentDir={sortDir} />
+              <ColumnHeader field="volume" label={t("table.volume")} onClick={toggleSort} sortIcon={<SortIcon field="volume" />} className="hidden w-24 text-right lg:table-cell" currentField={sortField} currentDir={sortDir} />
+              <ColumnHeader field="turnover" label={t("table.turnover")} onClick={toggleSort} sortIcon={<SortIcon field="turnover" />} className="hidden w-28 text-right lg:table-cell" currentField={sortField} currentDir={sortDir} />
             </tr>
           </thead>
           <tbody>
@@ -151,14 +152,23 @@ interface ColumnHeaderProps {
   onClick: (field: SortField) => void;
   sortIcon: React.ReactNode;
   className?: string;
+  currentField: SortField;
+  currentDir: SortDir;
 }
 
-function ColumnHeader({ field, label, onClick, sortIcon, className }: ColumnHeaderProps) {
+function ColumnHeader({ field, label, onClick, sortIcon, className, currentField, currentDir }: ColumnHeaderProps & { currentField: SortField; currentDir: SortDir }) {
+  const sortDirection: "ascending" | "descending" | "none" =
+    currentField === field ? (currentDir === "asc" ? "ascending" : "descending") : "none";
+
   return (
-    <th className={`cursor-pointer px-3 py-2 font-medium ${className ?? ""}`}>
+    <th
+      aria-sort={sortDirection}
+      className={`cursor-pointer px-3 py-2 font-medium ${className ?? ""}`}
+    >
       <button
         className="inline-flex items-center gap-1"
         onClick={() => onClick(field)}
+        aria-label={`${label}: ${sortDirection === "none" ? "unsorted" : sortDirection + ","} click to sort`}
       >
         {label}
         {sortIcon}

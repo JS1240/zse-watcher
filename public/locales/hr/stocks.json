@@ -1,5 +1,6 @@
 {
   "table": {
+    "label": "Popis dionica ZSE",
     "ticker": "Oznaka",
     "name": "Naziv",
     "price": "Cijena",

@@ -144,12 +144,13 @@ describe("StockTable", () => {
     it("sorts by change percentage descending by default", () => {
       renderWithProviders(<StockTable />);
 
-      const rows = screen.getAllByRole("row").filter(
-        (r) => r.querySelector("[class*='font-data']"),
-      );
+      // Rows are now role="button" — query buttons within tbody
+      const table = screen.getByRole("table");
+      const rowgroups = within(table).getAllByRole("rowgroup");
+      const tbodyButtons = within(rowgroups[1]).getAllByRole("button");
 
-      const tickers = rows.map((r) => {
-        const cells = within(r).getAllByRole("cell");
+      const tickers = tbodyButtons.map((b) => {
+        const cells = within(b).getAllByRole("cell");
         return cells[0]?.textContent ?? "";
       });
 
@@ -165,12 +166,12 @@ describe("StockTable", () => {
       fireEvent.click(changeButton);
       act(() => { vi.runAllTimers(); });
 
-      const rows = screen.getAllByRole("row").filter(
-        (r) => r.querySelector("[class*='font-data']"),
-      );
+      const table = screen.getByRole("table");
+      const rowgroups = within(table).getAllByRole("rowgroup");
+      const tbodyButtons = within(rowgroups[1]).getAllByRole("button");
 
-      const tickers = rows.map((r) => {
-        const cells = within(r).getAllByRole("cell");
+      const tickers = tbodyButtons.map((b) => {
+        const cells = within(b).getAllByRole("cell");
         return cells[0]?.textContent ?? "";
       });
 
@@ -186,11 +187,11 @@ describe("StockTable", () => {
       fireEvent.click(tickerButton);
       vi.advanceTimersByTime(10);
 
-      const rows = screen.getAllByRole("row").filter(
-        (r) => r.querySelector("[class*='font-data']"),
-      );
+      const table = screen.getByRole("table");
+      const rowgroups = within(table).getAllByRole("rowgroup");
+      const tbodyButtons = within(rowgroups[1]).getAllByRole("button");
 
-      const firstTicker = rows[0]?.querySelector("[class*='font-data']")?.textContent ?? "";
+      const firstTicker = tbodyButtons[0]?.querySelector("[class*='font-data']")?.textContent ?? "";
       expect(firstTicker.trim()).toBe("ADRS-P-A");
     });
   });
@@ -206,7 +207,7 @@ describe("StockTable", () => {
 
       renderWithProviders(<StockTable />);
 
-      const row = screen.getByRole("row", { name: /adris grupa/i });
+      const row = screen.getByRole("button", { name: /adris grupa d\.d\./i });
       fireEvent.click(row);
 
       expect(selectMock).toHaveBeenCalledWith("ADRS-P-A");
@@ -221,7 +222,7 @@ describe("StockTable", () => {
 
       renderWithProviders(<StockTable />);
 
-      const selectedRow = screen.getByRole("row", { name: /ht d\.d\./i });
+      const selectedRow = screen.getByRole("button", { name: /ht d\.d\./i });
       expect(selectedRow).toHaveClass("border-l-primary");
     });
   });

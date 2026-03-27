@@ -13,12 +13,24 @@ export function StockRow({ stock }: StockRowProps) {
   const { selectedTicker, select } = useSelectedStock();
   const isSelected = selectedTicker === stock.ticker;
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTableRowElement>) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      select(stock.ticker);
+    }
+  };
+
   return (
     <tr
+      role="button"
+      tabIndex={0}
       onClick={() => select(stock.ticker)}
+      onKeyDown={handleKeyDown}
+      aria-label={`${stock.ticker} — ${stock.name}: ${stock.price} EUR, ${stock.changePct > 0 ? "+" : ""}${stock.changePct}%`}
       className={cn(
         "group cursor-pointer border-b border-border/50 transition-colors hover:bg-accent/50",
         "last:border-b-0",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         isSelected && "border-l-2 border-l-primary bg-accent/30",
       )}
     >
