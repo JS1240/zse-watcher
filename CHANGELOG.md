@@ -101,3 +101,11 @@
   - Stripe API helper: createCheckoutSession, createPortalSession
   - UserMenu "Upgrade" link points to /pricing
   - Files: `supabase/functions/{stripe-checkout,stripe-webhook}/`, `src/features/premium/`, `src/routes/pricing.tsx`
+
+- **Portfolio localStorage persistence** - Transactions survive page refresh
+  - Generic `useLocalStorage<T>` hook with cross-tab sync via StorageEvent, quota error handling, and TypeScript generics
+  - `useLocalTransactions` hook: manages local-only portfolio transactions with add/remove/clear
+  - `LocalTransaction` type: id, ticker, type (buy/sell/dividend), shares, price, date, notes
+  - Storage key: `zse-portfolio-transactions`
+  - Croatian retail investors can now use the portfolio feature without Supabase auth
+  - Files: `src/hooks/use-local-storage.ts`, `src/features/portfolio/hooks/use-local-transactions.ts`
