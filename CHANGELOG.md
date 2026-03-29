@@ -157,3 +157,19 @@
   - Croatian retail investors can now use the portfolio feature without Supabase auth
   - Files: `src/hooks/use-local-storage.ts`, `src/features/portfolio/hooks/use-local-transactions.ts`
 
+
+- **Heatmap Sector Drill-Down** — click a sector to see all stocks within it
+  - SectorDrawer: slide-in panel with sortable table of all stocks in that sector
+  - Click sector name in heatmap cell, Escape or backdrop to close
+  - Shows ticker, price, change, turnover, volume; click ticker to open stock detail drawer
+
+- **Alerts LocalStorage Persistence** — unauthenticated users can now set alerts
+  - useLocalAlerts hook: localStorage under key zse-local-alerts
+  - useAlertsData: unified hook (Supabase for auth users, localStorage for guests)
+  - AlertRow shows 'local' badge for guest alerts
+  - Works without signing in
+
+- **Live Forex Rates on Macro Page** — real EUR/USD, USD/CHF, EUR/GBP, EUR/GBP
+  - useForexRates hook: fetches from frankfurter.app API every 5 minutes
+  - 2-column grid with 4 major pairs + EUR/HRK (CNB fixing, semi-fixed at 7.5)
+  - Graceful fallback on network failure
