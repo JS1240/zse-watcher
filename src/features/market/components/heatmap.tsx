@@ -1,12 +1,13 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { formatPercent } from "@/lib/formatters";
+import { SectorDrawer } from "@/features/market/components/sector-drawer";
 
-interface SectorGroup {
+export interface SectorGroup {
   sector: string;
   stocks: { ticker: string; changePct: number; turnover: number }[];
   avgChange: number;
@@ -18,6 +19,7 @@ export function Heatmap() {
   const stocks = result?.stocks ?? null;
   const { t } = useTranslation("heatmap");
   const { select } = useSelectedStock();
+  const [selectedSector, setSelectedSector] = useState<SectorGroup | null>(null);
 
   const sectors = useMemo(() => {
     if (!stocks) return [];
@@ -79,11 +81,17 @@ export function Heatmap() {
             sector={sector}
             maxTurnover={maxTurnover}
             onSelectTicker={select}
+            onSelectSector={() => setSelectedSector(sector)}
           />
         ))}
       </div>
 
       <HeatmapLegend />
+
+      <SectorDrawer
+        sector={selectedSector}
+        onClose={() => setSelectedSector(null)}
+      />
     </div>
   );
 }
@@ -164,10 +172,12 @@ function SectorCell({
   sector,
   maxTurnover,
   onSelectTicker,
+  onSelectSector,
 }: {
   sector: SectorGroup;
   maxTurnover: number;
   onSelectTicker: (ticker: string) => void;
+  onSelectSector: () => void;
 }) {
   const sizeRatio = sector.totalTurnover / maxTurnover;
   const minHeight = 80;
@@ -183,9 +193,12 @@ function SectorCell({
       style={{ minHeight: `${height}px` }}
     >
       <div className="flex items-center justify-between">
-        <span className="text-[10px] font-semibold uppercase tracking-wider text-foreground">
+        <button
+          onClick={onSelectSector}
+          className="text-[10px] cursor-pointer font-semibold uppercase tracking-wider text-foreground hover:text-primary focus-visible:text-primary focus-visible:outline-none"
+        >
           {sector.sector}
-        </span>
+        </button>
         <span
           className={cn(
             "font-data text-[10px] font-bold tabular-nums",
