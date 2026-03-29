@@ -5,14 +5,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
 import { Plus, Trash2, Bell, BellOff, X } from "lucide-react";
 
-import { useAlerts, useDeleteAlert, useToggleAlert, useCreateAlert } from "@/features/alerts/api/alerts-queries";
+import { useAlertsData } from "@/features/alerts/hooks/use-alerts-data";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { formatPrice, formatDate } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
-import type { PriceAlert, AlertCondition } from "@/types/alert";
+import type { AlertCondition } from "@/types/alert";
 
 const alertSchema = z.object({
   ticker: z.string().min(1, "Required"),
@@ -25,11 +25,11 @@ type AlertValues = z.infer<typeof alertSchema>;
 interface AlertFormProps {
   onClose: () => void;
   defaultTicker?: string;
+  onSubmit: (data: AlertValues) => Promise<void>;
 }
 
-export function AlertForm({ onClose, defaultTicker }: AlertFormProps) {
+export function AlertForm({ onClose, defaultTicker, onSubmit }: AlertFormProps) {
   const { t } = useTranslation("alerts");
-  const createAlert = useCreateAlert();
 
   const {
     register,
@@ -42,15 +42,6 @@ export function AlertForm({ onClose, defaultTicker }: AlertFormProps) {
       condition: "above",
     },
   });
-
-  const onSubmit = async (data: AlertValues) => {
-    await createAlert.mutateAsync({
-      ticker: data.ticker,
-      condition: data.condition as AlertCondition,
-      targetValue: parseFloat(data.targetValue),
-    });
-    onClose();
-  };
 
   return (
     <div className="rounded-md border border-border bg-card p-4">
@@ -89,7 +80,7 @@ export function AlertForm({ onClose, defaultTicker }: AlertFormProps) {
 
         <div className="flex items-end">
           <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? "Creating..." : t("create")}
+            {isSubmitting ? "..." : t("create")}
           </Button>
         </div>
       </form>
@@ -99,9 +90,7 @@ export function AlertForm({ onClose, defaultTicker }: AlertFormProps) {
 
 export function AlertsDashboard() {
   const { t } = useTranslation("alerts");
-  const { data: alerts, isLoading } = useAlerts();
-  const deleteAlert = useDeleteAlert();
-  const toggleAlert = useToggleAlert();
+  const { alerts, isLoading, addAlert, deleteAlert, toggleAlert } = useAlertsData();
   const [showForm, setShowForm] = useState(false);
 
   if (isLoading) {
@@ -124,7 +113,19 @@ export function AlertsDashboard() {
         </Button>
       </div>
 
-      {showForm && <AlertForm onClose={() => setShowForm(false)} />}
+      {showForm && (
+        <AlertForm
+          onClose={() => setShowForm(false)}
+          onSubmit={async (data) => {
+            await addAlert({
+              ticker: data.ticker,
+              condition: data.condition as AlertCondition,
+              targetValue: parseFloat(data.targetValue),
+            });
+            setShowForm(false);
+          }}
+        />
+      )}
 
       {/* Alert list */}
       {alerts && alerts.length > 0 ? (
@@ -133,13 +134,8 @@ export function AlertsDashboard() {
             <AlertRow
               key={alert.id}
               alert={alert}
-              onDelete={() => deleteAlert.mutate(alert.id)}
-              onToggle={() =>
-                toggleAlert.mutate({
-                  alertId: alert.id,
-                  isActive: !alert.isActive,
-                })
-              }
+              onDelete={() => deleteAlert(alert.id)}
+              onToggle={() => toggleAlert(alert.id)}
             />
           ))}
         </div>
@@ -158,7 +154,7 @@ function AlertRow({
   onDelete,
   onToggle,
 }: {
-  alert: PriceAlert;
+  alert: { id: string; ticker: string; condition: AlertCondition; targetValue: number; isActive: boolean; isTriggered: boolean; createdAt: string; isLocal: boolean };
   onDelete: () => void;
   onToggle: () => void;
 }) {
@@ -203,6 +199,11 @@ function AlertRow({
             <span className="font-data text-xs font-medium text-foreground">
               {isPercent ? `${alert.targetValue}%` : formatPrice(alert.targetValue)}
             </span>
+            {alert.isLocal && (
+              <span className="rounded-sm bg-muted px-1 py-0.5 text-[9px] text-muted-foreground">
+                local
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
             <span>{formatDate(alert.createdAt)}</span>
