@@ -1,7 +1,8 @@
 import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Filter, RotateCcw, ArrowUpDown, ArrowUp, ArrowDown, Info, Download } from "lucide-react";
+import { Filter, RotateCcw, ArrowUpDown, ArrowUp, ArrowDown, Info, Download, Save, Trash2, Bookmark } from "lucide-react";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
+import { useLocalStorage } from "@/hooks/use-local-storage";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ChangeBadge } from "@/components/shared/change-badge";
@@ -19,6 +20,13 @@ interface ScreenerFilters {
   minTurnover: string;
   minDividend: string;
   maxDividend: string;
+}
+
+interface ScreenerPreset {
+  id: string;
+  name: string;
+  filters: ScreenerFilters;
+  createdAt: string;
 }
 
 type SortColumn = keyof Pick<Stock, "price" | "changePct" | "turnover" | "volume" | "name">;
@@ -79,6 +87,9 @@ export function StockScreener() {
     column: "turnover",
     direction: "desc",
   });
+  const [presets, setPresets] = useLocalStorage<ScreenerPreset[]>("zse-screener-presets", []);
+  const [savePresetName, setSavePresetName] = useState("");
+  const [showSaveInput, setShowSaveInput] = useState(false);
 
   const sectors = useMemo(() => {
     if (!stocks) return [];
@@ -132,6 +143,27 @@ export function StockScreener() {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
+  const savePreset = () => {
+    if (!savePresetName.trim()) return;
+    const preset: ScreenerPreset = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      name: savePresetName.trim(),
+      filters: { ...filters },
+      createdAt: new Date().toISOString(),
+    };
+    setPresets((prev) => [preset, ...prev]);
+    setSavePresetName("");
+    setShowSaveInput(false);
+  };
+
+  const loadPreset = (preset: ScreenerPreset) => {
+    setFilters(preset.filters);
+  };
+
+  const deletePreset = (id: string) => {
+    setPresets((prev) => prev.filter((p) => p.id !== id));
+  };
+
   if (isLoading) return <Skeleton className="h-96" />;
 
   return (
@@ -150,19 +182,63 @@ export function StockScreener() {
             <Filter className="h-3 w-3" />
             {tc("common:actions.filter")}
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => {
-              setFilters(INITIAL_FILTERS);
-              setSort({ column: "turnover", direction: "desc" });
-            }}
-            className="h-6 text-[10px]"
-          >
-            <RotateCcw className="h-3 w-3" />
-            {tc("common:actions.reset")}
-          </Button>
+          <div className="flex items-center gap-2">
+            {showSaveInput ? (
+              <div className="flex items-center gap-1">
+                <Input
+                  value={savePresetName}
+                  onChange={(e) => setSavePresetName(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && savePreset()}
+                  placeholder="Preset name"
+                  className="h-6 w-28 text-[10px]"
+                  autoFocus
+                />
+                <Button size="sm" onClick={savePreset} className="h-6 text-[10px] px-1.5">Save</Button>
+                <Button size="sm" variant="ghost" onClick={() => { setShowSaveInput(false); setSavePresetName(""); }} className="h-6 text-[10px] px-1.5">Cancel</Button>
+              </div>
+            ) : (
+              <Button size="sm" variant="ghost" onClick={() => setShowSaveInput(true)} className="h-6 text-[10px]">
+                <Save className="h-3 w-3" />
+                Save
+              </Button>
+            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setFilters(INITIAL_FILTERS);
+                setSort({ column: "turnover", direction: "desc" });
+              }}
+              className="h-6 text-[10px]"
+            >
+              <RotateCcw className="h-3 w-3" />
+              {tc("common:actions.reset")}
+            </Button>
+          </div>
         </div>
+
+        {/* Presets row */}
+        {presets.length > 0 && (
+          <div className="mb-2 flex flex-wrap items-center gap-1">
+            <Bookmark className="h-3 w-3 shrink-0 text-muted-foreground" />
+            {presets.map((p) => (
+              <div key={p.id} className="flex items-center gap-0.5 rounded-sm bg-accent/70 px-1.5 py-0.5">
+                <button
+                  onClick={() => loadPreset(p)}
+                  className="text-[10px] font-medium text-foreground hover:text-primary"
+                >
+                  {p.name}
+                </button>
+                <button
+                  onClick={() => deletePreset(p.id)}
+                  className="text-muted-foreground/50 hover:text-price-down ml-0.5"
+                >
+                  <Trash2 className="h-2.5 w-2.5" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
 
         <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4">
           <div>
