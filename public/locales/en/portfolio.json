@@ -24,5 +24,6 @@
     "transactionAdded": "Transaction added",
     "transactionAddFailed": "Failed to add transaction"
   },
-  "empty": "No positions in portfolio"
+  "empty": "No positions in portfolio",
+  "history": "Transaction History"
 }

@@ -24,5 +24,6 @@
     "transactionAdded": "Transakcija dodana",
     "transactionAddFailed": "Neuspjelo dodavanje transakcije"
   },
-  "empty": "Nemate pozicija u portfelju"
+  "empty": "Nemate pozicija u portfelju",
+  "history": "Povijest transakcija"
 }

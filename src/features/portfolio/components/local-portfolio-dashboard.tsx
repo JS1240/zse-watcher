@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus } from "lucide-react";
+import { Plus, Trash2, ChevronDown, ChevronUp } from "lucide-react";
 import { useLocalTransactions } from "@/features/portfolio/hooks/use-local-transactions";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { AddPositionForm } from "@/features/portfolio/components/add-position-form";
@@ -11,10 +11,12 @@ import { cn } from "@/lib/utils";
 
 export function LocalPortfolioDashboard() {
   const { t } = useTranslation("portfolio");
-  const { transactions, hasLocalTransactions } = useLocalTransactions();
+  const { transactions, hasLocalTransactions, removeTransaction, clearTransactions } =
+    useLocalTransactions();
   const { data: stocksResult } = useStocksLive();
   const stocks = stocksResult?.stocks ?? null;
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
 
   // Calculate holdings from local transactions
   const holdingsMap = new Map<string, { totalShares: number; totalCost: number; name: string }>();
@@ -178,6 +180,115 @@ export function LocalPortfolioDashboard() {
           <p className="text-xs text-muted-foreground">
             {hasLocalTransactions ? "No holdings after sells" : t("empty")}
           </p>
+        </div>
+      )}
+
+      {/* Transaction history */}
+      {hasLocalTransactions && (
+        <div className="rounded-md border border-border">
+          <button
+            type="button"
+            onClick={() => setShowHistory((v) => !v)}
+            className="flex w-full items-center justify-between px-3 py-2 text-[10px] uppercase tracking-wider text-muted-foreground hover:bg-muted/50"
+          >
+            <span>
+              {t("history")} ({transactions.length}) —{" "}
+              <span className="text-[10px] text-muted-foreground/70">
+                tap a row to delete
+              </span>
+            </span>
+            {showHistory ? (
+              <ChevronUp className="h-3 w-3" />
+            ) : (
+              <ChevronDown className="h-3 w-3" />
+            )}
+          </button>
+
+          {showHistory && (
+            <div className="border-t border-border">
+              <div className="flex justify-end px-3 py-1.5">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (window.confirm("Clear all local transactions?")) {
+                      clearTransactions();
+                    }
+                  }}
+                  className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-destructive"
+                >
+                  <Trash2 className="h-3 w-3" />
+                  Clear all
+                </button>
+              </div>
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="border-b border-border/50 bg-muted/30 text-[10px] uppercase tracking-wider text-muted-foreground">
+                    <th className="px-3 py-1.5 text-left font-medium">Date</th>
+                    <th className="px-3 py-1.5 text-left font-medium">Ticker</th>
+                    <th className="px-3 py-1.5 text-left font-medium">Type</th>
+                    <th className="px-3 py-1.5 text-right font-medium">Shares</th>
+                    <th className="px-3 py-1.5 text-right font-medium">Price</th>
+                    <th className="px-3 py-1.5 text-right font-medium">Total</th>
+                    <th className="px-3 py-1.5 w-8" />
+                  </tr>
+                </thead>
+                <tbody>
+                  {transactions.map((tx) => {
+                    return (
+                      <tr
+                        key={tx.id}
+                        className="group border-b border-border/50 last:border-b-0 hover:bg-muted/30"
+                      >
+                        <td className="px-3 py-1.5 text-muted-foreground">
+                          {new Date(tx.transactionDate).toLocaleDateString("hr-HR", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "2-digit",
+                          })}
+                        </td>
+                        <td className="px-3 py-1.5 font-data font-semibold text-foreground">
+                          {tx.ticker}
+                        </td>
+                        <td className="px-3 py-1.5">
+                          <span
+                            className={cn(
+                              "inline-block rounded-[3px] px-1 py-0.5 font-data text-[10px] uppercase",
+                              tx.transactionType === "buy"
+                                ? "bg-buy/10 text-buy"
+                                : tx.transactionType === "sell"
+                                  ? "bg-sell/10 text-sell"
+                                  : "bg-dividend/10 text-dividend",
+                            )}
+                          >
+                            {tx.transactionType}
+                          </span>
+                        </td>
+                        <td className="px-3 py-1.5 text-right font-data tabular-nums text-foreground">
+                          {tx.shares.toFixed(0)}
+                        </td>
+                        <td className="px-3 py-1.5 text-right font-data tabular-nums text-muted-foreground">
+                          {formatPrice(tx.pricePerShare)}
+                        </td>
+                        <td className="px-3 py-1.5 text-right font-data tabular-nums text-foreground">
+                          {formatCurrency(tx.totalAmount)}
+                        </td>
+                        <td className="px-3 py-1.5">
+                          <button
+                            type="button"
+                            onClick={() => removeTransaction(tx.id)}
+                            className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive"
+                            title="Delete transaction"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       )}
     </div>
