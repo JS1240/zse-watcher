@@ -10,6 +10,19 @@
   - Range selector, gain/loss delta display, gradient fill, reference line at starting value
   - Shows €k format on YAxis, auto-formatted dates on XAxis
 
+- **CSV Export** — download portfolio holdings and stock screener results as CSV
+  - Portfolio: CSV button next to Add Position, includes ticker, shares, avg/current price, value, gain, gain %
+  - Screener: export button in results bar, all filtered columns
+  - Files: `src/features/portfolio/components/portfolio-dashboard.tsx`, `src/features/stocks/components/stock-screener.tsx`
+
+- **Received Dividends Tracker** — record and track dividends paid out
+  - `useReceivedDividends` hook: localStorage under key `zse-received-dividends`
+  - Record form: ticker, shares, amount/share, currency (EUR/HRK), pay date, notes
+  - Grouped by year, total converted to EUR (HRK/7.5)
+  - Ticker datalist auto-completes from existing portfolio holdings
+  - Portfolio page: new 'dividends' tab alongside holdings/analytics
+  - Files: `src/features/portfolio/hooks/use-received-dividends.ts`, `src/features/portfolio/components/received-dividends.tsx`
+
 ## [0.1.0] - 2026-03-26
 
 ### Added
@@ -119,3 +132,4 @@
   - Storage key: `zse-portfolio-transactions`
   - Croatian retail investors can now use the portfolio feature without Supabase auth
   - Files: `src/hooks/use-local-storage.ts`, `src/features/portfolio/hooks/use-local-transactions.ts`
+
