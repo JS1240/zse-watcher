@@ -13,15 +13,22 @@
 - **CSV Export** — download portfolio holdings and stock screener results as CSV
   - Portfolio: CSV button next to Add Position, includes ticker, shares, avg/current price, value, gain, gain %
   - Screener: export button in results bar, all filtered columns
-  - Files: `src/features/portfolio/components/portfolio-dashboard.tsx`, `src/features/stocks/components/stock-screener.tsx`
 
 - **Received Dividends Tracker** — record and track dividends paid out
   - `useReceivedDividends` hook: localStorage under key `zse-received-dividends`
   - Record form: ticker, shares, amount/share, currency (EUR/HRK), pay date, notes
   - Grouped by year, total converted to EUR (HRK/7.5)
-  - Ticker datalist auto-completes from existing portfolio holdings
   - Portfolio page: new 'dividends' tab alongside holdings/analytics
-  - Files: `src/features/portfolio/hooks/use-received-dividends.ts`, `src/features/portfolio/components/received-dividends.tsx`
+
+- **News Article Drawer** — inline article view instead of opening new tab
+  - `ArticleDrawer` component: slide-in panel with title, summary, source, date/time
+  - Escape or backdrop click to close
+  - 'Read full article on ZSE.hr' CTA button
+
+- **PWA Installability** — add to home screen as native app
+  - `public/manifest.json`: standalone display, purple theme, shortcuts for Stocks/Portfolio/Alerts
+  - `public/sw.js`: cache-first for static assets, network-first for API, clean old caches on activate
+  - Apple mobile web app meta tags for iOS home screen
 
 ## [0.1.0] - 2026-03-26
 

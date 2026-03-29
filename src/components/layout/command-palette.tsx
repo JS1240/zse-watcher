@@ -14,6 +14,7 @@ import {
   Moon,
 } from "lucide-react";
 import { useThemeStore } from "@/hooks/use-theme";
+import { eventBus } from "@/lib/event-bus";
 
 export function CommandPalette() {
   const [open, setOpen] = useState(false);
@@ -30,6 +31,13 @@ export function CommandPalette() {
     };
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = eventBus.on("toggle-command-palette", () => {
+      setOpen((prev) => !prev);
+    });
+    return unsubscribe;
   }, []);
 
   const navigateTo = (path: string) => {
