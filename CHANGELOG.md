@@ -42,6 +42,11 @@
   - Presets stored in localStorage under key `zse-screener-presets`
   - Click preset pill to load, X to delete; persists across sessions
 
+- **Heatmap Sector Drill-Down** — click a sector to see all stocks within it
+  - SectorDrawer: slide-in panel with sortable table of all stocks in that sector
+  - Click sector name in heatmap cell, Escape or backdrop to close
+  - Shows ticker, price, change, turnover, volume; click ticker to open stock detail drawer
+
 ## [0.1.0] - 2026-03-26
 
 ### Added
