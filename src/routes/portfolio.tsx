@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { AuthGuard } from "@/features/auth/components/auth-guard";
 import { PortfolioDashboard } from "@/features/portfolio/components/portfolio-dashboard";
 import { PortfolioAnalytics } from "@/features/portfolio/components/portfolio-analytics";
+import { ReceivedDividends } from "@/features/portfolio/components/received-dividends";
 import { PremiumGate } from "@/features/premium/components/premium-gate";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
@@ -12,7 +13,7 @@ export const Route = createFileRoute("/portfolio")({
   component: PortfolioPage,
 });
 
-type Tab = "holdings" | "analytics";
+type Tab = "holdings" | "analytics" | "dividends";
 
 function PortfolioPage() {
   const { t } = useTranslation("portfolio");
@@ -24,7 +25,7 @@ function PortfolioPage() {
       <div className="flex items-center justify-between">
         <h1 className="font-data text-lg font-bold">{t("title")}</h1>
         <div className="flex gap-1">
-          {(["holdings", "analytics"] as const).map((t) => (
+          {(["holdings", "analytics", "dividends"] as const).map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
@@ -43,6 +44,8 @@ function PortfolioPage() {
 
       {tab === "holdings" ? (
         <PortfolioDashboard isLocal={!isAuthenticated} />
+      ) : tab === "dividends" ? (
+        <ReceivedDividends />
       ) : (
         <AuthGuard
           fallback={
