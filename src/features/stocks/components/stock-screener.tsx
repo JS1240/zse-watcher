@@ -1,12 +1,13 @@
 import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Filter, RotateCcw, ArrowUpDown, ArrowUp, ArrowDown, Info } from "lucide-react";
+import { Filter, RotateCcw, ArrowUpDown, ArrowUp, ArrowDown, Info, Download } from "lucide-react";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatPrice, formatVolume } from "@/lib/formatters";
+import { exportToCsv } from "@/lib/export";
 import type { Stock } from "@/types/stock";
 
 interface ScreenerFilters {
@@ -279,9 +280,33 @@ export function StockScreener() {
         </div>
       </div>
 
-      {/* Results count */}
-      <div className="text-[10px] text-muted-foreground">
-        {t("screener.results", { count: results.length, total: stocks?.length ?? 0 })}
+      {/* Results count + export */}
+      <div className="flex items-center justify-between">
+        <span className="text-[10px] text-muted-foreground">
+          {t("screener.results", { count: results.length, total: stocks?.length ?? 0 })}
+        </span>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => {
+            const headers = ["Ticker", "Name", "Sector", "Price (EUR)", "Change (%)", "Turnover (EUR)", "Dividend Yield (%)", "Volume"];
+            const rows = results.map((s) => [
+              s.ticker,
+              s.name,
+              s.sector,
+              s.price.toFixed(2),
+              s.changePct.toFixed(2),
+              s.turnover.toFixed(0),
+              s.dividendYield !== null ? s.dividendYield.toFixed(1) : "",
+              s.volume.toString(),
+            ]);
+            exportToCsv(`zse-screener-${new Date().toISOString().split("T")[0]}`, headers, rows);
+          }}
+          className="h-6 text-[10px]"
+        >
+          <Download className="h-3 w-3" />
+          CSV
+        </Button>
       </div>
 
       {/* Results table */}

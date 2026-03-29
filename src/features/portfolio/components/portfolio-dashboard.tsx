@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus } from "lucide-react";
+import { Plus, Download } from "lucide-react";
 import { usePortfolioHoldings } from "@/features/portfolio/api/portfolio-queries";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { useLocalTransactions } from "@/features/portfolio/hooks/use-local-transactions";
@@ -8,6 +8,7 @@ import { AddPositionForm } from "@/features/portfolio/components/add-position-fo
 import { Button } from "@/components/ui/button";
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { formatPrice, formatCurrency } from "@/lib/formatters";
+import { exportToCsv } from "@/lib/export";
 import { cn } from "@/lib/utils";
 
 interface PortfolioDashboardProps {
@@ -38,6 +39,21 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
   const totalGainPct = totalPortfolioValue > 0
     ? (totalPortfolioGain / (totalPortfolioValue - totalPortfolioGain)) * 100
     : 0;
+
+  const handleExportCsv = () => {
+    const headers = ["Ticker", "Name", "Shares", "Avg Price (EUR)", "Current Price (EUR)", "Value (EUR)", "Gain (EUR)", "Gain (%)"];
+    const rows = enrichedHoldings.map((h) => [
+      h.ticker,
+      h.name,
+      h.totalShares.toString(),
+      h.avgPrice.toFixed(2),
+      h.currentPrice.toFixed(2),
+      h.totalValue.toFixed(2),
+      h.totalGain.toFixed(2),
+      h.gainPct.toFixed(2),
+    ]);
+    exportToCsv(`zse-portfolio-${new Date().toISOString().split("T")[0]}`, headers, rows);
+  };
 
   return (
     <div className="space-y-4">
@@ -91,10 +107,16 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
 
       {/* Add position button */}
       <div className="flex justify-end">
-        <Button size="sm" onClick={() => setShowAddForm(!showAddForm)}>
-          <Plus className="h-3.5 w-3.5" />
-          {t("addPosition")}
-        </Button>
+        <div className="flex gap-2">
+          <Button size="sm" variant="outline" onClick={handleExportCsv} disabled={enrichedHoldings.length === 0}>
+            <Download className="h-3.5 w-3.5" />
+            CSV
+          </Button>
+          <Button size="sm" onClick={() => setShowAddForm(!showAddForm)}>
+            <Plus className="h-3.5 w-3.5" />
+            {t("addPosition")}
+          </Button>
+        </div>
       </div>
 
       {/* Add position form */}
