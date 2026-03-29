@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { MarketOverview } from "@/features/market/components/market-overview";
 import { MarketStatus } from "@/features/market/components/market-status";
 import { useMacro } from "@/features/market/api/market-queries";
+import { useForexRates } from "@/features/market/api/forex-queries";
 import { formatPrice } from "@/lib/formatters";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ChangeBadge } from "@/components/shared/change-badge";
@@ -15,6 +16,7 @@ export const Route = createFileRoute("/macro")({
 function MacroPage() {
   const { t } = useTranslation("macro");
   const { data: macro, isLoading } = useMacro();
+  const { data: forex } = useForexRates();
 
   return (
     <div className="flex h-full flex-col gap-4 overflow-auto p-4">
@@ -56,14 +58,36 @@ function MacroPage() {
               <h3 className="text-[10px] uppercase tracking-wider text-muted-foreground">
                 {t("forex.title")}
               </h3>
-              <div className="mt-3 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">EUR/USD</span>
-                  <span className="font-data text-sm font-bold tabular-nums text-foreground">
-                    {macro.eurUsd.toFixed(4)}
-                  </span>
+              {forex ? (
+                <div className="mt-3 grid grid-cols-2 gap-3">
+                  {[
+                    { pair: "EUR/USD", value: forex.eurUsd },
+                    { pair: "USD/HRK", value: forex.usdHrk },
+                    { pair: "EUR/CHF", value: forex.eurChf },
+                    { pair: "EUR/GBP", value: forex.eurGbp },
+                  ].map(({ pair, value }) => (
+                    <div key={pair} className="flex items-center justify-between">
+                      <span className="text-[10px] text-muted-foreground">{pair}</span>
+                      <span className="font-data text-xs font-bold tabular-nums text-foreground">
+                        {value.toFixed(4)}
+                      </span>
+                    </div>
+                  ))}
+                  <div className="col-span-2 border-t border-border/50 pt-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] text-muted-foreground">EUR/HRK</span>
+                      <span className="font-data text-xs tabular-nums text-foreground">
+                        {forex.eurHrk.toFixed(4)}{" "}
+                        <span className="text-[9px] text-muted-foreground">(CNB fixing)</span>
+                      </span>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="mt-3 space-y-2">
+                  {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-4" />)}
+                </div>
+              )}
             </div>
           </>
         )}
