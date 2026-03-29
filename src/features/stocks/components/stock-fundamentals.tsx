@@ -1,5 +1,8 @@
 import { useTranslation } from "react-i18next";
+import { ExternalLink } from "lucide-react";
+import { useNews } from "@/features/news/api/news-queries";
 import { formatPrice, formatMarketCap } from "@/lib/formatters";
+import { formatDate } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import type { StockDetail } from "@/types/stock";
 
@@ -9,6 +12,10 @@ interface StockFundamentalsProps {
 
 export function StockFundamentals({ stock }: StockFundamentalsProps) {
   const { t } = useTranslation("stocks");
+  const { data: allNews } = useNews();
+  const relatedNews = allNews
+    ? allNews.filter((a) => a.ticker === stock.ticker).slice(0, 5)
+    : [];
 
   // 52-week range bar position
   const rangeWidth = stock.high52w - stock.low52w;
@@ -84,6 +91,36 @@ export function StockFundamentals({ stock }: StockFundamentalsProps) {
           </div>
         </div>
       </div>
+
+      {/* Related news */}
+      {relatedNews.length > 0 && (
+        <div>
+          <h4 className="mb-2 text-[10px] uppercase tracking-wider text-muted-foreground">
+            Latest News
+          </h4>
+          <div className="space-y-1.5">
+            {relatedNews.map((article) => (
+              <a
+                key={article.id}
+                href={article.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-start justify-between gap-2 rounded-sm border border-border/50 bg-card px-2 py-1.5 hover:border-border hover:bg-accent/50"
+              >
+                <div className="min-w-0 flex-1">
+                  <p className="line-clamp-1 text-[10px] font-medium text-foreground group-hover:text-primary">
+                    {article.title}
+                  </p>
+                  <p className="text-[9px] text-muted-foreground">
+                    {formatDate(article.publishedAt)} · {article.source}
+                  </p>
+                </div>
+                <ExternalLink className="mt-0.5 h-2.5 w-2.5 shrink-0 text-muted-foreground/50" />
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
