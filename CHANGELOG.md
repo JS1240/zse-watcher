@@ -173,3 +173,8 @@
   - useForexRates hook: fetches from frankfurter.app API every 5 minutes
   - 2-column grid with 4 major pairs + EUR/HRK (CNB fixing, semi-fixed at 7.5)
   - Graceful fallback on network failure
+
+- **Related News in Stock Detail Drawer** — latest 5 articles per ticker
+  - StockFundamentals: shows filtered news for the current ticker at bottom of fundamentals section
+  - Each item: title, date, source, external link; click to open on ZSE.hr
+  - Ties the news feed and stock detail together inline
