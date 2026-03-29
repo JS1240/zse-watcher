@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { usePortfolioHoldings } from "@/features/portfolio/api/portfolio-queries";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
+import { PortfolioChart } from "@/features/portfolio/components/portfolio-chart";
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { formatCurrency } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
@@ -71,6 +72,14 @@ export function PortfolioAnalytics() {
 
   return (
     <div className="space-y-4">
+      {/* Performance chart */}
+      <div className="rounded-md border border-border bg-card p-4">
+        <h3 className="mb-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+          Performance
+        </h3>
+        <PortfolioChart />
+      </div>
+
       {/* Summary metrics */}
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <MetricCard label="Total Value" value={formatCurrency(analytics.totalValue)} />
