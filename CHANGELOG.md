@@ -30,6 +30,18 @@
   - `public/sw.js`: cache-first for static assets, network-first for API, clean old caches on activate
   - Apple mobile web app meta tags for iOS home screen
 
+- **Keyboard Shortcuts Overlay** — press ? to see all shortcuts
+  - ShortcutsOverlay: modal with Navigation/App/Stock Table shortcut groups
+  - Escape or backdrop click to close; T works while overlay is open
+  - Global Cmd+K (Ctrl+K) shortcut wired via event bus for command palette
+  - eventBus: simple in-process pub/sub for cross-component communication
+  - Updated keyboard shortcuts reference in Settings page
+
+- **Screener Filter Presets** — save and recall filter configurations
+  - Save current filter set with a custom name inline in the filter bar
+  - Presets stored in localStorage under key `zse-screener-presets`
+  - Click preset pill to load, X to delete; persists across sessions
+
 ## [0.1.0] - 2026-03-26
 
 ### Added
