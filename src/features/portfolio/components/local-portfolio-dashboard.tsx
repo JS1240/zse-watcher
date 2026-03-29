@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Plus, Trash2, ChevronDown, ChevronUp } from "lucide-react";
 import { useLocalTransactions } from "@/features/portfolio/hooks/use-local-transactions";
@@ -17,6 +17,18 @@ export function LocalPortfolioDashboard() {
   const stocks = stocksResult?.stocks ?? null;
   const [showAddForm, setShowAddForm] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
+  const [savedFlash, setSavedFlash] = useState(false);
+  const prevTxLengthRef = useRef(transactions.length);
+
+  // Flash "Saved" indicator on transaction changes
+  useEffect(() => {
+    if (transactions.length !== prevTxLengthRef.current) {
+      prevTxLengthRef.current = transactions.length;
+      setSavedFlash(true);
+      const t = setTimeout(() => setSavedFlash(false), 1500);
+      return () => clearTimeout(t);
+    }
+  }, [transactions.length]);
 
   // Calculate holdings from local transactions
   const holdingsMap = new Map<string, { totalShares: number; totalCost: number; name: string }>();
@@ -71,10 +83,20 @@ export function LocalPortfolioDashboard() {
   return (
     <div className="space-y-4">
       {/* Local indicator */}
-      <div className="flex items-center gap-2 rounded-sm bg-muted/50 px-2 py-1">
-        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-        <span className="text-[10px] text-muted-foreground">
-          Portfolio saved locally — sign in to sync across devices
+      <div className="flex items-center justify-between rounded-sm bg-muted/50 px-2 py-1">
+        <div className="flex items-center gap-2">
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+          <span className="text-[10px] text-muted-foreground">
+            Portfolio saved locally
+          </span>
+        </div>
+        <span
+          className={cn(
+            "text-[10px] font-medium text-emerald-600 transition-opacity duration-500",
+            savedFlash ? "opacity-100" : "opacity-0",
+          )}
+        >
+          Saved
         </span>
       </div>
 
