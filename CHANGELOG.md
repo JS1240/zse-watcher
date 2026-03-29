@@ -1,5 +1,15 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- **Portfolio Performance Chart** — time-series area chart showing portfolio value over 1D/1W/1M/3M/6M/1Y
+  - Built with recharts, integrated into the analytics tab (premium)
+  - `usePortfolioHistory` hook: reconstructs historical portfolio value from transactions + mock price history
+  - Range selector, gain/loss delta display, gradient fill, reference line at starting value
+  - Shows €k format on YAxis, auto-formatted dates on XAxis
+
 ## [0.1.0] - 2026-03-26
 
 ### Added
