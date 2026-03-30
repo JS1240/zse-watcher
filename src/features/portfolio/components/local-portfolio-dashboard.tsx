@@ -18,11 +18,14 @@ export function LocalPortfolioDashboard() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [savedFlash, setSavedFlash] = useState(false);
-  const prevTxLengthRef = useRef(transactions.length);
+  const prevTxLengthRef = useRef<number | null>(null);
 
-  // Flash "Saved" indicator on transaction changes
+  // Flash "Saved" indicator only on user-initiated transaction changes (not on mount)
   useEffect(() => {
-    if (transactions.length !== prevTxLengthRef.current) {
+    if (prevTxLengthRef.current === null) {
+      // First render — initialize ref, no flash
+      prevTxLengthRef.current = transactions.length;
+    } else if (transactions.length !== prevTxLengthRef.current) {
       prevTxLengthRef.current = transactions.length;
       setSavedFlash(true);
       const t = setTimeout(() => setSavedFlash(false), 1500);
