@@ -86,21 +86,36 @@ export function LocalPortfolioDashboard() {
   return (
     <div className="space-y-4">
       {/* Local indicator */}
-      <div className="flex items-center justify-between rounded-sm bg-muted/50 px-2 py-1">
-        <div className="flex items-center gap-2">
+      <div
+        className="flex items-center justify-between rounded-sm bg-muted/50 px-2 py-1"
+        role="status"
+        aria-live="polite"
+      >
+        <div className="flex items-center gap-1.5">
           <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
           <span className="text-[10px] text-muted-foreground">
-            Portfolio saved locally
+            Saved locally
           </span>
         </div>
-        <span
+        <div
           className={cn(
-            "text-[10px] font-medium text-emerald-600 transition-opacity duration-500",
-            savedFlash ? "opacity-100" : "opacity-0",
+            "flex items-center gap-1 text-[10px] font-medium text-emerald-600 transition-all duration-300",
+            savedFlash
+              ? "opacity-100 translate-x-0"
+              : "opacity-0 -translate-x-1",
           )}
         >
+          <svg className="h-2.5 w-2.5" viewBox="0 0 12 12" fill="none">
+            <path
+              d="M2.5 6L5 8.5L9.5 3.5"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
           Saved
-        </span>
+        </div>
       </div>
 
       {/* Summary cards */}
