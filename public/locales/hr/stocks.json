@@ -47,6 +47,7 @@
     "minDividend": "Min div. %",
     "maxDividend": "Max div. %",
     "noResults": "Nijedna dionica ne odgovara trenutnim filterima",
+    "noStocks": "Nema dionica za prikaz",
     "results": "{{count}} rezultata od {{total}} dionica"
   }
 }

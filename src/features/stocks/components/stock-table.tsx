@@ -194,7 +194,7 @@ export function StockTable() {
 
         {filtered.length === 0 && (
           <div className="py-8 text-center text-xs text-muted-foreground">
-            No stocks found
+            {debouncedSearch ? t("noResults") : t("noStocks")}
           </div>
         )}
       </div>
