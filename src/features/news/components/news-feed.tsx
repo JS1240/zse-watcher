@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Newspaper } from "lucide-react";
 import { useNews } from "@/features/news/api/news-queries";
 import { ArticleDrawer } from "@/features/news/components/article-drawer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatDate, formatTime } from "@/lib/formatters";
+import { EmptyState } from "@/components/shared/empty-state";
 import type { NewsArticle } from "@/types/news";
 
 interface NewsFeedProps {
@@ -48,9 +49,13 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
 
   if (!filtered.length) {
     return (
-      <p className="py-4 text-center text-xs text-muted-foreground">
-        {t("empty.noData")}
-      </p>
+      <div className="py-4">
+        <EmptyState
+          icon={<Newspaper className="h-8 w-8" />}
+          title={t("empty.noData")}
+          description={t("empty.noDataDescription")}
+        />
+      </div>
     );
   }
 

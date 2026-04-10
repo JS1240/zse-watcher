@@ -52,7 +52,10 @@
   },
   "empty": {
     "noData": "No data available",
-    "noResults": "No results found"
+    "noResults": "No results found",
+    "noDataDescription": "Please try again later or refresh the page.",
+    "noResultsDescription": "Try adjusting your search terms or clearing the filters.",
+    "clearFilters": "Clear filters"
   },
   "time": {
     "lastUpdated": "Last updated",

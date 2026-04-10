@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { formatPrice, formatDate } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import type { AlertCondition } from "@/types/alert";
+import { EmptyState } from "@/components/shared/empty-state";
 
 const alertSchema = z.object({
   ticker: z.string().min(1, "Required"),
@@ -140,10 +141,12 @@ export function AlertsDashboard() {
           ))}
         </div>
       ) : (
-        <div className="rounded-md border border-border bg-card py-12 text-center">
-          <Bell className="mx-auto mb-2 h-8 w-8 text-muted-foreground/30" />
-          <p className="text-xs text-muted-foreground">{t("empty")}</p>
-        </div>
+        <EmptyState
+          icon={<Bell className="h-8 w-8" />}
+          title={t("empty")}
+          description={t("emptyDescription")}
+          action={{ label: t("create"), onClick: () => setShowForm(true) }}
+        />
       )}
     </div>
   );

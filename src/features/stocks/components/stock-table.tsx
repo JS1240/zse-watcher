@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Search, ArrowUpDown, ArrowUp, ArrowDown, Download } from "lucide-react";
+import { Search, ArrowUpDown, ArrowUp, ArrowDown, Download, TrendingUp } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { StockRow } from "@/features/stocks/components/stock-row";
@@ -11,12 +11,14 @@ import { usePriceFlash } from "@/hooks/use-price-flash";
 import { useDebounce } from "@/hooks/use-debounce";
 import { useSubscription } from "@/features/premium/hooks/use-subscription";
 import { exportToCsv } from "@/lib/export";
+import { EmptyState } from "@/components/shared/empty-state";
 
 type SortField = "ticker" | "price" | "changePct" | "turnover" | "volume";
 type SortDir = "asc" | "desc";
 
 export function StockTable() {
   const { t } = useTranslation("stocks");
+  const { t: tc } = useTranslation("common");
   const { data: result, isLoading, dataUpdatedAt, isFetching } = useStocksLive();
   const stocks = result?.stocks ?? null;
   const [search, setSearch] = useState("");
@@ -193,9 +195,20 @@ export function StockTable() {
         </table>
 
         {filtered.length === 0 && (
-          <div className="py-8 text-center text-xs text-muted-foreground">
-            {debouncedSearch ? t("noResults") : t("noStocks")}
-          </div>
+          debouncedSearch ? (
+            <EmptyState
+              icon={<Search className="h-8 w-8" />}
+              title={t("noResults")}
+              description={tc("empty.noResultsDescription")}
+              action={{ label: tc("empty.clearFilters"), onClick: () => setSearch("") }}
+            />
+          ) : (
+            <EmptyState
+              icon={<TrendingUp className="h-8 w-8" />}
+              title={t("noStocks")}
+              description={tc("empty.noDataDescription")}
+            />
+          )
         )}
       </div>
 

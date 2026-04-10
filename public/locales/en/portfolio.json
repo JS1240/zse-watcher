@@ -25,5 +25,6 @@
     "transactionAddFailed": "Failed to add transaction"
   },
   "empty": "No positions in portfolio",
+  "emptyDescription": "Add your first position to start tracking your holdings and gains.",
   "history": "Transaction History"
 }

@@ -20,6 +20,7 @@
     "created": "Created"
   },
   "empty": "No alerts configured",
+  "emptyDescription": "Create an alert to get notified when a stock reaches your target price.",
   "toast": {
     "created": "Alert created",
     "deleted": "Alert deleted",

@@ -52,7 +52,10 @@
   },
   "empty": {
     "noData": "Nema podataka",
-    "noResults": "Nema rezultata"
+    "noResults": "Nema rezultata",
+    "noDataDescription": "Pokušajte kasnije ili osvježite stranicu.",
+    "noResultsDescription": "Pokušajte promijeniti uvjete pretraživanja ili filtere.",
+    "clearFilters": "Očisti filtere"
   },
   "time": {
     "lastUpdated": "Zadnje azurirano",

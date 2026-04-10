@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, Download } from "lucide-react";
+import { Plus, Download, Wallet } from "lucide-react";
 import { usePortfolioHoldings } from "@/features/portfolio/api/portfolio-queries";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { useLocalTransactions } from "@/features/portfolio/hooks/use-local-transactions";
@@ -10,6 +10,7 @@ import { ChangeBadge } from "@/components/shared/change-badge";
 import { formatPrice, formatCurrency } from "@/lib/formatters";
 import { exportToCsv } from "@/lib/export";
 import { cn } from "@/lib/utils";
+import { EmptyState } from "@/components/shared/empty-state";
 
 interface PortfolioDashboardProps {
   isLocal?: boolean;
@@ -168,8 +169,13 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
           </table>
         </div>
       ) : (
-        <div className="rounded-md border border-border bg-card py-12 text-center">
-          <p className="text-xs text-muted-foreground">{t("empty")}</p>
+        <div className="rounded-md border border-border bg-card">
+          <EmptyState
+            icon={<Wallet className="h-8 w-8" />}
+            title={t("empty")}
+            description={t("emptyDescription")}
+            action={{ label: t("addPosition"), onClick: () => setShowAddForm(true) }}
+          />
         </div>
       )}
     </div>

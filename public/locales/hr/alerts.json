@@ -20,6 +20,7 @@
     "created": "Stvoreno"
   },
   "empty": "Nemate postavljenih alarma",
+  "emptyDescription": "Postavite alarm i primajte obavijesti kada cijena doseže određenu razinu.",
   "toast": {
     "created": "Alarm stvoren",
     "deleted": "Alarm obrisan",
