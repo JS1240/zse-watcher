@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { TickerSelect } from "@/components/shared/ticker-select";
 import { formatPrice, formatDate } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import type { AlertCondition } from "@/types/alert";
@@ -165,9 +166,9 @@ function AlertRow({ alert, onDelete, onToggle, onUpdate }: AlertRowProps) {
             <label className="mb-0.5 block text-[9px] uppercase tracking-wider text-muted-foreground">
               {t("fields.ticker")}
             </label>
-            <Input
+            <TickerSelect
               value={editTicker}
-              onChange={(e) => setEditTicker(e.target.value)}
+              onChange={(v) => setEditTicker(v)}
               className="h-7 font-data text-xs"
               placeholder="KOEI-R-A"
             />
