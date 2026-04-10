@@ -9,6 +9,7 @@ import { ChangeBadge } from "@/components/shared/change-badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatPrice, formatVolume } from "@/lib/formatters";
 import { exportToCsv } from "@/lib/export";
+import { useSelectedStock } from "@/hooks/use-selected-stock";
 import type { Stock } from "@/types/stock";
 
 interface ScreenerFilters {
@@ -82,6 +83,7 @@ export function StockScreener() {
   const { data: result, isLoading } = useStocksLive();
   const stocks = result?.stocks ?? null;
   const isMockData = result?.isMockData ?? false;
+  const { select } = useSelectedStock();
   const [filters, setFilters] = useState<ScreenerFilters>(INITIAL_FILTERS);
   const [sort, setSort] = useState<{ column: SortColumn; direction: SortDirection } | null>({
     column: "turnover",
@@ -445,7 +447,8 @@ export function StockScreener() {
             {results.map((s) => (
               <tr
                 key={s.ticker}
-                className="border-b border-border/50 last:border-b-0 hover:bg-accent/50"
+                className="border-b border-border/50 last:border-b-0 cursor-pointer hover:bg-accent/50"
+                onClick={() => select(s.ticker)}
               >
                 <td className="px-3 py-2 font-data font-semibold text-foreground">
                   {s.ticker}

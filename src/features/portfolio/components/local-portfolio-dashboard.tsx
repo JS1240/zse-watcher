@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { formatPrice, formatCurrency } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
+import { useSelectedStock } from "@/hooks/use-selected-stock";
 
 export function LocalPortfolioDashboard() {
   const { t } = useTranslation("portfolio");
@@ -15,6 +16,7 @@ export function LocalPortfolioDashboard() {
     useLocalTransactions();
   const { data: stocksResult } = useStocksLive();
   const stocks = stocksResult?.stocks ?? null;
+  const { select } = useSelectedStock();
   const [showAddForm, setShowAddForm] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [savedFlash, setSavedFlash] = useState(false);
@@ -172,7 +174,8 @@ export function LocalPortfolioDashboard() {
               {enrichedHoldings.map((h) => (
                 <tr
                   key={h.ticker}
-                  className="border-b border-border/50 last:border-b-0"
+                  className="border-b border-border/50 last:border-b-0 cursor-pointer hover:bg-accent/50"
+                  onClick={() => select(h.ticker)}
                 >
                   <td className="px-3 py-2">
                     <div>

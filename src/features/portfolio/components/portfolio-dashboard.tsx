@@ -12,6 +12,7 @@ import { formatPrice, formatCurrency } from "@/lib/formatters";
 import { exportToCsv } from "@/lib/export";
 import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/shared/empty-state";
+import { useSelectedStock } from "@/hooks/use-selected-stock";
 import type { Holding } from "@/features/portfolio/api/portfolio-queries";
 
 interface EnrichedHolding extends Holding {
@@ -32,6 +33,7 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
   const { data: stocksResult } = useStocksLive();
   const stocks = stocksResult?.stocks ?? null;
   const { transactions: localTxs, hasLocalTransactions } = useLocalTransactions();
+  const { select } = useSelectedStock();
 
   const [showAddForm, setShowAddForm] = useState(false);
 
@@ -166,7 +168,11 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
             </thead>
             <tbody>
               {enrichedHoldings.map((h) => (
-                <tr key={h.ticker} className="border-b border-border/50 last:border-b-0">
+                <tr
+                  key={h.ticker}
+                  className="border-b border-border/50 last:border-b-0 cursor-pointer hover:bg-accent/50"
+                  onClick={() => select(h.ticker)}
+                >
                   <td className="px-3 py-2">
                     <div>
                       <span className="font-data font-semibold text-foreground">{h.ticker}</span>
