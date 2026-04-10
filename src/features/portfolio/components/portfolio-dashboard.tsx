@@ -1,16 +1,26 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Plus, Download, Wallet } from "lucide-react";
-import { usePortfolioHoldings } from "@/features/portfolio/api/portfolio-queries";
+import { usePortfolio } from "@/features/portfolio/api/portfolio-queries";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { useLocalTransactions } from "@/features/portfolio/hooks/use-local-transactions";
 import { AddPositionForm } from "@/features/portfolio/components/add-position-form";
+import { PortfolioSkeleton } from "@/features/portfolio/components/portfolio-skeleton";
 import { Button } from "@/components/ui/button";
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { formatPrice, formatCurrency } from "@/lib/formatters";
 import { exportToCsv } from "@/lib/export";
 import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/shared/empty-state";
+import type { Holding } from "@/features/portfolio/api/portfolio-queries";
+
+interface EnrichedHolding extends Holding {
+  currentPrice: number;
+  totalValue: number;
+  totalGain: number;
+  gainPct: number;
+  name: string;
+}
 
 interface PortfolioDashboardProps {
   isLocal?: boolean;
@@ -18,31 +28,37 @@ interface PortfolioDashboardProps {
 
 export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps) {
   const { t } = useTranslation("portfolio");
-  const holdings = usePortfolioHoldings();
+  const { isLoading, data: portfolioData } = usePortfolio();
   const { data: stocksResult } = useStocksLive();
   const stocks = stocksResult?.stocks ?? null;
+  const { transactions: localTxs, hasLocalTransactions } = useLocalTransactions();
+
   const [showAddForm, setShowAddForm] = useState(false);
-  const { hasLocalTransactions } = useLocalTransactions();
 
-  // Enrich holdings with live prices
-  const enrichedHoldings = holdings.map((h) => {
-    const stock = stocks?.find((s) => s.ticker === h.ticker);
-    const currentPrice = stock?.price ?? h.avgPrice;
-    const totalValue = h.totalShares * currentPrice;
-    const totalGain = totalValue - h.totalCost;
-    const gainPct = h.totalCost > 0 ? (totalGain / h.totalCost) * 100 : 0;
+  const holdings = useMemo(() => {
+    return computeHoldings(portfolioData?.transactions ?? [], localTxs);
+  }, [portfolioData?.transactions, localTxs]);
 
-    return { ...h, currentPrice, totalValue, totalGain, gainPct, name: stock?.name ?? h.ticker };
-  });
+  const enrichedHoldings = computeEnrichedHoldings(holdings, stocks);
 
   const totalPortfolioValue = enrichedHoldings.reduce((sum, h) => sum + h.totalValue, 0);
   const totalPortfolioGain = enrichedHoldings.reduce((sum, h) => sum + h.totalGain, 0);
-  const totalGainPct = totalPortfolioValue > 0
-    ? (totalPortfolioGain / (totalPortfolioValue - totalPortfolioGain)) * 100
-    : 0;
+  const totalGainPct =
+    totalPortfolioValue > 0
+      ? (totalPortfolioGain / (totalPortfolioValue - totalPortfolioGain)) * 100
+      : 0;
 
   const handleExportCsv = () => {
-    const headers = ["Ticker", "Name", "Shares", "Avg Price (EUR)", "Current Price (EUR)", "Value (EUR)", "Gain (EUR)", "Gain (%)"];
+    const headers = [
+      "Ticker",
+      "Name",
+      "Shares",
+      "Avg Price (EUR)",
+      "Current Price (EUR)",
+      "Value (EUR)",
+      "Gain (EUR)",
+      "Gain (%)",
+    ];
     const rows = enrichedHoldings.map((h) => [
       h.ticker,
       h.name,
@@ -55,6 +71,10 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
     ]);
     exportToCsv(`zse-portfolio-${new Date().toISOString().split("T")[0]}`, headers, rows);
   };
+
+  if (isLoading) {
+    return <PortfolioSkeleton />;
+  }
 
   return (
     <div className="space-y-4">
@@ -109,7 +129,12 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
       {/* Add position button */}
       <div className="flex justify-end">
         <div className="flex gap-2">
-          <Button size="sm" variant="outline" onClick={handleExportCsv} disabled={enrichedHoldings.length === 0}>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={handleExportCsv}
+            disabled={enrichedHoldings.length === 0}
+          >
             <Download className="h-3.5 w-3.5" />
             CSV
           </Button>
@@ -121,9 +146,7 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
       </div>
 
       {/* Add position form */}
-      {showAddForm && (
-        <AddPositionForm onClose={() => setShowAddForm(false)} />
-      )}
+      {showAddForm && <AddPositionForm onClose={() => setShowAddForm(false)} />}
 
       {/* Holdings table */}
       {enrichedHoldings.length > 0 ? (
@@ -135,7 +158,9 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
                 <th className="px-3 py-2 text-right font-medium">{t("fields.shares")}</th>
                 <th className="px-3 py-2 text-right font-medium">{t("fields.avgPrice")}</th>
                 <th className="px-3 py-2 text-right font-medium">{t("fields.currentPrice")}</th>
-                <th className="hidden px-3 py-2 text-right font-medium md:table-cell">{t("fields.value")}</th>
+                <th className="hidden px-3 py-2 text-right font-medium md:table-cell">
+                  {t("fields.value")}
+                </th>
                 <th className="px-3 py-2 text-right font-medium">{t("fields.gain")}</th>
               </tr>
             </thead>
@@ -180,4 +205,76 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
       )}
     </div>
   );
+}
+
+function computeEnrichedHoldings(
+  holdings: Holding[],
+  stocks: Array<{ ticker: string; price: number; name: string }> | null,
+): EnrichedHolding[] {
+  return holdings.map((h) => {
+    const stock = stocks?.find((s) => s.ticker === h.ticker);
+    const currentPrice = stock?.price ?? h.avgPrice;
+    const totalValue = h.totalShares * currentPrice;
+    const totalGain = totalValue - h.totalCost;
+    const gainPct = h.totalCost > 0 ? (totalGain / h.totalCost) * 100 : 0;
+
+    return { ...h, currentPrice, totalValue, totalGain, gainPct, name: stock?.name ?? h.ticker };
+  });
+}
+
+function computeHoldings(
+  remoteTxs: Array<{
+    ticker: string;
+    transaction_type: string;
+    shares: number;
+    total_amount: number;
+  }>,
+  localTxs: Array<{
+    ticker: string;
+    transactionType: string;
+    shares: number;
+    totalAmount: number;
+  }>,
+): Holding[] {
+  const allTransactions = [
+    ...remoteTxs.map((tx) => ({
+      ticker: tx.ticker,
+      transactionType: tx.transaction_type as "buy" | "sell" | "dividend",
+      shares: tx.shares,
+      totalAmount: tx.total_amount,
+    })),
+    ...localTxs.map((tx) => ({
+      ticker: tx.ticker,
+      transactionType: tx.transactionType as "buy" | "sell" | "dividend",
+      shares: tx.shares,
+      totalAmount: tx.totalAmount,
+    })),
+  ];
+
+  if (!allTransactions.length) return [];
+
+  const holdingsMap = new Map<string, { totalShares: number; totalCost: number }>();
+
+  for (const txn of allTransactions) {
+    const current = holdingsMap.get(txn.ticker) ?? { totalShares: 0, totalCost: 0 };
+
+    if (txn.transactionType === "buy") {
+      current.totalShares += txn.shares;
+      current.totalCost += txn.totalAmount;
+    } else if (txn.transactionType === "sell") {
+      current.totalShares -= txn.shares;
+      current.totalCost -= txn.shares * (current.totalCost / (current.totalShares + txn.shares));
+    }
+
+    holdingsMap.set(txn.ticker, current);
+  }
+
+  return Array.from(holdingsMap.entries())
+    .filter(([_, h]) => h.totalShares > 0)
+    .map(([ticker, h]) => ({
+      ticker,
+      totalShares: h.totalShares,
+      avgPrice: h.totalCost / h.totalShares,
+      totalCost: h.totalCost,
+    }));
 }
