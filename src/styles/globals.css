@@ -72,3 +72,20 @@ body {
   from { transform: translateX(0); }
   to { transform: translateX(100%); }
 }
+
+/* Skeleton shimmer — premium loading indicator */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--color-muted) / 1) 0%,
+    hsl(var(--color-muted) / 0.5) 40%,
+    hsl(var(--color-muted) / 1) 80%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
