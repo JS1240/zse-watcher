@@ -18,14 +18,40 @@ export function WatchlistToggle({ ticker, className }: WatchlistToggleProps) {
   const addMutation = useAddToWatchlist();
   const removeMutation = useRemoveFromWatchlist();
 
-  if (!isAuthenticated) return null;
+  if (isAuthenticated) {
+    return <AuthenticatedToggle
+      ticker={ticker}
+      watchlistTickers={watchlistTickers}
+      addMutation={addMutation}
+      removeMutation={removeMutation}
+      className={className}
+    />;
+  }
 
+  // Show a subtle star for guests — acts as sign-in nudge
+  return <GuestToggle className={className} />;
+}
+
+function AuthenticatedToggle({
+  ticker,
+  watchlistTickers,
+  addMutation,
+  removeMutation,
+  className,
+}: {
+  ticker: string;
+  watchlistTickers: ReturnType<typeof useWatchlistTickers>;
+  addMutation: ReturnType<typeof useAddToWatchlist>;
+  removeMutation: ReturnType<typeof useRemoveFromWatchlist>;
+  className?: string;
+}) {
   const isWatched = watchlistTickers.has(ticker);
   const isPending = addMutation.isPending || removeMutation.isPending;
 
   const handleToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (isPending) return;
+
 
     if (isWatched) {
       removeMutation.mutate(ticker);
@@ -52,6 +78,22 @@ export function WatchlistToggle({ ticker, className }: WatchlistToggleProps) {
             : "text-muted-foreground hover:text-amber",
         )}
       />
+    </button>
+  );
+}
+
+function GuestToggle({ className }: { className?: string }) {
+  return (
+    <button
+      disabled
+      className={cn(
+        "cursor-pointer rounded-sm p-1 opacity-40",
+        className,
+      )}
+      title="Sign in to track stocks"
+      aria-label="Sign in to track stocks"
+    >
+      <Star className="h-3.5 w-3.5 text-muted-foreground" />
     </button>
   );
 }
