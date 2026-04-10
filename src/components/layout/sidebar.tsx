@@ -8,6 +8,7 @@ import {
   CalendarDays,
   Bell,
   SlidersHorizontal,
+  Star,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -18,7 +19,8 @@ const NAV_ITEMS = [
   { path: "/portfolio", labelKey: "nav.portfolio", icon: Wallet, shortcut: "4" },
   { path: "/dividends", labelKey: "nav.dividends", icon: CalendarDays, shortcut: "5" },
   { path: "/alerts", labelKey: "nav.alerts", icon: Bell, shortcut: "6" },
-  { path: "/screener", labelKey: "Screener", icon: SlidersHorizontal, shortcut: "7" },
+  { path: "/screener", labelKey: "nav.screener", icon: SlidersHorizontal, shortcut: "7" },
+  { path: "/watchlist", labelKey: "nav.watchlist", icon: Star, shortcut: "8" },
 ] as const;
 
 export function Sidebar() {

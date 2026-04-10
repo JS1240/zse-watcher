@@ -10,7 +10,9 @@
     "portfolio": "Portfelj",
     "dividends": "Dividende",
     "alerts": "Alarmi",
-    "settings": "Postavke"
+    "settings": "Postavke",
+    "screener": "Pretraživač",
+    "watchlist": "Lista praćenja"
   },
   "market": {
     "status": {

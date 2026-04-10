@@ -1,8 +1,11 @@
 {
   "title": "Watchlist",
   "empty": "No stocks in watchlist",
+  "emptyDescription": "Click the star next to a stock to add it to your watchlist.",
   "add": "Add to watchlist",
   "remove": "Remove from watchlist",
+  "searchPlaceholder": "Search stocks...",
+  "browseAction": "Browse stocks",
   "toast": {
     "added": "Added to watchlist",
     "removed": "Removed from watchlist",

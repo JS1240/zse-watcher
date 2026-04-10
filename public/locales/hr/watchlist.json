@@ -1,8 +1,11 @@
 {
   "title": "Praćenje",
   "empty": "Nema dionica u listi praćenja",
+  "emptyDescription": "Kliknite zvjezdicu pokraj dionice da je dodate u listu.",
   "add": "Dodaj u listu praćenja",
   "remove": "Ukloni iz liste praćenja",
+  "searchPlaceholder": "Pretraži dionice...",
+  "browseAction": "Pregledaj dionice",
   "toast": {
     "added": "Dionica dodana u listu praćenja",
     "removed": "Dionica uklonjena iz liste praćenja",

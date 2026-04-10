@@ -4,6 +4,16 @@
 
 ### Added
 
+- **Watchlist Page** — unauthenticated users get a full watchlist with localStorage persistence
+  - New `/watchlist` route with sidebar link (shortcut 8) and Star icon
+  - Authenticated users: managed via Supabase (existing behavior)
+  - Guest users: `useLocalWatchlist` hook with localStorage under `zse-watchlist`
+  - Unified `WatchlistPage` component shows `AuthenticatedWatchlist` or `LocalWatchlist` based on auth state
+  - Table: ticker, name, price, change, volume, turnover — click to open stock detail drawer
+  - Local watchlist: filled star with remove button; authenticated: unfilled star toggle
+  - Search filtering by ticker/name, skeleton loading states, EmptyState for zero items and no-results
+  - i18n: `nav.watchlist`, `nav.screener`, `searchPlaceholder`, `emptyDescription`, `browseAction` in both HR/EN
+
 - **Portfolio Performance Chart** — time-series area chart showing portfolio value over 1D/1W/1M/3M/6M/1Y
   - Built with recharts, integrated into the analytics tab (premium)
   - `usePortfolioHistory` hook: reconstructs historical portfolio value from transactions + mock price history

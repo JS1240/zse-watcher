@@ -10,7 +10,9 @@
     "portfolio": "Portfolio",
     "dividends": "Dividends",
     "alerts": "Alerts",
-    "settings": "Settings"
+    "settings": "Settings",
+    "screener": "Screener",
+    "watchlist": "Watchlist"
   },
   "market": {
     "status": {
