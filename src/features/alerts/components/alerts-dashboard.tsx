@@ -1,11 +1,8 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod/v4";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
-import { Plus, Trash2, Bell, BellOff, X } from "lucide-react";
-
+import { Bell, BellOff, Pencil, Trash2, X, Check } from "lucide-react";
 import { useAlertsData } from "@/features/alerts/hooks/use-alerts-data";
+import { AlertForm } from "@/features/alerts/components/alert-form";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
@@ -14,80 +11,6 @@ import { formatPrice, formatDate } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import type { AlertCondition } from "@/types/alert";
 import { EmptyState } from "@/components/shared/empty-state";
-
-const alertSchema = z.object({
-  ticker: z.string().min(1, "Required"),
-  condition: z.enum(["above", "below", "percent_change_up", "percent_change_down"]),
-  targetValue: z.string().min(1, "Required"),
-});
-
-type AlertValues = z.infer<typeof alertSchema>;
-
-interface AlertFormProps {
-  onClose: () => void;
-  defaultTicker?: string;
-  onSubmit: (data: AlertValues) => Promise<void>;
-}
-
-export function AlertForm({ onClose, defaultTicker, onSubmit }: AlertFormProps) {
-  const { t } = useTranslation("alerts");
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<AlertValues>({
-    resolver: zodResolver(alertSchema),
-    defaultValues: {
-      ticker: defaultTicker ?? "",
-      condition: "above",
-    },
-  });
-
-  return (
-    <div className="rounded-md border border-border bg-card p-4">
-      <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-xs font-semibold text-foreground">{t("create")}</h3>
-        <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
-          <X className="h-4 w-4" />
-        </button>
-      </div>
-
-      <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <div>
-          <label className="mb-1 block text-[10px] text-muted-foreground">{t("fields.ticker")}</label>
-          <Input placeholder="KOEI-R-A" {...register("ticker")} />
-          {errors.ticker && <p className="mt-0.5 text-[10px] text-destructive">{errors.ticker.message}</p>}
-        </div>
-
-        <div>
-          <label className="mb-1 block text-[10px] text-muted-foreground">{t("fields.condition")}</label>
-          <select
-            {...register("condition")}
-            className="flex h-8 w-full rounded-md border border-input bg-background px-3 py-1.5 font-data text-xs text-foreground"
-          >
-            <option value="above">{t("condition.above")}</option>
-            <option value="below">{t("condition.below")}</option>
-            <option value="percent_change_up">{t("condition.percentUp")}</option>
-            <option value="percent_change_down">{t("condition.percentDown")}</option>
-          </select>
-        </div>
-
-        <div>
-          <label className="mb-1 block text-[10px] text-muted-foreground">{t("fields.target")}</label>
-          <Input type="number" step="0.01" placeholder="150.00" {...register("targetValue")} />
-          {errors.targetValue && <p className="mt-0.5 text-[10px] text-destructive">{errors.targetValue.message}</p>}
-        </div>
-
-        <div className="flex items-end">
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? "..." : t("create")}
-          </Button>
-        </div>
-      </form>
-    </div>
-  );
-}
 
 export function AlertsDashboard() {
   const { t } = useTranslation("alerts");
@@ -109,23 +32,13 @@ export function AlertsDashboard() {
       {/* Create button */}
       <div className="flex justify-end">
         <Button size="sm" onClick={() => setShowForm(!showForm)}>
-          <Plus className="h-3.5 w-3.5" />
+          <Bell className="h-3.5 w-3.5" />
           {t("create")}
         </Button>
       </div>
 
       {showForm && (
-        <AlertForm
-          onClose={() => setShowForm(false)}
-          onSubmit={async (data) => {
-            await addAlert({
-              ticker: data.ticker,
-              condition: data.condition as AlertCondition,
-              targetValue: parseFloat(data.targetValue),
-            });
-            setShowForm(false);
-          }}
-        />
+        <AlertForm onClose={() => setShowForm(false)} />
       )}
 
       {/* Alert list */}
@@ -137,6 +50,15 @@ export function AlertsDashboard() {
               alert={alert}
               onDelete={() => deleteAlert(alert.id)}
               onToggle={() => toggleAlert(alert.id)}
+              onUpdate={async (id, data) => {
+                // Delete and re-create — inline edit via form replacement
+                await deleteAlert(id);
+                await addAlert({
+                  ticker: data.ticker,
+                  condition: data.condition,
+                  targetValue: data.targetValue,
+                });
+              }}
             />
           ))}
         </div>
@@ -152,37 +74,153 @@ export function AlertsDashboard() {
   );
 }
 
-function AlertRow({
-  alert,
-  onDelete,
-  onToggle,
-}: {
-  alert: { id: string; ticker: string; condition: AlertCondition; targetValue: number; isActive: boolean; isTriggered: boolean; createdAt: string; isLocal: boolean };
+interface AlertRowProps {
+  alert: {
+    id: string;
+    ticker: string;
+    condition: AlertCondition;
+    targetValue: number;
+    isActive: boolean;
+    isTriggered: boolean;
+    createdAt: string;
+    isLocal: boolean;
+  };
   onDelete: () => void;
   onToggle: () => void;
-}) {
-  const { t } = useTranslation("alerts");
+  onUpdate: (
+    id: string,
+    data: { ticker: string; condition: AlertCondition; targetValue: number },
+  ) => Promise<void>;
+}
 
-  const conditionLabel = {
-    above: t("condition.above"),
-    below: t("condition.below"),
-    percent_change_up: t("condition.percentUp"),
-    percent_change_down: t("condition.percentDown"),
-  }[alert.condition];
+function AlertRow({ alert, onDelete, onToggle, onUpdate }: AlertRowProps) {
+  const { t } = useTranslation("alerts");
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  // Inline edit form state
+  const [editTicker, setEditTicker] = useState(alert.ticker);
+  const [editCondition, setEditCondition] = useState(alert.condition);
+  const [editTarget, setEditTarget] = useState(alert.targetValue.toString());
+
+  const conditionOptions: { value: AlertCondition; label: string }[] = [
+    { value: "above", label: t("condition.above") },
+    { value: "below", label: t("condition.below") },
+    { value: "percent_change_up", label: t("condition.percentUp") },
+    { value: "percent_change_down", label: t("condition.percentDown") },
+  ];
 
   const isPercent = alert.condition.includes("percent");
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await onUpdate(alert.id, {
+        ticker: editTicker,
+        condition: editCondition,
+        targetValue: parseFloat(editTarget),
+      });
+      setEditing(false);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setEditTicker(alert.ticker);
+    setEditCondition(alert.condition);
+    setEditTarget(alert.targetValue.toString());
+    setEditing(false);
+  };
+
+  if (editing) {
+    return (
+      <div className="rounded-md border border-primary/50 bg-card px-3 py-2.5">
+        <div className="mb-2 flex items-center justify-between">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-primary">
+            {t("edit")}
+          </span>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="rounded-sm p-1 text-muted-foreground hover:bg-accent hover:text-foreground disabled:opacity-50"
+              title="Save"
+            >
+              <Check className="h-3.5 w-3.5" />
+            </button>
+            <button
+              onClick={handleCancel}
+              disabled={saving}
+              className="rounded-sm p-1 text-muted-foreground hover:bg-accent hover:text-foreground"
+              title="Cancel"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-3 gap-2">
+          <div>
+            <label className="mb-0.5 block text-[9px] uppercase tracking-wider text-muted-foreground">
+              {t("fields.ticker")}
+            </label>
+            <Input
+              value={editTicker}
+              onChange={(e) => setEditTicker(e.target.value)}
+              className="h-7 font-data text-xs"
+              placeholder="KOEI-R-A"
+            />
+          </div>
+          <div>
+            <label className="mb-0.5 block text-[9px] uppercase tracking-wider text-muted-foreground">
+              {t("fields.condition")}
+            </label>
+            <select
+              value={editCondition}
+              onChange={(e) => setEditCondition(e.target.value as AlertCondition)}
+              className="flex h-7 w-full rounded-md border border-input bg-background px-2 py-1 font-data text-xs text-foreground"
+            >
+              {conditionOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="mb-0.5 block text-[9px] uppercase tracking-wider text-muted-foreground">
+              {t("fields.target")}
+            </label>
+            <Input
+              type="number"
+              step="0.01"
+              value={editTarget}
+              onChange={(e) => setEditTarget(e.target.value)}
+              className="h-7 font-data text-xs"
+              placeholder="150.00"
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
       className={cn(
-        "flex items-center justify-between rounded-md border border-border bg-card px-3 py-2.5",
+        "group flex items-center justify-between rounded-md border border-border bg-card px-3 py-2.5 transition-colors",
         !alert.isActive && "opacity-50",
         alert.isTriggered && "border-amber/30 bg-amber/5",
       )}
     >
       <div className="flex items-center gap-3">
-        {/* Status */}
-        <button onClick={onToggle} className="text-muted-foreground hover:text-foreground">
+        {/* Status toggle */}
+        <button
+          onClick={onToggle}
+          className="text-muted-foreground transition-colors hover:text-foreground"
+          title={alert.isActive ? "Pause alert" : "Resume alert"}
+        >
           {alert.isActive ? (
             <Bell className="h-3.5 w-3.5 text-amber" />
           ) : (
@@ -190,17 +228,19 @@ function AlertRow({
           )}
         </button>
 
-        {/* Info */}
+        {/* Alert info */}
         <div>
           <div className="flex items-center gap-2">
             <span className="font-data text-xs font-semibold text-foreground">
               {alert.ticker}
             </span>
             <span className="text-[10px] text-muted-foreground">
-              {conditionLabel}
+              {conditionOptions.find((o) => o.value === alert.condition)?.label}
             </span>
             <span className="font-data text-xs font-medium text-foreground">
-              {isPercent ? `${alert.targetValue}%` : formatPrice(alert.targetValue)}
+              {isPercent
+                ? `${alert.targetValue}%`
+                : formatPrice(alert.targetValue)}
             </span>
             {alert.isLocal && (
               <span className="rounded-sm bg-muted px-1 py-0.5 text-[9px] text-muted-foreground">
@@ -219,13 +259,23 @@ function AlertRow({
         </div>
       </div>
 
-      {/* Delete */}
-      <button
-        onClick={onDelete}
-        className="rounded-sm p-1 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
-      >
-        <Trash2 className="h-3.5 w-3.5" />
-      </button>
+      {/* Actions — visible on hover */}
+      <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+        <button
+          onClick={() => setEditing(true)}
+          className="rounded-sm p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+          title="Edit alert"
+        >
+          <Pencil className="h-3.5 w-3.5" />
+        </button>
+        <button
+          onClick={onDelete}
+          className="rounded-sm p-1 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+          title="Delete alert"
+        >
+          <Trash2 className="h-3.5 w-3.5" />
+        </button>
+      </div>
     </div>
   );
 }
