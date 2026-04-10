@@ -6,13 +6,14 @@ import { X } from "lucide-react";
 import { useAddTransaction } from "@/features/portfolio/api/portfolio-queries";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { TickerSelect } from "@/components/shared/ticker-select";
 
 const positionSchema = z.object({
-  ticker: z.string().min(1, "Required"),
+  ticker: z.string().min(1, "Obavezno"),
   transactionType: z.enum(["buy", "sell", "dividend"]),
-  shares: z.string().min(1, "Required"),
-  pricePerShare: z.string().min(1, "Required"),
-  transactionDate: z.string().min(1, "Required"),
+  shares: z.string().min(1, "Obavezno"),
+  pricePerShare: z.string().min(1, "Obavezno"),
+  transactionDate: z.string().min(1, "Obavezno"),
   notes: z.string().optional(),
 });
 
@@ -29,6 +30,8 @@ export function AddPositionForm({ onClose }: AddPositionFormProps) {
   const {
     register,
     handleSubmit,
+    setValue,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<PositionValues>({
     resolver: zodResolver(positionSchema),
@@ -37,6 +40,8 @@ export function AddPositionForm({ onClose }: AddPositionFormProps) {
       transactionDate: new Date().toISOString().slice(0, 10),
     },
   });
+
+  const tickerValue = watch("ticker");
 
   const onSubmit = async (data: PositionValues) => {
     await addTransaction.mutateAsync({
@@ -62,7 +67,11 @@ export function AddPositionForm({ onClose }: AddPositionFormProps) {
       <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-2 gap-3 md:grid-cols-3">
         <div>
           <label className="mb-1 block text-[10px] text-muted-foreground">{t("fields.ticker")}</label>
-          <Input placeholder="KOEI-R-A" {...register("ticker")} />
+          <TickerSelect
+            value={tickerValue ?? ""}
+            onChange={(v) => setValue("ticker", v)}
+            placeholder="KOEI-R-A"
+          />
           {errors.ticker && <p className="mt-0.5 text-[10px] text-destructive">{errors.ticker.message}</p>}
         </div>
 
@@ -97,7 +106,7 @@ export function AddPositionForm({ onClose }: AddPositionFormProps) {
 
         <div className="flex items-end">
           <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? "Adding..." : t("addPosition")}
+            {isSubmitting ? "..." : t("addPosition")}
           </Button>
         </div>
       </form>

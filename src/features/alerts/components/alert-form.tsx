@@ -6,12 +6,13 @@ import { X } from "lucide-react";
 import { useCreateAlert } from "@/features/alerts/api/alerts-queries";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { TickerSelect } from "@/components/shared/ticker-select";
 import type { AlertCondition } from "@/types/alert";
 
 const alertSchema = z.object({
-  ticker: z.string().min(1, "Required"),
+  ticker: z.string().min(1, "Obavezno"),
   condition: z.enum(["above", "below", "percent_change_up", "percent_change_down"]),
-  targetValue: z.string().min(1, "Required"),
+  targetValue: z.string().min(1, "Obavezno"),
 });
 
 type AlertValues = z.infer<typeof alertSchema>;
@@ -28,6 +29,8 @@ export function AlertForm({ onClose, defaultTicker }: AlertFormProps) {
   const {
     register,
     handleSubmit,
+    setValue,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<AlertValues>({
     resolver: zodResolver(alertSchema),
@@ -36,6 +39,8 @@ export function AlertForm({ onClose, defaultTicker }: AlertFormProps) {
       condition: "above",
     },
   });
+
+  const tickerValue = watch("ticker");
 
   const onSubmit = async (data: AlertValues) => {
     await createAlert.mutateAsync({
@@ -58,7 +63,11 @@ export function AlertForm({ onClose, defaultTicker }: AlertFormProps) {
       <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <div>
           <label className="mb-1 block text-[10px] text-muted-foreground">{t("fields.ticker")}</label>
-          <Input placeholder="KOEI-R-A" {...register("ticker")} />
+          <TickerSelect
+            value={tickerValue}
+            onChange={(v) => setValue("ticker", v)}
+            placeholder="KOEI-R-A"
+          />
           {errors.ticker && <p className="mt-0.5 text-[10px] text-destructive">{errors.ticker.message}</p>}
         </div>
 
@@ -83,7 +92,7 @@ export function AlertForm({ onClose, defaultTicker }: AlertFormProps) {
 
         <div className="flex items-end">
           <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? "Creating..." : t("create")}
+            {isSubmitting ? "..." : t("create")}
           </Button>
         </div>
       </form>
