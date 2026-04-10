@@ -48,5 +48,9 @@
     "maxDividend": "Max Div. %",
     "noResults": "No stocks match the current filters",
     "results": "{{count}} results from {{total}} stocks"
+  },
+  "empty": {
+    "noNews": "No news",
+    "noNewsDescription": "There are no news articles available for this stock at the moment."
   }
 }

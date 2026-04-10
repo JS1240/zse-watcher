@@ -1,8 +1,11 @@
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { BarChart3 } from "lucide-react";
 import { usePortfolioHoldings } from "@/features/portfolio/api/portfolio-queries";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { PortfolioChart } from "@/features/portfolio/components/portfolio-chart";
 import { ChangeBadge } from "@/components/shared/change-badge";
+import { EmptyState } from "@/components/shared/empty-state";
 import { formatCurrency } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 
@@ -18,6 +21,7 @@ const SECTOR_COLORS = [
 ];
 
 export function PortfolioAnalytics() {
+  const { t } = useTranslation("portfolio");
   const holdings = usePortfolioHoldings();
   const { data: stocksResult } = useStocksLive();
   const stocks = stocksResult?.stocks ?? null;
@@ -64,9 +68,13 @@ export function PortfolioAnalytics() {
 
   if (!analytics) {
     return (
-      <div className="rounded-md border border-border bg-card py-12 text-center">
-        <p className="text-xs text-muted-foreground">Add positions to see analytics</p>
-      </div>
+      <EmptyState
+        icon={<BarChart3 className="h-8 w-8" />}
+        title={t("analytics.empty")}
+        description={t("analytics.emptyDescription")}
+        action={{ label: t("analytics.addAction"), onClick: () => document.getElementById("add-position-btn")?.click() }}
+        className="rounded-md border border-border"
+      />
     );
   }
 

@@ -140,7 +140,7 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
             <Download className="h-3.5 w-3.5" />
             CSV
           </Button>
-          <Button size="sm" onClick={() => setShowAddForm(!showAddForm)}>
+          <Button size="sm" id="add-position-btn" onClick={() => setShowAddForm(!showAddForm)}>
             <Plus className="h-3.5 w-3.5" />
             {t("addPosition")}
           </Button>

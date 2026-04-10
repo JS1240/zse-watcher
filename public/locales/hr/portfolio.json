@@ -26,5 +26,10 @@
   },
   "empty": "Nemate pozicija u portfelju",
   "emptyDescription": "Dodajte svoju prvu poziciju kako biste pratili vrijednost i dobit.",
-  "history": "Povijest transakcija"
+  "history": "Povijest transakcija",
+  "analytics": {
+    "empty": "Nema analitike bez pozicija",
+    "emptyDescription": "Dodajte pozicije u portfelj da biste vidjeli analitiku, sektore i izvedbu.",
+    "addAction": "Dodaj poziciju"
+  }
 }

@@ -26,5 +26,10 @@
   },
   "empty": "No positions in portfolio",
   "emptyDescription": "Add your first position to start tracking your holdings and gains.",
-  "history": "Transaction History"
+  "history": "Transaction History",
+  "analytics": {
+    "empty": "No analytics without positions",
+    "emptyDescription": "Add positions to your portfolio to see analytics, sector allocation and performance.",
+    "addAction": "Add position"
+  }
 }

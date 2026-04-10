@@ -4,6 +4,7 @@ import { CalendarDays } from "lucide-react";
 import { useDividends } from "@/features/dividends/api/dividends-queries";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/shared/empty-state";
 import { formatDate, formatCurrency } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 
@@ -49,9 +50,12 @@ export function DividendsCalendar() {
 
   if (!grouped.length) {
     return (
-      <div className="rounded-md border border-border bg-card py-12 text-center">
-        <CalendarDays className="mx-auto mb-2 h-8 w-8 text-muted-foreground/30" />
-        <p className="text-xs text-muted-foreground">{t("empty.noData")}</p>
+      <div className="rounded-md border border-border bg-card">
+        <EmptyState
+          icon={<CalendarDays className="h-5 w-5" />}
+          title={t("empty.noData")}
+          description={t("empty.noDataDescription")}
+        />
       </div>
     );
   }
