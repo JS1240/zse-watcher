@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- **Empty State for Sold Portfolio** — local portfolio now shows EmptyState with Wallet icon when all positions are sold, distinguishing between zero transactions and "all sold" states with contextual HR/EN copy
+
 ### Added
 
 - **Watchlist Page** — unauthenticated users get a full watchlist with localStorage persistence
