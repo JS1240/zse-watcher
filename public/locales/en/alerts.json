@@ -16,8 +16,13 @@
     "ticker": "Ticker",
     "condition": "Condition",
     "target": "Target Value",
+    "targetHint": "Decimal separator: 150.00 or 150,00",
     "status": "Status",
     "created": "Created"
+  },
+  "validation": {
+    "required": "Required",
+    "positiveNumber": "Must be a positive number"
   },
   "empty": "No alerts configured",
   "emptyDescription": "Create an alert to get notified when a stock reaches your target price.",

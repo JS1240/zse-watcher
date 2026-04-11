@@ -12,14 +12,10 @@ import type { AlertCondition } from "@/types/alert";
 const alertSchema = z.object({
   ticker: z.string().min(1, "Obavezno"),
   condition: z.enum(["above", "below", "percent_change_up", "percent_change_down"]),
-  targetValue: z
-    .string()
-    .min(1, "Obavezno")
-    .transform((v) => parseFloat(v.replace(",", ".")))
-    .refine((v) => !isNaN(v) && v > 0, { message: "Mora biti pozitivan broj" }),
+  targetValue: z.string().min(1, "Obavezno"),
 });
 
-type AlertValues = z.infer<typeof alertSchema>;
+type AlertFormData = z.infer<typeof alertSchema>;
 
 interface AlertFormProps {
   onClose: () => void;
@@ -36,7 +32,7 @@ export function AlertForm({ onClose, defaultTicker }: AlertFormProps) {
     setValue,
     watch,
     formState: { errors, isSubmitting },
-  } = useForm<AlertValues>({
+  } = useForm<AlertFormData>({
     resolver: zodResolver(alertSchema),
     defaultValues: {
       ticker: defaultTicker ?? "",
@@ -46,11 +42,13 @@ export function AlertForm({ onClose, defaultTicker }: AlertFormProps) {
 
   const tickerValue = watch("ticker");
 
-  const onSubmit = async (data: AlertValues) => {
+  const onSubmit = async (data: AlertFormData) => {
+    const parsed = parseFloat(data.targetValue.replace(",", "."));
+    if (isNaN(parsed) || parsed <= 0) return;
     await createAlert.mutateAsync({
       ticker: data.ticker,
       condition: data.condition as AlertCondition,
-      targetValue: data.targetValue,
+      targetValue: parsed,
     });
     onClose();
   };
@@ -90,9 +88,17 @@ export function AlertForm({ onClose, defaultTicker }: AlertFormProps) {
 
         <div>
           <label className="mb-1 block text-[10px] text-muted-foreground">{t("fields.target")}</label>
-          <Input type="number" step="0.01" placeholder="150.00" {...register("targetValue")} />
-          {errors.targetValue && <p className="mt-0.5 text-[10px] text-destructive">{errors.targetValue.message}</p>}
-          <p className="mt-0.5 text-[9px] text-muted-foreground">Decimalni zapis: 150.00 ili 150,00</p>
+          <Input
+            type="number"
+            step="0.01"
+            placeholder="150.00"
+            {...register("targetValue")}
+            error={!!errors.targetValue}
+          />
+          {errors.targetValue && (
+            <p className="mt-0.5 text-[10px] text-destructive">{errors.targetValue.message}</p>
+          )}
+          <p className="mt-0.5 text-[9px] text-muted-foreground">{t("fields.targetHint")}</p>
         </div>
 
         <div className="flex items-end">

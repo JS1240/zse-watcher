@@ -103,6 +103,8 @@ function AlertRow({ alert, onDelete, onToggle, onUpdate }: AlertRowProps) {
   const [editTicker, setEditTicker] = useState(alert.ticker);
   const [editCondition, setEditCondition] = useState(alert.condition);
   const [editTarget, setEditTarget] = useState(alert.targetValue.toString());
+  const [editTickerError, setEditTickerError] = useState(false);
+  const [editTargetError, setEditTargetError] = useState(false);
 
   const conditionOptions: { value: AlertCondition; label: string }[] = [
     { value: "above", label: t("condition.above") },
@@ -115,8 +117,17 @@ function AlertRow({ alert, onDelete, onToggle, onUpdate }: AlertRowProps) {
 
   const handleSave = async () => {
     const parsed = parseFloat(editTarget.replace(",", "."));
-    if (isNaN(parsed) || parsed <= 0) return;
+    if (!editTicker) {
+      setEditTickerError(true);
+      return;
+    }
+    if (isNaN(parsed) || parsed <= 0) {
+      setEditTargetError(true);
+      return;
+    }
     setSaving(true);
+    setEditTickerError(false);
+    setEditTargetError(false);
     try {
       await onUpdate(alert.id, {
         ticker: editTicker,
@@ -133,6 +144,8 @@ function AlertRow({ alert, onDelete, onToggle, onUpdate }: AlertRowProps) {
     setEditTicker(alert.ticker);
     setEditCondition(alert.condition);
     setEditTarget(alert.targetValue.toString());
+    setEditTickerError(false);
+    setEditTargetError(false);
     setEditing(false);
   };
 
@@ -170,10 +183,16 @@ function AlertRow({ alert, onDelete, onToggle, onUpdate }: AlertRowProps) {
             </label>
             <TickerSelect
               value={editTicker}
-              onChange={(v) => setEditTicker(v)}
-              className="h-7 font-data text-xs"
+              onChange={(v) => {
+                setEditTicker(v);
+                if (v) setEditTickerError(false);
+              }}
+              className={cn("h-7 font-data text-xs", editTickerError && "ring-1 ring-destructive")}
               placeholder="KOEI-R-A"
             />
+            {editTickerError && (
+              <p className="mt-0.5 text-[9px] text-destructive">{t("validation.required")}</p>
+            )}
           </div>
           <div>
             <label className="mb-0.5 block text-[9px] uppercase tracking-wider text-muted-foreground">
@@ -199,10 +218,18 @@ function AlertRow({ alert, onDelete, onToggle, onUpdate }: AlertRowProps) {
               type="number"
               step="0.01"
               value={editTarget}
-              onChange={(e) => setEditTarget(e.target.value)}
+              onChange={(e) => {
+                setEditTarget(e.target.value);
+                const parsed = parseFloat(e.target.value.replace(",", "."));
+                if (!isNaN(parsed) && parsed > 0) setEditTargetError(false);
+              }}
+              error={editTargetError}
               className="h-7 font-data text-xs"
               placeholder="150.00"
             />
+            {editTargetError && (
+              <p className="mt-0.5 text-[9px] text-destructive">{t("validation.positiveNumber")}</p>
+            )}
           </div>
         </div>
       </div>

@@ -16,8 +16,13 @@
     "ticker": "Oznaka",
     "condition": "Uvjet",
     "target": "Ciljna vrijednost",
+    "targetHint": "Podržan decimalni zarez: 150.00 ili 150,00",
     "status": "Status",
     "created": "Stvoreno"
+  },
+  "validation": {
+    "required": "Obavezno",
+    "positiveNumber": "Mora biti pozitivan broj"
   },
   "empty": "Nemate postavljenih alarma",
   "emptyDescription": "Postavite alarm i primajte obavijesti kada cijena doseže određenu razinu.",
