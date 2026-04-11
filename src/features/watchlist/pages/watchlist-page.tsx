@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Star, Search } from "lucide-react";
+import { Star, Search, ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocalWatchlist } from "@/features/watchlist/hooks/use-local-watchlist";
 import { useWatchlistItems } from "@/features/watchlist/api/watchlist-queries";
@@ -15,6 +15,41 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { useDebounce } from "@/hooks/use-debounce";
 import type { Stock } from "@/types/stock";
+
+type SortColumn = keyof Pick<Stock, "price" | "changePct" | "turnover" | "volume" | "name">;
+type SortDirection = "asc" | "desc";
+
+function SortHeader({
+  column,
+  label,
+  sort,
+  onSort,
+}: {
+  column: SortColumn;
+  label: string;
+  sort: { column: SortColumn; direction: SortDirection } | null;
+  onSort: (col: SortColumn) => void;
+}) {
+  const isActive = sort?.column === column;
+  const direction = isActive ? sort.direction : null;
+
+  return (
+    <button
+      onClick={() => onSort(column)}
+      className="flex items-center gap-1 transition-colors hover:text-foreground"
+      aria-sort={isActive ? (direction === "asc" ? "ascending" : "descending") : "none"}
+    >
+      <span>{label}</span>
+      {direction === "asc" ? (
+        <ArrowUp className="h-3 w-3 shrink-0" />
+      ) : direction === "desc" ? (
+        <ArrowDown className="h-3 w-3 shrink-0" />
+      ) : (
+        <ArrowUpDown className="h-3 w-3 shrink-0 text-muted-foreground/40" />
+      )}
+    </button>
+  );
+}
 
 export function WatchlistPage() {
   const { t } = useTranslation("watchlist");
@@ -44,6 +79,10 @@ function AuthenticatedWatchlist() {
   const { data: stocksResult } = useStocksLive();
   const stocks = stocksResult?.stocks ?? [];
   const [search, setSearch] = useState("");
+  const [sort, setSort] = useState<{ column: SortColumn; direction: SortDirection } | null>({
+    column: "turnover",
+    direction: "desc",
+  });
   const debouncedSearch = useDebounce(search, 200);
 
   const watchedStocks = useMemo(() => {
@@ -52,14 +91,37 @@ function AuthenticatedWatchlist() {
   }, [stocks, watchlistItems.data]);
 
   const filtered = useMemo(() => {
-    if (!debouncedSearch) return watchedStocks;
-    const q = debouncedSearch.toLowerCase();
-    return watchedStocks.filter(
-      (s) =>
-        s.ticker.toLowerCase().includes(q) ||
-        s.name.toLowerCase().includes(q),
-    );
-  }, [watchedStocks, debouncedSearch]);
+    let result = watchedStocks;
+    if (debouncedSearch) {
+      const q = debouncedSearch.toLowerCase();
+      result = result.filter(
+        (s) =>
+          s.ticker.toLowerCase().includes(q) ||
+          s.name.toLowerCase().includes(q),
+      );
+    }
+    if (!sort) return result;
+    return [...result].sort((a, b) => {
+      const aVal = a[sort.column];
+      const bVal = b[sort.column];
+      if (typeof aVal === "string" && typeof bVal === "string") {
+        return sort.direction === "asc"
+          ? aVal.localeCompare(bVal)
+          : bVal.localeCompare(aVal);
+      }
+      return sort.direction === "asc"
+        ? (aVal as number) - (bVal as number)
+        : (bVal as number) - (aVal as number);
+    });
+  }, [watchedStocks, debouncedSearch, sort]);
+
+  const handleSort = (col: SortColumn) => {
+    setSort((prev) => {
+      if (prev?.column !== col) return { column: col, direction: "desc" };
+      if (prev.direction === "desc") return { column: col, direction: "asc" };
+      return null;
+    });
+  };
 
   if (watchlistItems.isLoading) {
     return (
@@ -85,7 +147,7 @@ function AuthenticatedWatchlist() {
       </div>
 
       {filtered.length > 0 ? (
-        <WatchlistTable stocks={filtered} />
+        <WatchlistTable stocks={filtered} sort={sort} onSort={handleSort} />
       ) : debouncedSearch ? (
         <EmptyState
           icon={<Search className="h-8 w-8" />}
@@ -111,6 +173,10 @@ function LocalWatchlist() {
   const { data: stocksResult } = useStocksLive();
   const stocks = stocksResult?.stocks ?? [];
   const [search, setSearch] = useState("");
+  const [sort, setSort] = useState<{ column: SortColumn; direction: SortDirection } | null>({
+    column: "turnover",
+    direction: "desc",
+  });
   const debouncedSearch = useDebounce(search, 200);
 
   const watchedStocks = useMemo(() => {
@@ -119,14 +185,37 @@ function LocalWatchlist() {
   }, [stocks, items]);
 
   const filtered = useMemo(() => {
-    if (!debouncedSearch) return watchedStocks;
-    const q = debouncedSearch.toLowerCase();
-    return watchedStocks.filter(
-      (s) =>
-        s.ticker.toLowerCase().includes(q) ||
-        s.name.toLowerCase().includes(q),
-    );
-  }, [watchedStocks, debouncedSearch]);
+    let result = watchedStocks;
+    if (debouncedSearch) {
+      const q = debouncedSearch.toLowerCase();
+      result = result.filter(
+        (s) =>
+          s.ticker.toLowerCase().includes(q) ||
+          s.name.toLowerCase().includes(q),
+      );
+    }
+    if (!sort) return result;
+    return [...result].sort((a, b) => {
+      const aVal = a[sort.column];
+      const bVal = b[sort.column];
+      if (typeof aVal === "string" && typeof bVal === "string") {
+        return sort.direction === "asc"
+          ? aVal.localeCompare(bVal)
+          : bVal.localeCompare(aVal);
+      }
+      return sort.direction === "asc"
+        ? (aVal as number) - (bVal as number)
+        : (bVal as number) - (aVal as number);
+    });
+  }, [watchedStocks, debouncedSearch, sort]);
+
+  const handleSort = (col: SortColumn) => {
+    setSort((prev) => {
+      if (prev?.column !== col) return { column: col, direction: "desc" };
+      if (prev.direction === "desc") return { column: col, direction: "asc" };
+      return null;
+    });
+  };
 
   if (stocksResult === undefined) {
     return (
@@ -152,7 +241,7 @@ function LocalWatchlist() {
       </div>
 
       {filtered.length > 0 ? (
-        <WatchlistTable stocks={filtered} showRemove onRemove={removeItem} />
+        <WatchlistTable stocks={filtered} sort={sort} onSort={handleSort} showRemove onRemove={removeItem} />
       ) : debouncedSearch ? (
         <EmptyState
           icon={<Search className="h-8 w-8" />}
@@ -186,20 +275,32 @@ interface WatchlistTableProps {
   stocks: Stock[];
   showRemove?: boolean;
   onRemove?: (ticker: string) => void;
+  sort: { column: SortColumn; direction: SortDirection } | null;
+  onSort: (col: SortColumn) => void;
 }
 
-function WatchlistTable({ stocks, showRemove, onRemove }: WatchlistTableProps) {
+function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort }: WatchlistTableProps) {
   return (
     <div className="overflow-hidden rounded-md border border-border">
       <table className="w-full text-xs">
         <thead>
           <tr className="border-b border-border bg-muted/50 text-[10px] uppercase tracking-wider text-muted-foreground">
             <th className="px-3 py-2 text-left font-medium">Dionica</th>
-            <th className="hidden px-3 py-2 text-left font-medium md:table-cell">Naziv</th>
-            <th className="px-3 py-2 text-right font-medium">Cijena</th>
-            <th className="px-3 py-2 text-right font-medium">Promjena</th>
-            <th className="hidden px-3 py-2 text-right font-medium lg:table-cell">Volumen</th>
-            <th className="hidden px-3 py-2 text-right font-medium lg:table-cell">Promet</th>
+            <th className="hidden px-3 py-2 text-left font-medium md:table-cell">
+              <SortHeader column="name" label="Naziv" sort={sort} onSort={onSort} />
+            </th>
+            <th className="px-3 py-2 text-right font-medium">
+              <SortHeader column="price" label="Cijena" sort={sort} onSort={onSort} />
+            </th>
+            <th className="px-3 py-2 text-right font-medium">
+              <SortHeader column="changePct" label="Promjena" sort={sort} onSort={onSort} />
+            </th>
+            <th className="hidden px-3 py-2 text-right font-medium lg:table-cell">
+              <SortHeader column="volume" label="Volumen" sort={sort} onSort={onSort} />
+            </th>
+            <th className="hidden px-3 py-2 text-right font-medium lg:table-cell">
+              <SortHeader column="turnover" label="Promet" sort={sort} onSort={onSort} />
+            </th>
             {showRemove && <th className="w-10" />}
           </tr>
         </thead>
@@ -208,7 +309,6 @@ function WatchlistTable({ stocks, showRemove, onRemove }: WatchlistTableProps) {
             <WatchlistRow
               key={stock.ticker}
               stock={stock}
-              stocks={stocks}
               showRemove={showRemove}
               onRemove={onRemove}
             />
@@ -219,8 +319,10 @@ function WatchlistTable({ stocks, showRemove, onRemove }: WatchlistTableProps) {
   );
 }
 
-interface WatchlistRowProps extends WatchlistTableProps {
+interface WatchlistRowProps {
   stock: Stock;
+  showRemove?: boolean;
+  onRemove?: (ticker: string) => void;
 }
 
 function WatchlistRow({ stock, showRemove, onRemove }: WatchlistRowProps) {
