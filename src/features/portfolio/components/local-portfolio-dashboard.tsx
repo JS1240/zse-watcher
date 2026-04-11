@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, Trash2, ChevronDown, ChevronUp } from "lucide-react";
+import { Plus, Trash2, ChevronDown, ChevronUp, Wallet } from "lucide-react";
 import { useLocalTransactions } from "@/features/portfolio/hooks/use-local-transactions";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { AddPositionForm } from "@/features/portfolio/components/add-position-form";
 import { Button } from "@/components/ui/button";
 import { ChangeBadge } from "@/components/shared/change-badge";
+import { EmptyState } from "@/components/shared/empty-state";
 import { formatPrice, formatCurrency } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
@@ -204,10 +205,13 @@ export function LocalPortfolioDashboard() {
           </table>
         </div>
       ) : (
-        <div className="rounded-md border border-border bg-card py-12 text-center">
-          <p className="text-xs text-muted-foreground">
-            {hasLocalTransactions ? "No holdings after sells" : t("empty")}
-          </p>
+        <div className="rounded-md border border-border bg-card">
+          <EmptyState
+            icon={<Wallet className="h-8 w-8" />}
+            title={hasLocalTransactions ? t("emptySold") : t("empty")}
+            description={hasLocalTransactions ? t("emptySoldDescription") : t("emptyDescription")}
+            action={{ label: t("addPosition"), onClick: () => setShowAddForm(true) }}
+          />
         </div>
       )}
 

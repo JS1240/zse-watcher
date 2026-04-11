@@ -26,6 +26,8 @@
   },
   "empty": "Nemate pozicija u portfelju",
   "emptyDescription": "Dodajte svoju prvu poziciju kako biste pratili vrijednost i dobit.",
+  "emptySold": "Sve pozicije prodane",
+  "emptySoldDescription": "Imate transakcije u povijesti, ali nema aktivnih pozicija jer su sve prodane. Dodajte novu kupnju da biste nastavili.",
   "history": "Povijest transakcija",
   "analytics": {
     "empty": "Nema analitike bez pozicija",
