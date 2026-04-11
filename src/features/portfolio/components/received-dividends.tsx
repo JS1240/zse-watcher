@@ -5,8 +5,9 @@ import { useReceivedDividends } from "@/features/portfolio/hooks/use-received-di
 import { usePortfolioHoldings } from "@/features/portfolio/api/portfolio-queries";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { formatCurrency } from "@/lib/formatters";
-import { formatDate } from "@/lib/formatters";
+import { EmptyState } from "@/components/shared/empty-state";
+import { formatCurrency, formatDate } from "@/lib/formatters";
+import { cn } from "@/lib/utils";
 
 export function ReceivedDividends() {
   const { t } = useTranslation("portfolio");
@@ -158,12 +159,15 @@ export function ReceivedDividends() {
 
       {/* Dividends list */}
       {!hasDividends ? (
-        <div className="rounded-md border border-border bg-card py-8 text-center">
-          <Receipt className="mx-auto mb-2 h-6 w-6 text-muted-foreground/30" />
-          <p className="text-xs text-muted-foreground">No dividends recorded yet</p>
-        </div>
+        <EmptyState
+          icon={<Receipt className="h-8 w-8" />}
+          title={t("dividends.empty", "No dividends recorded yet")}
+          description={t("dividends.emptyDescription", "Record your first dividends to start tracking your investment returns.")}
+          action={{ label: t("dividends.recordAction", "Record"), onClick: () => setShowForm(true) }}
+          className="rounded-md border border-border"
+        />
       ) : (
-        <div className="space-y-3">
+        <div className={cn("space-y-3", hasDividends && "rounded-md border border-border bg-card p-3")}>
           {Object.entries(grouped).sort(([a], [b]) => b.localeCompare(a)).map(([year, divs]) => (
             <div key={year}>
               <h4 className="mb-1 text-[9px] font-semibold uppercase tracking-wider text-muted-foreground">{year}</h4>

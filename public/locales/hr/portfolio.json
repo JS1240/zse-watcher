@@ -1,5 +1,6 @@
 {
   "title": "Portfelj",
+  "dividendsReceived": "Primljene dividende",
   "addPosition": "Dodaj poziciju",
   "holdings": "Udjeli",
   "totalValue": "Ukupna vrijednost",
@@ -33,5 +34,10 @@
     "empty": "Nema analitike bez pozicija",
     "emptyDescription": "Dodajte pozicije u portfelj da biste vidjeli analitiku, sektore i izvedbu.",
     "addAction": "Dodaj poziciju"
+  },
+  "dividends": {
+    "empty": "Nema zaprimljenih dividendi",
+    "emptyDescription": "Zabilježite svoje prve dividende kako biste pratili prinos od ulaganja.",
+    "recordAction": "Zabilježi"
   }
 }

@@ -1,5 +1,6 @@
 {
   "title": "Portfolio",
+  "dividendsReceived": "Dividends Received",
   "addPosition": "Add Position",
   "holdings": "Holdings",
   "totalValue": "Total Value",
@@ -33,5 +34,10 @@
     "empty": "No analytics without positions",
     "emptyDescription": "Add positions to your portfolio to see analytics, sector allocation and performance.",
     "addAction": "Add position"
+  },
+  "dividends": {
+    "empty": "No dividends recorded yet",
+    "emptyDescription": "Record your first dividends to start tracking your investment returns.",
+    "recordAction": "Record"
   }
 }
