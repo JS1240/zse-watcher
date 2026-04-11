@@ -6,7 +6,7 @@ import { useLocalStorage } from "@/hooks/use-local-storage";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ChangeBadge } from "@/components/shared/change-badge";
-import { Skeleton } from "@/components/ui/skeleton";
+import { ScreenerSkeleton } from "@/features/stocks/components/screener-skeleton";
 import { formatPrice, formatVolume } from "@/lib/formatters";
 import { exportToCsv } from "@/lib/export";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
@@ -258,7 +258,7 @@ export function StockScreener() {
     setPresets((prev) => prev.filter((p) => p.id !== id));
   };
 
-  if (isLoading) return <Skeleton className="h-96" />;
+  if (isLoading) return <ScreenerSkeleton />;
 
   return (
     <div className="space-y-3">
