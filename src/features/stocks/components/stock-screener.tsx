@@ -58,13 +58,10 @@ function ScreenerFilterInput({
 
   const handleChange = (v: string) => {
     setLocalValue(v);
-    if (!error || !touched) {
-      // Pass up immediately if no error, otherwise wait for re-validation
-      const parsed = parseFloat(v.replace(",", "."));
-      const immediateError = v && isNaN(parsed) ? "Mora biti broj" : null;
-      if (!immediateError) {
-        onChange(field, v);
-      }
+    // Validate synchronously so we don't block subsequent keystrokes
+    const immediateError = v && isNaN(parseFloat(v.replace(",", "."))) ? "Mora biti broj" : null;
+    if (!immediateError) {
+      onChange(field, v);
     }
   };
 
