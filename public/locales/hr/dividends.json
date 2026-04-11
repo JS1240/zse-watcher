@@ -1,0 +1,20 @@
+{
+  "calendar": {
+    "exDiv": "Ex-div",
+    "pay": "Isplata"
+  },
+  "tickers": {
+    "HT-R-A": "HT d.d.",
+    "ADRS-P-A": "Adris grupa d.d.",
+    "KOEI-R-A": "Koncar d.d.",
+    "PODR-R-A": "Podravka d.d.",
+    "ZABA-R-A": "Zagrebacka banka d.d.",
+    "ERNT-R-A": "Ericsson Nikola Tesla d.d.",
+    "KRAS-R-A": "Kras d.d.",
+    "MAIS-R-A": "Maistra d.d."
+  },
+  "empty": {
+    "noData": "Nema podataka o dividendama",
+    "noDataDescription": "Dividende ce biti objavljene nakon odobrene skupstine dionicara."
+  }
+}

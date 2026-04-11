@@ -6,6 +6,14 @@
   "remove": "Remove from watchlist",
   "searchPlaceholder": "Search stocks...",
   "browseAction": "Browse stocks",
+  "table": {
+    "ticker": "Ticker",
+    "name": "Name",
+    "price": "Price",
+    "change": "Change",
+    "volume": "Volume",
+    "turnover": "Turnover"
+  },
   "toast": {
     "added": "Added to watchlist",
     "removed": "Removed from watchlist",

@@ -114,12 +114,14 @@ function AlertRow({ alert, onDelete, onToggle, onUpdate }: AlertRowProps) {
   const isPercent = alert.condition.includes("percent");
 
   const handleSave = async () => {
+    const parsed = parseFloat(editTarget.replace(",", "."));
+    if (isNaN(parsed) || parsed <= 0) return;
     setSaving(true);
     try {
       await onUpdate(alert.id, {
         ticker: editTicker,
         condition: editCondition,
-        targetValue: parseFloat(editTarget),
+        targetValue: parsed,
       });
       setEditing(false);
     } finally {

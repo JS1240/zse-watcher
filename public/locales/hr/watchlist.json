@@ -6,6 +6,14 @@
   "remove": "Ukloni iz liste praćenja",
   "searchPlaceholder": "Pretraži dionice...",
   "browseAction": "Pregledaj dionice",
+  "table": {
+    "ticker": "Dionica",
+    "name": "Naziv",
+    "price": "Cijena",
+    "change": "Promjena",
+    "volume": "Volumen",
+    "turnover": "Promet"
+  },
   "toast": {
     "added": "Dionica dodana u listu praćenja",
     "removed": "Dionica uklonjena iz liste praćenja",
