@@ -7,6 +7,7 @@ import { useWatchlistItems } from "@/features/watchlist/api/watchlist-queries";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
 import { WatchlistToggle } from "@/features/watchlist/components/watchlist-toggle";
+import { WatchlistSkeleton } from "@/features/watchlist/components/watchlist-skeleton";
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Input } from "@/components/ui/input";
@@ -124,13 +125,7 @@ function AuthenticatedWatchlist() {
   };
 
   if (watchlistItems.isLoading) {
-    return (
-      <div className="space-y-2">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <Skeleton key={i} className="h-12" />
-        ))}
-      </div>
-    );
+    return <WatchlistSkeleton />;
   }
 
   return (
@@ -218,13 +213,7 @@ function LocalWatchlist() {
   };
 
   if (stocksResult === undefined) {
-    return (
-      <div className="space-y-2">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <Skeleton key={i} className="h-12" />
-        ))}
-      </div>
-    );
+    return <WatchlistSkeleton />;
   }
 
   return (
