@@ -8,6 +8,11 @@
 
 ### Added
 
+- **Watchlist Sortable Columns** — click any column header to sort by name, price, change, volume, or turnover
+  - Sort descending by default; click again to reverse; third click clears sort
+  - SortHeader component with ArrowUp/ArrowDown/ArrowUpDown indicators matching the stock screener pattern
+  - Works in both authenticated (Supabase) and local (localStorage) watchlist views
+
 - **Watchlist Page** — unauthenticated users get a full watchlist with localStorage persistence
   - New `/watchlist` route with sidebar link (shortcut 8) and Star icon
   - Authenticated users: managed via Supabase (existing behavior)
