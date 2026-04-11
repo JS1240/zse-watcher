@@ -1,11 +1,12 @@
 import { useState, useMemo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Filter, RotateCcw, ArrowUpDown, ArrowUp, ArrowDown, Info, Download, Save, Trash2, Bookmark } from "lucide-react";
+import { Filter, RotateCcw, ArrowUpDown, ArrowUp, ArrowDown, Info, Download, Save, Trash2, Bookmark, Search } from "lucide-react";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ChangeBadge } from "@/components/shared/change-badge";
+import { EmptyState } from "@/components/shared/empty-state";
 import { ScreenerSkeleton } from "@/features/stocks/components/screener-skeleton";
 import { formatPrice, formatVolume } from "@/lib/formatters";
 import { exportToCsv } from "@/lib/export";
@@ -539,9 +540,19 @@ export function StockScreener() {
         </table>
 
         {results.length === 0 && (
-          <div className="py-8 text-center text-xs text-muted-foreground">
-            {t("screener.noResults")}
-          </div>
+          <EmptyState
+            icon={<Search className="h-8 w-8" />}
+            title={t("screener.noResults")}
+            description={tc("empty.noResultsDescription")}
+            action={{
+              label: tc("common:actions.reset"),
+              onClick: () => {
+                setFilters(INITIAL_FILTERS);
+                setSort({ column: "turnover", direction: "desc" });
+              },
+            }}
+            variant="action"
+          />
         )}
       </div>
     </div>
