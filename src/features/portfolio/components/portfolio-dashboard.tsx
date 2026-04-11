@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, Download, Wallet } from "lucide-react";
+import { Plus, Download, Wallet, ChevronUp, ChevronDown } from "lucide-react";
 import { usePortfolio } from "@/features/portfolio/api/portfolio-queries";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { useLocalTransactions } from "@/features/portfolio/hooks/use-local-transactions";
@@ -36,6 +36,8 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
   const { select } = useSelectedStock();
 
   const [showAddForm, setShowAddForm] = useState(false);
+  const [sortField, setSortField] = useState<string | null>(null);
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
 
   const holdings = useMemo(() => {
     return computeHoldings(portfolioData?.transactions ?? [], localTxs);
@@ -43,8 +45,57 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
 
   const enrichedHoldings = computeEnrichedHoldings(holdings, stocks);
 
-  const totalPortfolioValue = enrichedHoldings.reduce((sum, h) => sum + h.totalValue, 0);
-  const totalPortfolioGain = enrichedHoldings.reduce((sum, h) => sum + h.totalGain, 0);
+  const sortedHoldings = useMemo(() => {
+    if (!sortField) return enrichedHoldings;
+    return [...enrichedHoldings].sort((a, b) => {
+      let aVal: number | string;
+      let bVal: number | string;
+      switch (sortField) {
+        case "ticker":
+          aVal = a.ticker.toLowerCase();
+          bVal = b.ticker.toLowerCase();
+          break;
+        case "shares":
+          aVal = a.totalShares;
+          bVal = b.totalShares;
+          break;
+        case "avgPrice":
+          aVal = a.avgPrice;
+          bVal = b.avgPrice;
+          break;
+        case "currentPrice":
+          aVal = a.currentPrice;
+          bVal = b.currentPrice;
+          break;
+        case "value":
+          aVal = a.totalValue;
+          bVal = b.totalValue;
+          break;
+        case "gainPct":
+          aVal = a.gainPct;
+          bVal = b.gainPct;
+          break;
+        default:
+          return 0;
+      }
+      if (typeof aVal === "string") {
+        return sortDir === "asc" ? aVal.localeCompare(bVal as string) : (bVal as string).localeCompare(aVal);
+      }
+      return sortDir === "asc" ? aVal - (bVal as number) : (bVal as number) - aVal;
+    });
+  }, [enrichedHoldings, sortField, sortDir]);
+
+  const handleSort = (field: string) => {
+    if (sortField === field) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortField(field);
+      setSortDir("desc");
+    }
+  };
+
+  const totalPortfolioValue = sortedHoldings.reduce((sum, h) => sum + h.totalValue, 0);
+  const totalPortfolioGain = sortedHoldings.reduce((sum, h) => sum + h.totalGain, 0);
   const totalGainPct =
     totalPortfolioValue > 0
       ? (totalPortfolioGain / (totalPortfolioValue - totalPortfolioGain)) * 100
@@ -135,7 +186,7 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
             size="sm"
             variant="outline"
             onClick={handleExportCsv}
-            disabled={enrichedHoldings.length === 0}
+            disabled={sortedHoldings.length === 0}
           >
             <Download className="h-3.5 w-3.5" />
             CSV
@@ -151,23 +202,21 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
       {showAddForm && <AddPositionForm onClose={() => setShowAddForm(false)} />}
 
       {/* Holdings table */}
-      {enrichedHoldings.length > 0 ? (
+      {sortedHoldings.length > 0 ? (
         <div className="overflow-hidden rounded-md border border-border">
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-border bg-muted/50 text-[10px] uppercase tracking-wider text-muted-foreground">
-                <th className="px-3 py-2 text-left font-medium">{t("fields.ticker")}</th>
-                <th className="px-3 py-2 text-right font-medium">{t("fields.shares")}</th>
-                <th className="px-3 py-2 text-right font-medium">{t("fields.avgPrice")}</th>
-                <th className="px-3 py-2 text-right font-medium">{t("fields.currentPrice")}</th>
-                <th className="hidden px-3 py-2 text-right font-medium md:table-cell">
-                  {t("fields.value")}
-                </th>
-                <th className="px-3 py-2 text-right font-medium">{t("fields.gain")}</th>
+                <SortableTh field="ticker" label={t("fields.ticker")} sortField={sortField} sortDir={sortDir} onSort={handleSort} align="left" />
+                <SortableTh field="shares" label={t("fields.shares")} sortField={sortField} sortDir={sortDir} onSort={handleSort} align="right" />
+                <SortableTh field="avgPrice" label={t("fields.avgPrice")} sortField={sortField} sortDir={sortDir} onSort={handleSort} align="right" />
+                <SortableTh field="currentPrice" label={t("fields.currentPrice")} sortField={sortField} sortDir={sortDir} onSort={handleSort} align="right" />
+                <SortableTh field="value" label={t("fields.value")} sortField={sortField} sortDir={sortDir} onSort={handleSort} align="right" className="hidden md:table-cell" />
+                <SortableTh field="gainPct" label={t("fields.gain")} sortField={sortField} sortDir={sortDir} onSort={handleSort} align="right" />
               </tr>
             </thead>
             <tbody>
-              {enrichedHoldings.map((h) => (
+              {sortedHoldings.map((h) => (
                 <tr
                   key={h.ticker}
                   className="border-b border-border/50 last:border-b-0 cursor-pointer hover:bg-accent/50"
@@ -210,6 +259,37 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
         </div>
       )}
     </div>
+  );
+}
+
+interface SortableThProps {
+  field: string;
+  label: string;
+  sortField: string | null;
+  sortDir: "asc" | "desc";
+  onSort: (field: string) => void;
+  align?: "left" | "right";
+  className?: string;
+}
+
+function SortableTh({ field, label, sortField, sortDir, onSort, align = "left", className }: SortableThProps) {
+  const isActive = sortField === field;
+  return (
+    <th
+      className={cn(
+        "px-3 py-2 font-medium cursor-pointer select-none hover:text-foreground transition-colors",
+        align === "right" ? "text-right" : "text-left",
+        isActive ? "text-foreground" : "text-muted-foreground",
+        className,
+      )}
+      onClick={() => onSort(field)}
+    >
+      <span className={cn("inline-flex items-center gap-0.5", align === "right" ? "flex-row-reverse" : "flex-row")}>
+        {label}
+        {isActive && (sortDir === "asc" ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />)}
+        {!isActive && <span className="h-3 w-3 opacity-30">⇅</span>}
+      </span>
+    </th>
   );
 }
 
