@@ -280,26 +280,27 @@ interface WatchlistTableProps {
 }
 
 function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort }: WatchlistTableProps) {
+  const { t } = useTranslation("watchlist");
   return (
     <div className="overflow-hidden rounded-md border border-border">
       <table className="w-full text-xs">
         <thead>
           <tr className="border-b border-border bg-muted/50 text-[10px] uppercase tracking-wider text-muted-foreground">
-            <th className="px-3 py-2 text-left font-medium">Dionica</th>
+            <th className="px-3 py-2 text-left font-medium">{t("table.ticker")}</th>
             <th className="hidden px-3 py-2 text-left font-medium md:table-cell">
-              <SortHeader column="name" label="Naziv" sort={sort} onSort={onSort} />
+              <SortHeader column="name" label={t("table.name")} sort={sort} onSort={onSort} />
             </th>
             <th className="px-3 py-2 text-right font-medium">
-              <SortHeader column="price" label="Cijena" sort={sort} onSort={onSort} />
+              <SortHeader column="price" label={t("table.price")} sort={sort} onSort={onSort} />
             </th>
             <th className="px-3 py-2 text-right font-medium">
-              <SortHeader column="changePct" label="Promjena" sort={sort} onSort={onSort} />
+              <SortHeader column="changePct" label={t("table.change")} sort={sort} onSort={onSort} />
             </th>
             <th className="hidden px-3 py-2 text-right font-medium lg:table-cell">
-              <SortHeader column="volume" label="Volumen" sort={sort} onSort={onSort} />
+              <SortHeader column="volume" label={t("table.volume")} sort={sort} onSort={onSort} />
             </th>
             <th className="hidden px-3 py-2 text-right font-medium lg:table-cell">
-              <SortHeader column="turnover" label="Promet" sort={sort} onSort={onSort} />
+              <SortHeader column="turnover" label={t("table.turnover")} sort={sort} onSort={onSort} />
             </th>
             {showRemove && <th className="w-10" />}
           </tr>
