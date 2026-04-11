@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Filter, RotateCcw, ArrowUpDown, ArrowUp, ArrowDown, Info, Download, Save, Trash2, Bookmark } from "lucide-react";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
@@ -11,6 +11,101 @@ import { formatPrice, formatVolume } from "@/lib/formatters";
 import { exportToCsv } from "@/lib/export";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
 import type { Stock } from "@/types/stock";
+import { cn } from "@/lib/utils";
+
+/** Validation helper: returns error message or null if valid */
+function validateFilterValue(value: string, field: keyof ScreenerFilters): string | null {
+  if (!value) return null; // Empty is valid (no filter)
+  const parsed = parseFloat(value.replace(",", "."));
+  if (isNaN(parsed)) return "Mora biti broj";
+  if (parsed < 0) return "Ne može biti negativan";
+  if (field === "minPrice" || field === "maxPrice") {
+    if (parsed > 100_000) return "Prevelik iznos";
+  }
+  if (field === "minTurnover") {
+    if (parsed > 10_000_000) return "Prevelik iznos";
+  }
+  return null;
+}
+
+interface ScreenerFilterInputProps {
+  label: string;
+  field: keyof ScreenerFilters;
+  placeholder?: string;
+  inputMode?: "decimal" | "numeric";
+  className?: string;
+}
+
+function ScreenerFilterInput({
+  label,
+  field,
+  value,
+  onChange,
+  placeholder,
+  inputMode = "decimal",
+  className,
+}: ScreenerFilterInputProps & { value: string; onChange: (key: keyof ScreenerFilters, value: string) => void }) {
+  const [localValue, setLocalValue] = useState(value);
+  const [touched, setTouched] = useState(false);
+  const error = touched ? validateFilterValue(localValue, field) : null;
+  const hasValue = localValue !== "";
+
+  // Sync with parent when parent value changes (e.g. preset load)
+  useEffect(() => {
+    setLocalValue(value);
+  }, [value]);
+
+
+  const handleChange = (v: string) => {
+    setLocalValue(v);
+    if (!error || !touched) {
+      // Pass up immediately if no error, otherwise wait for re-validation
+      const parsed = parseFloat(v.replace(",", "."));
+      const immediateError = v && isNaN(parsed) ? "Mora biti broj" : null;
+      if (!immediateError) {
+        onChange(field, v);
+      }
+    }
+  };
+
+  const handleBlur = () => {
+    setTouched(true);
+    if (localValue && !error) {
+      onChange(field, localValue);
+    }
+  };
+
+
+  return (
+    <div className={className}>
+      <label className={cn("mb-1 block text-[9px] uppercase", error ? "text-destructive" : "text-muted-foreground")}>
+        {label}
+      </label>
+      <div className="relative">
+        <Input
+          type="text"
+          inputMode={inputMode}
+          value={localValue}
+          onChange={(e) => handleChange(e.target.value)}
+          onBlur={handleBlur}
+          placeholder={placeholder}
+          className={cn(
+            "h-7 text-[11px] font-data transition-all",
+            error && "border-destructive/60 bg-destructive/5 pr-7",
+            hasValue && !error && "border-primary/40 bg-primary/5",
+          )}
+        />
+        {error && (
+          <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-1.5">
+            <span className="text-[9px] font-medium text-destructive">
+              {error}
+            </span>
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
 
 interface ScreenerFilters {
   sector: string;
@@ -259,102 +354,69 @@ export function StockScreener() {
             </select>
           </div>
 
-          <div>
-            <label className="mb-1 block text-[9px] uppercase text-muted-foreground">
-              {t("screener.minPrice")}
-            </label>
-            <Input
-              type="number"
-              step="0.01"
-              value={filters.minPrice}
-              onChange={(e) => updateFilter("minPrice", e.target.value)}
-              className="h-7 text-[11px]"
-              placeholder="0"
-            />
-          </div>
-
-          <div>
-            <label className="mb-1 block text-[9px] uppercase text-muted-foreground">
-              {t("screener.maxPrice")}
-            </label>
-            <Input
-              type="number"
-              step="0.01"
-              value={filters.maxPrice}
-              onChange={(e) => updateFilter("maxPrice", e.target.value)}
-              className="h-7 text-[11px]"
-              placeholder="1000"
-            />
-          </div>
-
-          <div>
-            <label className="mb-1 block text-[9px] uppercase text-muted-foreground">
-              {t("screener.minChange")}
-            </label>
-            <Input
-              type="number"
-              step="0.1"
-              value={filters.minChange}
-              onChange={(e) => updateFilter("minChange", e.target.value)}
-              className="h-7 text-[11px]"
-              placeholder="-10"
-            />
-          </div>
-
-          <div>
-            <label className="mb-1 block text-[9px] uppercase text-muted-foreground">
-              {t("screener.maxChange")}
-            </label>
-            <Input
-              type="number"
-              step="0.1"
-              value={filters.maxChange}
-              onChange={(e) => updateFilter("maxChange", e.target.value)}
-              className="h-7 text-[11px]"
-              placeholder="10"
-            />
-          </div>
-
-          <div>
-            <label className="mb-1 block text-[9px] uppercase text-muted-foreground">
-              {t("screener.minTurnover")}
-            </label>
-            <Input
-              type="number"
-              value={filters.minTurnover}
-              onChange={(e) => updateFilter("minTurnover", e.target.value)}
-              className="h-7 text-[11px]"
-              placeholder="0"
-            />
-          </div>
-
-          <div>
-            <label className="mb-1 block text-[9px] uppercase text-muted-foreground">
-              {t("screener.minDividend")}
-            </label>
-            <Input
-              type="number"
-              step="0.1"
-              value={filters.minDividend}
-              onChange={(e) => updateFilter("minDividend", e.target.value)}
-              className="h-7 text-[11px]"
-              placeholder="0"
-            />
-          </div>
-
-          <div>
-            <label className="mb-1 block text-[9px] uppercase text-muted-foreground">
-              {t("screener.maxDividend")}
-            </label>
-            <Input
-              type="number"
-              step="0.1"
-              value={filters.maxDividend}
-              onChange={(e) => updateFilter("maxDividend", e.target.value)}
-              className="h-7 text-[11px]"
-              placeholder="10"
-            />
-          </div>
+          <ScreenerFilterInput
+            label={t("screener.minPrice")}
+            field="minPrice"
+            value={filters.minPrice}
+            onChange={updateFilter}
+            placeholder="0"
+            inputMode="decimal"
+            className="col-span-1"
+          />
+          <ScreenerFilterInput
+            label={t("screener.maxPrice")}
+            field="maxPrice"
+            value={filters.maxPrice}
+            onChange={updateFilter}
+            placeholder="1000"
+            inputMode="decimal"
+            className="col-span-1"
+          />
+          <ScreenerFilterInput
+            label={t("screener.minChange")}
+            field="minChange"
+            value={filters.minChange}
+            onChange={updateFilter}
+            placeholder="-10"
+            inputMode="decimal"
+            className="col-span-1"
+          />
+          <ScreenerFilterInput
+            label={t("screener.maxChange")}
+            field="maxChange"
+            value={filters.maxChange}
+            onChange={updateFilter}
+            placeholder="10"
+            inputMode="decimal"
+            className="col-span-1"
+          />
+          <ScreenerFilterInput
+            label={t("screener.minTurnover")}
+            field="minTurnover"
+            value={filters.minTurnover}
+            onChange={updateFilter}
+            placeholder="0"
+            inputMode="numeric"
+            className="col-span-1"
+          />
+          <ScreenerFilterInput
+            label={t("screener.minDividend")}
+            field="minDividend"
+            value={filters.minDividend}
+            onChange={updateFilter}
+            placeholder="0"
+            inputMode="decimal"
+            className="col-span-1"
+          />
+          <ScreenerFilterInput
+            label={t("screener.maxDividend")}
+            field="maxDividend"
+            value={filters.maxDividend}
+            onChange={updateFilter}
+            placeholder="10"
+            inputMode="decimal"
+            className="col-span-1"
+          />
         </div>
       </div>
 
