@@ -274,7 +274,7 @@ function AlertRow({ alert, onDelete, onToggle, onUpdate }: AlertRowProps) {
             </span>
             {alert.isLocal && (
               <span className="rounded-sm bg-muted px-1 py-0.5 text-[9px] text-muted-foreground">
-                local
+                {t("status.local")}
               </span>
             )}
           </div>

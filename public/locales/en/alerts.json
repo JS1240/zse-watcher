@@ -10,7 +10,8 @@
   "status": {
     "active": "Active",
     "triggered": "Triggered",
-    "disabled": "Disabled"
+    "disabled": "Disabled",
+    "local": "local"
   },
   "fields": {
     "ticker": "Ticker",

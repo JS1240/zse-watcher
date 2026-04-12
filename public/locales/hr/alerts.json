@@ -10,7 +10,8 @@
   "status": {
     "active": "Aktivan",
     "triggered": "Aktiviran",
-    "disabled": "Onemogucen"
+    "disabled": "Onemogucen",
+    "local": "lokalno"
   },
   "fields": {
     "ticker": "Oznaka",
