@@ -47,7 +47,13 @@
     "minDividend": "Min Div. %",
     "maxDividend": "Max Div. %",
     "noResults": "No stocks match the current filters",
-    "results": "{{count}} results from {{total}} stocks"
+    "noStocks": "No stocks to display",
+    "results": "{{count}} results from {{total}} stocks",
+    "validation": {
+      "mustBeNumber": "Must be a number",
+      "notNegative": "Cannot be negative",
+      "tooLarge": "Value too large"
+    }
   },
   "empty": {
     "noNews": "No news",

@@ -15,16 +15,16 @@ import type { Stock } from "@/types/stock";
 import { cn } from "@/lib/utils";
 
 /** Validation helper: returns error message or null if valid */
-function validateFilterValue(value: string, field: keyof ScreenerFilters): string | null {
+function validateFilterValue(value: string, field: keyof ScreenerFilters, t: (key: string) => string): string | null {
   if (!value) return null; // Empty is valid (no filter)
   const parsed = parseFloat(value.replace(",", "."));
-  if (isNaN(parsed)) return "Mora biti broj";
-  if (parsed < 0) return "Ne može biti negativan";
+  if (isNaN(parsed)) return t("screener.validation.mustBeNumber");
+  if (parsed < 0) return t("screener.validation.notNegative");
   if (field === "minPrice" || field === "maxPrice") {
-    if (parsed > 100_000) return "Prevelik iznos";
+    if (parsed > 100_000) return t("screener.validation.tooLarge");
   }
   if (field === "minTurnover") {
-    if (parsed > 10_000_000) return "Prevelik iznos";
+    if (parsed > 10_000_000) return t("screener.validation.tooLarge");
   }
   return null;
 }
@@ -46,9 +46,10 @@ function ScreenerFilterInput({
   inputMode = "decimal",
   className,
 }: ScreenerFilterInputProps & { value: string; onChange: (key: keyof ScreenerFilters, value: string) => void }) {
+  const { t } = useTranslation("stocks");
   const [localValue, setLocalValue] = useState(value);
   const [touched, setTouched] = useState(false);
-  const error = touched ? validateFilterValue(localValue, field) : null;
+  const error = touched ? validateFilterValue(localValue, field, t) : null;
   const hasValue = localValue !== "";
 
   // Sync with parent when parent value changes (e.g. preset load)
@@ -60,7 +61,7 @@ function ScreenerFilterInput({
   const handleChange = (v: string) => {
     setLocalValue(v);
     // Validate synchronously so we don't block subsequent keystrokes
-    const immediateError = v && isNaN(parseFloat(v.replace(",", "."))) ? "Mora biti broj" : null;
+    const immediateError = v && isNaN(parseFloat(v.replace(",", "."))) ? t("screener.validation.mustBeNumber") : null;
     if (!immediateError) {
       onChange(field, v);
     }
