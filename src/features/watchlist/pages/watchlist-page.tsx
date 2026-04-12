@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Star, Search, ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
+import { Star, Search, ArrowUp, ArrowDown, ArrowUpDown, GripVertical } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocalWatchlist } from "@/features/watchlist/hooks/use-local-watchlist";
 import { useWatchlistItems } from "@/features/watchlist/api/watchlist-queries";
@@ -12,9 +12,26 @@ import { ChangeBadge } from "@/components/shared/change-badge";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Input } from "@/components/ui/input";
 import { formatPrice, formatVolume } from "@/lib/formatters";
-import { Skeleton } from "@/components/ui/skeleton";
+
 import { cn } from "@/lib/utils";
 import { useDebounce } from "@/hooks/use-debounce";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import type { Stock } from "@/types/stock";
 
 type SortColumn = keyof Pick<Stock, "price" | "changePct" | "turnover" | "volume" | "name">;
@@ -161,18 +178,141 @@ function AuthenticatedWatchlist() {
   );
 }
 
+function SortableRow({
+  stock,
+  showRemove,
+  onRemove,
+}: {
+  stock: Stock;
+  showRemove?: boolean;
+  onRemove?: (ticker: string) => void;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: stock.ticker });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 100 : "auto",
+  };
+
+  const { select, selectedTicker } = useSelectedStock();
+  const isSelected = selectedTicker === stock.ticker;
+
+  return (
+    <tr
+      ref={setNodeRef}
+      style={style}
+      role="button"
+      tabIndex={0}
+      onClick={() => select(stock.ticker)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          select(stock.ticker);
+        }
+      }}
+      className={cn(
+        "group cursor-pointer border-b border-border/50 transition-colors hover:bg-accent/50",
+        "last:border-b-0",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        isSelected && "border-l-2 border-l-primary bg-accent/30",
+        isDragging && "bg-muted",
+      )}
+    >
+      <td className="px-3 py-2">
+        <div className="flex items-center gap-1">
+          <button
+            {...attributes}
+            {...listeners}
+            className="cursor-grab rounded-sm p-1 text-muted-foreground hover:text-foreground active:cursor-grabbing"
+            title="Drag to reorder"
+          >
+            <GripVertical className="h-3.5 w-3.5" />
+          </button>
+          {showRemove ? (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onRemove?.(stock.ticker);
+              }}
+              className="rounded-sm p-1 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+              title="Remove"
+            >
+              <Star className="h-3.5 w-3.5 fill-amber text-amber" />
+            </button>
+          ) : (
+            <WatchlistToggle ticker={stock.ticker} />
+          )}
+          <span className="font-data text-xs font-semibold text-foreground">
+            {stock.ticker}
+          </span>
+        </div>
+      </td>
+      <td className="hidden px-3 py-2 md:table-cell">
+        <span className="truncate text-xs text-muted-foreground">{stock.name}</span>
+      </td>
+      <td className="px-3 py-2 text-right">
+        <span className="font-data text-xs tabular-nums font-medium text-foreground">
+          {formatPrice(stock.price)}
+        </span>
+      </td>
+      <td className="px-3 py-2 text-right">
+        <ChangeBadge value={stock.changePct} showIcon={false} />
+      </td>
+      <td className="hidden px-3 py-2 text-right lg:table-cell">
+        <span className="font-data text-xs tabular-nums text-muted-foreground">
+          {formatVolume(stock.volume)}
+        </span>
+      </td>
+      <td className="hidden px-3 py-2 text-right lg:table-cell">
+        <span className="font-data text-xs tabular-nums text-muted-foreground">
+          {formatVolume(stock.turnover)} EUR
+        </span>
+      </td>
+      {showRemove && <td />}
+    </tr>
+  );
+}
+
 function LocalWatchlist() {
   const { t } = useTranslation("watchlist");
   const { t: tc } = useTranslation("common");
-  const { items, removeItem } = useLocalWatchlist();
+  const { items, removeItem, reorder: reorderItems } = useLocalWatchlist();
   const { data: stocksResult } = useStocksLive();
   const stocks = stocksResult?.stocks ?? [];
   const [search, setSearch] = useState("");
-  const [sort, setSort] = useState<{ column: SortColumn; direction: SortDirection } | null>({
-    column: "turnover",
-    direction: "desc",
-  });
+  const [sort, setSort] = useState<{ column: SortColumn; direction: SortDirection } | null>(null);
   const debouncedSearch = useDebounce(search, 200);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = items.findIndex((i) => i.ticker === active.id);
+    const newIndex = items.findIndex((i) => i.ticker === over.id);
+    if (oldIndex !== -1 && newIndex !== -1) {
+      reorderItems(arrayMove(items, oldIndex, newIndex));
+    }
+  };
 
   const watchedStocks = useMemo(() => {
     const tickerSet = new Set(items.map((i) => i.ticker));
@@ -230,7 +370,37 @@ function LocalWatchlist() {
       </div>
 
       {filtered.length > 0 ? (
-        <WatchlistTable stocks={filtered} sort={sort} onSort={handleSort} showRemove onRemove={removeItem} />
+        // Only enable drag-drop when not filtering (preserves actual watchlist order)
+        !debouncedSearch && items.length > 1 ? (
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={filtered.map((s) => s.ticker)}
+              strategy={verticalListSortingStrategy}
+            >
+              <WatchlistTable
+                stocks={filtered}
+                sort={sort}
+                onSort={handleSort}
+                showRemove
+                onRemove={removeItem}
+                dragEnabled
+              />
+            </SortableContext>
+          </DndContext>
+        ) : (
+          <WatchlistTable
+            stocks={filtered}
+            sort={sort}
+            onSort={handleSort}
+            showRemove
+            onRemove={removeItem}
+            dragEnabled={false}
+          />
+        )
       ) : debouncedSearch ? (
         <EmptyState
           icon={<Search className="h-8 w-8" />}
@@ -266,9 +436,10 @@ interface WatchlistTableProps {
   onRemove?: (ticker: string) => void;
   sort: { column: SortColumn; direction: SortDirection } | null;
   onSort: (col: SortColumn) => void;
+  dragEnabled?: boolean;
 }
 
-function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort }: WatchlistTableProps) {
+function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort, dragEnabled }: WatchlistTableProps) {
   const { t } = useTranslation("watchlist");
   return (
     <div className="overflow-hidden rounded-md border border-border">
@@ -295,14 +466,23 @@ function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort }: Watchlis
           </tr>
         </thead>
         <tbody>
-          {stocks.map((stock) => (
-            <WatchlistRow
-              key={stock.ticker}
-              stock={stock}
-              showRemove={showRemove}
-              onRemove={onRemove}
-            />
-          ))}
+          {stocks.map((stock) =>
+            dragEnabled ? (
+              <SortableRow
+                key={stock.ticker}
+                stock={stock}
+                showRemove={showRemove}
+                onRemove={onRemove}
+              />
+            ) : (
+              <WatchlistRow
+                key={stock.ticker}
+                stock={stock}
+                showRemove={showRemove}
+                onRemove={onRemove}
+              />
+            )
+          )}
         </tbody>
       </table>
     </div>

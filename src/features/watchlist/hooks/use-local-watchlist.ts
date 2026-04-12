@@ -45,11 +45,17 @@ export function useLocalWatchlist() {
     queryClient.invalidateQueries({ queryKey: ["local-watchlist"] });
   }, [queryClient]);
 
+  const reorder = useCallback((newOrder: LocalWatchlistItem[]) => {
+    setStorageItems(newOrder);
+    queryClient.setQueryData(["local-watchlist"], newOrder);
+    queryClient.invalidateQueries({ queryKey: ["local-watchlist"] });
+  }, [queryClient]);
+
   const clearAll = useCallback(() => {
     setStorageItems([]);
     queryClient.setQueryData(["local-watchlist"], []);
     queryClient.invalidateQueries({ queryKey: ["local-watchlist"] });
   }, [queryClient]);
 
-  return { items, addItem, removeItem, clearAll };
+  return { items, addItem, removeItem, reorder, clearAll };
 }

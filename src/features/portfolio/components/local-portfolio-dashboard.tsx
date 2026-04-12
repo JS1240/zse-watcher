@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, Trash2, ChevronDown, ChevronUp, Wallet } from "lucide-react";
+import { Plus, Trash2, ChevronDown, ChevronUp, Wallet, Download } from "lucide-react";
 import { useLocalTransactions } from "@/features/portfolio/hooks/use-local-transactions";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { AddPositionForm } from "@/features/portfolio/components/add-position-form";
@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { EmptyState } from "@/components/shared/empty-state";
 import { formatPrice, formatCurrency } from "@/lib/formatters";
+import { exportToCsv } from "@/lib/export";
 import { cn } from "@/lib/utils";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
 
@@ -86,6 +87,30 @@ export function LocalPortfolioDashboard() {
       ? (totalPortfolioGain / (totalPortfolioValue - totalPortfolioGain)) * 100
       : 0;
 
+  const handleExportCsv = () => {
+    const headers = [
+      "Ticker",
+      "Name",
+      "Shares",
+      "Avg Price (EUR)",
+      "Current Price (EUR)",
+      "Value (EUR)",
+      "Gain (EUR)",
+      "Gain (%)",
+    ];
+    const rows = enrichedHoldings.map((h) => [
+      h.ticker,
+      h.name,
+      h.totalShares.toString(),
+      h.avgPrice.toFixed(2),
+      h.currentPrice.toFixed(2),
+      h.totalValue.toFixed(2),
+      h.totalGain.toFixed(2),
+      h.gainPct.toFixed(2),
+    ]);
+    exportToCsv(`zse-portfolio-local-${new Date().toISOString().split("T")[0]}`, headers, rows);
+  };
+
   return (
     <div className="space-y-4">
       {/* Local indicator */}
@@ -142,8 +167,14 @@ export function LocalPortfolioDashboard() {
         </div>
       </div>
 
-      {/* Add position button */}
-      <div className="flex justify-end">
+      {/* Add position + export buttons */}
+      <div className="flex justify-end gap-2">
+        {enrichedHoldings.length > 0 && (
+          <Button size="sm" variant="outline" onClick={handleExportCsv}>
+            <Download className="h-3.5 w-3.5" />
+            CSV
+          </Button>
+        )}
         <Button size="sm" onClick={() => setShowAddForm(!showAddForm)}>
           <Plus className="h-3.5 w-3.5" />
           {t("addPosition")}
