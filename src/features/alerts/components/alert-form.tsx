@@ -9,11 +9,17 @@ import { Input } from "@/components/ui/input";
 import { TickerSelect } from "@/components/shared/ticker-select";
 import type { AlertCondition } from "@/types/alert";
 
+const translateError = (key: string | undefined, t: (key: string) => string) => {
+  if (!key) return "";
+  return key.includes(".") ? t(key) : key;
+};
+
 const alertSchema = z.object({
-  ticker: z.string().min(1, "Obavezno"),
+  ticker: z.string().min(1, "validation.required"),
   condition: z.enum(["above", "below", "percent_change_up", "percent_change_down"]),
-  targetValue: z.string().min(1, "Obavezno"),
+  targetValue: z.string().min(1, "validation.required"),
 });
+
 
 type AlertFormData = z.infer<typeof alertSchema>;
 
@@ -70,7 +76,7 @@ export function AlertForm({ onClose, defaultTicker }: AlertFormProps) {
             onChange={(v) => setValue("ticker", v)}
             placeholder="KOEI-R-A"
           />
-          {errors.ticker && <p className="mt-0.5 text-[10px] text-destructive">{errors.ticker.message}</p>}
+          {errors.ticker && <p className="mt-0.5 text-[10px] text-destructive">{translateError(errors.ticker.message, t)}</p>}
         </div>
 
         <div>
@@ -96,7 +102,7 @@ export function AlertForm({ onClose, defaultTicker }: AlertFormProps) {
             error={!!errors.targetValue}
           />
           {errors.targetValue && (
-            <p className="mt-0.5 text-[10px] text-destructive">{errors.targetValue.message}</p>
+            <p className="mt-0.5 text-[10px] text-destructive">{translateError(errors.targetValue.message, t)}</p>
           )}
           <p className="mt-0.5 text-[9px] text-muted-foreground">{t("fields.targetHint")}</p>
         </div>

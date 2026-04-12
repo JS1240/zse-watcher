@@ -9,13 +9,18 @@ import { Input } from "@/components/ui/input";
 import { TickerSelect } from "@/components/shared/ticker-select";
 
 const positionSchema = z.object({
-  ticker: z.string().min(1, "Obavezno"),
+  ticker: z.string().min(1, "validation.required"),
   transactionType: z.enum(["buy", "sell", "dividend"]),
-  shares: z.string().min(1, "Obavezno"),
-  pricePerShare: z.string().min(1, "Obavezno"),
-  transactionDate: z.string().min(1, "Obavezno"),
+  shares: z.string().min(1, "validation.required"),
+  pricePerShare: z.string().min(1, "validation.required"),
+  transactionDate: z.string().min(1, "validation.required"),
   notes: z.string().optional(),
 });
+
+const translateError = (key: string | undefined, t: (key: string) => string) => {
+  if (!key) return "";
+  return key.includes(".") ? t(key) : key;
+};
 
 type PositionValues = z.infer<typeof positionSchema>;
 
@@ -72,7 +77,7 @@ export function AddPositionForm({ onClose }: AddPositionFormProps) {
             onChange={(v) => setValue("ticker", v)}
             placeholder="KOEI-R-A"
           />
-          {errors.ticker && <p className="mt-0.5 text-[10px] text-destructive">{errors.ticker.message}</p>}
+          {errors.ticker && <p className="mt-0.5 text-[10px] text-destructive">{translateError(errors.ticker.message, t)}</p>}
         </div>
 
         <div>
@@ -90,13 +95,13 @@ export function AddPositionForm({ onClose }: AddPositionFormProps) {
         <div>
           <label className="mb-1 block text-[10px] text-muted-foreground">{t("fields.shares")}</label>
           <Input type="number" step="1" placeholder="100" {...register("shares")} />
-          {errors.shares && <p className="mt-0.5 text-[10px] text-destructive">{errors.shares.message}</p>}
+          {errors.shares && <p className="mt-0.5 text-[10px] text-destructive">{translateError(errors.shares.message, t)}</p>}
         </div>
 
         <div>
           <label className="mb-1 block text-[10px] text-muted-foreground">{t("fields.avgPrice")}</label>
           <Input type="number" step="0.01" placeholder="142.00" {...register("pricePerShare")} />
-          {errors.pricePerShare && <p className="mt-0.5 text-[10px] text-destructive">{errors.pricePerShare.message}</p>}
+          {errors.pricePerShare && <p className="mt-0.5 text-[10px] text-destructive">{translateError(errors.pricePerShare.message, t)}</p>}
         </div>
 
         <div>
