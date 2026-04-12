@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { EmptyState } from "@/components/shared/empty-state";
+import { ErrorState } from "@/components/shared/error-state";
 import { ScreenerSkeleton } from "@/features/stocks/components/screener-skeleton";
 import { formatPrice, formatVolume } from "@/lib/formatters";
 import { exportToCsv } from "@/lib/export";
@@ -174,7 +175,7 @@ function SortHeader({
 export function StockScreener() {
   const { t } = useTranslation("stocks");
   const { t: tc } = useTranslation("common");
-  const { data: result, isLoading } = useStocksLive();
+  const { data: result, isLoading, isError, refetch } = useStocksLive();
   const stocks = result?.stocks ?? null;
   const isMockData = result?.isMockData ?? false;
   const { select } = useSelectedStock();
@@ -261,6 +262,16 @@ export function StockScreener() {
   };
 
   if (isLoading) return <ScreenerSkeleton />;
+
+  if (isError) {
+    return (
+      <ErrorState
+        title={tc("errors.generic")}
+        description={tc("errors.network")}
+        retry={{ onRetry: refetch, label: tc("errors.tryAgain") }}
+      />
+    );
+  }
 
   return (
     <div className="space-y-3">

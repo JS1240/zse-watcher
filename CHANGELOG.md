@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+### Added
+
+- **ErrorState Component** — reusable error display with retry button for failed API calls
+  - Red circle-X icon, title + description + optional hint
+  - Retry button that calls `refetch()` on the failed query
+  - Integrated into StockScreener, AlertsDashboard, and NewsFeed components
+
 ### Fixed
 
 - **Empty State for Sold Portfolio** — local portfolio now shows EmptyState with Wallet icon when all positions are sold, distinguishing between zero transactions and "all sold" states with contextual HR/EN copy

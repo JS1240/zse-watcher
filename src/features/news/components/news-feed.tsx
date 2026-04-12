@@ -7,6 +7,7 @@ import { ArticleDrawer } from "@/features/news/components/article-drawer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatDate, formatTime } from "@/lib/formatters";
 import { EmptyState } from "@/components/shared/empty-state";
+import { ErrorState } from "@/components/shared/error-state";
 import type { NewsArticle } from "@/types/news";
 
 interface NewsFeedProps {
@@ -16,7 +17,7 @@ interface NewsFeedProps {
 }
 
 export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
-  const { data: articles, isLoading } = useNews();
+  const { data: articles, isLoading, isError, refetch } = useNews();
   const { t } = useTranslation("common");
   const [selectedArticle, setSelectedArticle] = useState<NewsArticle | null>(null);
 
@@ -44,6 +45,16 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
           <Skeleton key={i} className="h-16" />
         ))}
       </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <ErrorState
+        title={t("errors.generic")}
+        description={t("errors.network")}
+        retry={{ onRetry: refetch, label: t("errors.tryAgain") }}
+      />
     );
   }
 

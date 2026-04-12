@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Bell, BellOff, Pencil, Trash2, X, Check } from "lucide-react";
 import { useAlertsData } from "@/features/alerts/hooks/use-alerts-data";
+import { useAlerts } from "@/features/alerts/api/alerts-queries";
 import { AlertForm } from "@/features/alerts/components/alert-form";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -12,10 +13,13 @@ import { formatPrice, formatDate } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import type { AlertCondition } from "@/types/alert";
 import { EmptyState } from "@/components/shared/empty-state";
+import { ErrorState } from "@/components/shared/error-state";
 
 export function AlertsDashboard() {
   const { t } = useTranslation("alerts");
+  const { t: tc } = useTranslation("common");
   const { alerts, isLoading, addAlert, deleteAlert, toggleAlert } = useAlertsData();
+  const { isError, refetch } = useAlerts();
   const [showForm, setShowForm] = useState(false);
 
   if (isLoading) {
@@ -25,6 +29,16 @@ export function AlertsDashboard() {
           <Skeleton key={i} className="h-14" />
         ))}
       </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <ErrorState
+        title={tc("errors.generic")}
+        description={tc("errors.network")}
+        retry={{ onRetry: refetch, label: tc("errors.tryAgain") }}
+      />
     );
   }
 
