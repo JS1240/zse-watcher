@@ -161,3 +161,46 @@ export function useToggleAlert() {
     },
   });
 }
+
+export function useUpdateAlert() {
+  const { t } = useTranslation("alerts");
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+
+  return useMutation({
+    mutationFn: async ({
+      alertId,
+      ticker,
+      condition,
+      targetValue,
+    }: {
+      alertId: string;
+      ticker: string;
+      condition: AlertCondition;
+      targetValue: number;
+    }) => {
+      if (!user) throw new Error("Not authenticated");
+
+      const { error } = await supabase
+        .from("alerts")
+        .update({
+          ticker,
+          condition,
+          target_value: targetValue,
+          is_triggered: false,
+          triggered_at: null,
+        })
+        .eq("id", alertId)
+        .eq("user_id", user.id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["alerts", user?.id] });
+      toast.success(t("toast.updated"));
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : t("toast.updateFailed"));
+    },
+  });
+}

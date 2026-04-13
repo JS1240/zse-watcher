@@ -38,6 +38,7 @@
     "updated": "Alarm azuriran",
     "createFailed": "Neuspjelo stvaranje alarma",
     "deleteFailed": "Neuspjelo brisanje alarma",
+    "updateFailed": "Neuspjelo azuriranje alarma",
     "exported": "Alarmi izvezeni u CSV"
   },
   "notification": {

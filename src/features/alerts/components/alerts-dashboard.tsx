@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Bell, BellOff, Pencil, Trash2, X, Check, Keyboard, Download, AlertCircle, Search } from "lucide-react";
 import { toast } from "sonner";
 import { useAlertsData } from "@/features/alerts/hooks/use-alerts-data";
-import { useAlerts } from "@/features/alerts/api/alerts-queries";
+import { useAlerts, useUpdateAlert } from "@/features/alerts/api/alerts-queries";
 import { AlertForm } from "@/features/alerts/components/alert-form";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -21,8 +21,9 @@ import { useDebounce } from "@/hooks/use-debounce";
 export function AlertsDashboard() {
   const { t } = useTranslation("alerts");
   const { t: tc } = useTranslation("common");
-  const { alerts, isLoading, addAlert, deleteAlert, toggleAlert } = useAlertsData();
+  const { alerts, isLoading, deleteAlert, toggleAlert } = useAlertsData();
   const { isError, refetch } = useAlerts();
+  const updateAlert = useUpdateAlert();
   const [showForm, setShowForm] = useState(false);
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 200);
@@ -134,14 +135,13 @@ export function AlertsDashboard() {
               }}
               onToggle={() => toggleAlert(alert.id)}
               onUpdate={async (id, data) => {
-                // Delete and re-create — inline edit via form replacement
-                await deleteAlert(id);
-                await addAlert({
+                // Proper update mutation — preserves alert ID and createdAt
+                await updateAlert.mutateAsync({
+                  alertId: id,
                   ticker: data.ticker,
                   condition: data.condition,
                   targetValue: data.targetValue,
                 });
-                toast.success(t("toast.updated"));
               }}
             />
           ))}

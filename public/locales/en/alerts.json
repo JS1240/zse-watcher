@@ -38,6 +38,7 @@
     "updated": "Alert updated",
     "createFailed": "Failed to create alert",
     "deleteFailed": "Failed to delete alert",
+    "updateFailed": "Failed to update alert",
     "exported": "Alerts exported to CSV"
   },
   "notification": {
