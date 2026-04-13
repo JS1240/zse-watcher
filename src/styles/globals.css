@@ -82,9 +82,9 @@ body {
 .animate-shimmer {
   background: linear-gradient(
     90deg,
-    hsl(var(--color-muted) / 1) 0%,
-    hsl(var(--color-muted) / 0.5) 40%,
-    hsl(var(--color-muted) / 1) 80%
+    var(--color-muted) 0%,
+    color-mix(in srgb, var(--color-muted) 60%, hsl(0 0% 100%)) 40%,
+    var(--color-muted) 80%
   );
   background-size: 200% 100%;
   animation: shimmer 1.6s ease-in-out infinite;

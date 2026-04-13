@@ -20,7 +20,7 @@ const defaultColumns = [
 ];
 
 function SkeletonCell({ width }: { width?: string }) {
-  return <div className={cn("h-4 rounded-md bg-muted animate-pulse", width || "flex-1")} />;
+  return <div className={cn("h-4 rounded-md bg-muted animate-shimmer", width || "flex-1")} />;
 }
 
 export function TableSkeleton({
