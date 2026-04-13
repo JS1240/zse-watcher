@@ -55,7 +55,7 @@ export function HistoryChart({
           className="flex items-center justify-center rounded-md border border-border bg-card text-xs text-muted-foreground"
           style={{ height: `${height}px` }}
         >
-          No chart data available
+          {t("chart.noData")}
         </div>
       )}
     </div>

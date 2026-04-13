@@ -25,6 +25,9 @@
     "website": "Web stranica",
     "isin": "ISIN"
   },
+  "chart": {
+    "noData": "Nema podataka za graf"
+  },
   "ranges": {
     "1D": "1D",
     "1W": "1T",

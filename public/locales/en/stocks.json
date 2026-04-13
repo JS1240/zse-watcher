@@ -25,6 +25,9 @@
     "website": "Website",
     "isin": "ISIN"
   },
+  "chart": {
+    "noData": "No chart data available"
+  },
   "ranges": {
     "1D": "1D",
     "1W": "1W",

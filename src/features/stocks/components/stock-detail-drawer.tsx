@@ -39,9 +39,16 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
       >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
-          <span className="font-data text-sm font-bold text-foreground">
-            {ticker}
-          </span>
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="font-data text-sm font-bold text-foreground shrink-0">
+              {ticker}
+            </span>
+            {stock && (
+              <span className="truncate text-xs text-muted-foreground">
+                {stock.name}
+              </span>
+            )}
+          </div>
           <button
             onClick={onClose}
             className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
