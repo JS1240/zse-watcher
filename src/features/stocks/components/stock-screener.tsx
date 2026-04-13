@@ -460,10 +460,10 @@ export function StockScreener() {
       </div>
 
       {/* Results table */}
-      <div className="overflow-hidden rounded-md border border-border">
+      <div className="overflow-auto rounded-md border border-border max-h-[60vh]">
         <table className="w-full text-xs">
-          <thead>
-            <tr className="border-b border-border bg-muted/50 text-[10px] uppercase tracking-wider text-muted-foreground">
+          <thead className="sticky top-0 z-10 bg-muted/95 backdrop-blur supports-[backdrop-filter]:bg-muted/80">
+            <tr className="border-b border-border text-[10px] uppercase tracking-wider text-muted-foreground">
               <th className="py-2 pl-3 pr-1 text-left font-medium">
                 {t("table.ticker")}
               </th>

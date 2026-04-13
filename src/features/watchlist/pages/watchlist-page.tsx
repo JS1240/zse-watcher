@@ -494,10 +494,10 @@ interface WatchlistTableProps {
 function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort, dragEnabled }: WatchlistTableProps) {
   const { t } = useTranslation("watchlist");
   return (
-    <div className="overflow-hidden rounded-md border border-border">
+    <div className="overflow-auto rounded-md border border-border max-h-[60vh]">
       <table className="w-full text-xs">
-        <thead>
-          <tr className="border-b border-border bg-muted/50 text-[10px] uppercase tracking-wider text-muted-foreground">
+        <thead className="sticky top-0 z-10 bg-muted/95 backdrop-blur supports-[backdrop-filter]:bg-muted/80">
+          <tr className="border-b border-border text-[10px] uppercase tracking-wider text-muted-foreground">
             <th className="px-3 py-2 text-left font-medium">{t("table.ticker")}</th>
             <th className="hidden px-3 py-2 text-left font-medium md:table-cell">
               <SortHeader column="name" label={t("table.name")} sort={sort} onSort={onSort} />
