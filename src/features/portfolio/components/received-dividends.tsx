@@ -5,6 +5,7 @@ import { useReceivedDividends } from "@/features/portfolio/hooks/use-received-di
 import { usePortfolioHoldings } from "@/features/portfolio/api/portfolio-queries";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/shared/empty-state";
 import { formatCurrency, formatDate } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
@@ -24,6 +25,7 @@ export function ReceivedDividends() {
   });
 
   const holdingTickers = holdings.map((h) => h.ticker);
+  const isHoldingsLoading = !holdings.length && !dividends.length;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,10 +67,13 @@ export function ReceivedDividends() {
         <div className="flex items-center gap-2">
           <Receipt className="h-4 w-4 text-muted-foreground" />
           <span className="text-xs font-semibold text-foreground">{t("dividendsReceived", "Dividends Received")}</span>
-          {hasDividends && (
+          {hasDividends && !isHoldingsLoading && (
             <span className="font-data text-[10px] text-muted-foreground">
               Total: {formatCurrency(totalReceived)} EUR
             </span>
+          )}
+          {isHoldingsLoading && (
+            <Skeleton className="h-3 w-20" />
           )}
         </div>
         <Button
