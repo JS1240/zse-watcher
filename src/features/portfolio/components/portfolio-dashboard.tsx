@@ -124,6 +124,7 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
       h.gainPct.toFixed(2),
     ]);
     exportToCsv(`zse-portfolio-${new Date().toISOString().split("T")[0]}`, headers, rows);
+    toast.success(t("toast.exported"));
   };
 
   if (isLoading) {
@@ -190,7 +191,7 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
             disabled={sortedHoldings.length === 0}
           >
             <Download className="h-3.5 w-3.5" />
-            CSV
+            {t("exportCsv")}
           </Button>
           <Button size="sm" id="add-position-btn" onClick={() => setShowAddForm(!showAddForm)}>
             <Plus className="h-3.5 w-3.5" />

@@ -23,8 +23,10 @@
   },
   "toast": {
     "transactionAdded": "Transakcija dodana",
-    "transactionAddFailed": "Neuspjelo dodavanje transakcije"
+    "transactionAddFailed": "Neuspjelo dodavanje transakcije",
+    "exported": "Portfelj izvezen u CSV"
   },
+  "exportCsv": "CSV",
   "empty": "Nemate pozicija u portfelju",
   "emptyDescription": "Dodajte svoju prvu poziciju kako biste pratili vrijednost i dobit.",
   "emptySold": "Sve pozicije prodane",

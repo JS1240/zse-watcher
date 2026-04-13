@@ -23,8 +23,10 @@
   },
   "toast": {
     "transactionAdded": "Transaction added",
-    "transactionAddFailed": "Failed to add transaction"
+    "transactionAddFailed": "Failed to add transaction",
+    "exported": "Portfolio exported to CSV"
   },
+  "exportCsv": "CSV",
   "empty": "No positions in portfolio",
   "emptyDescription": "Add your first position to start tracking your holdings and gains.",
   "emptySold": "All positions sold",
