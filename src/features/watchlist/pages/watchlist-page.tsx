@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Star, Search, ArrowUp, ArrowDown, ArrowUpDown, GripVertical } from "lucide-react";
+import { Star, Search, ArrowUp, ArrowDown, ArrowUpDown, GripVertical, Download } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocalWatchlist } from "@/features/watchlist/hooks/use-local-watchlist";
 import { useWatchlistItems } from "@/features/watchlist/api/watchlist-queries";
@@ -11,7 +11,9 @@ import { WatchlistSkeleton } from "@/features/watchlist/components/watchlist-ske
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { formatPrice, formatVolume } from "@/lib/formatters";
+import { exportToCsv } from "@/lib/export";
 
 import { cn } from "@/lib/utils";
 import { useDebounce } from "@/hooks/use-debounce";
@@ -141,21 +143,46 @@ function AuthenticatedWatchlist() {
     });
   };
 
+  const handleExportCsv = () => {
+    const headers = ["Ticker", "Name", "Price (EUR)", "Change (%)", "Volume", "Turnover (EUR)"];
+    const rows = filtered.map((s) => [
+      s.ticker,
+      s.name,
+      s.price.toFixed(2),
+      s.changePct.toFixed(2),
+      s.volume.toString(),
+      s.turnover.toFixed(2),
+    ]);
+    exportToCsv(`zse-watchlist-${new Date().toISOString().split("T")[0]}`, headers, rows);
+  };
+
   if (watchlistItems.isLoading) {
     return <WatchlistSkeleton />;
   }
 
   return (
     <div className="flex flex-col gap-3">
-      {/* Search */}
-      <div className="relative">
-        <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-muted-foreground" />
-        <Input
-          placeholder={tc("actions.search")}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="pl-8"
-        />
+      {/* Search + CSV */}
+      <div className="flex gap-2">
+        <div className="relative flex-1">
+          <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-muted-foreground" />
+          <Input
+            placeholder={tc("actions.search")}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-8"
+          />
+        </div>
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={handleExportCsv}
+          disabled={filtered.length === 0}
+          title={t("exportCsv")}
+        >
+          <Download className="h-3.5 w-3.5" />
+          CSV
+        </Button>
       </div>
 
       {filtered.length > 0 ? (
@@ -352,21 +379,46 @@ function LocalWatchlist() {
     });
   };
 
+  const handleExportCsv = () => {
+    const headers = ["Ticker", "Name", "Price (EUR)", "Change (%)", "Volume", "Turnover (EUR)"];
+    const rows = filtered.map((s) => [
+      s.ticker,
+      s.name,
+      s.price.toFixed(2),
+      s.changePct.toFixed(2),
+      s.volume.toString(),
+      s.turnover.toFixed(2),
+    ]);
+    exportToCsv(`zse-watchlist-${new Date().toISOString().split("T")[0]}`, headers, rows);
+  };
+
   if (stocksResult === undefined) {
     return <WatchlistSkeleton />;
   }
 
   return (
     <div className="flex flex-col gap-3">
-      {/* Search */}
-      <div className="relative">
-        <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-muted-foreground" />
-        <Input
-          placeholder={tc("actions.search")}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="pl-8"
-        />
+      {/* Search + CSV */}
+      <div className="flex gap-2">
+        <div className="relative flex-1">
+          <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-muted-foreground" />
+          <Input
+            placeholder={tc("actions.search")}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-8"
+          />
+        </div>
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={handleExportCsv}
+          disabled={filtered.length === 0}
+          title={t("exportCsv")}
+        >
+          <Download className="h-3.5 w-3.5" />
+          CSV
+        </Button>
       </div>
 
       {filtered.length > 0 ? (

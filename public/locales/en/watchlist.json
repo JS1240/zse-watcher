@@ -6,6 +6,7 @@
   "remove": "Remove from watchlist",
   "searchPlaceholder": "Search stocks...",
   "browseAction": "Browse stocks",
+  "exportCsv": "Export to CSV",
   "table": {
     "ticker": "Ticker",
     "name": "Name",

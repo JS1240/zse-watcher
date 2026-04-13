@@ -6,6 +6,7 @@
   "remove": "Ukloni iz liste praćenja",
   "searchPlaceholder": "Pretraži dionice...",
   "browseAction": "Pregledaj dionice",
+  "exportCsv": "Izvezi u CSV",
   "table": {
     "ticker": "Dionica",
     "name": "Naziv",
