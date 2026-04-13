@@ -4,6 +4,11 @@
 
 ### Added
 
+- **EmptyState 'no-results' variant** — distinguishes zero-results from zero-data states
+  - Variant `'no-results'` for filters/search returning empty (prominent clear action)
+  - StockScreener: shows only when stocks exist but filters match nothing
+  - Shows `variant="info"` when stocks are still loading
+
 - **ErrorState Component** — reusable error display with retry button for failed API calls
   - Red circle-X icon, title + description + optional hint
   - Retry button that calls `refetch()` on the failed query

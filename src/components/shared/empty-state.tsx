@@ -2,7 +2,7 @@ import { type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-type EmptyStateVariant = "action" | "info" | "warning";
+type EmptyStateVariant = "action" | "info" | "warning" | "no-results";
 
 interface EmptyStateProps {
   icon: ReactNode;
@@ -13,6 +13,7 @@ interface EmptyStateProps {
     label: string;
     onClick: () => void;
   };
+  /** variant 'no-results' shows a prominent action button for clearing filters/search */
   variant?: EmptyStateVariant;
   className?: string;
 }
@@ -29,6 +30,10 @@ const variantClasses: Record<EmptyStateVariant, { container: string; icon: strin
   warning: {
     container: "bg-amber/5 ring-amber/20",
     icon: "text-amber",
+  },
+  "no-results": {
+    container: "bg-muted/60 ring-border",
+    icon: "text-muted-foreground",
   },
 };
 

@@ -551,7 +551,7 @@ export function StockScreener() {
           </tbody>
         </table>
 
-        {results.length === 0 && (
+        {results.length === 0 && stocks && (
           <EmptyState
             icon={<Search className="h-8 w-8" />}
             title={t("screener.noResults")}
@@ -563,7 +563,7 @@ export function StockScreener() {
                 setSort({ column: "turnover", direction: "desc" });
               },
             }}
-            variant="action"
+            variant="no-results"
           />
         )}
       </div>
