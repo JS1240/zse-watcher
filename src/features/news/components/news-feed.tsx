@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { ExternalLink, Newspaper } from "lucide-react";
+import { ExternalLink, Newspaper, Search } from "lucide-react";
 import { useNews } from "@/features/news/api/news-queries";
 import { ArticleDrawer } from "@/features/news/components/article-drawer";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
 import { formatDate, formatTime } from "@/lib/formatters";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
 import type { NewsArticle } from "@/types/news";
+import { useDebounce } from "@/hooks/use-debounce";
 
 interface NewsFeedProps {
   ticker?: string;
@@ -19,7 +21,10 @@ interface NewsFeedProps {
 export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
   const { data: articles, isLoading, isError, refetch } = useNews();
   const { t } = useTranslation("common");
+  const { t: tn } = useTranslation("news");
   const [selectedArticle, setSelectedArticle] = useState<NewsArticle | null>(null);
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 200);
 
   const filtered = useMemo(() => {
     if (!articles) return [];
@@ -31,12 +36,23 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
     if (category) {
       result = result.filter((a) => a.category === category);
     }
-    if (limit) {
+    if (debouncedSearch) {
+      const q = debouncedSearch.toLowerCase();
+      result = result.filter(
+        (a) =>
+          a.title.toLowerCase().includes(q) ||
+          (a.ticker && a.ticker.toLowerCase().includes(q)),
+      );
+    }
+    if (limit && !debouncedSearch) {
       result = result.slice(0, limit);
     }
 
     return result;
-  }, [articles, ticker, category, limit]);
+  }, [articles, ticker, category, limit, debouncedSearch]);
+
+  // Only show search when not limited (inline usage)
+  const showSearch = !limit && articles && articles.length > 0;
 
   if (isLoading) {
     return (
@@ -47,6 +63,10 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
       </div>
     );
   }
+
+  // Results count
+  const totalCount = articles?.length ?? 0;
+  const filteredCount = filtered.length;
 
   if (isError) {
     return (
@@ -60,12 +80,32 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
 
   if (!filtered.length) {
     return (
-      <div className="py-4">
-        <EmptyState
-          icon={<Newspaper className="h-8 w-8" />}
-          title={t("empty.noData")}
-          description={t("empty.noDataDescription")}
-        />
+      <div className="space-y-3">
+        {showSearch && (
+          <div className="relative">
+            <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-muted-foreground" />
+            <Input
+              placeholder={t("actions.search")}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-8"
+            />
+          </div>
+        )}
+        {totalCount > 0 ? (
+          <EmptyState
+            icon={<Search className="h-8 w-8" />}
+            title={t("empty.noResults")}
+            description={t("empty.noResultsDescription")}
+            action={{ label: t("empty.clearFilters"), onClick: () => setSearch("") }}
+          />
+        ) : (
+          <EmptyState
+            icon={<Newspaper className="h-8 w-8" />}
+            title={tn("empty") || t("empty.noData")}
+            description={tn("emptyDescription") || t("empty.noDataDescription")}
+          />
+        )}
       </div>
     );
   }
@@ -73,6 +113,26 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
   return (
     <>
       <div className="space-y-1">
+        {showSearch && (
+          <div className="relative">
+            <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-muted-foreground" />
+            <Input
+              placeholder={t("actions.search")}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-8"
+            />
+          </div>
+        )}
+
+        {/* Results count */}
+        {totalCount > 0 && (
+          <div className="text-[10px] text-muted-foreground">
+            {filteredCount} {filteredCount === 1 ? " vijest" : " vijesti"}
+            {debouncedSearch && totalCount !== filteredCount && ` / ${totalCount}`}
+          </div>
+        )}
+
         {filtered.map((article) => (
           <button
             key={article.id}

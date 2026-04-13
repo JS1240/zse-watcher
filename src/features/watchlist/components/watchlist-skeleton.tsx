@@ -39,29 +39,29 @@ export function WatchlistSkeleton({ className, rows = 5 }: WatchlistSkeletonProp
               {/* Star + Ticker */}
               <td className="px-3 py-2">
                 <div className="flex items-center gap-1">
-                  <Skeleton className="h-3.5 w-3.5 rounded" />
-                  <Skeleton className="h-3.5 w-10" />
+                  <Skeleton className="h-3.5 w-3.5 rounded animate-shimmer" />
+                  <Skeleton className="h-3.5 w-10 animate-shimmer" />
                 </div>
               </td>
               {/* Name */}
               <td className="hidden px-3 py-2 md:table-cell">
-                <Skeleton className="h-3 w-28" />
+                <Skeleton className="h-3 w-28 animate-shimmer" />
               </td>
               {/* Price */}
               <td className="px-3 py-2 text-right">
-                <Skeleton className="ml-auto h-3.5 w-14" />
+                <Skeleton className="ml-auto h-3.5 w-14 animate-shimmer" />
               </td>
               {/* Change */}
               <td className="px-3 py-2 text-right">
-                <Skeleton className="ml-auto h-4 w-12 rounded-sm" />
+                <Skeleton className="ml-auto h-4 w-12 rounded-sm animate-shimmer" />
               </td>
               {/* Volume */}
               <td className="hidden px-3 py-2 text-right lg:table-cell">
-                <Skeleton className="ml-auto h-3 w-16" />
+                <Skeleton className="ml-auto h-3 w-16 animate-shimmer" />
               </td>
               {/* Turnover */}
               <td className="hidden px-3 py-2 text-right lg:table-cell">
-                <Skeleton className="ml-auto h-3 w-20" />
+                <Skeleton className="ml-auto h-3 w-20 animate-shimmer" />
               </td>
             </tr>
           ))}
