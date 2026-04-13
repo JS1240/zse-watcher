@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, Trash2, Receipt } from "lucide-react";
+import { Plus, Trash2, Receipt, Download } from "lucide-react";
+import { toast } from "sonner";
+import { exportToCsv } from "@/lib/export";
 import { useReceivedDividends } from "@/features/portfolio/hooks/use-received-dividends";
 import { usePortfolioHoldings } from "@/features/portfolio/api/portfolio-queries";
 import { Button } from "@/components/ui/button";
@@ -60,6 +62,23 @@ export function ReceivedDividends() {
     return acc;
   }, {});
 
+  const handleExportCsv = () => {
+    const headers = ["Ticker", "Shares", "Per Share", "Total Amount", "Currency", "Date Paid", "Notes"];
+    const rows = dividends
+      .sort((a, b) => b.payDate.localeCompare(a.payDate))
+      .map((d) => [
+        d.ticker,
+        d.shares.toString(),
+        d.amountPerShare.toFixed(4),
+        d.totalAmount.toFixed(2),
+        d.currency,
+        d.payDate,
+        d.notes ?? "",
+      ]);
+    exportToCsv(`zse-dividends-${new Date().toISOString().split("T")[0]}`, headers, rows);
+    toast.success("Dividends exported to CSV");
+  };
+
   return (
     <div className="space-y-3">
       {/* Header */}
@@ -76,15 +95,23 @@ export function ReceivedDividends() {
             <Skeleton className="h-3 w-20" />
           )}
         </div>
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={() => setShowForm(!showForm)}
-          className="h-6 text-[10px]"
-        >
-          <Plus className="h-3 w-3" />
-          Record
-        </Button>
+        <div className="flex gap-2">
+          {hasDividends && (
+            <Button size="sm" variant="outline" onClick={handleExportCsv} className="h-6 text-[10px]">
+              <Download className="h-3 w-3" />
+              CSV
+            </Button>
+          )}
+          <Button
+            size="sm"
+            variant={hasDividends ? "default" : "outline"}
+            onClick={() => setShowForm(!showForm)}
+            className="h-6 text-[10px]"
+          >
+            <Plus className="h-3 w-3" />
+            Record
+          </Button>
+        </div>
       </div>
 
       {/* Add form */}
