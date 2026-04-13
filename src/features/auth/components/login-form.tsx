@@ -72,8 +72,8 @@ export function LoginForm({ onSwitchToRegister }: LoginFormProps) {
         </p>
       )}
 
-      <Button type="submit" className="w-full" disabled={isSubmitting}>
-        {isSubmitting ? "Signing in..." : t("actions.login")}
+      <Button type="submit" className="w-full" loading={isSubmitting}>
+        {t("actions.login")}
       </Button>
 
       <div className="relative">

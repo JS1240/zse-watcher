@@ -125,8 +125,8 @@ export function AddPositionForm({ onClose, onSuccess }: AddPositionFormProps) {
         </div>
 
         <div className="flex items-end">
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? "..." : t("addPosition")}
+          <Button type="submit" className="w-full" loading={isSubmitting}>
+            {t("addPosition")}
           </Button>
         </div>
       </form>

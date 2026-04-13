@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Bell, BellOff, Pencil, Trash2, X, Check, Keyboard } from "lucide-react";
 import { toast } from "sonner";
@@ -139,29 +139,6 @@ function AlertRow({ alert, onDelete, onToggle, onUpdate }: AlertRowProps) {
   const isPercentEdit = editCondition.includes("percent");
   const editPlaceholder = isPercentEdit ? "10.5" : "150.00";
 
-  // Keyboard navigation
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (e.key === "Enter") {
-        handleSave();
-      } else if (e.key === "Escape") {
-        handleCancel();
-      }
-    },
-    [handleSave, handleCancel],
-  );
-
-  // Focus target input on enter edit mode
-  useEffect(() => {
-    if (editing) {
-      const timer = setTimeout(() => {
-        const input = document.getElementById(`alert-edit-target-${alert.id}`);
-        input?.focus();
-      }, 100);
-      return () => clearTimeout(timer);
-    }
-  }, [editing, alert.id]);
-
   const handleSave = async () => {
     const parsed = parseFloat(editTarget.replace(",", "."));
     if (!editTicker) {
@@ -195,6 +172,25 @@ function AlertRow({ alert, onDelete, onToggle, onUpdate }: AlertRowProps) {
     setEditTargetError(false);
     setEditing(false);
   };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleSave();
+    } else if (e.key === "Escape") {
+      handleCancel();
+    }
+  };
+
+  // Focus target input on enter edit mode
+  useEffect(() => {
+    if (editing) {
+      const timer = setTimeout(() => {
+        const input = document.getElementById(`alert-edit-target-${alert.id}`);
+        input?.focus();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [editing, alert.id]);
 
   if (editing) {
     return (

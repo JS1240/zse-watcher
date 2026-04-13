@@ -139,8 +139,8 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
         </div>
 
         <div className="flex items-end">
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? "..." : t("create")}
+          <Button type="submit" className="w-full" loading={isSubmitting}>
+            {t("create")}
           </Button>
         </div>
       </form>

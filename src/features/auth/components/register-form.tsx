@@ -99,8 +99,8 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
         </p>
       )}
 
-      <Button type="submit" className="w-full" disabled={isSubmitting}>
-        {isSubmitting ? "Creating account..." : t("actions.register")}
+      <Button type="submit" className="w-full" loading={isSubmitting}>
+        {t("actions.register")}
       </Button>
 
       <p className="text-center text-[11px] text-muted-foreground">
