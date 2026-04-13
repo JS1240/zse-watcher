@@ -68,6 +68,8 @@
   },
   "commandPalette": {
     "placeholder": "Pretrazi dionice, akcije...",
-    "noResults": "Nema rezultata"
+    "noResults": "Nema rezultata",
+    "loading": "Ucitavam...",
+    "hint": "Upišite ticker ili naziv dionice"
   }
 }

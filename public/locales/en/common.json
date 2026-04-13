@@ -68,6 +68,8 @@
   },
   "commandPalette": {
     "placeholder": "Search stocks, actions...",
-    "noResults": "No results found"
+    "noResults": "No results found",
+    "loading": "Loading...",
+    "hint": "Enter ticker or stock name"
   }
 }

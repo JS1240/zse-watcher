@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { Command } from "cmdk";
@@ -12,15 +12,24 @@ import {
   Settings,
   Sun,
   Moon,
+  SlidersHorizontal,
+  Star,
+  TrendingUp,
 } from "lucide-react";
 import { useThemeStore } from "@/hooks/use-theme";
+import { useStocksLive } from "@/features/stocks/api/stocks-queries";
+import { useSelectedStock } from "@/hooks/use-selected-stock";
 import { eventBus } from "@/lib/event-bus";
+import { formatPrice, formatPercent } from "@/lib/formatters";
 
 export function CommandPalette() {
   const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
   const { t } = useTranslation("common");
   const navigate = useNavigate();
   const { mode, toggle: toggleTheme } = useThemeStore();
+  const { data: stocksResult, isLoading: stocksLoading } = useStocksLive();
+  const { select } = useSelectedStock();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -40,8 +49,26 @@ export function CommandPalette() {
     return unsubscribe;
   }, []);
 
+  // Filter stocks based on search input
+  const matchingStocks = useMemo(() => {
+    if (!stocksResult?.stocks || search.length < 1) return [];
+    const q = search.toLowerCase();
+    return stocksResult.stocks
+      .filter(
+        (s) =>
+          s.ticker.toLowerCase().includes(q) ||
+          s.name.toLowerCase().includes(q),
+      )
+      .slice(0, 5);
+  }, [stocksResult?.stocks, search]);
+
   const navigateTo = (path: string) => {
     navigate({ to: path });
+    setOpen(false);
+  };
+
+  const selectStock = (ticker: string) => {
+    select(ticker);
     setOpen(false);
   };
 
@@ -64,34 +91,138 @@ export function CommandPalette() {
       >
         <Command.Input
           placeholder={t("commandPalette.placeholder")}
+          value={search}
+          onValueChange={setSearch}
           className="h-11 w-full border-b border-border bg-transparent px-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
         />
 
-        <Command.List className="max-h-72 overflow-y-auto p-2">
+        <Command.List className="max-h-80 overflow-y-auto p-2">
           <Command.Empty className="py-6 text-center text-sm text-muted-foreground">
-            {t("commandPalette.noResults")}
+            {search.length > 0 && matchingStocks.length === 0
+              ? t("commandPalette.noResults")
+              : stocksLoading
+                ? t("commandPalette.loading")
+                : t("commandPalette.hint")}
           </Command.Empty>
 
-          <Command.Group heading="Navigation" className="px-2 py-1.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-            <CommandItem icon={Activity} label={t("nav.stocks")} shortcut="1" onSelect={() => navigateTo("/")} />
-            <CommandItem icon={BarChart3} label={t("nav.macro")} shortcut="2" onSelect={() => navigateTo("/macro")} />
-            <CommandItem icon={Grid3X3} label={t("nav.heatmap")} shortcut="3" onSelect={() => navigateTo("/heatmap")} />
-            <CommandItem icon={Wallet} label={t("nav.portfolio")} shortcut="4" onSelect={() => navigateTo("/portfolio")} />
-            <CommandItem icon={CalendarDays} label={t("nav.dividends")} shortcut="5" onSelect={() => navigateTo("/dividends")} />
-            <CommandItem icon={Bell} label={t("nav.alerts")} shortcut="6" onSelect={() => navigateTo("/alerts")} />
-            <CommandItem icon={Settings} label={t("nav.settings")} onSelect={() => navigateTo("/settings")} />
-          </Command.Group>
+          {/* Stock search results */}
+          {matchingStocks.length > 0 && (
+            <Command.Group
+              heading="Stocks"
+              className="px-2 py-1.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground"
+            >
+              {matchingStocks.map((stock) => (
+                <Command.Item
+                  key={stock.ticker}
+                  onSelect={() => selectStock(stock.ticker)}
+                  className="flex cursor-pointer items-center gap-3 rounded-md px-2 py-2 text-sm text-foreground aria-selected:bg-accent"
+                >
+                  <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                  <div className="flex flex-1 items-center justify-between">
+                    <div className="flex flex-col">
+                      <span className="font-data font-semibold">{stock.ticker}</span>
+                      <span className="text-xs text-muted-foreground">{stock.name}</span>
+                    </div>
+                    <div className="flex flex-col items-end font-data text-xs">
+                      <span className="text-foreground">
+                        {formatPrice(stock.price)}
+                      </span>
+                      <span
+                        className={
+                          stock.changePct >= 0
+                            ? "text-emerald-500"
+                            : "text-destructive"
+                        }
+                      >
+                        {formatPercent(stock.changePct)}
+                      </span>
+                    </div>
+                  </div>
+                </Command.Item>
+              ))}
+            </Command.Group>
+          )}
 
-          <Command.Separator className="my-1 h-px bg-border" />
+          {/* Navigation - show when no search or search is short */}
+          {search.length < 2 && (
+            <>
+              <Command.Group
+                heading="Navigation"
+                className="px-2 py-1.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground"
+              >
+                <CommandItem
+                  icon={Activity}
+                  label={t("nav.stocks")}
+                  shortcut="1"
+                  onSelect={() => navigateTo("/")}
+                />
+                <CommandItem
+                  icon={BarChart3}
+                  label={t("nav.macro")}
+                  shortcut="2"
+                  onSelect={() => navigateTo("/macro")}
+                />
+                <CommandItem
+                  icon={Grid3X3}
+                  label={t("nav.heatmap")}
+                  shortcut="3"
+                  onSelect={() => navigateTo("/heatmap")}
+                />
+                <CommandItem
+                  icon={Wallet}
+                  label={t("nav.portfolio")}
+                  shortcut="4"
+                  onSelect={() => navigateTo("/portfolio")}
+                />
+                <CommandItem
+                  icon={CalendarDays}
+                  label={t("nav.dividends")}
+                  shortcut="5"
+                  onSelect={() => navigateTo("/dividends")}
+                />
+                <CommandItem
+                  icon={Bell}
+                  label={t("nav.alerts")}
+                  shortcut="6"
+                  onSelect={() => navigateTo("/alerts")}
+                />
+                <CommandItem
+                  icon={SlidersHorizontal}
+                  label={t("nav.screener")}
+                  shortcut="7"
+                  onSelect={() => navigateTo("/screener")}
+                />
+                <CommandItem
+                  icon={Star}
+                  label={t("nav.watchlist")}
+                  shortcut="8"
+                  onSelect={() => navigateTo("/watchlist")}
+                />
+                <CommandItem
+                  icon={Settings}
+                  label={t("nav.settings")}
+                  onSelect={() => navigateTo("/settings")}
+                />
+              </Command.Group>
 
-          <Command.Group heading="Actions" className="px-2 py-1.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-            <CommandItem
-              icon={mode === "dark" ? Sun : Moon}
-              label={mode === "dark" ? t("theme.light") : t("theme.dark")}
-              shortcut="T"
-              onSelect={() => { toggleTheme(); setOpen(false); }}
-            />
-          </Command.Group>
+              <Command.Separator className="my-1 h-px bg-border" />
+
+              <Command.Group
+                heading="Actions"
+                className="px-2 py-1.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground"
+              >
+                <CommandItem
+                  icon={mode === "dark" ? Sun : Moon}
+                  label={mode === "dark" ? t("theme.light") : t("theme.dark")}
+                  shortcut="T"
+                  onSelect={() => {
+                    toggleTheme();
+                    setOpen(false);
+                  }}
+                />
+              </Command.Group>
+            </>
+          )}
         </Command.List>
       </Command>
     </div>
