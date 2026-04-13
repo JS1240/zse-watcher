@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Bell, BellOff, Pencil, Trash2, X, Check, Keyboard, Download, AlertCircle } from "lucide-react";
+import { Bell, BellOff, Pencil, Trash2, X, Check, Keyboard, Download, AlertCircle, Search } from "lucide-react";
 import { toast } from "sonner";
 import { useAlertsData } from "@/features/alerts/hooks/use-alerts-data";
 import { useAlerts } from "@/features/alerts/api/alerts-queries";
@@ -16,6 +16,7 @@ import type { AlertCondition } from "@/types/alert";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
 import { exportToCsv } from "@/lib/export";
+import { useDebounce } from "@/hooks/use-debounce";
 
 export function AlertsDashboard() {
   const { t } = useTranslation("alerts");
@@ -23,6 +24,15 @@ export function AlertsDashboard() {
   const { alerts, isLoading, addAlert, deleteAlert, toggleAlert } = useAlertsData();
   const { isError, refetch } = useAlerts();
   const [showForm, setShowForm] = useState(false);
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 200);
+
+  const filteredAlerts = useMemo(() => {
+    if (!alerts) return [];
+    if (!debouncedSearch) return alerts;
+    const q = debouncedSearch.toLowerCase();
+    return alerts.filter((a) => a.ticker.toLowerCase().includes(q));
+  }, [alerts, debouncedSearch]);
 
   if (isLoading) {
     return (
@@ -46,7 +56,7 @@ export function AlertsDashboard() {
 
   // CSV export for alerts
   const handleExport = () => {
-    if (!alerts || alerts.length === 0) return;
+    if (!filteredAlerts || filteredAlerts.length === 0) return;
     const headers = ["Ticker", "Condition", "Target", "Status", "Active", "Created"];
     const rows = alerts.map((a) => {
       const conditionLabels: Record<string, string> = {
@@ -56,7 +66,7 @@ export function AlertsDashboard() {
         percent_change_down: t("condition.percentDown"),
       };
       return [
-        a.ticker,
+        a.ticker.toUpperCase(),
         conditionLabels[a.condition] || a.condition,
         a.condition.includes("percent") ? `${a.targetValue}%` : formatPrice(a.targetValue),
         a.isTriggered ? t("status.triggered") : "—",
@@ -70,18 +80,31 @@ export function AlertsDashboard() {
 
   return (
     <div className="space-y-3">
-      {/* Action buttons */}
-      <div className="flex justify-end gap-2">
+      {/* Search + Action buttons */}
+      <div className="flex gap-2">
         {alerts && alerts.length > 0 && (
-          <Button size="sm" variant="secondary" onClick={handleExport}>
-            <Download className="h-3.5 w-3.5" />
-            {t("exportCsv")}
-          </Button>
+          <div className="relative flex-1">
+            <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-muted-foreground" />
+            <Input
+              placeholder={tc("actions.search")}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-8"
+            />
+          </div>
         )}
-        <Button size="sm" onClick={() => setShowForm(!showForm)}>
-          <Bell className="h-3.5 w-3.5" />
-          {t("create")}
-        </Button>
+        <div className="flex gap-2">
+          {filteredAlerts.length > 0 && (
+            <Button size="sm" variant="secondary" onClick={handleExport}>
+              <Download className="h-3.5 w-3.5" />
+              {t("exportCsv")}
+            </Button>
+          )}
+          <Button size="sm" onClick={() => setShowForm(!showForm)}>
+            <Bell className="h-3.5 w-3.5" />
+            {t("create")}
+          </Button>
+        </div>
       </div>
 
       {showForm && (
@@ -92,9 +115,9 @@ export function AlertsDashboard() {
       )}
 
       {/* Alert list */}
-      {alerts && alerts.length > 0 ? (
+      {filteredAlerts.length > 0 ? (
         <div className="space-y-1">
-          {alerts.map((alert) => (
+          {filteredAlerts.map((alert) => (
             <AlertRow
               key={alert.id}
               alert={alert}
@@ -116,6 +139,20 @@ export function AlertsDashboard() {
             />
           ))}
         </div>
+      ) : debouncedSearch ? (
+        <EmptyState
+          icon={<Search className="h-8 w-8" />}
+          title={tc("empty.noResults")}
+          description={tc("empty.noResultsDescription")}
+          action={{ label: tc("empty.clearFilters"), onClick: () => setSearch("") }}
+        />
+      ) : (!alerts || alerts.length === 0) ? (
+        <EmptyState
+          icon={<Bell className="h-8 w-8" />}
+          title={t("empty")}
+          description={t("emptyDescription")}
+          action={{ label: t("create"), onClick: () => setShowForm(true) }}
+        />
       ) : (
         <EmptyState
           icon={<Bell className="h-8 w-8" />}
