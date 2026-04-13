@@ -114,6 +114,13 @@ export function AlertsDashboard() {
         />
       )}
 
+      {/* Results count */}
+      {alerts && alerts.length > 0 && (
+        <div className="text-[10px] text-muted-foreground">
+          {filteredAlerts.length} {filteredAlerts.length === 1 ? "alert" : "alerta"}
+        </div>
+      )}
+
       {/* Alert list */}
       {filteredAlerts.length > 0 ? (
         <div className="space-y-1">

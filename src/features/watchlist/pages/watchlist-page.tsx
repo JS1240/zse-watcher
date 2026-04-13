@@ -187,6 +187,13 @@ function AuthenticatedWatchlist() {
         </Button>
       </div>
 
+      {/* Results count */}
+      {watchedStocks.length > 0 && (
+        <div className="text-[10px] text-muted-foreground">
+          {filtered.length} {filtered.length === 1 ? "stock" : "stockova"}
+        </div>
+      )}
+
       {filtered.length > 0 ? (
         <WatchlistTable stocks={filtered} sort={sort} onSort={handleSort} />
       ) : debouncedSearch ? (
@@ -423,6 +430,13 @@ function LocalWatchlist() {
           CSV
         </Button>
       </div>
+
+      {/* Results count */}
+      {items.length > 0 && (
+        <div className="text-[10px] text-muted-foreground">
+          {filtered.length} {filtered.length === 1 ? "stock" : "stockova"}
+        </div>
+      )}
 
       {filtered.length > 0 ? (
         // Only enable drag-drop when not filtering (preserves actual watchlist order)
