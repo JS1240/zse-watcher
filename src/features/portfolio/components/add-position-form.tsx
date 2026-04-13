@@ -76,8 +76,13 @@ export function AddPositionForm({ onClose }: AddPositionFormProps) {
             value={tickerValue ?? ""}
             onChange={(v) => setValue("ticker", v)}
             placeholder="KOEI-R-A"
+            error={!!errors.ticker}
           />
-          {errors.ticker && <p className="mt-0.5 text-[10px] text-destructive">{translateError(errors.ticker.message, t)}</p>}
+          {errors.ticker && (
+            <p className="mt-0.5 flex items-center gap-1 text-[10px] text-destructive">
+              <span className="text-xs">⚠</span>{translateError(errors.ticker.message, t)}
+            </p>
+          )}
         </div>
 
         <div>
@@ -94,14 +99,22 @@ export function AddPositionForm({ onClose }: AddPositionFormProps) {
 
         <div>
           <label className="mb-1 block text-[10px] text-muted-foreground">{t("fields.shares")}</label>
-          <Input type="number" step="1" placeholder="100" {...register("shares")} />
-          {errors.shares && <p className="mt-0.5 text-[10px] text-destructive">{translateError(errors.shares.message, t)}</p>}
+          <Input type="number" step="1" placeholder="100" {...register("shares")} error={!!errors.shares} />
+          {errors.shares && (
+            <p className="mt-0.5 flex items-center gap-1 text-[10px] text-destructive">
+              <span className="text-xs">⚠</span>{translateError(errors.shares.message, t)}
+            </p>
+          )}
         </div>
 
         <div>
           <label className="mb-1 block text-[10px] text-muted-foreground">{t("fields.avgPrice")}</label>
-          <Input type="number" step="0.01" placeholder="142.00" {...register("pricePerShare")} />
-          {errors.pricePerShare && <p className="mt-0.5 text-[10px] text-destructive">{translateError(errors.pricePerShare.message, t)}</p>}
+          <Input type="number" step="0.01" placeholder="142.00" {...register("pricePerShare")} error={!!errors.pricePerShare} />
+          {errors.pricePerShare && (
+            <p className="mt-0.5 flex items-center gap-1 text-[10px] text-destructive">
+              <span className="text-xs">⚠</span>{translateError(errors.pricePerShare.message, t)}
+            </p>
+          )}
         </div>
 
         <div>

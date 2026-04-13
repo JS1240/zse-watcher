@@ -9,6 +9,7 @@ interface TickerSelectProps {
   onChange: (ticker: string) => void;
   placeholder?: string;
   className?: string;
+  error?: boolean;
 }
 
 export function TickerSelect({
@@ -16,6 +17,7 @@ export function TickerSelect({
   onChange,
   placeholder = "KOEI-R-A",
   className,
+  error,
 }: TickerSelectProps) {
   const [text, setText] = useState(value);
   const [isOpen, setIsOpen] = useState(false);
@@ -132,6 +134,7 @@ export function TickerSelect({
             "flex h-8 w-full rounded-md border border-input bg-background px-3 py-1.5 pr-7 font-data text-xs text-foreground transition-colors",
             "placeholder:text-muted-foreground",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+            error && "border-destructive focus-visible:ring-destructive",
           )}
         />
         <ChevronDown className="pointer-events-none absolute right-2 h-3.5 w-3.5 text-muted-foreground" />

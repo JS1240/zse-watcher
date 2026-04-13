@@ -75,8 +75,11 @@ export function AlertForm({ onClose, defaultTicker }: AlertFormProps) {
             value={tickerValue}
             onChange={(v) => setValue("ticker", v)}
             placeholder="KOEI-R-A"
+            error={!!errors.ticker}
           />
-          {errors.ticker && <p className="mt-0.5 text-[10px] text-destructive">{translateError(errors.ticker.message, t)}</p>}
+          {errors.ticker && <p className="mt-0.5 flex items-center gap-1 text-[10px] text-destructive">
+            <span className="text-xs">⚠</span>{translateError(errors.ticker.message, t)}
+          </p>}
         </div>
 
         <div>
@@ -101,10 +104,13 @@ export function AlertForm({ onClose, defaultTicker }: AlertFormProps) {
             {...register("targetValue")}
             error={!!errors.targetValue}
           />
-          {errors.targetValue && (
-            <p className="mt-0.5 text-[10px] text-destructive">{translateError(errors.targetValue.message, t)}</p>
+          {errors.targetValue ? (
+            <p className="mt-0.5 flex items-center gap-1 text-[10px] text-destructive">
+              <span className="text-xs">⚠</span>{translateError(errors.targetValue.message, t)}
+            </p>
+          ) : (
+            <p className="mt-0.5 text-[9px] text-muted-foreground">{t("fields.targetHint")}</p>
           )}
-          <p className="mt-0.5 text-[9px] text-muted-foreground">{t("fields.targetHint")}</p>
         </div>
 
         <div className="flex items-end">
