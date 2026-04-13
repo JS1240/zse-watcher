@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { cn } from "@/lib/utils";
 import { formatPrice, formatVolume } from "@/lib/formatters";
 import { ChangeBadge } from "@/components/shared/change-badge";
@@ -12,7 +13,9 @@ interface StockRowProps {
   flash?: FlashDirection;
 }
 
-export function StockRow({ stock, flash }: StockRowProps) {
+// Memoize to prevent re-renders when stock data hasn't changed
+// Selection state comes from global store, not props
+const StockRowBase = ({ stock, flash }: StockRowProps) => {
   const { selectedTicker, select } = useSelectedStock();
   const isSelected = selectedTicker === stock.ticker;
 
@@ -81,4 +84,15 @@ export function StockRow({ stock, flash }: StockRowProps) {
       </td>
     </tr>
   );
-}
+};
+
+export const StockRow = memo(StockRowBase, (prev, next) => {
+  // Re-render only if stock data, flash state, or selection changed
+  return (
+    prev.stock.ticker === next.stock.ticker &&
+    prev.stock.price === next.stock.price &&
+    prev.stock.changePct === next.stock.changePct &&
+    prev.stock.name === next.stock.name &&
+    prev.flash === next.flash
+  );
+});
