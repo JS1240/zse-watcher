@@ -1,9 +1,10 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { CalendarDays } from "lucide-react";
+import { CalendarDays, Search, ArrowUp, ArrowDown, ArrowUpDown, TrendingUp, Euro, Calendar } from "lucide-react";
 import { useDividends } from "@/features/dividends/api/dividends-queries";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
 import { formatDate, formatCurrency } from "@/lib/formatters";
@@ -12,14 +13,62 @@ import { cn } from "@/lib/utils";
 export function DividendsCalendar() {
   const { data: dividends, isLoading, isError, refetch } = useDividends();
   const { t } = useTranslation("common");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortField, setSortField] = useState<"yield" | "amount" | "exDivDate">("exDivDate");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
 
-  // Group by month
-  const grouped = useMemo(() => {
+  // Filter and sort dividends
+  const filteredDividends = useMemo(() => {
     if (!dividends) return [];
+    let result = [...dividends];
+
+    // Filter by search query
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter(
+        (d) =>
+          d.ticker.toLowerCase().includes(query) ||
+          d.name.toLowerCase().includes(query)
+      );
+    }
+
+    // Sort
+    result.sort((a, b) => {
+      let aVal: number | string;
+      let bVal: number | string;
+      switch (sortField) {
+        case "yield":
+          aVal = a.yield;
+          bVal = b.yield;
+          break;
+        case "amount":
+          aVal = a.amountEur;
+          bVal = b.amountEur;
+          break;
+        case "exDivDate":
+        default:
+          aVal = a.exDivDate;
+          bVal = b.exDivDate;
+          break;
+      }
+      if (typeof aVal === "string") {
+        return sortDir === "asc"
+          ? aVal.localeCompare(bVal as string)
+          : (bVal as string).localeCompare(aVal);
+      }
+      return sortDir === "asc" ? aVal - (bVal as number) : (bVal as number) - aVal;
+    });
+
+    return result;
+  }, [dividends, searchQuery, sortField, sortDir]);
+
+  // Group filtered dividends by month
+  const grouped = useMemo(() => {
+    if (!filteredDividends.length) return [];
 
     const months = new Map<string, typeof dividends>();
 
-    for (const d of dividends) {
+    for (const d of filteredDividends) {
       const monthKey = d.exDivDate.slice(0, 7); // YYYY-MM
       if (!months.has(monthKey)) {
         months.set(monthKey, []);
@@ -35,9 +84,29 @@ export function DividendsCalendar() {
           year: "numeric",
           month: "long",
         }),
-        items: items.sort((a, b) => a.exDivDate.localeCompare(b.exDivDate)),
+        items,
       }));
-  }, [dividends]);
+  }, [filteredDividends]);
+
+  const handleSort = (field: "yield" | "amount" | "exDivDate") => {
+    if (sortField === field) {
+      setSortDir(sortDir === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortDir("desc");
+    }
+  };
+
+  const SortIcon = ({ field }: { field: "yield" | "amount" | "exDivDate" }) => {
+    if (sortField !== field) {
+      return <ArrowUpDown className="h-3 w-3 opacity-30" />;
+    }
+    return sortDir === "asc" ? (
+      <ArrowUp className="h-3 w-3" />
+    ) : (
+      <ArrowDown className="h-3 w-3" />
+    );
+  };
 
   if (isLoading) {
     return (
@@ -59,68 +128,138 @@ export function DividendsCalendar() {
     );
   }
 
+  if (!dividends?.length) {
+    return (
+      <EmptyState
+        icon={<CalendarDays className="h-8 w-8" />}
+        title={t("empty.noData")}
+        description={t("empty.noDataDescription")}
+        variant="info"
+      />
+    );
+  }
+
   if (!grouped.length) {
     return (
-      <div className="rounded-md border border-border bg-card">
-        <EmptyState
-          icon={<CalendarDays className="h-5 w-5" />}
-          title={t("empty.noData")}
-          description={t("empty.noDataDescription")}
-        />
-      </div>
+      <EmptyState
+        icon={<Search className="h-8 w-8" />}
+        title={t("empty.noResults")}
+        description={t("empty.noResultsDescription")}
+        variant="no-results"
+        action={{ label: t("clear"), onClick: () => setSearchQuery("") }}
+      />
     );
   }
 
   return (
     <div className="space-y-4">
+      {/* Search and sort controls */}
+      <div className="flex flex-wrap items-center gap-2">
+        <div className="relative flex-1 min-w-[180px]">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+          <Input
+            placeholder={t("searchPlaceholder")}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-8 h-8 text-xs"
+          />
+        </div>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => handleSort("yield")}
+            className={cn(
+              "flex items-center gap-1 rounded px-2 py-1 text-[10px] uppercase tracking-wider transition-colors",
+              sortField === "yield"
+                ? "bg-primary text-primary-foreground"
+                : "bg-muted text-muted-foreground hover:bg-muted/70"
+            )}
+          >
+            <TrendingUp className="h-3 w-3" />
+            Yield
+            <SortIcon field="yield" />
+          </button>
+          <button
+            onClick={() => handleSort("amount")}
+            className={cn(
+              "flex items-center gap-1 rounded px-2 py-1 text-[10px] uppercase tracking-wider transition-colors",
+              sortField === "amount"
+                ? "bg-primary text-primary-foreground"
+                : "bg-muted text-muted-foreground hover:bg-muted/70"
+            )}
+          >
+            <Euro className="h-3 w-3" />
+            {t("fields.amount")}
+            <SortIcon field="amount" />
+          </button>
+          <button
+            onClick={() => handleSort("exDivDate")}
+            className={cn(
+              "flex items-center gap-1 rounded px-2 py-1 text-[10px] uppercase tracking-wider transition-colors",
+              sortField === "exDivDate"
+                ? "bg-primary text-primary-foreground"
+                : "bg-muted text-muted-foreground hover:bg-muted/70"
+            )}
+          >
+            <Calendar className="h-3 w-3" />
+            {t("fields.date")}
+            <SortIcon field="exDivDate" />
+          </button>
+        </div>
+      </div>
+
+      {/* Results count */}
+      <div className="text-[10px] text-muted-foreground">
+        {filteredDividends.length} {filteredDividends.length === 1 ? "dividend" : "dividendi"}
+      </div>
+
       {grouped.map((group) => (
         <div key={group.month}>
           <h3 className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
             {group.label}
           </h3>
           <div className="space-y-1">
-            {group.items.map((d) => {
-              const isPast = new Date(d.exDivDate) < new Date();
-              return (
-                <div
-                  key={`${d.ticker}-${d.exDivDate}`}
-                  className={cn(
-                    "flex items-center justify-between rounded-md border border-border bg-card px-3 py-2.5",
-                    isPast && "opacity-50",
-                  )}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary/10">
-                      <CalendarDays className="h-4 w-4 text-primary" />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-data text-xs font-semibold text-foreground">
-                          {d.ticker}
-                        </span>
-                        <span className="text-[10px] text-muted-foreground">{d.name}</span>
+              {group.items!.map((d) => {
+                const isPast = new Date(d.exDivDate) < new Date();
+                return (
+                  <div
+                    key={`${d.ticker}-${d.exDivDate}`}
+                    className={cn(
+                      "flex items-center justify-between rounded-md border border-border bg-card px-3 py-2.5 transition-colors hover:bg-accent/30",
+                      isPast && "opacity-50",
+                    )}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary/10">
+                        <CalendarDays className="h-4 w-4 text-primary" />
                       </div>
-                      <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
-                        <span>Ex-div: {formatDate(d.exDivDate)}</span>
-                        <span>Pay: {formatDate(d.payDate)}</span>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-data text-xs font-semibold text-foreground">
+                            {d.ticker}
+                          </span>
+                          <span className="text-[10px] text-muted-foreground">{d.name}</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                          <span>Ex-div: {formatDate(d.exDivDate)}</span>
+                          <span>Pay: {formatDate(d.payDate)}</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="flex items-center gap-3 text-right">
-                    <div>
-                      <div className="font-data text-xs font-medium tabular-nums text-foreground">
-                        {formatCurrency(d.amountEur)}
+                    <div className="flex items-center gap-3 text-right">
+                      <div>
+                        <div className="font-data text-xs font-medium tabular-nums text-foreground">
+                          {formatCurrency(d.amountEur)}
+                        </div>
+                        <Badge variant="success" className="text-[9px]">
+                          {d.yield.toFixed(1)}%
+                        </Badge>
                       </div>
-                      <Badge variant="success" className="text-[9px]">
-                        {d.yield.toFixed(1)}%
-                      </Badge>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
         </div>
       ))}
     </div>

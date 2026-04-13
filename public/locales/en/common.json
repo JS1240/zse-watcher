@@ -23,6 +23,7 @@
   },
   "actions": {
     "search": "Search...",
+    "clear": "Clear",
     "refresh": "Refresh",
     "save": "Save",
     "cancel": "Cancel",
@@ -58,6 +59,11 @@
     "noDataDescription": "Please try again later or refresh the page.",
     "noResultsDescription": "Try adjusting your search terms or clearing the filters.",
     "clearFilters": "Clear filters"
+  },
+  "searchPlaceholder": "Ticker or name...",
+  "fields": {
+    "amount": "Amount",
+    "date": "Date"
   },
   "time": {
     "lastUpdated": "Last updated",

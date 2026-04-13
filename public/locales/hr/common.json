@@ -23,6 +23,7 @@
   },
   "actions": {
     "search": "Pretrazi...",
+    "clear": "Ocisti",
     "refresh": "Osvjezi",
     "save": "Spremi",
     "cancel": "Odustani",
@@ -58,6 +59,11 @@
     "noDataDescription": "Pokušajte kasnije ili osvježite stranicu.",
     "noResultsDescription": "Pokušajte promijeniti uvjete pretraživanja ili filtere.",
     "clearFilters": "Očisti filtere"
+  },
+  "searchPlaceholder": "Ticker ili naziv...",
+  "fields": {
+    "amount": "Iznos",
+    "date": "Datum"
   },
   "time": {
     "lastUpdated": "Zadnje azurirano",
