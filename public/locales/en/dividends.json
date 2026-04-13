@@ -16,5 +16,9 @@
   "empty": {
     "noData": "No dividend data",
     "noDataDescription": "Dividends will be announced after shareholder approval."
-  }
+  },
+  "toast": {
+    "exported": "Dividends exported to CSV"
+  },
+  "exportCsv": "CSV"
 }

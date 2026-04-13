@@ -16,5 +16,9 @@
   "empty": {
     "noData": "Nema podataka o dividendama",
     "noDataDescription": "Dividende ce biti objavljene nakon odobrene skupstine dionicara."
-  }
+  },
+  "toast": {
+    "exported": "Dividende izvezene u CSV"
+  },
+  "exportCsv": "CSV"
 }

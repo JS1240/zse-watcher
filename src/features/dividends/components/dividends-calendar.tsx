@@ -1,18 +1,22 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { CalendarDays, Search, ArrowUp, ArrowDown, ArrowUpDown, TrendingUp, Euro, Calendar } from "lucide-react";
+import { CalendarDays, Search, ArrowUp, ArrowDown, ArrowUpDown, TrendingUp, Euro, Calendar, Download } from "lucide-react";
+import { toast } from "sonner";
 import { useDividends } from "@/features/dividends/api/dividends-queries";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
 import { formatDate, formatCurrency } from "@/lib/formatters";
+import { exportToCsv } from "@/lib/export";
 import { cn } from "@/lib/utils";
 
 export function DividendsCalendar() {
   const { data: dividends, isLoading, isError, refetch } = useDividends();
   const { t } = useTranslation("common");
+  const { t: td } = useTranslation("dividends");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortField, setSortField] = useState<"yield" | "amount" | "exDivDate">("exDivDate");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
@@ -151,6 +155,22 @@ export function DividendsCalendar() {
     );
   }
 
+  // Export filtered dividends to CSV
+  const handleExportCsv = () => {
+    if (!filteredDividends.length) return;
+    const headers = ["Ticker", "Name", "Ex-Div Date", "Pay Date", "Amount (EUR)", "Yield (%)"];
+    const rows = filteredDividends.map((d) => [
+      d.ticker,
+      d.name,
+      formatDate(d.exDivDate),
+      formatDate(d.payDate),
+      d.amountEur.toFixed(2),
+      d.yield.toFixed(2),
+    ]);
+    exportToCsv(`zse-dividends-${new Date().toISOString().split("T")[0]}`, headers, rows);
+    toast.success(td("toast.exported"));
+  };
+
   return (
     <div className="space-y-4">
       {/* Search and sort controls */}
@@ -164,6 +184,16 @@ export function DividendsCalendar() {
             className="pl-8 h-8 text-xs"
           />
         </div>
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={handleExportCsv}
+          disabled={filteredDividends.length === 0}
+          title={t("exportCsv")}
+        >
+          <Download className="h-3.5 w-3.5" />
+          CSV
+        </Button>
         <div className="flex items-center gap-1">
           <button
             onClick={() => handleSort("yield")}
