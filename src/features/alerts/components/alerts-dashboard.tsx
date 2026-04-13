@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Bell, BellOff, Pencil, Trash2, X, Check } from "lucide-react";
+import { toast } from "sonner";
 import { useAlertsData } from "@/features/alerts/hooks/use-alerts-data";
 import { useAlerts } from "@/features/alerts/api/alerts-queries";
 import { AlertForm } from "@/features/alerts/components/alert-form";
@@ -53,7 +54,10 @@ export function AlertsDashboard() {
       </div>
 
       {showForm && (
-        <AlertForm onClose={() => setShowForm(false)} />
+        <AlertForm
+          onClose={() => setShowForm(false)}
+          onSuccess={() => toast.success(t("toast.created"))}
+        />
       )}
 
       {/* Alert list */}
@@ -63,7 +67,10 @@ export function AlertsDashboard() {
             <AlertRow
               key={alert.id}
               alert={alert}
-              onDelete={() => deleteAlert(alert.id)}
+              onDelete={() => {
+                deleteAlert(alert.id);
+                toast.success(t("toast.deleted"));
+              }}
               onToggle={() => toggleAlert(alert.id)}
               onUpdate={async (id, data) => {
                 // Delete and re-create — inline edit via form replacement
@@ -73,6 +80,7 @@ export function AlertsDashboard() {
                   condition: data.condition,
                   targetValue: data.targetValue,
                 });
+                toast.success(t("toast.updated"));
               }}
             />
           ))}

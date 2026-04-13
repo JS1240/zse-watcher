@@ -26,9 +26,10 @@ type PositionValues = z.infer<typeof positionSchema>;
 
 interface AddPositionFormProps {
   onClose: () => void;
+  onSuccess?: () => void;
 }
 
-export function AddPositionForm({ onClose }: AddPositionFormProps) {
+export function AddPositionForm({ onClose, onSuccess }: AddPositionFormProps) {
   const { t } = useTranslation("portfolio");
   const addTransaction = useAddTransaction();
 
@@ -57,6 +58,7 @@ export function AddPositionForm({ onClose }: AddPositionFormProps) {
       transactionDate: data.transactionDate,
       notes: data.notes,
     });
+    onSuccess?.();
     onClose();
   };
 

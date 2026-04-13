@@ -30,6 +30,7 @@
   "toast": {
     "created": "Alert created",
     "deleted": "Alert deleted",
+    "updated": "Alert updated",
     "createFailed": "Failed to create alert",
     "deleteFailed": "Failed to delete alert"
   },

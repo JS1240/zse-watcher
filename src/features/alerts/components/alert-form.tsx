@@ -26,9 +26,10 @@ type AlertFormData = z.infer<typeof alertSchema>;
 interface AlertFormProps {
   onClose: () => void;
   defaultTicker?: string;
+  onSuccess?: () => void;
 }
 
-export function AlertForm({ onClose, defaultTicker }: AlertFormProps) {
+export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps) {
   const { t } = useTranslation("alerts");
   const createAlert = useCreateAlert();
 
@@ -56,6 +57,7 @@ export function AlertForm({ onClose, defaultTicker }: AlertFormProps) {
       condition: data.condition as AlertCondition,
       targetValue: parsed,
     });
+    onSuccess?.();
     onClose();
   };
 

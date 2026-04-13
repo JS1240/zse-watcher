@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Plus, Trash2, ChevronDown, ChevronUp, Wallet, Download } from "lucide-react";
+import { toast } from "sonner";
 import { useLocalTransactions } from "@/features/portfolio/hooks/use-local-transactions";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { AddPositionForm } from "@/features/portfolio/components/add-position-form";
@@ -189,7 +190,10 @@ export function LocalPortfolioDashboard() {
 
       {/* Add position form */}
       {showAddForm && (
-        <AddPositionForm onClose={() => setShowAddForm(false)} />
+        <AddPositionForm
+          onClose={() => setShowAddForm(false)}
+          onSuccess={() => toast.success(t("toast.transactionAdded"))}
+        />
       )}
 
       {/* Holdings table */}

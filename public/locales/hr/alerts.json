@@ -30,6 +30,7 @@
   "toast": {
     "created": "Alarm stvoren",
     "deleted": "Alarm obrisan",
+    "updated": "Alarm ažuriran",
     "createFailed": "Neuspjelo stvaranje alarma",
     "deleteFailed": "Neuspjelo brisanje alarma"
   },
