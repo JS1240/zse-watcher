@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { TrendingUp, TrendingDown } from "lucide-react";
 import { useMovers } from "@/features/market/api/market-queries";
+import { useSelectedStock } from "@/hooks/use-selected-stock";
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatPrice } from "@/lib/formatters";
@@ -47,8 +48,18 @@ export function MarketMovers() {
 }
 
 function MoverRow({ mover }: { mover: Mover }) {
+  const select = useSelectedStock((state) => state.select);
+
+  const handleClick = () => {
+    select(mover.ticker);
+  };
+
   return (
-    <div className="flex items-center justify-between rounded-sm px-2 py-1.5 transition-colors hover:bg-accent/50">
+    <button
+      type="button"
+      onClick={handleClick}
+      className="flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left transition-colors hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary"
+    >
       <div className="flex flex-col">
         <span className="font-data text-[11px] font-semibold text-foreground">
           {mover.ticker}
@@ -63,6 +74,6 @@ function MoverRow({ mover }: { mover: Mover }) {
         </span>
         <ChangeBadge value={mover.changePct} showIcon={false} className="text-[10px]" />
       </div>
-    </div>
+    </button>
   );
 }
