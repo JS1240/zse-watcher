@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatPercent } from "@/lib/formatters";
@@ -8,11 +9,7 @@ interface ChangeBadgeProps {
   showIcon?: boolean;
 }
 
-export function ChangeBadge({
-  value,
-  className,
-  showIcon = true,
-}: ChangeBadgeProps) {
+function ChangeBadgeBase({ value, className, showIcon = true }: ChangeBadgeProps) {
   const isPositive = value > 0;
   const isNegative = value < 0;
 
@@ -37,3 +34,7 @@ export function ChangeBadge({
     </span>
   );
 }
+
+export const ChangeBadge = memo(ChangeBadgeBase, (prev, next) => {
+  return prev.value === next.value && prev.showIcon === next.showIcon;
+});
