@@ -4,6 +4,12 @@
 
 ### Added
 
+- **CSV Export for Alerts** — export alerts to CSV for backup and analysis
+  - Export button in alerts dashboard (visible when alerts exist)
+  - Columns: Ticker, Condition, Target, Status, Active, Created date
+  - Localized condition labels and date format
+  - Toast confirmation on export
+
 - **EmptyState 'no-results' variant** — distinguishes zero-results from zero-data states
   - Variant `'no-results'` for filters/search returning empty (prominent clear action)
   - StockScreener: shows only when stocks exist but filters match nothing

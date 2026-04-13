@@ -1,6 +1,7 @@
 {
   "title": "Price Alerts",
   "create": "Create Alert",
+  "exportCsv": "CSV",
   "condition": {
     "above": "Price Above",
     "below": "Price Below",
@@ -36,7 +37,8 @@
     "deleted": "Alert deleted",
     "updated": "Alert updated",
     "createFailed": "Failed to create alert",
-    "deleteFailed": "Failed to delete alert"
+    "deleteFailed": "Failed to delete alert",
+    "exported": "Alerts exported to CSV"
   },
   "notification": {
     "title": "Notifications",

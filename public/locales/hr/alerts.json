@@ -1,6 +1,7 @@
 {
   "title": "Alarmi cijena",
   "create": "Stvori alarm",
+  "exportCsv": "CSV",
   "condition": {
     "above": "Cijena iznad",
     "below": "Cijena ispod",
@@ -26,17 +27,18 @@
     "positiveNumber": "Unesite pozitivan broj",
     "selectTicker": "Odaberite dionicu s popisa"
   },
-  "edit": "Uređivanje",
+  "edit": "Urediivanje",
   "pressEnter": "Enter za spremanje",
   "cancelHint": "Esc za odustanak",
   "empty": "Nemate postavljenih alarma",
-  "emptyDescription": "Postavite alarm i primajte obavijesti kada cijena doseže određenu razinu.",
+  "emptyDescription": "Postavite alarm i primajte obavijesti kada cijena doseze odredenu razinu.",
   "toast": {
     "created": "Alarm stvoren",
     "deleted": "Alarm obrisan",
-    "updated": "Alarm ažuriran",
+    "updated": "Alarm azuriran",
     "createFailed": "Neuspjelo stvaranje alarma",
-    "deleteFailed": "Neuspjelo brisanje alarma"
+    "deleteFailed": "Neuspjelo brisanje alarma",
+    "exported": "Alarmi izvezeni u CSV"
   },
   "notification": {
     "title": "Obavijesti",

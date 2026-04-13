@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Bell, BellOff, Pencil, Trash2, X, Check, Keyboard } from "lucide-react";
+import { Bell, BellOff, Pencil, Trash2, X, Check, Keyboard, Download } from "lucide-react";
 import { toast } from "sonner";
 import { useAlertsData } from "@/features/alerts/hooks/use-alerts-data";
 import { useAlerts } from "@/features/alerts/api/alerts-queries";
@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import type { AlertCondition } from "@/types/alert";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
+import { exportToCsv } from "@/lib/export";
 
 export function AlertsDashboard() {
   const { t } = useTranslation("alerts");
@@ -43,10 +44,40 @@ export function AlertsDashboard() {
     );
   }
 
+  // CSV export for alerts
+  const handleExport = () => {
+    if (!alerts || alerts.length === 0) return;
+    const headers = ["Ticker", "Condition", "Target", "Status", "Active", "Created"];
+    const rows = alerts.map((a) => {
+      const conditionLabels: Record<string, string> = {
+        above: t("condition.above"),
+        below: t("condition.below"),
+        percent_change_up: t("condition.percentUp"),
+        percent_change_down: t("condition.percentDown"),
+      };
+      return [
+        a.ticker,
+        conditionLabels[a.condition] || a.condition,
+        a.condition.includes("percent") ? `${a.targetValue}%` : formatPrice(a.targetValue),
+        a.isTriggered ? t("status.triggered") : "—",
+        a.isActive ? "✓" : "—",
+        formatDate(a.createdAt),
+      ];
+    });
+    exportToCsv(`zse-alerts-${new Date().toISOString().split("T")[0]}`, headers, rows);
+    toast.success(t("toast.exported") || "Exported to CSV");
+  };
+
   return (
     <div className="space-y-3">
-      {/* Create button */}
-      <div className="flex justify-end">
+      {/* Action buttons */}
+      <div className="flex justify-end gap-2">
+        {alerts && alerts.length > 0 && (
+          <Button size="sm" variant="secondary" onClick={handleExport}>
+            <Download className="h-3.5 w-3.5" />
+            {t("exportCsv")}
+          </Button>
+        )}
         <Button size="sm" onClick={() => setShowForm(!showForm)}>
           <Bell className="h-3.5 w-3.5" />
           {t("create")}
