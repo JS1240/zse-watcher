@@ -1,9 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod/v4";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
-import { X, Keyboard } from "lucide-react";
+import { X, Keyboard, AlertCircle, CheckCircle2 } from "lucide-react";
 import { useCreateAlert } from "@/features/alerts/api/alerts-queries";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -51,6 +51,11 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
   const tickerValue = watch("ticker");
   const conditionValue = watch("condition");
   const isPercentCondition = conditionValue?.includes("percent");
+  const [touched, setTouched] = useState({ ticker: false, target: false });
+
+  // Check if a field has been interacted with
+  const showTickerError = touched.ticker && errors.ticker;
+  const showTargetError = touched.target && errors.targetValue;
 
   // Keyboard hint based on condition
   const keyboardHint = isPercentCondition
@@ -92,13 +97,23 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
           <label className="mb-1 block text-[10px] text-muted-foreground">{t("fields.ticker")}</label>
           <TickerSelect
             value={tickerValue}
-            onChange={(v) => setValue("ticker", v, { shouldValidate: true })}
+            onChange={(v) => {
+              setValue("ticker", v, { shouldValidate: true });
+              setTouched((prev) => ({ ...prev, ticker: true }));
+            }}
+            onBlur={() => setTouched((prev) => ({ ...prev, ticker: true }))}
             placeholder="KOEI-R-A"
-            error={!!errors.ticker}
+            error={showTickerError}
           />
-          {errors.ticker && (
-            <p className="mt-1 flex items-center gap-1 rounded bg-destructive/10 px-2 py-1 text-[10px] font-medium text-destructive">
-              <span className="text-xs">⚠</span>{translateError(errors.ticker.message, t)}
+          {showTickerError ? (
+            <p className="mt-1.5 flex items-center gap-1.5 rounded-md bg-destructive/10 px-2.5 py-1.5 text-xs font-medium text-destructive">
+              <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
+              {translateError(errors.ticker?.message, t)}
+            </p>
+          ) : tickerValue && (
+            <p className="mt-1.5 flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400">
+              <CheckCircle2 className="h-3.5 w-3.5 flex-shrink-0" />
+              {tickerValue}
             </p>
           )}
         </div>
@@ -123,16 +138,19 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
             type="number"
             step={isPercentCondition ? "0.01" : "0.01"}
             placeholder={isPercentCondition ? "10.5" : "150.00"}
-            {...register("targetValue")}
-            error={!!errors.targetValue}
+            {...register("targetValue", {
+              onBlur: () => setTouched((prev) => ({ ...prev, target: true })),
+            })}
+            error={showTargetError}
           />
-          {errors.targetValue ? (
-            <p className="mt-1 flex items-center gap-1 rounded bg-destructive/10 px-2 py-1 text-[10px] font-medium text-destructive">
-              <span className="text-xs">⚠</span>{translateError(errors.targetValue.message, t)}
+          {showTargetError ? (
+            <p className="mt-1.5 flex items-center gap-1.5 rounded-md bg-destructive/10 px-2.5 py-1.5 text-xs font-medium text-destructive">
+              <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
+              {translateError(errors.targetValue?.message, t)}
             </p>
           ) : (
-            <p className="mt-1 flex items-center gap-1.5 text-[9px] text-muted-foreground">
-              <Keyboard className="h-3 w-3" />
+            <p className="mt-1.5 flex items-center gap-1.5 text-[9px] text-muted-foreground">
+              <Keyboard className="h-3 w-3 flex-shrink-0" />
               {keyboardHint}
             </p>
           )}

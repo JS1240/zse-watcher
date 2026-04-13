@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Bell, BellOff, Pencil, Trash2, X, Check, Keyboard, Download } from "lucide-react";
+import { Bell, BellOff, Pencil, Trash2, X, Check, Keyboard, Download, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useAlertsData } from "@/features/alerts/hooks/use-alerts-data";
 import { useAlerts } from "@/features/alerts/api/alerts-queries";
@@ -265,8 +265,9 @@ function AlertRow({ alert, onDelete, onToggle, onUpdate }: AlertRowProps) {
               placeholder="KOEI-R-A"
             />
             {editTickerError && (
-              <p className="mt-1 flex items-center gap-1 rounded bg-destructive/10 px-2 py-1 text-[9px] font-medium text-destructive">
-                ⚠ {t("validation.selectTicker")}
+              <p className="mt-1.5 flex items-center gap-1.5 rounded-md bg-destructive/10 px-2.5 py-1.5 text-xs font-medium text-destructive">
+                <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
+                {t("validation.selectTicker")}
               </p>
             )}
           </div>
@@ -306,12 +307,13 @@ function AlertRow({ alert, onDelete, onToggle, onUpdate }: AlertRowProps) {
               placeholder={editPlaceholder}
             />
             {editTargetError ? (
-              <p className="mt-1 flex items-center gap-1 rounded bg-destructive/10 px-2 py-1 text-[9px] font-medium text-destructive">
-                ⚠ {t("validation.positiveNumber")}
+              <p className="mt-1.5 flex items-center gap-1.5 rounded-md bg-destructive/10 px-2.5 py-1.5 text-xs font-medium text-destructive">
+                <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
+                {t("validation.positiveNumber")}
               </p>
             ) : (
-              <p className="mt-1 flex items-center gap-1 text-[8px] text-muted-foreground">
-                <Keyboard className="h-3 w-3" />
+              <p className="mt-1.5 flex items-center gap-1.5 text-[9px] text-muted-foreground">
+                <Keyboard className="h-3 w-3 flex-shrink-0" />
                 {t("pressEnter")} · {t("cancelHint")}
               </p>
             )}
