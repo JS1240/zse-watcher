@@ -101,9 +101,8 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
               setValue("ticker", v, { shouldValidate: true });
               setTouched((prev) => ({ ...prev, ticker: true }));
             }}
-            onBlur={() => setTouched((prev) => ({ ...prev, ticker: true }))}
             placeholder="KOEI-R-A"
-            error={showTickerError}
+            error={!!showTickerError}
           />
           {showTickerError ? (
             <p className="mt-1.5 flex items-center gap-1.5 rounded-md bg-destructive/10 px-2.5 py-1.5 text-xs font-medium text-destructive">
@@ -141,7 +140,7 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
             {...register("targetValue", {
               onBlur: () => setTouched((prev) => ({ ...prev, target: true })),
             })}
-            error={showTargetError}
+            error={!!showTargetError}
           />
           {showTargetError ? (
             <p className="mt-1.5 flex items-center gap-1.5 rounded-md bg-destructive/10 px-2.5 py-1.5 text-xs font-medium text-destructive">

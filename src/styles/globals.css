@@ -99,3 +99,27 @@ body {
 .animate-empty-state {
   animation: empty-state-in 0.4s ease-out forwards;
 }
+
+/* Focus-visible for keyboard navigation accessibility */
+*:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* Remove default focus for mouse users */
+*:focus {
+  outline: none;
+}
+
+/* Ensure focus-visible on buttons */
+button:focus-visible,
+[role="button"]:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* Interactive table rows */
+tr[data-clickable]:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: -2px;
+}
