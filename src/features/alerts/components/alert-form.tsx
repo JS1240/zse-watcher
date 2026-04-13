@@ -1,8 +1,9 @@
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod/v4";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
-import { X } from "lucide-react";
+import { X, Keyboard } from "lucide-react";
 import { useCreateAlert } from "@/features/alerts/api/alerts-queries";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -48,6 +49,22 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
   });
 
   const tickerValue = watch("ticker");
+  const conditionValue = watch("condition");
+  const isPercentCondition = conditionValue?.includes("percent");
+
+  // Keyboard hint based on condition
+  const keyboardHint = isPercentCondition
+    ? t("fields.targetHint").replace("Primjer", "npr.") + " — " + t("pressEnter")
+    : t("fields.targetHint") + " — " + t("pressEnter");
+
+  // Focus input on mount
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const input = document.getElementById("alert-target-input");
+      input?.focus();
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   const onSubmit = async (data: AlertFormData) => {
     const parsed = parseFloat(data.targetValue.replace(",", "."));
@@ -75,13 +92,15 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
           <label className="mb-1 block text-[10px] text-muted-foreground">{t("fields.ticker")}</label>
           <TickerSelect
             value={tickerValue}
-            onChange={(v) => setValue("ticker", v)}
+            onChange={(v) => setValue("ticker", v, { shouldValidate: true })}
             placeholder="KOEI-R-A"
             error={!!errors.ticker}
           />
-          {errors.ticker && <p className="mt-0.5 flex items-center gap-1 text-[10px] text-destructive">
-            <span className="text-xs">⚠</span>{translateError(errors.ticker.message, t)}
-          </p>}
+          {errors.ticker && (
+            <p className="mt-1 flex items-center gap-1 rounded bg-destructive/10 px-2 py-1 text-[10px] font-medium text-destructive">
+              <span className="text-xs">⚠</span>{translateError(errors.ticker.message, t)}
+            </p>
+          )}
         </div>
 
         <div>
@@ -100,18 +119,22 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
         <div>
           <label className="mb-1 block text-[10px] text-muted-foreground">{t("fields.target")}</label>
           <Input
+            id="alert-target-input"
             type="number"
-            step="0.01"
-            placeholder="150.00"
+            step={isPercentCondition ? "0.01" : "0.01"}
+            placeholder={isPercentCondition ? "10.5" : "150.00"}
             {...register("targetValue")}
             error={!!errors.targetValue}
           />
           {errors.targetValue ? (
-            <p className="mt-0.5 flex items-center gap-1 text-[10px] text-destructive">
+            <p className="mt-1 flex items-center gap-1 rounded bg-destructive/10 px-2 py-1 text-[10px] font-medium text-destructive">
               <span className="text-xs">⚠</span>{translateError(errors.targetValue.message, t)}
             </p>
           ) : (
-            <p className="mt-0.5 text-[9px] text-muted-foreground">{t("fields.targetHint")}</p>
+            <p className="mt-1 flex items-center gap-1.5 text-[9px] text-muted-foreground">
+              <Keyboard className="h-3 w-3" />
+              {keyboardHint}
+            </p>
           )}
         </div>
 

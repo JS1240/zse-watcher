@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Bell, BellOff, Pencil, Trash2, X, Check } from "lucide-react";
+import { Bell, BellOff, Pencil, Trash2, X, Check, Keyboard } from "lucide-react";
 import { toast } from "sonner";
 import { useAlertsData } from "@/features/alerts/hooks/use-alerts-data";
 import { useAlerts } from "@/features/alerts/api/alerts-queries";
@@ -136,6 +136,31 @@ function AlertRow({ alert, onDelete, onToggle, onUpdate }: AlertRowProps) {
   ];
 
   const isPercent = alert.condition.includes("percent");
+  const isPercentEdit = editCondition.includes("percent");
+  const editPlaceholder = isPercentEdit ? "10.5" : "150.00";
+
+  // Keyboard navigation
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter") {
+        handleSave();
+      } else if (e.key === "Escape") {
+        handleCancel();
+      }
+    },
+    [handleSave, handleCancel],
+  );
+
+  // Focus target input on enter edit mode
+  useEffect(() => {
+    if (editing) {
+      const timer = setTimeout(() => {
+        const input = document.getElementById(`alert-edit-target-${alert.id}`);
+        input?.focus();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [editing, alert.id]);
 
   const handleSave = async () => {
     const parsed = parseFloat(editTarget.replace(",", "."));
@@ -213,7 +238,9 @@ function AlertRow({ alert, onDelete, onToggle, onUpdate }: AlertRowProps) {
               placeholder="KOEI-R-A"
             />
             {editTickerError && (
-              <p className="mt-0.5 text-[9px] text-destructive">{t("validation.required")}</p>
+              <p className="mt-1 flex items-center gap-1 rounded bg-destructive/10 px-2 py-1 text-[9px] font-medium text-destructive">
+                ⚠ {t("validation.selectTicker")}
+              </p>
             )}
           </div>
           <div>
@@ -237,9 +264,11 @@ function AlertRow({ alert, onDelete, onToggle, onUpdate }: AlertRowProps) {
               {t("fields.target")}
             </label>
             <Input
+              id={`alert-edit-target-${alert.id}`}
               type="number"
               step="0.01"
               value={editTarget}
+              onKeyDown={handleKeyDown}
               onChange={(e) => {
                 setEditTarget(e.target.value);
                 const parsed = parseFloat(e.target.value.replace(",", "."));
@@ -247,10 +276,17 @@ function AlertRow({ alert, onDelete, onToggle, onUpdate }: AlertRowProps) {
               }}
               error={editTargetError}
               className="h-7 font-data text-xs"
-              placeholder="150.00"
+              placeholder={editPlaceholder}
             />
-            {editTargetError && (
-              <p className="mt-0.5 text-[9px] text-destructive">{t("validation.positiveNumber")}</p>
+            {editTargetError ? (
+              <p className="mt-1 flex items-center gap-1 rounded bg-destructive/10 px-2 py-1 text-[9px] font-medium text-destructive">
+                ⚠ {t("validation.positiveNumber")}
+              </p>
+            ) : (
+              <p className="mt-1 flex items-center gap-1 text-[8px] text-muted-foreground">
+                <Keyboard className="h-3 w-3" />
+                {t("pressEnter")} · {t("cancelHint")}
+              </p>
             )}
           </div>
         </div>

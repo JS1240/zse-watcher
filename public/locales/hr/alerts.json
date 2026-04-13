@@ -17,14 +17,18 @@
     "ticker": "Oznaka",
     "condition": "Uvjet",
     "target": "Ciljna vrijednost",
-    "targetHint": "Podržan decimalni zarez: 150.00 ili 150,00",
+    "targetHint": "Primjer: 150,00 ili 10.5%",
     "status": "Status",
     "created": "Stvoreno"
   },
   "validation": {
-    "required": "Obavezno",
-    "positiveNumber": "Mora biti pozitivan broj"
+    "required": "Obavezno polje",
+    "positiveNumber": "Unesite pozitivan broj",
+    "selectTicker": "Odaberite dionicu s popisa"
   },
+  "edit": "Uređivanje",
+  "pressEnter": "Enter za spremanje",
+  "cancelHint": "Esc za odustanak",
   "empty": "Nemate postavljenih alarma",
   "emptyDescription": "Postavite alarm i primajte obavijesti kada cijena doseže određenu razinu.",
   "toast": {
