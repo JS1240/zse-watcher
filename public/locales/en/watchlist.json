@@ -19,6 +19,7 @@
     "added": "Added to watchlist",
     "removed": "Removed from watchlist",
     "addFailed": "Failed to add to watchlist",
-    "removeFailed": "Failed to remove from watchlist"
+    "removeFailed": "Failed to remove from watchlist",
+    "exported": "Exported to CSV"
   }
 }

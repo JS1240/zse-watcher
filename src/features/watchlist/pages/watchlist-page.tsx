@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Star, Search, ArrowUp, ArrowDown, ArrowUpDown, GripVertical, Download } from "lucide-react";
+import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocalWatchlist } from "@/features/watchlist/hooks/use-local-watchlist";
 import { useWatchlistItems } from "@/features/watchlist/api/watchlist-queries";
@@ -154,6 +155,7 @@ function AuthenticatedWatchlist() {
       s.turnover.toFixed(2),
     ]);
     exportToCsv(`zse-watchlist-${new Date().toISOString().split("T")[0]}`, headers, rows);
+    toast.success(t("toast.exported"));
   };
 
   if (watchlistItems.isLoading) {
@@ -390,6 +392,7 @@ function LocalWatchlist() {
       s.turnover.toFixed(2),
     ]);
     exportToCsv(`zse-watchlist-${new Date().toISOString().split("T")[0]}`, headers, rows);
+    toast.success(t("toast.exported"));
   };
 
   if (stocksResult === undefined) {
