@@ -4,6 +4,7 @@ import { Plus, Trash2, ChevronDown, ChevronUp, Wallet, Download } from "lucide-r
 import { useLocalTransactions } from "@/features/portfolio/hooks/use-local-transactions";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { AddPositionForm } from "@/features/portfolio/components/add-position-form";
+import { PortfolioSkeleton } from "@/features/portfolio/components/portfolio-skeleton";
 import { Button } from "@/components/ui/button";
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { EmptyState } from "@/components/shared/empty-state";
@@ -16,7 +17,7 @@ export function LocalPortfolioDashboard() {
   const { t } = useTranslation("portfolio");
   const { transactions, hasLocalTransactions, removeTransaction, clearTransactions } =
     useLocalTransactions();
-  const { data: stocksResult } = useStocksLive();
+  const { data: stocksResult, isLoading: stocksLoading } = useStocksLive();
   const stocks = stocksResult?.stocks ?? null;
   const { select } = useSelectedStock();
   const [showAddForm, setShowAddForm] = useState(false);
@@ -36,6 +37,11 @@ export function LocalPortfolioDashboard() {
       return () => clearTimeout(t);
     }
   }, [transactions.length]);
+
+  // Show skeleton while stocks are loading (prevents layout shift)
+  if (stocksLoading && !stocks) {
+    return <PortfolioSkeleton />;
+  }
 
   // Calculate holdings from local transactions
   const holdingsMap = new Map<string, { totalShares: number; totalCost: number; name: string }>();
