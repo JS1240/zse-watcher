@@ -47,7 +47,7 @@ export function EmptyState({
   className,
 }: EmptyStateProps) {
   return (
-    <div className={cn("flex flex-col items-center justify-center py-8 px-4 text-center", className)}>
+    <div className={cn("flex flex-col items-center justify-center py-8 px-4 text-center animate-empty-state", className)}>
       {/* Icon container */}
       <div
         className={cn(

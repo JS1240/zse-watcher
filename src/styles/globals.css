@@ -89,3 +89,13 @@ body {
   background-size: 200% 100%;
   animation: shimmer 1.6s ease-in-out infinite;
 }
+
+/* Empty state entrance animation */
+@keyframes empty-state-in {
+  0% { opacity: 0; transform: scale(0.95); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.animate-empty-state {
+  animation: empty-state-in 0.4s ease-out forwards;
+}
