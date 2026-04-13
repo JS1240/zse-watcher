@@ -4,6 +4,14 @@
 
 ### Added
 
+- **Focus States for Keyboard Navigation** — accessibility improvements for Croatian retail investors
+  - `:focus-visible` outline styles in globals.css
+  - Button component with focus ring offset
+  - StockRow already had proper focus-visible, now unified
+  - Removes default `:focus` outline for mouse users while keeping keyboard accessibility
+
+### Added
+
 - **CSV Export for Alerts** — export alerts to CSV for backup and analysis
   - Export button in alerts dashboard (visible when alerts exist)
   - Columns: Ticker, Condition, Target, Status, Active, Created date
