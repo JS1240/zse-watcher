@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ErrorState } from "@/components/shared/error-state";
 import { cn } from "@/lib/utils";
 import { formatPercent } from "@/lib/formatters";
 import { SectorDrawer } from "@/features/market/components/sector-drawer";
@@ -15,9 +16,10 @@ export interface SectorGroup {
 }
 
 export function Heatmap() {
-  const { data: result, isLoading } = useStocksLive();
+  const { data: result, isLoading, isError, refetch } = useStocksLive();
   const stocks = result?.stocks ?? null;
   const { t } = useTranslation("heatmap");
+  const { t: tc } = useTranslation("common");
   const { select } = useSelectedStock();
   const [selectedSector, setSelectedSector] = useState<SectorGroup | null>(null);
 
@@ -54,6 +56,16 @@ export function Heatmap() {
       (a, b) => b.totalTurnover - a.totalTurnover,
     );
   }, [stocks, t]);
+
+  if (isError) {
+    return (
+      <ErrorState
+        title={tc("errors.generic")}
+        description={tc("errors.network")}
+        retry={{ onRetry: refetch, label: tc("errors.tryAgain") }}
+      />
+    );
+  }
 
   if (isLoading) {
     return <Skeleton className="h-96 w-full" />;

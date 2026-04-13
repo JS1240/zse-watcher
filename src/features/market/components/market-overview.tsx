@@ -3,11 +3,23 @@ import { Activity, TrendingUp, DollarSign } from "lucide-react";
 import { useMacro } from "@/features/market/api/market-queries";
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ErrorState } from "@/components/shared/error-state";
 import { formatPrice } from "@/lib/formatters";
 
 export function MarketOverview() {
-  const { data: macro, isLoading } = useMacro();
+  const { data: macro, isLoading, isError, refetch } = useMacro();
   const { t } = useTranslation("macro");
+  const { t: tc } = useTranslation("common");
+
+  if (isError) {
+    return (
+      <ErrorState
+        title={tc("errors.generic")}
+        description={tc("errors.network")}
+        retry={{ onRetry: refetch, label: tc("errors.tryAgain") }}
+      />
+    );
+  }
 
   if (isLoading || !macro) {
     return (

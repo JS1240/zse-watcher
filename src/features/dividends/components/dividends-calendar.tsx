@@ -5,11 +5,12 @@ import { useDividends } from "@/features/dividends/api/dividends-queries";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/shared/empty-state";
+import { ErrorState } from "@/components/shared/error-state";
 import { formatDate, formatCurrency } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 
 export function DividendsCalendar() {
-  const { data: dividends, isLoading } = useDividends();
+  const { data: dividends, isLoading, isError, refetch } = useDividends();
   const { t } = useTranslation("common");
 
   // Group by month
@@ -45,6 +46,16 @@ export function DividendsCalendar() {
           <Skeleton key={i} className="h-24" />
         ))}
       </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <ErrorState
+        title={t("errors.generic")}
+        description={t("errors.network")}
+        retry={{ onRetry: refetch, label: t("errors.tryAgain") }}
+      />
     );
   }
 
