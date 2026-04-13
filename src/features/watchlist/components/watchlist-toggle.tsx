@@ -5,6 +5,7 @@ import {
   useAddToWatchlist,
   useRemoveFromWatchlist,
 } from "@/features/watchlist/api/watchlist-queries";
+import { useLocalWatchlist } from "@/features/watchlist/hooks/use-local-watchlist";
 import { cn } from "@/lib/utils";
 
 interface WatchlistToggleProps {
@@ -14,6 +15,7 @@ interface WatchlistToggleProps {
 
 export function WatchlistToggle({ ticker, className }: WatchlistToggleProps) {
   const { isAuthenticated } = useAuth();
+  const { items: localItems, addItem, removeItem } = useLocalWatchlist();
   const watchlistTickers = useWatchlistTickers();
   const addMutation = useAddToWatchlist();
   const removeMutation = useRemoveFromWatchlist();
@@ -28,8 +30,38 @@ export function WatchlistToggle({ ticker, className }: WatchlistToggleProps) {
     />;
   }
 
-  // Show a subtle star for guests — acts as sign-in nudge
-  return <GuestToggle className={className} />;
+  // Guests can use local watchlist too
+  const localTickers = new Set(localItems.map((i) => i.ticker));
+  const isWatched = localTickers.has(ticker);
+
+  const handleToggle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (isWatched) {
+      removeItem(ticker);
+    } else {
+      addItem(ticker);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleToggle}
+      className={cn(
+        "rounded-sm p-1 transition-colors hover:bg-accent",
+        className,
+      )}
+      title={isWatched ? "Remove from watchlist" : "Add to watchlist"}
+    >
+      <Star
+        className={cn(
+          "h-3.5 w-3.5 transition-colors",
+          isWatched
+            ? "fill-amber text-amber"
+            : "text-muted-foreground hover:text-amber",
+        )}
+      />
+    </button>
+  );
 }
 
 function AuthenticatedToggle({
@@ -78,22 +110,6 @@ function AuthenticatedToggle({
             : "text-muted-foreground hover:text-amber",
         )}
       />
-    </button>
-  );
-}
-
-function GuestToggle({ className }: { className?: string }) {
-  return (
-    <button
-      disabled
-      className={cn(
-        "cursor-pointer rounded-sm p-1 opacity-40",
-        className,
-      )}
-      title="Sign in to track stocks"
-      aria-label="Sign in to track stocks"
-    >
-      <Star className="h-3.5 w-3.5 text-muted-foreground" />
     </button>
   );
 }
