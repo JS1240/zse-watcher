@@ -98,7 +98,7 @@ function AuthenticatedWatchlist() {
   const { t: tc } = useTranslation("common");
   const watchlistItems = useWatchlistItems();
   const { data: stocksResult } = useStocksLive();
-  const stocks = stocksResult?.stocks ?? [];
+  const stocks = useMemo(() => stocksResult?.stocks ?? [], [stocksResult]);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<{ column: SortColumn; direction: SortDirection } | null>({
     column: "turnover",
@@ -334,7 +334,7 @@ function LocalWatchlist() {
   const { t: tc } = useTranslation("common");
   const { items, removeItem, reorder: reorderItems } = useLocalWatchlist();
   const { data: stocksResult } = useStocksLive();
-  const stocks = stocksResult?.stocks ?? [];
+  const stocks = useMemo(() => stocksResult?.stocks ?? [], [stocksResult]);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<{ column: SortColumn; direction: SortDirection } | null>(null);
   const debouncedSearch = useDebounce(search, 200);
