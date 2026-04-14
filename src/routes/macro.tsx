@@ -5,8 +5,8 @@ import { MarketStatus } from "@/features/market/components/market-status";
 import { useMacro } from "@/features/market/api/market-queries";
 import { useForexRates } from "@/features/market/api/forex-queries";
 import { formatPrice } from "@/lib/formatters";
-import { Skeleton } from "@/components/ui/skeleton";
 import { ChangeBadge } from "@/components/shared/change-badge";
+import { MacroSkeleton } from "@/features/market/components/macro-skeleton";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/macro")({
@@ -30,9 +30,7 @@ function MacroPage() {
       {/* Detailed index cards */}
       <div className="grid gap-3 md:grid-cols-2">
         {isLoading || !macro ? (
-          Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-32" />
-          ))
+          <MacroSkeleton />
         ) : (
           <>
             <IndexCard
