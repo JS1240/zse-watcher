@@ -1,4 +1,3 @@
-import { useTranslation } from "react-i18next";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
@@ -8,7 +7,6 @@ interface AlertsSkeletonProps {
 }
 
 export function AlertsSkeleton({ className, rows = 5 }: AlertsSkeletonProps) {
-  const { t } = useTranslation("alerts");
 
   return (
     <div className={cn("space-y-1", className)}>

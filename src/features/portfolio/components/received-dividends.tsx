@@ -7,8 +7,8 @@ import { useReceivedDividends } from "@/features/portfolio/hooks/use-received-di
 import { usePortfolioHoldings } from "@/features/portfolio/api/portfolio-queries";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/shared/empty-state";
+import { DividendsSkeleton } from "@/features/dividends/components/dividends-skeleton";
 import { formatCurrency, formatDate } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 
@@ -92,7 +92,7 @@ export function ReceivedDividends() {
             </span>
           )}
           {isHoldingsLoading && (
-            <Skeleton className="h-3 w-20" />
+            <DividendsSkeleton rows={2} />
           )}
         </div>
         <div className="flex gap-2">
