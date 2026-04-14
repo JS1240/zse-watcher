@@ -25,6 +25,9 @@ function RootLayout() {
   useKeyboardShortcut({ key: "4", handler: () => navigate({ to: "/portfolio" }) });
   useKeyboardShortcut({ key: "5", handler: () => navigate({ to: "/dividends" }) });
   useKeyboardShortcut({ key: "6", handler: () => navigate({ to: "/alerts" }) });
+  useKeyboardShortcut({ key: "7", handler: () => navigate({ to: "/screener" }) });
+  useKeyboardShortcut({ key: "8", handler: () => navigate({ to: "/watchlist" }) });
+  useKeyboardShortcut({ key: "9", handler: () => navigate({ to: "/pricing" }) });
 
   // Theme toggle: T
   useKeyboardShortcut({ key: "t", handler: toggleTheme });

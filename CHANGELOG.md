@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- **Light Theme Color Contrast** — improve accessibility for Croatian retail investors
+  - Increase muted-foreground from 45% to 55% lightness for better readability
+  - Improve price colors: price-up (32%), price-down (48%), price-neutral (55%)
+  - Darken border and input from 90% to 85% for better visibility
+  - All changes ensure WCAG AA contrast ratios on light backgrounds
+
 ### Changed
 
 - **DividendsCalendar Loading State** — uses DividendsSkeleton for polished loading UI

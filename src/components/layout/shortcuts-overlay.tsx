@@ -16,6 +16,9 @@ const SHORTCUTS = [
       { keys: ["4"], description: "Portfolio" },
       { keys: ["5"], description: "Dividends" },
       { keys: ["6"], description: "Alerts" },
+      { keys: ["7"], description: "Screener" },
+      { keys: ["8"], description: "Watchlist" },
+      { keys: ["9"], description: "Pricing" },
     ],
   },
   {
