@@ -7,6 +7,7 @@ import { useForexRates } from "@/features/market/api/forex-queries";
 import { formatPrice } from "@/lib/formatters";
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { MacroSkeleton } from "@/features/market/components/macro-skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/macro")({

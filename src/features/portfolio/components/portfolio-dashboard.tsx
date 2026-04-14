@@ -48,7 +48,11 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
     return computeHoldings(portfolioData?.transactions ?? [], localTxs);
   }, [portfolioData?.transactions, localTxs]);
 
-  const enrichedHoldings = computeEnrichedHoldings(holdings, stocks);
+  // Memoize enriched holdings — only recalculates when holdings or stocks change
+  const enrichedHoldings = useMemo(
+    () => computeEnrichedHoldings(holdings, stocks),
+    [holdings, stocks],
+  );
 
   // Filter by search term
   const filteredHoldings = useMemo(() => {
@@ -110,12 +114,15 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
     }
   };
 
-  const totalPortfolioValue = sortedHoldings.reduce((sum, h) => sum + h.totalValue, 0);
-  const totalPortfolioGain = sortedHoldings.reduce((sum, h) => sum + h.totalGain, 0);
-  const totalGainPct =
-    totalPortfolioValue > 0
-      ? (totalPortfolioGain / (totalPortfolioValue - totalPortfolioGain)) * 100
-      : 0;
+  // Memoize portfolio totals — recalculates only when holdings change
+  const totals = useMemo(() => {
+    const totalValue = sortedHoldings.reduce((sum, h) => sum + h.totalValue, 0);
+    const totalGain = sortedHoldings.reduce((sum, h) => sum + h.totalGain, 0);
+    const gainPct = totalValue > 0 ? (totalGain / (totalValue - totalGain)) * 100 : 0;
+    return { totalValue, totalGain, gainPct };
+  }, [sortedHoldings]);
+
+  const { totalValue: totalPortfolioValue, totalGain: totalPortfolioGain, gainPct: totalGainPct } = totals;
 
   const handleExportCsv = () => {
     const headers = [

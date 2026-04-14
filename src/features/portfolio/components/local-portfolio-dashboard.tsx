@@ -48,48 +48,55 @@ export function LocalPortfolioDashboard() {
     return <PortfolioSkeleton />;
   }
 
-  // Calculate holdings from local transactions
-  const holdingsMap = new Map<string, { totalShares: number; totalCost: number; name: string }>();
+  // Memoize holdings calculation — only recalculates when transactions change (infrequent)
+  const holdingsMap = useMemo(() => {
+    const map = new Map<string, { totalShares: number; totalCost: number; name: string }>();
 
-  for (const tx of transactions) {
-    const stock = stocks?.find((s) => s.ticker === tx.ticker);
-    const current = holdingsMap.get(tx.ticker) ?? {
-      totalShares: 0,
-      totalCost: 0,
-      name: stock?.name ?? tx.ticker,
-    };
+    for (const tx of transactions) {
+      const stock = stocks?.find((s) => s.ticker === tx.ticker);
+      const current = map.get(tx.ticker) ?? {
+        totalShares: 0,
+        totalCost: 0,
+        name: stock?.name ?? tx.ticker,
+      };
 
-    if (tx.transactionType === "buy") {
-      current.totalShares += tx.shares;
-      current.totalCost += tx.totalAmount;
-    } else if (tx.transactionType === "sell") {
-      current.totalShares -= tx.shares;
-      current.totalCost -= tx.shares * (current.totalCost / (current.totalShares + tx.shares));
+      if (tx.transactionType === "buy") {
+        current.totalShares += tx.shares;
+        current.totalCost += tx.totalAmount;
+      } else if (tx.transactionType === "sell") {
+        current.totalShares -= tx.shares;
+        current.totalCost -= tx.shares * (current.totalCost / (current.totalShares + tx.shares));
+      }
+
+      map.set(tx.ticker, current);
     }
 
-    holdingsMap.set(tx.ticker, current);
-  }
+    return map;
+  }, [transactions, stocks]);
 
-  const enrichedHoldings = Array.from(holdingsMap.entries())
-    .filter(([_, h]) => h.totalShares > 0)
-    .map(([ticker, h]) => {
-      const stock = stocks?.find((s) => s.ticker === ticker);
-      const currentPrice = stock?.price ?? h.totalCost / h.totalShares;
-      const totalValue = h.totalShares * currentPrice;
-      const totalGain = totalValue - h.totalCost;
-      const gainPct = h.totalCost > 0 ? (totalGain / h.totalCost) * 100 : 0;
+  // Memoize enriched holdings — recalculates when holdingsMap changes
+  const enrichedHoldings = useMemo(() => {
+    return Array.from(holdingsMap.entries())
+      .filter(([_, h]) => h.totalShares > 0)
+      .map(([ticker, h]) => {
+        const stock = stocks?.find((s) => s.ticker === ticker);
+        const currentPrice = stock?.price ?? h.totalCost / h.totalShares;
+        const totalValue = h.totalShares * currentPrice;
+        const totalGain = totalValue - h.totalCost;
+        const gainPct = h.totalCost > 0 ? (totalGain / h.totalCost) * 100 : 0;
 
-      return {
-        ticker,
-        totalShares: h.totalShares,
-        avgPrice: h.totalCost / h.totalShares,
-        currentPrice,
-        totalValue,
-        totalGain,
-        gainPct,
-        name: h.name,
-      };
-    });
+        return {
+          ticker,
+          totalShares: h.totalShares,
+          avgPrice: h.totalCost / h.totalShares,
+          currentPrice,
+          totalValue,
+          totalGain,
+          gainPct,
+          name: h.name,
+        };
+      });
+  }, [holdingsMap, stocks]);
 
   // Filter by search term
   const filteredHoldings = useMemo(() => {
@@ -102,12 +109,15 @@ export function LocalPortfolioDashboard() {
     );
   }, [enrichedHoldings, debouncedSearch]);
 
-  const totalPortfolioValue = enrichedHoldings.reduce((sum, h) => sum + h.totalValue, 0);
-  const totalPortfolioGain = enrichedHoldings.reduce((sum, h) => sum + h.totalGain, 0);
-  const totalGainPct =
-    totalPortfolioValue > 0
-      ? (totalPortfolioGain / (totalPortfolioValue - totalPortfolioGain)) * 100
-      : 0;
+  // Memoize totals — recalculates on enrichedHoldings change (infrequent)
+  const totals = useMemo(() => {
+    const totalValue = enrichedHoldings.reduce((sum, h) => sum + h.totalValue, 0);
+    const totalGain = enrichedHoldings.reduce((sum, h) => sum + h.totalGain, 0);
+    const gainPct = totalValue > 0 ? (totalGain / (totalValue - totalGain)) * 100 : 0;
+    return { totalValue, totalGain, gainPct };
+  }, [enrichedHoldings]);
+
+  const { totalValue: totalPortfolioValue, totalGain: totalPortfolioGain, gainPct: totalGainPct } = totals;
 
   const handleExportCsv = () => {
     const headers = [
