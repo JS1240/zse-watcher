@@ -116,6 +116,7 @@ export function LocalPortfolioDashboard() {
       h.gainPct.toFixed(2),
     ]);
     exportToCsv(`zse-portfolio-local-${new Date().toISOString().split("T")[0]}`, headers, rows);
+    toast.success(t("toast.exported"));
   };
 
   return (
