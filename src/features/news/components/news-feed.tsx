@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { ExternalLink, Newspaper, Search } from "lucide-react";
 import { useNews } from "@/features/news/api/news-queries";
 import { ArticleDrawer } from "@/features/news/components/article-drawer";
-import { Skeleton } from "@/components/ui/skeleton";
+import { NewsSkeleton } from "@/features/news/components/news-skeleton";
 import { Input } from "@/components/ui/input";
 import { formatDate, formatTime } from "@/lib/formatters";
 import { EmptyState } from "@/components/shared/empty-state";
@@ -55,13 +55,7 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
   const showSearch = !limit && articles && articles.length > 0;
 
   if (isLoading) {
-    return (
-      <div className="space-y-3">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <Skeleton key={i} className="h-16" />
-        ))}
-      </div>
-    );
+    return <NewsSkeleton />;
   }
 
   // Results count
