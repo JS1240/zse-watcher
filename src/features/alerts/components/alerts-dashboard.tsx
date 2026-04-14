@@ -17,6 +17,7 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
 import { exportToCsv } from "@/lib/export";
 import { useDebounce } from "@/hooks/use-debounce";
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 
 export function AlertsDashboard() {
   const { t } = useTranslation("alerts");
@@ -26,6 +27,7 @@ export function AlertsDashboard() {
   const updateAlert = useUpdateAlert();
   const [showForm, setShowForm] = useState(false);
   const [search, setSearch] = useState("");
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const debouncedSearch = useDebounce(search, 200);
 
   const filteredAlerts = useMemo(() => {
@@ -129,10 +131,7 @@ export function AlertsDashboard() {
             <AlertRow
               key={alert.id}
               alert={alert}
-              onDelete={() => {
-                deleteAlert(alert.id);
-                toast.success(t("toast.deleted"));
-              }}
+              onDelete={() => setConfirmDelete(alert.id)}
               onToggle={() => toggleAlert(alert.id)}
               onUpdate={async (id, data) => {
                 // Proper update mutation — preserves alert ID and createdAt
@@ -168,6 +167,28 @@ export function AlertsDashboard() {
           action={{ label: t("create"), onClick: () => setShowForm(true) }}
         />
       )}
+
+      {/* Delete confirmation dialog */}
+      <ConfirmationDialog
+        open={!!confirmDelete}
+        onOpenChange={(open) => !open && setConfirmDelete(null)}
+        title={t("confirmDelete") || "Delete alert?"}
+        description={
+          confirmDelete
+            ? t("confirmDeleteDescription")
+                ?.replace("{ticker}", alerts?.find((a) => a.id === confirmDelete)?.ticker ?? "")
+            : ""
+        }
+        confirmLabel={t("actions.delete") || "Delete"}
+        cancelLabel={tc("actions.cancel") || "Cancel"}
+        variant="danger"
+        onConfirm={() => {
+          if (confirmDelete) {
+            deleteAlert(confirmDelete);
+            toast.success(t("toast.deleted"));
+          }
+        }}
+      />
     </div>
   );
 }

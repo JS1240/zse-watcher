@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { formatPrice, formatVolume } from "@/lib/formatters";
 import { exportToCsv } from "@/lib/export";
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 
 import { cn } from "@/lib/utils";
 import { useDebounce } from "@/hooks/use-debounce";
@@ -337,6 +338,7 @@ function LocalWatchlist() {
   const stocks = useMemo(() => stocksResult?.stocks ?? [], [stocksResult]);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<{ column: SortColumn; direction: SortDirection } | null>(null);
+  const [confirmRemove, setConfirmRemove] = useState<string | null>(null);
   const debouncedSearch = useDebounce(search, 200);
 
   const sensors = useSensors(
@@ -477,7 +479,7 @@ function LocalWatchlist() {
                 sort={sort}
                 onSort={handleSort}
                 showRemove
-                onRemove={removeItem}
+                onRemove={(ticker) => setConfirmRemove(ticker)}
                 dragEnabled
               />
             </SortableContext>
@@ -488,7 +490,7 @@ function LocalWatchlist() {
             sort={sort}
             onSort={handleSort}
             showRemove
-            onRemove={removeItem}
+            onRemove={(ticker) => setConfirmRemove(ticker)}
             dragEnabled={false}
           />
         )
@@ -517,6 +519,27 @@ function LocalWatchlist() {
           action={{ label: tc("empty.clearFilters"), onClick: () => setSearch("") }}
         />
       )}
+
+      {/* Delete confirmation dialog */}
+      <ConfirmationDialog
+        open={!!confirmRemove}
+        onOpenChange={(open) => !open && setConfirmRemove(null)}
+        title={t("confirmRemove") || "Remove from watchlist?"}
+        description={
+          confirmRemove
+            ? t("confirmRemoveDescription")?.replace("{ticker}", confirmRemove) ?? `Remove ${confirmRemove} from your watchlist?`
+            : ""
+        }
+        confirmLabel={tc("actions.delete") || "Remove"}
+        cancelLabel={tc("actions.cancel") || "Cancel"}
+        variant="danger"
+        onConfirm={() => {
+          if (confirmRemove) {
+            removeItem(confirmRemove);
+            toast.success(t("toast.removed") || "Removed from watchlist");
+          }
+        }}
+      />
     </div>
   );
 }
