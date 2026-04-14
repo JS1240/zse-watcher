@@ -315,7 +315,32 @@ export function LocalPortfolioDashboard() {
 
           {showHistory && (
             <div className="border-t border-border">
-              <div className="flex justify-end px-3 py-1.5">
+              <div className="flex justify-end gap-2 px-3 py-1.5">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const headers = ["Date", "Ticker", "Type", "Shares", "Price (EUR)", "Total (EUR)", "Notes"];
+                    const rows = transactions.map((tx) => [
+                      new Date(tx.transactionDate).toISOString().split("T")[0],
+                      tx.ticker,
+                      tx.transactionType,
+                      tx.shares.toString(),
+                      tx.pricePerShare.toFixed(2),
+                      tx.totalAmount.toFixed(2),
+                      tx.notes || "",
+                    ]);
+                    exportToCsv(
+                      `zse-transactions-${new Date().toISOString().split("T")[0]}`,
+                      headers,
+                      rows,
+                    );
+                    toast.success(t("toast.exported"));
+                  }}
+                  className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground"
+                >
+                  <Download className="h-3 w-3" />
+                  CSV
+                </button>
                 <button
                   type="button"
                   onClick={() => {
