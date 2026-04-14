@@ -10,6 +10,12 @@
 
 ### Added
 
+- **MacroSkeleton Component** — polished loading state for macro/economic indicators page
+  - Matches IndexCard, ForexCard, and FactorItem layouts exactly
+  - Shows ticker skeleton for each index (CROBEX, CROBEX10, Euro Stoxx 50)
+  - Forex skeleton with EUR/HRK, EUR/USD, etc.
+  - Investment factors skeleton (GDP, inflation, unemployment, interest rate)
+
 - **Year Filter for Dividends Page** — filter dividends by year for tax reporting
   - Year dropdown to view dividends by specific year
   - Defaults to most recent year on load
