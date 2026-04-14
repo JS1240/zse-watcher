@@ -4,6 +4,14 @@
 
 ### Added
 
+- **HeatmapSkeleton Component** — polished loading state for sector heatmap page
+  - Realistic sector grid layout with varying cell sizes
+  - Legend placeholders (top and bottom gradient bar)
+  - Hover details panel skeleton
+  - Matches the design of the live heatmap component visually
+
+### Added
+
 - **Focus States for Keyboard Navigation** — accessibility improvements for Croatian retail investors
   - `:focus-visible` outline styles in globals.css
   - Button component with focus ring offset

@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
-import { Skeleton } from "@/components/ui/skeleton";
+import { HeatmapSkeleton } from "@/features/market/components/heatmap-skeleton";
 import { ErrorState } from "@/components/shared/error-state";
 import { cn } from "@/lib/utils";
 import { formatPercent } from "@/lib/formatters";
@@ -68,7 +68,7 @@ export function Heatmap() {
   }
 
   if (isLoading) {
-    return <Skeleton className="h-96 w-full" />;
+    return <HeatmapSkeleton />;
   }
 
   if (!sectors.length) {
