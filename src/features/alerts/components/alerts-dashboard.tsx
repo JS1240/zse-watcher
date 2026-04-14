@@ -19,6 +19,7 @@ import { ErrorState } from "@/components/shared/error-state";
 import { exportToCsv } from "@/lib/export";
 import { useDebounce } from "@/hooks/use-debounce";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
+import { AlertsSkeleton } from "@/features/alerts/components/alerts-skeleton";
 
 interface FilterChipProps {
   active: boolean;
@@ -81,13 +82,7 @@ export function AlertsDashboard() {
   }, [alerts, debouncedSearch, statusFilter]);
 
   if (isLoading) {
-    return (
-      <div className="space-y-2">
-        {Array.from({ length: 3 }).map((_, i) => (
-          <Skeleton key={i} className="h-14" />
-        ))}
-      </div>
-    );
+    return <AlertsSkeleton />;
   }
 
   if (isError) {
