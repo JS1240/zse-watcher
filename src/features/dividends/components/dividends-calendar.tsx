@@ -1,6 +1,6 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { CalendarDays, Search, ArrowUp, ArrowDown, ArrowUpDown, TrendingUp, Euro, Calendar, Download } from "lucide-react";
+import { CalendarDays, Search, ArrowUp, ArrowDown, ArrowUpDown, TrendingUp, Euro, Calendar, Download, ChevronDown, ChevronUp } from "lucide-react";
 import { toast } from "sonner";
 import { useDividends } from "@/features/dividends/api/dividends-queries";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -20,11 +20,38 @@ export function DividendsCalendar() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortField, setSortField] = useState<"yield" | "amount" | "exDivDate">("exDivDate");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+  const [selectedYear, setSelectedYear] = useState<number | null>(null);
+  const [showYearFilter, setShowYearFilter] = useState(false);
+
+  // Extract unique years from dividends
+  const availableYears = useMemo(() => {
+    if (!dividends) return [];
+    const years = new Set(dividends.map((d) => new Date(d.exDivDate).getFullYear()));
+    return Array.from(years).sort((a, b) => b - a);
+  }, [dividends]);
+
+  // Default to most recent year on first load
+  useEffect(() => {
+    if (availableYears.length > 0 && selectedYear === null) {
+      setSelectedYear(availableYears[0]);
+    }
+  }, [availableYears, selectedYear]);
+
+  // Currently selected year label
+  const selectedYearLabel = selectedYear
+    ? selectedYear.toString()
+    : availableYears[0]?.toString() ?? "Sve";
 
   // Filter and sort dividends
   const filteredDividends = useMemo(() => {
     if (!dividends) return [];
     let result = [...dividends];
+
+    // Filter by year (default to most recent if none selected)
+    const targetYear = selectedYear ?? availableYears[0];
+    if (targetYear) {
+      result = result.filter((d) => new Date(d.exDivDate).getFullYear() === targetYear);
+    }
 
     // Filter by search query
     if (searchQuery.trim()) {
@@ -36,7 +63,12 @@ export function DividendsCalendar() {
       );
     }
 
-    // Sort
+    return result;
+  }, [dividends, searchQuery, selectedYear, availableYears]);
+
+  // Sort (applied after filtering)
+  const sortedDividends = useMemo(() => {
+    let result = [...filteredDividends];
     result.sort((a, b) => {
       let aVal: number | string;
       let bVal: number | string;
@@ -64,15 +96,15 @@ export function DividendsCalendar() {
     });
 
     return result;
-  }, [dividends, searchQuery, sortField, sortDir]);
+  }, [filteredDividends, sortField, sortDir]);
 
   // Group filtered dividends by month
   const grouped = useMemo(() => {
-    if (!filteredDividends.length) return [];
+    if (!sortedDividends.length) return [];
 
     const months = new Map<string, typeof dividends>();
 
-    for (const d of filteredDividends) {
+    for (const d of sortedDividends) {
       const monthKey = d.exDivDate.slice(0, 7); // YYYY-MM
       if (!months.has(monthKey)) {
         months.set(monthKey, []);
@@ -90,7 +122,7 @@ export function DividendsCalendar() {
         }),
         items,
       }));
-  }, [filteredDividends]);
+  }, [sortedDividends]);
 
   const handleSort = (field: "yield" | "amount" | "exDivDate") => {
     if (sortField === field) {
@@ -157,9 +189,9 @@ export function DividendsCalendar() {
 
   // Export filtered dividends to CSV
   const handleExportCsv = () => {
-    if (!filteredDividends.length) return;
+    if (!sortedDividends.length) return;
     const headers = ["Ticker", "Name", "Ex-Div Date", "Pay Date", "Amount (EUR)", "Yield (%)"];
-    const rows = filteredDividends.map((d) => [
+    const rows = sortedDividends.map((d) => [
       d.ticker,
       d.name,
       formatDate(d.exDivDate),
@@ -167,7 +199,7 @@ export function DividendsCalendar() {
       d.amountEur.toFixed(2),
       d.yield.toFixed(2),
     ]);
-    exportToCsv(`zse-dividends-${new Date().toISOString().split("T")[0]}`, headers, rows);
+    exportToCsv(`zse-dividends-${selectedYear ?? "all"}-${new Date().toISOString().split("T")[0]}`, headers, rows);
     toast.success(td("toast.exported"));
   };
 
@@ -184,11 +216,63 @@ export function DividendsCalendar() {
             className="pl-8 h-8 text-xs"
           />
         </div>
+
+        {/* Year filter dropdown */}
+        {availableYears.length > 1 && (
+          <div className="relative">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setShowYearFilter(!showYearFilter)}
+              className="min-w-[70px] gap-1"
+            >
+              <Calendar className="h-3.5 w-3.5" />
+              {selectedYearLabel}
+              {showYearFilter ? (
+                <ChevronUp className="h-3 w-3" />
+              ) : (
+                <ChevronDown className="h-3 w-3" />
+              )}
+            </Button>
+            {showYearFilter && (
+              <div className="absolute right-0 top-full z-10 mt-1 min-w-[80px] rounded-md border border-border bg-card shadow-md">
+                <button
+                  onClick={() => {
+                    setSelectedYear(null);
+                    setShowYearFilter(false);
+                  }}
+                  className={cn(
+                    "block w-full px-3 py-2 text-left text-xs transition-colors hover:bg-accent",
+                    selectedYear === null && "bg-accent font-medium"
+                  )}
+                >
+                  Sve
+                </button>
+                {availableYears.map((year) => (
+                  <button
+                    key={year}
+                    onClick={() => {
+                      setSelectedYear(year);
+                      setShowYearFilter(false);
+                    }}
+                    className={cn(
+                      "block w-full px-3 py-2 text-left text-xs transition-colors hover:bg-accent",
+                      selectedYear === year && "bg-accent font-medium"
+                    )}
+                  >
+                    {year}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
         <Button
           size="sm"
           variant="outline"
           onClick={handleExportCsv}
-          disabled={filteredDividends.length === 0}
+          disabled={sortedDividends.length === 0}
           title={t("exportCsv")}
         >
           <Download className="h-3.5 w-3.5" />
@@ -239,7 +323,10 @@ export function DividendsCalendar() {
 
       {/* Results count */}
       <div className="text-[10px] text-muted-foreground">
-        {filteredDividends.length} {filteredDividends.length === 1 ? "dividend" : "dividendi"}
+        {sortedDividends.length} {sortedDividends.length === 1 ? "dividend" : "dividendi"}
+        {selectedYear && (
+          <span className="ml-1 text-primary">({selectedYear})</span>
+        )}
       </div>
 
       {grouped.map((group) => (
