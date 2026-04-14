@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+### Changed
+
+- **DividendsCalendar Loading State** — uses DividendsSkeleton for polished loading UI
+  - Replaces inline skeleton divs with reusable DividendsSkeleton
+  - Consistent with other pages (ScreenerSkeleton, WatchlistSkeleton)
+
 ### Added
 
 - **Year Filter for Dividends Page** — filter dividends by year for tax reporting

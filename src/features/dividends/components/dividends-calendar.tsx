@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { CalendarDays, Search, ArrowUp, ArrowDown, ArrowUpDown, TrendingUp, Euro, Calendar, Download, ChevronDown, ChevronUp } from "lucide-react";
 import { toast } from "sonner";
 import { useDividends } from "@/features/dividends/api/dividends-queries";
-import { Skeleton } from "@/components/ui/skeleton";
+import { DividendsSkeleton } from "./dividends-skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -145,13 +145,7 @@ export function DividendsCalendar() {
   };
 
   if (isLoading) {
-    return (
-      <div className="space-y-3">
-        {Array.from({ length: 3 }).map((_, i) => (
-          <Skeleton key={i} className="h-24" />
-        ))}
-      </div>
-    );
+    return <DividendsSkeleton rows={3} />;
   }
 
   if (isError) {
