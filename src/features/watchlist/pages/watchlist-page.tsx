@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Star, Search, ArrowUp, ArrowDown, ArrowUpDown, GripVertical, Download } from "lucide-react";
+import { Star, Search, ArrowUp, ArrowDown, ArrowUpDown, GripVertical, Download, X } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocalWatchlist } from "@/features/watchlist/hooks/use-local-watchlist";
@@ -162,6 +162,8 @@ function AuthenticatedWatchlist() {
     return <WatchlistSkeleton />;
   }
 
+  const handleClearSearch = () => setSearch("");
+
   return (
     <div className="flex flex-col gap-3">
       {/* Search + CSV */}
@@ -172,8 +174,17 @@ function AuthenticatedWatchlist() {
             placeholder={tc("actions.search")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-8"
+            className="pl-8 pr-8"
           />
+          {search && (
+            <button
+              onClick={handleClearSearch}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              title={tc("actions.clear")}
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          )}
         </div>
         <Button
           size="sm"
@@ -406,6 +417,8 @@ function LocalWatchlist() {
     return <WatchlistSkeleton />;
   }
 
+  const handleClearSearch = () => setSearch("");
+
   return (
     <div className="flex flex-col gap-3">
       {/* Search + CSV */}
@@ -416,8 +429,17 @@ function LocalWatchlist() {
             placeholder={tc("actions.search")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-8"
+            className="pl-8 pr-8"
           />
+          {search && (
+            <button
+              onClick={handleClearSearch}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              title={tc("actions.clear")}
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          )}
         </div>
         <Button
           size="sm"
