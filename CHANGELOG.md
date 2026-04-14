@@ -4,6 +4,12 @@
 
 ### Added
 
+- **Year Filter for Dividends Page** — filter dividends by year for tax reporting
+  - Year dropdown to view dividends by specific year
+  - Defaults to most recent year on load
+  - CSV export includes selected year in filename 
+  - Croatian retail investors can filter for porez na dividende
+
 - **HeatmapSkeleton Component** — polished loading state for sector heatmap page
   - Realistic sector grid layout with varying cell sizes
   - Legend placeholders (top and bottom gradient bar)

@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, Download, Wallet, ChevronUp, ChevronDown } from "lucide-react";
+import { Plus, Download, Wallet, ChevronUp, ChevronDown, Search, X } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { useDebounce } from "@/hooks/use-debounce";
 import { toast } from "sonner";
 import { usePortfolio } from "@/features/portfolio/api/portfolio-queries";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
@@ -37,8 +39,10 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
   const { select } = useSelectedStock();
 
   const [showAddForm, setShowAddForm] = useState(false);
+  const [search, setSearch] = useState("");
   const [sortField, setSortField] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+  const debouncedSearch = useDebounce(search, 200);
 
   const holdings = useMemo(() => {
     return computeHoldings(portfolioData?.transactions ?? [], localTxs);
@@ -46,9 +50,20 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
 
   const enrichedHoldings = computeEnrichedHoldings(holdings, stocks);
 
+  // Filter by search term
+  const filteredHoldings = useMemo(() => {
+    if (!debouncedSearch) return enrichedHoldings;
+    const q = debouncedSearch.toLowerCase();
+    return enrichedHoldings.filter(
+      (h) =>
+        h.ticker.toLowerCase().includes(q) ||
+        h.name.toLowerCase().includes(q)
+    );
+  }, [enrichedHoldings, debouncedSearch]);
+
   const sortedHoldings = useMemo(() => {
-    if (!sortField) return enrichedHoldings;
-    return [...enrichedHoldings].sort((a, b) => {
+    if (!sortField) return filteredHoldings;
+    return [...filteredHoldings].sort((a, b) => {
       let aVal: number | string;
       let bVal: number | string;
       switch (sortField) {
@@ -84,7 +99,7 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
       }
       return sortDir === "asc" ? aVal - (bVal as number) : (bVal as number) - aVal;
     });
-  }, [enrichedHoldings, sortField, sortDir]);
+  }, [filteredHoldings, sortField, sortDir]);
 
   const handleSort = (field: string) => {
     if (sortField === field) {
@@ -181,8 +196,29 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
         </div>
       </div>
 
-      {/* Add position button */}
-      <div className="flex justify-end">
+      {/* Search + Action buttons */}
+      <div className="flex gap-2">
+        {/* Search input - only show when there are holdings */}
+        {enrichedHoldings.length > 0 && (
+          <div className="relative flex-1">
+            <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-muted-foreground" />
+            <Input
+              placeholder={t("searchPlaceholder") || "Search ticker or name..."}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-8 pr-8"
+            />
+            {search && (
+              <button
+                onClick={() => setSearch("")}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                title="Clear search"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
+          </div>
+        )}
         <div className="flex gap-2">
           <Button
             size="sm"
@@ -199,6 +235,13 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
           </Button>
         </div>
       </div>
+
+      {/* Results count */}
+      {enrichedHoldings.length > 0 && (
+        <div className="text-[10px] text-muted-foreground">
+          {sortedHoldings.length} / {enrichedHoldings.length} {sortedHoldings.length === 1 ? "position" : "positions"}
+        </div>
+      )}
 
       {/* Add position form */}
       {showAddForm && (
@@ -255,6 +298,13 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
             </tbody>
           </table>
         </div>
+      ) : filteredHoldings.length === 0 && search ? (
+        <EmptyState
+          icon={<Search className="h-8 w-8" />}
+          title={t("searchNoResults") || "No results found"}
+          description={t("searchNoResultsDescription") || "No positions match your search."}
+          action={{ label: t("clearSearch") || "Clear search", onClick: () => setSearch("") }}
+        />
       ) : (
         <div className="rounded-md border border-border bg-card">
           <EmptyState
