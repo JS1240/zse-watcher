@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+### Performance
+
+- **Portfolio Holdings Memoization** — memoize holdings calculations to prevent unnecessary recalculation
+  - HoldigsMap and enrichedHoldings now memoized with useMemo in LocalPortfolioDashboard
+  - enrichedHoldings and totals memoized in authenticated PortfolioDashboard
+  - Calculations only run when transactions or stocks change, not on every render
+  - Improves responsiveness for Croatian retail investors with larger portfolios
+
 ### Fixed
 
 - **Light Theme Color Contrast** — improve accessibility for Croatian retail investors
