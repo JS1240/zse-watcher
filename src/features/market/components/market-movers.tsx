@@ -3,9 +3,9 @@ import { TrendingUp, TrendingDown, Clock } from "lucide-react";
 import { useMovers } from "@/features/market/api/market-queries";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
 import { ChangeBadge } from "@/components/shared/change-badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import { formatPrice } from "@/lib/formatters";
 import type { Mover } from "@/types/market";
+import { MoversSkeleton } from "./movers-skeleton";
 
 function formatLastUpdated(timestamp: number | undefined): string {
   if (!timestamp) return "";
@@ -18,14 +18,7 @@ export function MarketMovers() {
   const { t } = useTranslation("stocks");
 
   if (isLoading || !data) {
-    return (
-      <div className="space-y-2">
-        <Skeleton className="h-6 w-32" />
-        {Array.from({ length: 5 }).map((_, i) => (
-          <Skeleton key={i} className="h-8" />
-        ))}
-      </div>
-    );
+    return <MoversSkeleton />;
   }
 
   return (
