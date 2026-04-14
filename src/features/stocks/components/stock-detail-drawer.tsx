@@ -1,6 +1,8 @@
+import { useEffect } from "react";
 import { X, Info } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useStockDetail } from "@/features/stocks/api/stock-detail-queries";
+import { useRecentStocks } from "@/hooks/use-recent-stocks";
 import { StockHeader } from "@/features/stocks/components/stock-header";
 import { StockFundamentals } from "@/features/stocks/components/stock-fundamentals";
 import { HistoryChart } from "@/features/charts/components/history-chart";
@@ -19,6 +21,14 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
   const { data: result, isLoading } = useStockDetail(ticker);
   const stock = result?.stock ?? null;
   const isMockData = result?.isMockData ?? false;
+  const { addRecentStock } = useRecentStocks();
+
+  // Record stock view when drawer opens with valid stock
+  useEffect(() => {
+    if (ticker && stock?.name) {
+      addRecentStock(ticker, stock.name);
+    }
+  }, [ticker, stock?.name, addRecentStock]);
 
   if (!ticker) return null;
 

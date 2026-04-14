@@ -19,6 +19,7 @@ import {
 import { useThemeStore } from "@/hooks/use-theme";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
+import { useRecentStocks } from "@/hooks/use-recent-stocks";
 import { eventBus } from "@/lib/event-bus";
 import { formatPrice, formatPercent } from "@/lib/formatters";
 
@@ -30,6 +31,19 @@ export function CommandPalette() {
   const { mode, toggle: toggleTheme } = useThemeStore();
   const { data: stocksResult, isLoading: stocksLoading } = useStocksLive();
   const { select } = useSelectedStock();
+  const { recentStocks } = useRecentStocks();
+
+  // Get stock data for recent stocks
+  const recentStocksWithData = useMemo(() => {
+    if (!stocksResult?.stocks || recentStocks.length === 0) return [];
+    return recentStocks
+      .map((recent) => {
+        const stock = stocksResult.stocks.find((s) => s.ticker === recent.ticker);
+        if (!stock) return null;
+        return { ...recent, price: stock.price, changePct: stock.changePct };
+      })
+      .filter((s): s is { ticker: string; name: string; viewedAt: number; price: number; changePct: number } => s !== null);
+  }, [stocksResult?.stocks, recentStocks]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -97,6 +111,44 @@ export function CommandPalette() {
         />
 
         <Command.List className="max-h-80 overflow-y-auto p-2">
+          {/* Recently viewed stocks - show when no search */}
+          {search.length < 2 && recentStocksWithData.length > 0 && (
+            <Command.Group
+              heading={t("commandPalette.recent") || "Recently Viewed"}
+              className="px-2 py-1.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground"
+            >
+              {recentStocksWithData.map((stock) => (
+                <Command.Item
+                  key={stock.ticker}
+                  onSelect={() => selectStock(stock.ticker)}
+                  className="flex cursor-pointer items-center gap-3 rounded-md px-2 py-2 text-sm text-foreground aria-selected:bg-accent"
+                >
+                  <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                  <div className="flex flex-1 items-center justify-between">
+                    <div className="flex flex-col">
+                      <span className="font-data font-semibold">{stock.ticker}</span>
+                      <span className="text-xs text-muted-foreground">{stock.name}</span>
+                    </div>
+                    <div className="flex flex-col items-end font-data text-xs">
+                      <span className="text-foreground">
+                        {formatPrice(stock.price)}
+                      </span>
+                      <span
+                        className={
+                          stock.changePct >= 0
+                            ? "text-emerald-500"
+                            : "text-destructive"
+                        }
+                      >
+                        {formatPercent(stock.changePct)}
+                      </span>
+                    </div>
+                  </div>
+                </Command.Item>
+              ))}
+            </Command.Group>
+          )}
+
           <Command.Empty className="py-6 text-center text-sm text-muted-foreground">
             {search.length > 0 && matchingStocks.length === 0
               ? t("commandPalette.noResults")

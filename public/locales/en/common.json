@@ -76,6 +76,7 @@
     "placeholder": "Search stocks, actions...",
     "noResults": "No results found",
     "loading": "Loading...",
-    "hint": "Enter ticker or stock name"
+    "hint": "Enter ticker or stock name",
+    "recent": "Recently Viewed"
   }
 }
