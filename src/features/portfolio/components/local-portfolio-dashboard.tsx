@@ -1,8 +1,10 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, Trash2, ChevronDown, ChevronUp, Wallet, Download } from "lucide-react";
+import { Plus, Trash2, ChevronDown, ChevronUp, Wallet, Download, Search, X } from "lucide-react";
 import { toast } from "sonner";
 import { useLocalTransactions } from "@/features/portfolio/hooks/use-local-transactions";
+import { useDebounce } from "@/hooks/use-debounce";
+import { Input } from "@/components/ui/input";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { AddPositionForm } from "@/features/portfolio/components/add-position-form";
 import { PortfolioSkeleton } from "@/features/portfolio/components/portfolio-skeleton";
@@ -22,6 +24,8 @@ export function LocalPortfolioDashboard() {
   const stocks = stocksResult?.stocks ?? null;
   const { select } = useSelectedStock();
   const [showAddForm, setShowAddForm] = useState(false);
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 200);
   const [showHistory, setShowHistory] = useState(false);
   const [savedFlash, setSavedFlash] = useState(false);
   const prevTxLengthRef = useRef<number | null>(null);
@@ -87,6 +91,17 @@ export function LocalPortfolioDashboard() {
       };
     });
 
+  // Filter by search term
+  const filteredHoldings = useMemo(() => {
+    if (!debouncedSearch) return enrichedHoldings;
+    const q = debouncedSearch.toLowerCase();
+    return enrichedHoldings.filter(
+      (h) =>
+        h.ticker.toLowerCase().includes(q) ||
+        h.name.toLowerCase().includes(q)
+    );
+  }, [enrichedHoldings, debouncedSearch]);
+
   const totalPortfolioValue = enrichedHoldings.reduce((sum, h) => sum + h.totalValue, 0);
   const totalPortfolioGain = enrichedHoldings.reduce((sum, h) => sum + h.totalGain, 0);
   const totalGainPct =
@@ -105,7 +120,7 @@ export function LocalPortfolioDashboard() {
       "Gain (EUR)",
       "Gain (%)",
     ];
-    const rows = enrichedHoldings.map((h) => [
+    const rows = filteredHoldings.map((h) => [
       h.ticker,
       h.name,
       h.totalShares.toString(),
@@ -170,18 +185,38 @@ export function LocalPortfolioDashboard() {
             {t("holdings")}
           </span>
           <div className="mt-1 font-data text-lg font-bold tabular-nums text-foreground">
-            {enrichedHoldings.length}
+            {filteredHoldings.length}
           </div>
         </div>
       </div>
 
-      {/* Add position + export buttons */}
-      <div className="flex justify-end gap-2">
+      {/* Search + Add position + export buttons */}
+      <div className="flex flex-wrap justify-end gap-2">
         {enrichedHoldings.length > 0 && (
-          <Button size="sm" variant="outline" onClick={handleExportCsv}>
-            <Download className="h-3.5 w-3.5" />
-            CSV
-          </Button>
+          <>
+            <div className="relative">
+              <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-muted-foreground" />
+              <Input
+                placeholder="Search..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-32 pl-8 pr-8 py-1.5 text-xs h-7"
+              />
+              {search && (
+                <button
+                  onClick={() => setSearch("")}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  title="Clear"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
+            <Button size="sm" variant="outline" onClick={handleExportCsv}>
+              <Download className="h-3.5 w-3.5" />
+              CSV
+            </Button>
+          </>
         )}
         <Button size="sm" onClick={() => setShowAddForm(!showAddForm)}>
           <Plus className="h-3.5 w-3.5" />
@@ -198,7 +233,7 @@ export function LocalPortfolioDashboard() {
       )}
 
       {/* Holdings table */}
-      {enrichedHoldings.length > 0 ? (
+      {filteredHoldings.length > 0 ? (
         <div className="overflow-hidden rounded-md border border-border">
           <table className="w-full text-xs">
             <thead>
@@ -214,7 +249,7 @@ export function LocalPortfolioDashboard() {
               </tr>
             </thead>
             <tbody>
-              {enrichedHoldings.map((h) => (
+              {filteredHoldings.map((h) => (
                 <tr
                   key={h.ticker}
                   className="border-b border-border/50 last:border-b-0 cursor-pointer hover:bg-accent/50"
