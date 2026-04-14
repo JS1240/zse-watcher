@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { TickerSelect } from "@/components/shared/ticker-select";
 import { formatPrice, formatDate } from "@/lib/formatters";
+import { normalizeNumberInput, formatInputNumber, parseLocalizedNumber } from "@/lib/format-input";
 import { cn } from "@/lib/utils";
 import type { AlertCondition } from "@/types/alert";
 import { EmptyState } from "@/components/shared/empty-state";
@@ -92,8 +93,17 @@ export function AlertsDashboard() {
               placeholder={tc("actions.search")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-8"
+              className="pl-8 pr-8"
             />
+            {search && (
+              <button
+                onClick={() => setSearch("")}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                title={tc("actions.clear")}
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
           </div>
         )}
         <div className="flex gap-2">
@@ -236,7 +246,8 @@ function AlertRow({ alert, onDelete, onToggle, onUpdate }: AlertRowProps) {
   const editPlaceholder = isPercentEdit ? "10.5" : "150.00";
 
   const handleSave = async () => {
-    const parsed = parseFloat(editTarget.replace(",", "."));
+    // Support both Croatian (150,00) and English (150.00) decimal formats
+    const parsed = parseLocalizedNumber(editTarget);
     if (!editTicker) {
       setEditTickerError(true);
       return;
@@ -257,6 +268,15 @@ function AlertRow({ alert, onDelete, onToggle, onUpdate }: AlertRowProps) {
       setEditing(false);
     } finally {
       setSaving(false);
+    }
+  };
+
+  // Handle localized input display on blur
+  const handleTargetBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const normalized = normalizeNumberInput(e.target.value);
+    const parsed = parseLocalizedNumber(normalized);
+    if (!isNaN(parsed)) {
+      e.target.value = formatInputNumber(parsed, 2);
     }
   };
 
@@ -358,13 +378,15 @@ function AlertRow({ alert, onDelete, onToggle, onUpdate }: AlertRowProps) {
             </label>
             <Input
               id={`alert-edit-target-${alert.id}`}
-              type="number"
+              type="text"
+              inputMode="decimal"
               step="0.01"
               value={editTarget}
               onKeyDown={handleKeyDown}
+              onBlur={handleTargetBlur}
               onChange={(e) => {
                 setEditTarget(e.target.value);
-                const parsed = parseFloat(e.target.value.replace(",", "."));
+                const parsed = parseLocalizedNumber(e.target.value);
                 if (!isNaN(parsed) && parsed > 0) setEditTargetError(false);
               }}
               error={editTargetError}

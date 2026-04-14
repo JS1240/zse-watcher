@@ -7,6 +7,7 @@ import { useAddTransaction } from "@/features/portfolio/api/portfolio-queries";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TickerSelect } from "@/components/shared/ticker-select";
+import { normalizeNumberInput, formatInputNumber, parseLocalizedNumber } from "@/lib/format-input";
 
 const positionSchema = z.object({
   ticker: z.string().min(1, "validation.required"),
@@ -50,16 +51,30 @@ export function AddPositionForm({ onClose, onSuccess }: AddPositionFormProps) {
   const tickerValue = watch("ticker");
 
   const onSubmit = async (data: PositionValues) => {
+    // Support both Croatian (150,00) and English (150.00) decimal formats
+    const shares = parseLocalizedNumber(data.shares);
+    const pricePerShare = parseLocalizedNumber(data.pricePerShare);
+    if (isNaN(shares) || shares <= 0 || isNaN(pricePerShare) || pricePerShare <= 0) return;
+
     await addTransaction.mutateAsync({
       ticker: data.ticker,
       transactionType: data.transactionType,
-      shares: parseFloat(data.shares),
-      pricePerShare: parseFloat(data.pricePerShare),
+      shares,
+      pricePerShare,
       transactionDate: data.transactionDate,
       notes: data.notes,
     });
     onSuccess?.();
     onClose();
+  };
+
+  // Handle localized input display for price field
+  const handlePriceBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const normalized = normalizeNumberInput(e.target.value);
+    const parsed = parseLocalizedNumber(normalized);
+    if (!isNaN(parsed)) {
+      e.target.value = formatInputNumber(parsed, 2);
+    }
   };
 
   return (
@@ -111,7 +126,15 @@ export function AddPositionForm({ onClose, onSuccess }: AddPositionFormProps) {
 
         <div>
           <label className="mb-1 block text-[10px] text-muted-foreground">{t("fields.avgPrice")}</label>
-          <Input type="number" step="0.01" placeholder="142.00" {...register("pricePerShare")} error={!!errors.pricePerShare} />
+          <Input
+            type="text"
+            inputMode="decimal"
+            placeholder="142,00"
+            {...register("pricePerShare", {
+              onBlur: handlePriceBlur,
+            })}
+            error={!!errors.pricePerShare}
+          />
           {errors.pricePerShare && (
             <p className="mt-0.5 flex items-center gap-1 text-[10px] text-destructive">
               <span className="text-xs">⚠</span>{translateError(errors.pricePerShare.message, t)}

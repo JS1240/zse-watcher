@@ -8,6 +8,7 @@ import { useCreateAlert } from "@/features/alerts/api/alerts-queries";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TickerSelect } from "@/components/shared/ticker-select";
+import { normalizeNumberInput, formatInputNumber, parseLocalizedNumber } from "@/lib/format-input";
 import type { AlertCondition } from "@/types/alert";
 
 const translateError = (key: string | undefined, t: (key: string) => string) => {
@@ -72,7 +73,8 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
   }, []);
 
   const onSubmit = async (data: AlertFormData) => {
-    const parsed = parseFloat(data.targetValue.replace(",", "."));
+    // Support both Croatian (150,00) and English (150.00) decimal formats
+    const parsed = parseLocalizedNumber(data.targetValue);
     if (isNaN(parsed) || parsed <= 0) return;
     await createAlert.mutateAsync({
       ticker: data.ticker,
@@ -82,6 +84,15 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
     onSuccess?.();
     onClose();
   };
+
+  // Format display value on load and when condition changes
+  const targetValueDisplay = (() => {
+    const currentValue = watch("targetValue");
+    if (!currentValue) return "";
+    const parsed = parseLocalizedNumber(currentValue);
+    if (isNaN(parsed)) return currentValue;
+    return formatInputNumber(parsed, isPercentCondition ? 2 : 2);
+  })();
 
   return (
     <div className="rounded-md border border-border bg-card p-4">
@@ -134,11 +145,26 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
           <label className="mb-1 block text-[10px] text-muted-foreground">{t("fields.target")}</label>
           <Input
             id="alert-target-input"
-            type="number"
-            step={isPercentCondition ? "0.01" : "0.01"}
-            placeholder={isPercentCondition ? "10.5" : "150.00"}
+            type="text"
+            inputMode="decimal"
+            placeholder={isPercentCondition ? "10,50" : "150,00"}
+            defaultValue={targetValueDisplay}
             {...register("targetValue", {
-              onBlur: () => setTouched((prev) => ({ ...prev, target: true })),
+              onChange: (e) => {
+                // Store normalized value for form submission
+                const normalized = normalizeNumberInput(e.target.value);
+                // Use the actual input value for react-hook-form
+                e.target.value = normalized;
+              },
+              onBlur: (e) => {
+                setTouched((prev) => ({ ...prev, target: true }));
+                // On blur, format for Croatian display
+                const normalized = normalizeNumberInput(e.target.value);
+                const parsed = parseLocalizedNumber(normalized);
+                if (!isNaN(parsed)) {
+                  e.target.value = formatInputNumber(parsed, 2);
+                }
+              },
             })}
             error={!!showTargetError}
           />
