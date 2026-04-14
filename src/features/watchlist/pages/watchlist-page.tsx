@@ -220,6 +220,8 @@ function AuthenticatedWatchlist() {
           icon={<Star className="h-8 w-8" />}
           title={t("empty")}
           description={t("emptyDescription")}
+          action={{ label: t("browseAction"), onClick: () => { window.location.href = "/"; } }}
+          hint={t("emptyHint")}
         />
       )}
     </div>
@@ -513,6 +515,7 @@ function LocalWatchlist() {
             label: t("browseAction"),
             onClick: () => { window.location.href = "/"; },
           }}
+          hint={t("emptyHint")}
         />
       ) : (
         <EmptyState

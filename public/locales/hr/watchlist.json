@@ -2,6 +2,7 @@
   "title": "Praćenje",
   "empty": "Nema dionica u listi praćenja",
   "emptyDescription": "Kliknite zvjezdicu pokraj dionice da je dodate u listu.",
+  "emptyHint": "Pratite dionice koje vas zanimaju i lako pratite njihovu vrijednost.",
   "add": "Dodaj u listu praćenja",
   "remove": "Ukloni iz liste praćenja",
   "searchPlaceholder": "Pretraži dionice...",
