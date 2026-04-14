@@ -10,6 +10,7 @@
   "table": {
     "ticker": "Ticker",
     "name": "Name",
+    "sector": "Sector",
     "price": "Price",
     "change": "Change",
     "volume": "Volume",

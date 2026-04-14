@@ -307,6 +307,9 @@ function SortableRow({
       <td className="hidden px-3 py-2 md:table-cell">
         <span className="truncate text-xs text-muted-foreground">{stock.name}</span>
       </td>
+      <td className="hidden px-3 py-2 lg:table-cell">
+        <span className="text-xs text-muted-foreground">{stock.sector || "-"}</span>
+      </td>
       <td className="px-3 py-2 text-right">
         <span className="font-data text-xs tabular-nums font-medium text-foreground">
           {formatPrice(stock.price)}
@@ -564,6 +567,9 @@ function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort, dragEnable
             <th className="hidden px-3 py-2 text-left font-medium md:table-cell">
               <SortHeader column="name" label={t("table.name")} sort={sort} onSort={onSort} />
             </th>
+            <th className="hidden px-3 py-2 text-left font-medium lg:table-cell">
+              {t("table.sector")}
+            </th>
             <th className="px-3 py-2 text-right font-medium">
               <SortHeader column="price" label={t("table.price")} sort={sort} onSort={onSort} />
             </th>
@@ -654,6 +660,9 @@ function WatchlistRow({ stock, showRemove, onRemove }: WatchlistRowProps) {
       </td>
       <td className="hidden px-3 py-2 md:table-cell">
         <span className="truncate text-xs text-muted-foreground">{stock.name}</span>
+      </td>
+      <td className="hidden px-3 py-2 lg:table-cell">
+        <span className="text-xs text-muted-foreground">{stock.sector || "-"}</span>
       </td>
       <td className="px-3 py-2 text-right">
         <span className="font-data text-xs tabular-nums font-medium text-foreground">

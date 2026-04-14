@@ -10,6 +10,7 @@
   "table": {
     "ticker": "Dionica",
     "name": "Naziv",
+    "sector": "Sektor",
     "price": "Cijena",
     "change": "Promjena",
     "volume": "Volumen",
