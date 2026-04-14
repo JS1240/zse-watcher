@@ -2,6 +2,12 @@
   "title": "Price Alerts",
   "create": "Create Alert",
   "exportCsv": "CSV",
+  "filter": {
+    "all": "All",
+    "active": "Active",
+    "triggered": "Triggered",
+    "paused": "Paused"
+  },
   "condition": {
     "above": "Price Above",
     "below": "Price Below",

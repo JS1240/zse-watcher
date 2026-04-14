@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Bell, BellOff, Pencil, Trash2, X, Check, Keyboard, Download, AlertCircle, Search } from "lucide-react";
+import { Bell, BellOff, Pencil, Trash2, X, Check, Keyboard, Download, AlertCircle, Search, CircleDot, Pause } from "lucide-react";
 import { toast } from "sonner";
 import { useAlertsData } from "@/features/alerts/hooks/use-alerts-data";
 import { useAlerts, useUpdateAlert } from "@/features/alerts/api/alerts-queries";
@@ -20,6 +20,30 @@ import { exportToCsv } from "@/lib/export";
 import { useDebounce } from "@/hooks/use-debounce";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 
+interface FilterChipProps {
+  active: boolean;
+  onClick: () => void;
+  label: string;
+  icon?: React.ReactNode;
+}
+
+function FilterChip({ active, onClick, label, icon }: FilterChipProps) {
+  return (
+    <button
+      onClick={onClick}
+      className={cn(
+        "flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium transition-colors",
+        active
+          ? "bg-primary text-primary-foreground"
+          : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
+      )}
+    >
+      {icon}
+      {label}
+    </button>
+  );
+}
+
 export function AlertsDashboard() {
   const { t } = useTranslation("alerts");
   const { t: tc } = useTranslation("common");
@@ -28,15 +52,33 @@ export function AlertsDashboard() {
   const updateAlert = useUpdateAlert();
   const [showForm, setShowForm] = useState(false);
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "triggered" | "paused">("all");
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const debouncedSearch = useDebounce(search, 200);
 
   const filteredAlerts = useMemo(() => {
     if (!alerts) return [];
-    if (!debouncedSearch) return alerts;
-    const q = debouncedSearch.toLowerCase();
-    return alerts.filter((a) => a.ticker.toLowerCase().includes(q));
-  }, [alerts, debouncedSearch]);
+    let result = alerts;
+
+    // Filter by status
+    if (statusFilter !== "all") {
+      if (statusFilter === "active") {
+        result = result.filter((a) => a.isActive && !a.isTriggered);
+      } else if (statusFilter === "triggered") {
+        result = result.filter((a) => a.isTriggered);
+      } else if (statusFilter === "paused") {
+        result = result.filter((a) => !a.isActive);
+      }
+    }
+
+    // Filter by search term
+    if (debouncedSearch) {
+      const q = debouncedSearch.toLowerCase();
+      result = result.filter((a) => a.ticker.toLowerCase().includes(q));
+    }
+
+    return result;
+  }, [alerts, debouncedSearch, statusFilter]);
 
   if (isLoading) {
     return (
@@ -84,40 +126,71 @@ export function AlertsDashboard() {
 
   return (
     <div className="space-y-3">
-      {/* Search + Action buttons */}
-      <div className="flex gap-2">
-        {alerts && alerts.length > 0 && (
-          <div className="relative flex-1">
-            <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-muted-foreground" />
-            <Input
-              placeholder={tc("actions.search")}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-8 pr-8"
-            />
-            {search && (
-              <button
-                onClick={() => setSearch("")}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                title={tc("actions.clear")}
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
+      {/* Search + Status Filter + Action buttons */}
+      <div className="flex flex-col gap-2">
+        <div className="flex gap-2">
+          {alerts && alerts.length > 0 && (
+            <div className="relative flex-1">
+              <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-muted-foreground" />
+              <Input
+                placeholder={tc("actions.search")}
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-8 pr-8"
+              />
+              {search && (
+                <button
+                  onClick={() => setSearch("")}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  title={tc("actions.clear")}
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
+          )}
+          <div className="flex gap-2">
+            {filteredAlerts.length > 0 && (
+              <Button size="sm" variant="secondary" onClick={handleExport}>
+                <Download className="h-3.5 w-3.5" />
+                {t("exportCsv")}
+              </Button>
             )}
+            <Button size="sm" onClick={() => setShowForm(!showForm)}>
+              <Bell className="h-3.5 w-3.5" />
+              {t("create")}
+            </Button>
+          </div>
+        </div>
+
+        {/* Status filter buttons - only show when there are alerts */}
+        {alerts && alerts.length > 0 && (
+          <div className="flex gap-1">
+            <FilterChip
+              active={statusFilter === "all"}
+              onClick={() => setStatusFilter("all")}
+              label={t("filter.all") || "Sve"}
+            />
+            <FilterChip
+              active={statusFilter === "active"}
+              onClick={() => setStatusFilter("active")}
+              label={t("filter.active") || "Aktivne"}
+              icon={<CircleDot className="h-3 w-3" />}
+            />
+            <FilterChip
+              active={statusFilter === "triggered"}
+              onClick={() => setStatusFilter("triggered")}
+              label={t("filter.triggered") || "Aktivirane"}
+              icon={<AlertCircle className="h-3 w-3" />}
+            />
+            <FilterChip
+              active={statusFilter === "paused"}
+              onClick={() => setStatusFilter("paused")}
+              label={t("filter.paused") || "Pauzirane"}
+              icon={<Pause className="h-3 w-3" />}
+            />
           </div>
         )}
-        <div className="flex gap-2">
-          {filteredAlerts.length > 0 && (
-            <Button size="sm" variant="secondary" onClick={handleExport}>
-              <Download className="h-3.5 w-3.5" />
-              {t("exportCsv")}
-            </Button>
-          )}
-          <Button size="sm" onClick={() => setShowForm(!showForm)}>
-            <Bell className="h-3.5 w-3.5" />
-            {t("create")}
-          </Button>
-        </div>
       </div>
 
       {showForm && (

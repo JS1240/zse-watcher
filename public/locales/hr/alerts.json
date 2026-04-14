@@ -2,6 +2,12 @@
   "title": "Alarmi cijena",
   "create": "Stvori alarm",
   "exportCsv": "CSV",
+  "filter": {
+    "all": "Sve",
+    "active": "Aktivne",
+    "triggered": "Aktivirane",
+    "paused": "Pauzirane"
+  },
   "condition": {
     "above": "Cijena iznad",
     "below": "Cijena ispod",
