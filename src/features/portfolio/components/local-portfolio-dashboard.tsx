@@ -252,7 +252,7 @@ export function LocalPortfolioDashboard() {
               {filteredHoldings.map((h) => (
                 <tr
                   key={h.ticker}
-                  className="border-b border-border/50 last:border-b-0 cursor-pointer hover:bg-accent/50"
+                  className="border-b border-border/50 cursor-pointer transition-all duration-150 hover:bg-accent/70"
                   onClick={() => select(h.ticker)}
                 >
                   <td className="px-3 py-2">

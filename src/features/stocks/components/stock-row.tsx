@@ -34,10 +34,10 @@ const StockRowBase = ({ stock, flash }: StockRowProps) => {
       onKeyDown={handleKeyDown}
       aria-label={`${stock.ticker} — ${stock.name}: ${stock.price} EUR, ${stock.changePct > 0 ? "+" : ""}${stock.changePct}%`}
       className={cn(
-        "group cursor-pointer border-b border-border/50 transition-colors hover:bg-accent/50",
+        "group cursor-pointer border-b border-border/50 transition-all duration-150 hover:bg-accent/70",
         "last:border-b-0",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-        isSelected && "border-l-2 border-l-primary bg-accent/30",
+        isSelected && "border-l-2 border-l-primary bg-primary/10",
         flash === "up" && "price-flash-up",
         flash === "down" && "price-flash-down",
       )}

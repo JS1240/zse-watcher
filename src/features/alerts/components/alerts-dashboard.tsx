@@ -481,7 +481,7 @@ function AlertRow({ alert, onDelete, onToggle, onUpdate }: AlertRowProps) {
   return (
     <div
       className={cn(
-        "group flex items-center justify-between rounded-md border border-border bg-card px-3 py-2.5 transition-colors",
+        "group flex items-center justify-between rounded-md border border-border bg-card px-3 py-2.5 transition-all duration-150 hover:bg-accent/30",
         !alert.isActive && "opacity-50",
         alert.isTriggered && "border-amber/30 bg-amber/5",
       )}

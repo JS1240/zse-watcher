@@ -519,7 +519,7 @@ export function StockScreener() {
             {results.map((s) => (
               <tr
                 key={s.ticker}
-                className="border-b border-border/50 last:border-b-0 cursor-pointer hover:bg-accent/50"
+                className="border-b border-border/50 cursor-pointer transition-all duration-150 hover:bg-accent/70"
                 onClick={() => select(s.ticker)}
               >
                 <td className="px-3 py-2 font-data font-semibold text-foreground">
