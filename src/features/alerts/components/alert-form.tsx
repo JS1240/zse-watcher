@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod/v4";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TickerSelect } from "@/components/shared/ticker-select";
 import { normalizeNumberInput, formatInputNumber, parseLocalizedNumber } from "@/lib/format-input";
+import { cn } from "@/lib/utils";
+import { useDebounce } from "@/hooks/use-debounce";
 import type { AlertCondition } from "@/types/alert";
 
 const translateError = (key: string | undefined, t: (key: string) => string) => {
@@ -21,7 +23,6 @@ const alertSchema = z.object({
   condition: z.enum(["above", "below", "percent_change_up", "percent_change_down"]),
   targetValue: z.string().min(1, "validation.required"),
 });
-
 
 type AlertFormData = z.infer<typeof alertSchema>;
 
@@ -51,17 +52,42 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
 
   const tickerValue = watch("ticker");
   const conditionValue = watch("condition");
+  const targetInputValue = watch("targetValue");
   const isPercentCondition = conditionValue?.includes("percent");
+
+  // Focus state for validation timing
+  const [focused, setFocused] = useState({ ticker: false, target: false });
   const [touched, setTouched] = useState({ ticker: false, target: false });
 
-  // Check if a field has been interacted with
-  const showTickerError = touched.ticker && errors.ticker;
-  const showTargetError = touched.target && errors.targetValue;
+  // Debounce target value for real-time validation
+  const debouncedTarget = useDebounce(targetInputValue, 300);
+
+  // Real-time validation checks
+  const isTickerValid = useMemo(() => {
+    if (!tickerValue) return false;
+    // Valid ticker: 3-10 chars, alphanumeric with optional - and _
+    return /^[A-Z0-9_-]{3,10}$/i.test(tickerValue);
+  }, [tickerValue]);
+
+  const isTargetValid = useMemo(() => {
+    if (!debouncedTarget) return false;
+    const parsed = parseLocalizedNumber(debouncedTarget);
+    return !isNaN(parsed) && parsed > 0;
+  }, [debouncedTarget]);
+
+  // Show errors: field was touched AND (has error OR valid check failed when not focused)
+  const showTickerError = touched.ticker && (errors.ticker || (tickerValue && !isTickerValid));
+  const showTargetError = touched.target && (errors.targetValue || (debouncedTarget && !isTargetValid));
 
   // Keyboard hint based on condition
   const keyboardHint = isPercentCondition
     ? t("fields.targetHint").replace("Primjer", "npr.") + " — " + t("pressEnter")
     : t("fields.targetHint") + " — " + t("pressEnter");
+
+  // Handle focus for real-time validation
+  const handleTargetFocus = useCallback(() => {
+    setFocused((prev) => ({ ...prev, target: true }));
+  }, []);
 
   // Focus input on mount
   useEffect(() => {
@@ -73,7 +99,6 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
   }, []);
 
   const onSubmit = async (data: AlertFormData) => {
-    // Support both Croatian (150,00) and English (150.00) decimal formats
     const parsed = parseLocalizedNumber(data.targetValue);
     if (isNaN(parsed) || parsed <= 0) return;
     await createAlert.mutateAsync({
@@ -111,21 +136,26 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
             onChange={(v) => {
               setValue("ticker", v, { shouldValidate: true });
               setTouched((prev) => ({ ...prev, ticker: true }));
+              if (v) setFocused((prev) => ({ ...prev, ticker: true }));
             }}
             placeholder="KOEI-R-A"
             error={!!showTickerError}
+            className={cn(
+              showTickerError && "ring-1 ring-destructive border-destructive",
+              isTickerValid && !showTickerError && "ring-1 ring-emerald-500 border-emerald-500"
+            )}
           />
           {showTickerError ? (
             <p className="mt-1.5 flex items-center gap-1.5 rounded-md bg-destructive/10 px-2.5 py-1.5 text-xs font-medium text-destructive">
               <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
-              {translateError(errors.ticker?.message, t)}
+              {translateError(errors.ticker?.message, t) || t("validation.selectTicker")}
             </p>
-          ) : tickerValue && (
+          ) : isTickerValid ? (
             <p className="mt-1.5 flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400">
               <CheckCircle2 className="h-3.5 w-3.5 flex-shrink-0" />
-              {tickerValue}
+              {t("fields.tickerValid") || "Odabrano"}
             </p>
-          )}
+          ) : null}
         </div>
 
         <div>
@@ -149,29 +179,38 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
             inputMode="decimal"
             placeholder={isPercentCondition ? "10,50" : "150,00"}
             defaultValue={targetValueDisplay}
+            onFocus={handleTargetFocus}
             {...register("targetValue", {
-              onChange: (e) => {
-                // Store normalized value for form submission
-                const normalized = normalizeNumberInput(e.target.value);
-                // Use the actual input value for react-hook-form
-                e.target.value = normalized;
-              },
               onBlur: (e) => {
+                setFocused((prev) => ({ ...prev, target: false }));
                 setTouched((prev) => ({ ...prev, target: true }));
-                // On blur, format for Croatian display
+                // Format on blur
                 const normalized = normalizeNumberInput(e.target.value);
                 const parsed = parseLocalizedNumber(normalized);
                 if (!isNaN(parsed)) {
                   e.target.value = formatInputNumber(parsed, 2);
                 }
               },
+              onChange: (e) => {
+                const normalized = normalizeNumberInput(e.target.value);
+                e.target.value = normalized;
+              },
             })}
             error={!!showTargetError}
+            className={cn(
+              showTargetError && "ring-1 ring-destructive border-destructive",
+              isTargetValid && !focused.target && !showTargetError && "ring-1 ring-emerald-500 border-emerald-500"
+            )}
           />
           {showTargetError ? (
             <p className="mt-1.5 flex items-center gap-1.5 rounded-md bg-destructive/10 px-2.5 py-1.5 text-xs font-medium text-destructive">
               <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
-              {translateError(errors.targetValue?.message, t)}
+              {translateError(errors.targetValue?.message, t) || t("validation.positiveNumber")}
+            </p>
+          ) : isTargetValid && !focused.target ? (
+            <p className="mt-1.5 flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400">
+              <CheckCircle2 className="h-3.5 w-3.5 flex-shrink-0" />
+              {t("fields.targetValid") || "Ispravno"}
             </p>
           ) : (
             <p className="mt-1.5 flex items-center gap-1.5 text-[9px] text-muted-foreground">
