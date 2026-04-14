@@ -26,7 +26,8 @@
     "isin": "ISIN"
   },
   "chart": {
-    "noData": "No chart data available"
+    "noData": "No chart data available",
+    "loadError": "Failed to load chart data"
   },
   "ranges": {
     "1D": "1D",

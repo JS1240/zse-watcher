@@ -4,6 +4,7 @@ import { LazyTradingChart } from "@/features/charts/components/lazy-trading-char
 import { useStockHistory } from "@/features/stocks/api/stock-detail-queries";
 import { CHART_RANGES, type ChartRange } from "@/config/constants";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ErrorState } from "@/components/shared/error-state";
 import { cn } from "@/lib/utils";
 
 interface HistoryChartProps {
@@ -19,7 +20,17 @@ export function HistoryChart({
 }: HistoryChartProps) {
   const [range, setRange] = useState<ChartRange>("1M");
   const { t } = useTranslation("stocks");
-  const { data: history, isLoading } = useStockHistory(ticker, range);
+  const { data: history, isLoading, isError, refetch } = useStockHistory(ticker, range);
+
+  if (isError) {
+    return (
+      <ErrorState
+        title={t("chart.loadError")}
+        description={t("errors.network")}
+        retry={{ onRetry: refetch, label: t("errors.tryAgain") }}
+      />
+    );
+  }
 
   return (
     <div className="flex flex-col gap-2">
