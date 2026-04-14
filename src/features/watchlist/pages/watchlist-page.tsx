@@ -214,6 +214,7 @@ function AuthenticatedWatchlist() {
           title={tc("empty.noResults")}
           description={tc("empty.noResultsDescription")}
           action={{ label: tc("empty.clearFilters"), onClick: () => setSearch("") }}
+          variant="no-results"
         />
       ) : (
         <EmptyState
@@ -505,6 +506,7 @@ function LocalWatchlist() {
           title={tc("empty.noResults")}
           description={tc("empty.noResultsDescription")}
           action={{ label: tc("empty.clearFilters"), onClick: () => setSearch("") }}
+          variant="no-results"
         />
       ) : items.length === 0 ? (
         <EmptyState
