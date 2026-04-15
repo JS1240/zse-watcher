@@ -1,8 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { X, Info } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useStockDetail } from "@/features/stocks/api/stock-detail-queries";
 import { useRecentStocks } from "@/hooks/use-recent-stocks";
+import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { StockHeader } from "@/features/stocks/components/stock-header";
 import { StockFundamentals } from "@/features/stocks/components/stock-fundamentals";
 import { HistoryChart } from "@/features/charts/components/history-chart";
@@ -22,11 +23,26 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
   const stock = result?.stock ?? null;
   const isMockData = result?.isMockData ?? false;
   const { addRecentStock } = useRecentStocks();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  // Focus trap for keyboard accessibility
+  const { setContainerRef } = useFocusTrap({
+    active: drawerOpen,
+    onEscape: onClose,
+  });
 
   // Record stock view when drawer opens with valid stock
   useEffect(() => {
     if (ticker && stock?.name) {
       addRecentStock(ticker, stock.name);
+    }
+    // Set drawer open state after mount to enable focus trap
+    if (ticker) {
+      const timer = setTimeout(() => setDrawerOpen(true), 0);
+      return () => {
+        clearTimeout(timer);
+        setDrawerOpen(false);
+      };
     }
   }, [ticker, stock?.name, addRecentStock]);
 
@@ -42,10 +58,14 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
 
       {/* Drawer */}
       <div
+        ref={setContainerRef}
         className={cn(
           "fixed right-0 top-0 z-50 flex h-full w-full max-w-lg flex-col border-l border-border bg-card shadow-2xl",
           "animate-[slide-in-right_0.2s_ease-out]",
         )}
+        role="dialog"
+        aria-modal="true"
+        aria-label={`${ticker} ${t("detail.title")}`}
       >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
@@ -61,7 +81,8 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
           </div>
           <button
             onClick={onClose}
-            className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+            className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            aria-label={t("close")}
           >
             <X className="h-4 w-4" />
           </button>
