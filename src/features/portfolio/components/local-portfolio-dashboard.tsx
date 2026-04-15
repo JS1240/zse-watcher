@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, Trash2, ChevronDown, ChevronUp, Wallet, Download, Search, X, ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
+import { Plus, Trash2, ChevronDown, ChevronUp, Wallet, Download, Search, X, ArrowUp, ArrowDown, ArrowUpDown, TrendingUp, TrendingDown } from "lucide-react";
 import { toast } from "sonner";
 import { useLocalTransactions } from "@/features/portfolio/hooks/use-local-transactions";
 import { useDebounce } from "@/hooks/use-debounce";
@@ -25,6 +25,7 @@ export function LocalPortfolioDashboard() {
   const { select } = useSelectedStock();
   const [showAddForm, setShowAddForm] = useState(false);
   const [search, setSearch] = useState("");
+  const [changeFilter, setChangeFilter] = useState<"all" | "gainers" | "losers" | "unchanged">("all");
   const debouncedSearch = useDebounce(search, 200);
   const [showHistory, setShowHistory] = useState(false);
   const [savedFlash, setSavedFlash] = useState(false);
@@ -98,16 +99,27 @@ export function LocalPortfolioDashboard() {
       });
   }, [holdingsMap, stocks]);
 
-  // Filter by search term
+  // Filter by search term and change direction
   const filteredHoldings = useMemo(() => {
-    if (!debouncedSearch) return enrichedHoldings;
-    const q = debouncedSearch.toLowerCase();
-    return enrichedHoldings.filter(
-      (h) =>
-        h.ticker.toLowerCase().includes(q) ||
-        h.name.toLowerCase().includes(q)
-    );
-  }, [enrichedHoldings, debouncedSearch]);
+    let result = enrichedHoldings;
+    if (debouncedSearch) {
+      const q = debouncedSearch.toLowerCase();
+      result = result.filter(
+        (h) =>
+          h.ticker.toLowerCase().includes(q) ||
+          h.name.toLowerCase().includes(q)
+      );
+    }
+    // Apply change direction filter
+    if (changeFilter !== "all") {
+      result = result.filter((h) => {
+        if (changeFilter === "gainers") return h.gainPct > 0;
+        if (changeFilter === "losers") return h.gainPct < 0;
+        return h.gainPct === 0;
+      });
+    }
+    return result;
+  }, [enrichedHoldings, debouncedSearch, changeFilter]);
 
   // Sort state for holdings table
   type SortColumn = "totalShares" | "avgPrice" | "currentPrice" | "totalValue" | "totalGain" | "gainPct";
@@ -250,7 +262,7 @@ export function LocalPortfolioDashboard() {
         </div>
       </div>
 
-      {/* Search + Add position + export buttons */}
+      {/* Search + filters + Add position + export buttons */}
       <div className="flex flex-wrap justify-end gap-2">
         {enrichedHoldings.length > 0 && (
           <>
@@ -271,6 +283,45 @@ export function LocalPortfolioDashboard() {
                   <X className="h-3.5 w-3.5" />
                 </button>
               )}
+            </div>
+            {/* Change direction filters */}
+            <div className="flex gap-1">
+              <button
+                onClick={() => setChangeFilter("all")}
+                className={cn(
+                  "flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-medium transition-all",
+                  changeFilter === "all"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "bg-muted/60 text-muted-foreground hover:bg-muted"
+                )}
+              >
+                <TrendingUp className="h-3 w-3" />
+                <span className="hidden sm:inline">Svi</span>
+              </button>
+              <button
+                onClick={() => setChangeFilter("gainers")}
+                className={cn(
+                  "flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-medium transition-all",
+                  changeFilter === "gainers"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "bg-muted/60 text-muted-foreground hover:bg-muted"
+                )}
+              >
+                <TrendingUp className="h-3 w-3" />
+                <span className="hidden sm:inline">+</span>
+              </button>
+              <button
+                onClick={() => setChangeFilter("losers")}
+                className={cn(
+                  "flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-medium transition-all",
+                  changeFilter === "losers"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "bg-muted/60 text-muted-foreground hover:bg-muted"
+                )}
+              >
+                <TrendingDown className="h-3 w-3" />
+                <span className="hidden sm:inline">-</span>
+              </button>
             </div>
             <Button size="sm" variant="outline" onClick={handleExportCsv}>
               <Download className="h-3.5 w-3.5" />
