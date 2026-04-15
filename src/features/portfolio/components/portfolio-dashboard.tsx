@@ -258,10 +258,10 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
         />
       )}
 
-      {/* Holdings table */}
+      {/* Holdings table - horizontal scroll on mobile */}
       {sortedHoldings.length > 0 ? (
-        <div className="overflow-hidden rounded-md border border-border">
-          <table className="w-full text-xs">
+        <div className="overflow-x-auto rounded-md border border-border [-webkit-overflow-scrolling:touch] [scrollbar-gutter:stable]">
+          <table className="min-w-[400px] w-full text-xs">
             <thead>
               <tr className="border-b border-border bg-muted/50 text-[10px] uppercase tracking-wider text-muted-foreground">
                 <SortableTh field="ticker" label={t("fields.ticker")} sortField={sortField} sortDir={sortDir} onSort={handleSort} align="left" />
