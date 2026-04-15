@@ -1,9 +1,10 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { BarChart3 } from "lucide-react";
-import { usePortfolioHoldings } from "@/features/portfolio/api/portfolio-queries";
+import { usePortfolioHoldings, usePortfolio } from "@/features/portfolio/api/portfolio-queries";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { PortfolioChart } from "@/features/portfolio/components/portfolio-chart";
+import { PortfolioAnalyticsSkeleton } from "@/features/portfolio/components/portfolio-analytics-skeleton";
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { EmptyState } from "@/components/shared/empty-state";
 import { formatCurrency } from "@/lib/formatters";
@@ -22,9 +23,11 @@ const SECTOR_COLORS = [
 
 export function PortfolioAnalytics() {
   const { t } = useTranslation("portfolio");
+  const { isLoading: isPortfolioLoading } = usePortfolio();
   const holdings = usePortfolioHoldings();
-  const { data: stocksResult } = useStocksLive();
+  const { data: stocksResult, isLoading: isStocksLoading } = useStocksLive();
   const stocks = stocksResult?.stocks ?? null;
+  const isLoading = isPortfolioLoading || isStocksLoading;
 
   const analytics = useMemo(() => {
     if (!holdings.length || !stocks) return null;
@@ -65,6 +68,10 @@ export function PortfolioAnalytics() {
 
     return { enriched, totalValue, totalCost, totalGain, totalGainPct, sectors, best, worst };
   }, [holdings, stocks]);
+
+  if (isLoading) {
+    return <PortfolioAnalyticsSkeleton />;
+  }
 
   if (!analytics) {
     return (
