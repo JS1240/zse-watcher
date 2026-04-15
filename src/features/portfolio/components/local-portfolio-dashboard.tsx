@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, Trash2, ChevronDown, ChevronUp, Wallet, Download, Search, X } from "lucide-react";
+import { Plus, Trash2, ChevronDown, ChevronUp, Wallet, Download, Search, X, ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import { toast } from "sonner";
 import { useLocalTransactions } from "@/features/portfolio/hooks/use-local-transactions";
 import { useDebounce } from "@/hooks/use-debounce";
@@ -109,6 +109,56 @@ export function LocalPortfolioDashboard() {
     );
   }, [enrichedHoldings, debouncedSearch]);
 
+  // Sort state for holdings table
+  type SortColumn = "totalShares" | "avgPrice" | "currentPrice" | "totalValue" | "totalGain" | "gainPct";
+  const [sort, setSort] = useState<{ column: SortColumn; direction: "asc" | "desc" } | null>(null);
+
+  // Apply sorting to holdings
+  const sortedHoldings = useMemo(() => {
+    if (!sort) return filteredHoldings;
+    return [...filteredHoldings].sort((a, b) => {
+      const aVal = a[sort.column];
+      const bVal = b[sort.column];
+      return sort.direction === "asc" ? aVal - bVal : bVal - aVal;
+    });
+  }, [filteredHoldings, sort]);
+
+  const handleSort = (column: SortColumn) => {
+    setSort((prev) => {
+      if (prev?.column !== column) return { column, direction: "desc" };
+      if (prev.direction === "desc") return { column, direction: "asc" };
+      return null;
+    });
+  };
+
+  // Reusable sort header
+  function SortHeader({
+    column,
+    label,
+  }: {
+    column: SortColumn;
+    label: string;
+  }) {
+    const isActive = sort?.column === column;
+    const direction = isActive ? sort.direction : null;
+    return (
+      <button
+        onClick={() => handleSort(column)}
+        className="flex items-center gap-1 transition-colors hover:text-foreground"
+        aria-sort={isActive ? (direction === "asc" ? "ascending" : "descending") : "none"}
+      >
+        <span>{label}</span>
+        {direction === "asc" ? (
+          <ArrowUp className="h-3 w-3 shrink-0" />
+        ) : direction === "desc" ? (
+          <ArrowDown className="h-3 w-3 shrink-0" />
+        ) : (
+          <ArrowUpDown className="h-3 w-3 shrink-0 text-muted-foreground/40" />
+        )}
+      </button>
+    );
+  }
+
   // Memoize totals — recalculates on enrichedHoldings change (infrequent)
   const totals = useMemo(() => {
     const totalValue = enrichedHoldings.reduce((sum, h) => sum + h.totalValue, 0);
@@ -130,7 +180,7 @@ export function LocalPortfolioDashboard() {
       "Gain (EUR)",
       "Gain (%)",
     ];
-    const rows = filteredHoldings.map((h) => [
+    const rows = sortedHoldings.map((h) => [
       h.ticker,
       h.name,
       h.totalShares.toString(),
@@ -243,23 +293,31 @@ export function LocalPortfolioDashboard() {
       )}
 
       {/* Holdings table - horizontal scroll on mobile */}
-      {filteredHoldings.length > 0 ? (
+      {sortedHoldings.length > 0 ? (
         <div className="overflow-x-auto rounded-md border border-border [-webkit-overflow-scrolling:touch] [scrollbar-gutter:stable]">
           <table className="min-w-[400px] w-full text-xs">
             <thead>
               <tr className="border-b border-border bg-muted/50 text-[10px] uppercase tracking-wider text-muted-foreground">
                 <th className="px-3 py-2 text-left font-medium">{t("fields.ticker")}</th>
-                <th className="px-3 py-2 text-right font-medium">{t("fields.shares")}</th>
-                <th className="px-3 py-2 text-right font-medium">{t("fields.avgPrice")}</th>
-                <th className="px-3 py-2 text-right font-medium">{t("fields.currentPrice")}</th>
-                <th className="hidden px-3 py-2 text-right font-medium md:table-cell">
-                  {t("fields.value")}
+                <th className="px-3 py-2 text-right font-medium">
+                  <SortHeader column="totalShares" label={t("fields.shares")} />
                 </th>
-                <th className="px-3 py-2 text-right font-medium">{t("fields.gain")}</th>
+                <th className="px-3 py-2 text-right font-medium">
+                  <SortHeader column="avgPrice" label={t("fields.avgPrice")} />
+                </th>
+                <th className="px-3 py-2 text-right font-medium">
+                  <SortHeader column="currentPrice" label={t("fields.currentPrice")} />
+                </th>
+                <th className="hidden px-3 py-2 text-right font-medium md:table-cell">
+                  <SortHeader column="totalValue" label={t("fields.value")} />
+                </th>
+                <th className="px-3 py-2 text-right font-medium">
+                  <SortHeader column="gainPct" label={t("fields.gain")} />
+                </th>
               </tr>
             </thead>
             <tbody>
-              {filteredHoldings.map((h) => (
+              {sortedHoldings.map((h) => (
                 <tr
                   key={h.ticker}
                   className="border-b border-border/50 cursor-pointer transition-all duration-150 active:bg-accent/50 hover:bg-accent/70"
