@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { Bell, BellOff, Pencil, Trash2, X, Check, Keyboard, Download, AlertCircle, Search, CircleDot, Pause } from "lucide-react";
+import { Bell, BellOff, Pencil, Trash2, X, Check, CheckCircle2, Keyboard, Download, AlertCircle, Search, CircleDot, Pause } from "lucide-react";
 import { toast } from "sonner";
 import { useAlertsData } from "@/features/alerts/hooks/use-alerts-data";
 import { useAlerts, useUpdateAlert } from "@/features/alerts/api/alerts-queries";
@@ -334,6 +334,21 @@ function AlertRow({ alert, onDelete, onToggle, onUpdate }: AlertRowProps) {
   const [editTickerError, setEditTickerError] = useState(false);
   const [editTargetError, setEditTargetError] = useState(false);
 
+  // Real-time validation state
+  const [editFocused, setEditFocused] = useState({ ticker: false, target: false });
+
+  // Real-time validation logic (matching AlertForm pattern)
+  const isEditTickerValid = useMemo(() => {
+    if (!editTicker) return false;
+    return /^[A-Z0-9_-]{3,10}$/i.test(editTicker);
+  }, [editTicker]);
+
+  const isEditTargetValid = useMemo(() => {
+    if (!editTarget) return false;
+    const parsed = parseLocalizedNumber(editTarget);
+    return !isNaN(parsed) && parsed > 0;
+  }, [editTarget]);
+
   const conditionOptions: { value: AlertCondition; label: string }[] = [
     { value: "above", label: t("condition.above") },
     { value: "below", label: t("condition.below") },
@@ -446,15 +461,24 @@ function AlertRow({ alert, onDelete, onToggle, onUpdate }: AlertRowProps) {
                 setEditTicker(v);
                 if (v) setEditTickerError(false);
               }}
-              className={cn("h-7 font-data text-xs", editTickerError && "ring-1 ring-destructive")}
+              className={cn(
+                "h-7 font-data text-xs",
+                editTickerError && "ring-1 ring-destructive border-destructive",
+                isEditTickerValid && !editTickerError && "ring-1 ring-emerald-500 border-emerald-500"
+              )}
               placeholder="KOEI-R-A"
             />
-            {editTickerError && (
+            {editTickerError ? (
               <p className="mt-1.5 flex items-center gap-1.5 rounded-md bg-destructive/10 px-2.5 py-1.5 text-xs font-medium text-destructive">
                 <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
                 {t("validation.selectTicker")}
               </p>
-            )}
+            ) : isEditTickerValid ? (
+              <p className="mt-1.5 flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400">
+                <CheckCircle2 className="h-3.5 w-3.5 flex-shrink-0" />
+                {t("fields.tickerValid") || "Odabrano"}
+              </p>
+            ) : null}
           </div>
           <div>
             <label className="mb-0.5 block text-[9px] uppercase tracking-wider text-muted-foreground">
@@ -483,20 +507,33 @@ function AlertRow({ alert, onDelete, onToggle, onUpdate }: AlertRowProps) {
               step="0.01"
               value={editTarget}
               onKeyDown={handleKeyDown}
-              onBlur={handleTargetBlur}
+              onBlur={(e) => {
+                setEditFocused((prev) => ({ ...prev, target: false }));
+                handleTargetBlur(e);
+              }}
+              onFocus={() => setEditFocused((prev) => ({ ...prev, target: true }))}
               onChange={(e) => {
                 setEditTarget(e.target.value);
                 const parsed = parseLocalizedNumber(e.target.value);
                 if (!isNaN(parsed) && parsed > 0) setEditTargetError(false);
               }}
               error={editTargetError}
-              className="h-7 font-data text-xs"
+              className={cn(
+                "h-7 font-data text-xs",
+                editTargetError && "ring-1 ring-destructive border-destructive",
+                isEditTargetValid && !editTargetError && !editFocused.target && "ring-1 ring-emerald-500 border-emerald-500"
+              )}
               placeholder={editPlaceholder}
             />
             {editTargetError ? (
               <p className="mt-1.5 flex items-center gap-1.5 rounded-md bg-destructive/10 px-2.5 py-1.5 text-xs font-medium text-destructive">
                 <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
                 {t("validation.positiveNumber")}
+              </p>
+            ) : isEditTargetValid && !editFocused.target ? (
+              <p className="mt-1.5 flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400">
+                <CheckCircle2 className="h-3.5 w-3.5 flex-shrink-0" />
+                {t("fields.targetValid") || "Ispravno"}
               </p>
             ) : (
               <p className="mt-1.5 flex items-center gap-1.5 text-[9px] text-muted-foreground">
