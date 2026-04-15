@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Filter, RotateCcw, ArrowUpDown, ArrowUp, ArrowDown, Info, Download, Save, Trash2, Bookmark, Search } from "lucide-react";
+import { Filter, RotateCcw, ArrowUpDown, ArrowUp, ArrowDown, Info, Download, Save, Trash2, Bookmark, Search, ChevronDown } from "lucide-react";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { Button } from "@/components/ui/button";
@@ -180,6 +180,16 @@ export function StockScreener() {
   const isMockData = result?.isMockData ?? false;
   const { select } = useSelectedStock();
   const [filters, setFilters] = useState<ScreenerFilters>(INITIAL_FILTERS);
+  const [filtersCollapsed, setFiltersCollapsed] = useState(false);
+
+  // Count active filters for badge
+  const activeFilterCount = useMemo(() => {
+    return Object.entries(filters).filter(([key, value]) => {
+      if (!value) return false;
+      const initial = INITIAL_FILTERS[key as keyof ScreenerFilters];
+      return value !== (initial ?? "");
+    }).length;
+  }, [filters]);
   const [sort, setSort] = useState<{ column: SortColumn; direction: SortDirection } | null>({
     column: "turnover",
     direction: "desc",
@@ -285,10 +295,18 @@ export function StockScreener() {
       {/* Filter bar */}
       <div className="rounded-md border border-border bg-card p-3">
         <div className="mb-2 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-            <Filter className="h-3 w-3" />
-            {tc("common:actions.filter")}
+          <div className="flex items-center gap-2">
+            <Filter className="h-3 w-3 text-muted-foreground" />
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              {tc("common:actions.filter")}
+            </span>
+            {activeFilterCount > 0 && (
+              <span className="rounded-full bg-accent px-1.5 py-0.5 text-[9px] font-semibold text-foreground">
+                {activeFilterCount}
+              </span>
+            )}
           </div>
+          <div className="flex items-center gap-2">
           <div className="flex items-center gap-2">
             {showSaveInput ? (
               <div className="flex items-center gap-1">
@@ -325,29 +343,51 @@ export function StockScreener() {
         </div>
 
         {/* Presets row */}
-        {presets.length > 0 && (
+        {(presets.length > 0 || activeFilterCount > 0) && (
           <div className="mb-2 flex flex-wrap items-center gap-1">
-            <Bookmark className="h-3 w-3 shrink-0 text-muted-foreground" />
-            {presets.map((p) => (
-              <div key={p.id} className="flex items-center gap-0.5 rounded-sm bg-accent/70 px-1.5 py-0.5">
-                <button
-                  onClick={() => loadPreset(p)}
-                  className="text-[10px] font-medium text-foreground hover:text-primary"
-                >
-                  {p.name}
-                </button>
-                <button
-                  onClick={() => deletePreset(p.id)}
-                  className="text-muted-foreground/50 hover:text-price-down ml-0.5"
-                >
-                  <Trash2 className="h-2.5 w-2.5" />
-                </button>
-              </div>
-            ))}
+            {presets.length > 0 && (
+              <>
+                <Bookmark className="h-3 w-3 shrink-0 text-muted-foreground" />
+                {presets.map((p) => (
+                  <div key={p.id} className="flex items-center gap-0.5 rounded-sm bg-accent/70 px-1.5 py-0.5">
+                    <button
+                      onClick={() => loadPreset(p)}
+                      className="text-[10px] font-medium text-foreground hover:text-primary"
+                    >
+                      {p.name}
+                    </button>
+                    <button
+                      onClick={() => deletePreset(p.id)}
+                      className="text-muted-foreground/50 hover:text-price-down ml-0.5"
+                    >
+                      <Trash2 className="h-2.5 w-2.5" />
+                    </button>
+                  </div>
+                ))}
+              </>
+            )}
+            {/* Collapse/expand toggle */}
+            <button
+              onClick={() => setFiltersCollapsed(!filtersCollapsed)}
+              className="ml-auto flex items-center gap-1 text-[10px] text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <ChevronDown
+                className={cn(
+                  "h-3 w-3 transition-transform",
+                  filtersCollapsed && "-rotate-90"
+                )}
+              />
+              {filtersCollapsed ? tc("common:actions.show") : tc("common:actions.hide")}
+            </button>
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4">
+        {/* Collapsible filter inputs */}
+        <div className={cn(
+          "grid grid-cols-2 gap-2 overflow-hidden transition-all duration-200",
+          filtersCollapsed ? "max-h-0 opacity-0" : "max-h-[500px] opacity-100"
+        )}>
+          <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4">
           <div>
             <label className="mb-1 block text-[9px] uppercase text-muted-foreground">
               {t("table.sector")}
@@ -427,6 +467,8 @@ export function StockScreener() {
             inputMode="decimal"
             className="col-span-1"
           />
+        </div>
+        </div>
         </div>
       </div>
 

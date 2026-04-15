@@ -4,6 +4,12 @@
 
 ### Added
 
+- **Collapsible Filter Panel for Stock Screener** — improve space efficiency for Croatian retail investors
+  - Active filter count badge shows number of active filters (e.g., "2" when sector + minPrice set)
+  - Chevron toggle to collapse/expand filter inputs with smooth animation
+  - Presets row moves above filters with collapse toggle for clean layout
+  - Saves screen space on smaller devices — critical for mobile investors
+
 - **Price Flash for Watchlist** — visual price change feedback for Croatian retail investors
   - Green/red flash animation on price changes (matching stocks table pattern)
   - Works in both local and authenticated watchlist views
