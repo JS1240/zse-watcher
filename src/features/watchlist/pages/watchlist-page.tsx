@@ -437,8 +437,7 @@ function LocalWatchlist() {
           s.name.toLowerCase().includes(q),
       );
     }
-    if (!sort) return result;
-    // Apply change direction filter
+    // Apply change direction filter before sorting
     if (changeFilter !== "all") {
       result = result.filter((s) => {
         if (changeFilter === "gainers") return s.changePct > 0;
