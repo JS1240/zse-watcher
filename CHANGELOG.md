@@ -4,6 +4,14 @@
 
 ### Added
 
+- **Price Flash for Watchlist** — visual price change feedback for Croatian retail investors
+  - Green/red flash animation on price changes (matching stocks table pattern)
+  - Works in both local and authenticated watchlist views
+  - Uses usePriceFlash hook to detect price direction between renders
+  - Helps investors spot live price changes during trading sessions
+
+### Added
+
 - **SettingsSkeleton Component** — polished loading state for settings page
   - Matches the exact layout: account section, theme toggle, language selector, keyboard shortcuts
   - Shows skeleton while checking auth state (was returning empty null before)

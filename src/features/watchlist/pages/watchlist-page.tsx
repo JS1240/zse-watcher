@@ -7,6 +7,7 @@ import { useLocalWatchlist } from "@/features/watchlist/hooks/use-local-watchlis
 import { useWatchlistItems } from "@/features/watchlist/api/watchlist-queries";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
+import { usePriceFlash } from "@/hooks/use-price-flash";
 import { WatchlistToggle } from "@/features/watchlist/components/watchlist-toggle";
 import { WatchlistSkeleton } from "@/features/watchlist/components/watchlist-skeleton";
 import { ChangeBadge } from "@/components/shared/change-badge";
@@ -269,10 +270,12 @@ function SortableRow({
   stock,
   showRemove,
   onRemove,
+  flash,
 }: {
   stock: Stock;
   showRemove?: boolean;
   onRemove?: (ticker: string) => void;
+  flash?: "up" | "down" | null;
 }) {
   const {
     attributes,
@@ -312,6 +315,8 @@ function SortableRow({
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         isSelected && "border-l-2 border-l-primary bg-accent/30",
         isDragging && "bg-muted",
+        flash === "up" && "price-flash-up",
+        flash === "down" && "price-flash-down",
       )}
     >
       <td className="px-3 py-2">
@@ -628,6 +633,7 @@ interface WatchlistTableProps {
 
 function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort, dragEnabled }: WatchlistTableProps) {
   const { t } = useTranslation("watchlist");
+  const flashMap = usePriceFlash(stocks);
   return (
     <div className="overflow-auto rounded-md border border-border max-h-[60vh]">
       <table className="w-full text-xs">
@@ -663,6 +669,7 @@ function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort, dragEnable
                 stock={stock}
                 showRemove={showRemove}
                 onRemove={onRemove}
+                flash={flashMap.get(stock.ticker) ?? null}
               />
             ) : (
               <WatchlistRow
@@ -670,6 +677,7 @@ function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort, dragEnable
                 stock={stock}
                 showRemove={showRemove}
                 onRemove={onRemove}
+                flash={flashMap.get(stock.ticker) ?? null}
               />
             )
           )}
@@ -683,9 +691,10 @@ interface WatchlistRowProps {
   stock: Stock;
   showRemove?: boolean;
   onRemove?: (ticker: string) => void;
+  flash?: "up" | "down" | null;
 }
 
-function WatchlistRow({ stock, showRemove, onRemove }: WatchlistRowProps) {
+function WatchlistRow({ stock, showRemove, onRemove, flash }: WatchlistRowProps) {
   const { select, selectedTicker } = useSelectedStock();
   const isSelected = selectedTicker === stock.ticker;
 
@@ -705,6 +714,8 @@ function WatchlistRow({ stock, showRemove, onRemove }: WatchlistRowProps) {
         "last:border-b-0",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         isSelected && "border-l-2 border-l-primary bg-accent/30",
+        flash === "up" && "price-flash-up",
+        flash === "down" && "price-flash-down",
       )}
     >
       <td className="px-3 py-2">
