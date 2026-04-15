@@ -44,11 +44,11 @@ type SortColumn = keyof Pick<Stock, "price" | "changePct" | "turnover" | "volume
 type SortDirection = "asc" | "desc";
 type ChangeFilter = "all" | "gainers" | "losers" | "unchanged";
 
-const changeFilters: { value: ChangeFilter; label: string; icon: typeof TrendingUp }[] = [
-  { value: "all", label: "Svi", icon: TrendingUp },
-  { value: "gainers", label: "📈 Dobitnici", icon: TrendingUp },
-  { value: "losers", label: "📉 Gubitnici", icon: TrendingDown },
-  { value: "unchanged", label: "➡️ Nepromijenjeno", icon: Minus },
+const changeFilters: { value: ChangeFilter; labelKey: string; icon: typeof TrendingUp }[] = [
+  { value: "all", labelKey: "filters.all", icon: TrendingUp },
+  { value: "gainers", labelKey: "filters.gainers", icon: TrendingUp },
+  { value: "losers", labelKey: "filters.losers", icon: TrendingDown },
+  { value: "unchanged", labelKey: "filters.unchanged", icon: Minus },
 ];
 
 function SortHeader({
@@ -230,7 +230,7 @@ function AuthenticatedWatchlist() {
 
       {/* Quick filters: gainers / losers / unchanged */}
       <div className="flex gap-1.5 flex-wrap">
-        {changeFilters.map(({ value, label, icon: Icon }) => (
+        {changeFilters.map(({ value, labelKey, icon: Icon }) => (
           <button
             key={value}
             onClick={() => setChangeFilter(value)}
@@ -242,7 +242,7 @@ function AuthenticatedWatchlist() {
             )}
           >
             <Icon className="h-3 w-3" />
-            <span className="hidden sm:inline">{label.split(" ")[0]}</span>
+            <span className="hidden sm:inline">{t(labelKey)}</span>
           </button>
         ))}
       </div>
@@ -535,7 +535,7 @@ function LocalWatchlist() {
 
       {/* Quick filters: gainers / losers / unchanged */}
       <div className="flex gap-1.5 flex-wrap">
-        {changeFilters.map(({ value, label, icon: Icon }) => (
+        {changeFilters.map(({ value, labelKey, icon: Icon }) => (
           <button
             key={value}
             onClick={() => setChangeFilter(value)}
@@ -547,7 +547,7 @@ function LocalWatchlist() {
             )}
           >
             <Icon className="h-3 w-3" />
-            <span className="hidden sm:inline">{label.split(" ")[0]}</span>
+            <span className="hidden sm:inline">{t(labelKey)}</span>
           </button>
         ))}
       </div>

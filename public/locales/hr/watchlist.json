@@ -1,4 +1,10 @@
 {
+  "filters": {
+    "all": "Svi",
+    "gainers": "Dobitnici",
+    "losers": "Gubitnici",
+    "unchanged": "Nepromijenjeno"
+  },
   "title": "Praćenje",
   "empty": "Nema dionica u listi praćenja",
   "emptyDescription": "Kliknite zvjezdicu pokraj dionice da je dodate u listu.",
