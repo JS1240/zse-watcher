@@ -43,9 +43,18 @@ export function WatchlistToggle({ ticker, className }: WatchlistToggleProps) {
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleToggle(e as unknown as React.MouseEvent);
+    }
+  };
+
   return (
     <button
       onClick={handleToggle}
+      onKeyDown={handleKeyDown}
+      aria-label={isWatched ? "Remove from watchlist" : "Add to watchlist"}
       className={cn(
         "rounded-sm p-1 transition-colors hover:bg-accent",
         className,
