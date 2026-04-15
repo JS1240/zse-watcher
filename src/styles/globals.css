@@ -96,8 +96,17 @@ body {
   100% { opacity: 1; transform: scale(1); }
 }
 
+@keyframes empty-icon-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
 .animate-empty-state {
   animation: empty-state-in 0.4s ease-out forwards;
+}
+
+.animate-empty-icon {
+  animation: empty-icon-float 2s ease-in-out infinite;
 }
 
 /* Focus-visible for keyboard navigation accessibility */

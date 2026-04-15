@@ -4,7 +4,11 @@
 
 ### Added
 
-- **Watchlist Quick Filters** — filter by price direction for quick insights
+- **EmptyState Visual Polish** — improve empty state UX for Croatian retail investors
+  - Add floating animation to empty state icons (subtle 4px vertical movement)
+  - Use Lightbulb icon for hint pills instead of emoji
+  - Polish hint layout with inline flexbox styling
+  - Makes empty states feel alive rather than static
   - Filter pills: 📈 Dobitnici (gainers), 📉 Gubitnici (losers), ➡️ Nepromijenjeno (unchanged)
   - Works in both local and authenticated watchlist views
   - Combines with search for powerful filtering

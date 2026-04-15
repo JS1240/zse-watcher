@@ -1,6 +1,7 @@
 import { type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Lightbulb } from "lucide-react";
 
 type EmptyStateVariant = "action" | "info" | "warning" | "no-results";
 
@@ -52,6 +53,7 @@ export function EmptyState({
       <div
         className={cn(
           "mb-4 flex h-14 w-14 items-center justify-center rounded-2xl ring-1 transition-colors",
+          "animate-empty-icon",
           variantClasses[variant].container,
         )}
       >
@@ -84,9 +86,10 @@ export function EmptyState({
 
       {/* Hint pill */}
       {hint && (
-        <p className="mt-3 max-w-[260px] rounded-md bg-muted/40 px-3 py-1.5 text-[10px] leading-relaxed text-muted-foreground ring-1 ring-border">
-          💡 {hint}
-        </p>
+        <div className="mt-3 flex items-center gap-2 max-w-[260px] rounded-md bg-muted/40 px-3 py-1.5 text-[10px] leading-relaxed text-muted-foreground ring-1 ring-border">
+          <Lightbulb className="h-3 w-3 shrink-0 text-amber" />
+          <span>{hint}</span>
+        </div>
       )}
     </div>
   );
