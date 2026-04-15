@@ -10,6 +10,7 @@ interface TickerSelectProps {
   placeholder?: string;
   className?: string;
   error?: boolean;
+  id?: string;
 }
 
 export function TickerSelect({
@@ -18,6 +19,7 @@ export function TickerSelect({
   placeholder = "KOEI-R-A",
   className,
   error,
+  id,
 }: TickerSelectProps) {
   const [text, setText] = useState(value);
   const [isOpen, setIsOpen] = useState(false);
@@ -115,6 +117,7 @@ export function TickerSelect({
     <div className={cn("relative", className)}>
       <div className="relative flex items-center">
         <input
+          id={id}
           ref={inputRef}
           type="text"
           value={text}

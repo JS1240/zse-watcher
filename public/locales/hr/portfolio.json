@@ -14,7 +14,11 @@
     "value": "Vrijednost",
     "gain": "Dobitak/Gubitak",
     "gainPercent": "Dobitak %",
-    "date": "Datum"
+    "date": "Datum",
+    "tickerValid": "Odabrano",
+    "valid": "Ispravno",
+    "sharesHint": "unesite broj dionica",
+    "priceHint": "cijena po dionici (npr. 142,50)"
   },
   "type": {
     "buy": "Kupnja",

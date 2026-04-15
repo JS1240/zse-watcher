@@ -14,7 +14,11 @@
     "value": "Value",
     "gain": "Gain/Loss",
     "gainPercent": "Gain %",
-    "date": "Date"
+    "date": "Date",
+    "tickerValid": "Selected",
+    "valid": "Valid",
+    "sharesHint": "enter number of shares",
+    "priceHint": "price per share (e.g. 142.50)"
   },
   "type": {
     "buy": "Buy",
