@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Bell, BellOff, Pencil, Trash2, X, Check, Keyboard, Download, AlertCircle, Search, CircleDot, Pause } from "lucide-react";
 import { toast } from "sonner";
@@ -294,6 +294,38 @@ function AlertRow({ alert, onDelete, onToggle, onUpdate }: AlertRowProps) {
   const { t } = useTranslation("alerts");
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+  const rowRef = useRef<HTMLDivElement>(null);
+
+  // Handle row-level keyboard shortcuts (outside edit mode)
+  const handleRowKeyDown = (e: React.KeyboardEvent) => {
+    if (editing) return; // Edit mode has its own handler
+
+    switch (e.key) {
+      case "Enter":
+      case " ":
+        e.preventDefault();
+        onToggle();
+        break;
+      case "e":
+      case "E":
+        e.preventDefault();
+        setEditing(true);
+        break;
+      case "Delete":
+      case "Backspace":
+        e.preventDefault();
+        onDelete();
+        break;
+    }
+  };
+
+  // Focus row on mount if it's triggered (get attention)
+  useEffect(() => {
+    if (alert.isTriggered && rowRef.current) {
+      rowRef.current.focus();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run on mount
 
   // Inline edit form state
   const [editTicker, setEditTicker] = useState(alert.ticker);
@@ -480,8 +512,13 @@ function AlertRow({ alert, onDelete, onToggle, onUpdate }: AlertRowProps) {
 
   return (
     <div
+      ref={rowRef}
+tabIndex={0}
+      onKeyDown={handleRowKeyDown}
+      role="row"
+      aria-label={`${alert.ticker} alert: ${alert.isActive ? "active" : "paused"}. Press Enter to toggle, E to edit, Delete to remove`}
       className={cn(
-        "group flex items-center justify-between rounded-md border border-border bg-card px-3 py-2.5 transition-all duration-150 hover:bg-accent/30",
+        "group flex cursor-pointer items-center justify-between rounded-md border border-border bg-card px-3 py-2.5 transition-all duration-150 hover:bg-accent/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         !alert.isActive && "opacity-50",
         alert.isTriggered && "border-amber/30 bg-amber/5",
       )}
@@ -491,7 +528,8 @@ function AlertRow({ alert, onDelete, onToggle, onUpdate }: AlertRowProps) {
         <button
           onClick={onToggle}
           className="text-muted-foreground transition-colors hover:text-foreground"
-          title={alert.isActive ? "Pause alert" : "Resume alert"}
+          title={alert.isActive ? "Pause alert (Enter)" : "Resume alert (Enter)"}
+          aria-label={`${alert.isActive ? "Pause" : "Resume"} ${alert.ticker} alert`}
         >
           {alert.isActive ? (
             <Bell className="h-3.5 w-3.5 text-amber" />
@@ -531,19 +569,21 @@ function AlertRow({ alert, onDelete, onToggle, onUpdate }: AlertRowProps) {
         </div>
       </div>
 
-      {/* Actions — visible on hover */}
-      <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+      {/* Actions — visible on hover/focus */}
+      <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
         <button
           onClick={() => setEditing(true)}
           className="rounded-sm p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-          title="Edit alert"
+          title="Edit alert (E)"
+          aria-label={`Edit ${alert.ticker} alert`}
         >
           <Pencil className="h-3.5 w-3.5" />
         </button>
         <button
           onClick={onDelete}
           className="rounded-sm p-1 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
-          title={`Delete ${alert.ticker} alert`}
+          title={`Delete ${alert.ticker} alert (Del)`}
+          aria-label={`Delete ${alert.ticker} alert`}
         >
           <Trash2 className="h-3.5 w-3.5" />
         </button>
