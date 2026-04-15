@@ -43,7 +43,7 @@ export function Sidebar() {
                 ? "bg-accent text-foreground"
                 : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
             )}
-            title={t(item.labelKey)}
+            title={`${t(item.labelKey)} (press ${item.shortcut})`}
           >
             <Icon className="h-4 w-4 shrink-0" />
             <span className="hidden lg:inline">{t(item.labelKey)}</span>
