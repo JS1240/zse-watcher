@@ -66,7 +66,7 @@ function SortHeader({
   return (
     <button
       onClick={() => onSort(column)}
-      className="flex items-center gap-1 transition-colors hover:text-foreground"
+      className="flex items-center gap-1 transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background rounded-sm"
       aria-sort={isActive ? (direction === "asc" ? "ascending" : "descending") : "none"}
     >
       <span>{label}</span>
@@ -223,7 +223,7 @@ function AuthenticatedWatchlist() {
             key={value}
             onClick={() => setChangeFilter(value)}
             className={cn(
-              "flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-medium transition-all",
+              "flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
               changeFilter === value
                 ? "bg-primary text-primary-foreground shadow-sm"
                 : "bg-muted/60 text-muted-foreground hover:bg-muted",
