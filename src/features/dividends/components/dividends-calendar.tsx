@@ -68,7 +68,7 @@ export function DividendsCalendar() {
 
   // Sort (applied after filtering)
   const sortedDividends = useMemo(() => {
-    let result = [...filteredDividends];
+    const result = [...filteredDividends];
     result.sort((a, b) => {
       let aVal: number | string;
       let bVal: number | string;

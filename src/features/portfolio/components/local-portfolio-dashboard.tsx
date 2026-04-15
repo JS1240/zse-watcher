@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Plus, Trash2, ChevronDown, ChevronUp, Wallet, Download, Search, X, ArrowUp, ArrowDown, ArrowUpDown, TrendingUp, TrendingDown } from "lucide-react";
 import { toast } from "sonner";
@@ -7,7 +7,6 @@ import { useDebounce } from "@/hooks/use-debounce";
 import { Input } from "@/components/ui/input";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { AddPositionForm } from "@/features/portfolio/components/add-position-form";
-import { PortfolioSkeleton } from "@/features/portfolio/components/portfolio-skeleton";
 import { Button } from "@/components/ui/button";
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { EmptyState } from "@/components/shared/empty-state";
@@ -20,7 +19,7 @@ export function LocalPortfolioDashboard() {
   const { t } = useTranslation("portfolio");
   const { transactions, hasLocalTransactions, removeTransaction, clearTransactions } =
     useLocalTransactions();
-  const { data: stocksResult, isLoading: stocksLoading } = useStocksLive();
+  const { data: stocksResult } = useStocksLive();
   const stocks = stocksResult?.stocks ?? null;
   const { select } = useSelectedStock();
   const [showAddForm, setShowAddForm] = useState(false);
@@ -28,28 +27,9 @@ export function LocalPortfolioDashboard() {
   const [changeFilter, setChangeFilter] = useState<"all" | "gainers" | "losers" | "unchanged">("all");
   const debouncedSearch = useDebounce(search, 200);
   const [showHistory, setShowHistory] = useState(false);
-  const [savedFlash, setSavedFlash] = useState(false);
-  const prevTxLengthRef = useRef<number | null>(null);
-
-  // Flash "Saved" indicator only on user-initiated transaction changes (not on mount)
-  useEffect(() => {
-    if (prevTxLengthRef.current === null) {
-      // First render — initialize ref, no flash
-      prevTxLengthRef.current = transactions.length;
-    } else if (transactions.length !== prevTxLengthRef.current) {
-      prevTxLengthRef.current = transactions.length;
-      setSavedFlash(true);
-      const t = setTimeout(() => setSavedFlash(false), 1500);
-      return () => clearTimeout(t);
-    }
-  }, [transactions.length]);
-
-  // Show skeleton while stocks are loading (prevents layout shift)
-  if (stocksLoading && !stocks) {
-    return <PortfolioSkeleton />;
-  }
 
   // Memoize holdings calculation — only recalculates when transactions change (infrequent)
+  // Must be before any conditional return (React hooks rule)
   const holdingsMap = useMemo(() => {
     const map = new Map<string, { totalShares: number; totalCost: number; name: string }>();
 
