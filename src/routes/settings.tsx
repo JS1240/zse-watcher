@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Moon, Sun, Globe, Monitor, Keyboard } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useThemeStore } from "@/hooks/use-theme";
+import { useSubscription } from "@/features/premium/hooks/use-subscription";
 import { LoginPrompt } from "@/features/auth/components/login-prompt";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
@@ -19,9 +20,10 @@ function SettingsPage() {
   const { t, i18n } = useTranslation("common");
   const { isAuthenticated, user, loading } = useAuth();
   const { mode, setMode } = useThemeStore();
+  const { isPremium, loading: subLoading } = useSubscription();
   const [showShortcuts, setShowShortcuts] = useState(false);
 
-  if (loading) return <SettingsSkeleton />;
+  if (loading || subLoading) return <SettingsSkeleton />;
 
   if (!isAuthenticated) {
     return <LoginPrompt />;
@@ -54,7 +56,12 @@ function SettingsPage() {
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">Plan</span>
-            <span className="font-data font-medium text-foreground">Free</span>
+            <span className={cn(
+              "font-data font-medium",
+              isPremium ? "text-amber drop-shadow-sm" : "text-foreground"
+            )}>
+              {isPremium ? "Premium" : "Free"}
+            </span>
           </div>
         </div>
       </section>
