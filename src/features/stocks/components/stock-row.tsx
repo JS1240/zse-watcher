@@ -43,7 +43,7 @@ const StockRowBase = ({ stock, flash }: StockRowProps) => {
       )}
     >
       {/* Star + Ticker */}
-      <td className="px-3 py-2">
+      <td className="sticky left-0 z-[1] bg-card px-3 py-2">
         <div className="flex items-center gap-1">
           <WatchlistToggle ticker={stock.ticker} />
           <span className="font-data text-xs font-semibold text-foreground">

@@ -129,10 +129,10 @@ export function StockTable() {
       </div>
 
       {/* Table */}
-      <div className="overflow-hidden rounded-md border border-border">
+      <div className="overflow-auto rounded-md border border-border max-h-[70vh]">
         <table aria-label={t("table.label")} className="w-full text-xs">
-          <thead>
-            <tr className="border-b border-border bg-muted/50 text-[10px] uppercase tracking-wider text-muted-foreground">
+          <thead className="sticky top-0 z-10 bg-muted/95 backdrop-blur supports-[backdrop-filter]:bg-muted/80">
+            <tr className="border-b border-border text-[10px] uppercase tracking-wider text-muted-foreground">
               <ColumnHeader
                 field="ticker"
                 label={t("table.ticker")}
