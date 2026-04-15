@@ -2,9 +2,9 @@ import { useTranslation } from "react-i18next";
 import { Activity, TrendingUp, DollarSign } from "lucide-react";
 import { useMacro } from "@/features/market/api/market-queries";
 import { ChangeBadge } from "@/components/shared/change-badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/shared/error-state";
 import { formatPrice } from "@/lib/formatters";
+import { MarketOverviewSkeleton } from "./market-overview-skeleton";
 
 export function MarketOverview() {
   const { data: macro, isLoading, isError, refetch } = useMacro();
@@ -22,13 +22,7 @@ export function MarketOverview() {
   }
 
   if (isLoading || !macro) {
-    return (
-      <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <Skeleton key={i} className="h-20" />
-        ))}
-      </div>
-    );
+    return <MarketOverviewSkeleton />;
   }
 
   return (

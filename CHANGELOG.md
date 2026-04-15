@@ -32,6 +32,11 @@
 
 ### Changed
 
+- **MarketOverview Loading State** — uses MarketOverviewSkeleton for polished loading UI
+  - Matches the exact layout: CROBEX (accent), CROBEX10, Euro Stoxx 50, EUR/USD
+  - Consistent with DividendsSkeleton and MacroSkeleton patterns
+  - Croatian retail investors see polished loading states throughout
+
 - **DividendsCalendar Loading State** — uses DividendsSkeleton for polished loading UI
   - Replaces inline skeleton divs with reusable DividendsSkeleton
   - Consistent with other pages (ScreenerSkeleton, WatchlistSkeleton)
