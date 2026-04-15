@@ -40,9 +40,10 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import type { Stock } from "@/types/stock";
 
-type SortColumn = keyof Pick<Stock, "price" | "changePct" | "turnover" | "volume" | "name">;
+type SortColumn = keyof Pick<Stock, "price" | "changePct" | "turnover" | "volume" | "name" | "sector">;
 type SortDirection = "asc" | "desc";
 type ChangeFilter = "all" | "gainers" | "losers" | "unchanged";
+type SectorFilter = string | null;
 
 const changeFilters: { value: ChangeFilter; labelKey: string; icon: typeof TrendingUp }[] = [
   { value: "all", labelKey: "filters.all", icon: TrendingUp },
@@ -50,6 +51,11 @@ const changeFilters: { value: ChangeFilter; labelKey: string; icon: typeof Trend
   { value: "losers", labelKey: "filters.losers", icon: TrendingDown },
   { value: "unchanged", labelKey: "filters.unchanged", icon: Minus },
 ];
+
+function getUniqueSectors(stocks: Stock[]): string[] {
+  const sectors = new Set(stocks.map((s) => s.sector).filter(Boolean));
+  return Array.from(sectors).sort();
+}
 
 function SortHeader({
   column,
@@ -112,6 +118,7 @@ function AuthenticatedWatchlist() {
   const stocks = useMemo(() => stocksResult?.stocks ?? [], [stocksResult]);
   const [search, setSearch] = useState("");
   const [changeFilter, setChangeFilter] = useState<ChangeFilter>("all");
+  const [sectorFilter, setSectorFilter] = useState<SectorFilter>(null);
   const [sort, setSort] = useState<{ column: SortColumn; direction: SortDirection } | null>({
     column: "turnover",
     direction: "desc",
@@ -123,6 +130,9 @@ function AuthenticatedWatchlist() {
     return stocks.filter((s) => tickers.has(s.ticker));
   }, [stocks, watchlistItems.data]);
 
+  // Compute unique sectors from watched stocks
+  const availableSectors = useMemo(() => getUniqueSectors(watchedStocks), [watchedStocks]);
+
   const filtered = useMemo(() => {
     let result = watchedStocks;
     if (debouncedSearch) {
@@ -132,6 +142,10 @@ function AuthenticatedWatchlist() {
           s.ticker.toLowerCase().includes(q) ||
           s.name.toLowerCase().includes(q),
       );
+    }
+    // Apply sector filter
+    if (sectorFilter) {
+      result = result.filter((s) => s.sector === sectorFilter);
     }
     // Apply change direction filter
     if (changeFilter !== "all") {
@@ -154,7 +168,7 @@ function AuthenticatedWatchlist() {
         ? (aVal as number) - (bVal as number)
         : (bVal as number) - (aVal as number);
     });
-  }, [watchedStocks, debouncedSearch, changeFilter, sort]);
+  }, [watchedStocks, debouncedSearch, sectorFilter, changeFilter, sort]);
 
   const handleSort = (col: SortColumn) => {
     setSort((prev) => {
@@ -165,14 +179,16 @@ function AuthenticatedWatchlist() {
   };
 
   const handleExportCsv = () => {
-    const headers = ["Ticker", "Name", "Price (EUR)", "Change (%)", "Volume", "Turnover (EUR)"];
+    const headers = ["Ticker", "Name", "Sector", "Price (EUR)", "Change (%)", "Volume", "Turnover (EUR)", "Dividend Yield (%)"];
     const rows = filtered.map((s) => [
       s.ticker,
       s.name,
+      s.sector,
       s.price.toFixed(2),
       s.changePct.toFixed(2),
       s.volume.toString(),
       s.turnover.toFixed(2),
+      s.dividendYield ? s.dividendYield.toFixed(2) : "",
     ]);
     exportToCsv(`zse-watchlist-${new Date().toISOString().split("T")[0]}`, headers, rows);
     toast.success(t("toast.exported"));
@@ -228,7 +244,7 @@ function AuthenticatedWatchlist() {
         </Button>
       </div>
 
-      {/* Quick filters: gainers / losers / unchanged */}
+      {/* Quick filters: change direction + sector */}
       <div className="flex gap-1.5 flex-wrap">
         {changeFilters.map(({ value, labelKey, icon: Icon }) => (
           <button
@@ -245,6 +261,26 @@ function AuthenticatedWatchlist() {
             <span className="hidden sm:inline">{t(labelKey)}</span>
           </button>
         ))}
+        {/* Sector filter dropdown */}
+        {availableSectors.length > 0 && (
+          <select
+            value={sectorFilter ?? ""}
+            onChange={(e) => setSectorFilter(e.target.value || null)}
+            className={cn(
+              "rounded-full px-2.5 py-1 text-[10px] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
+              sectorFilter
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "bg-muted/60 text-muted-foreground hover:bg-muted",
+            )}
+          >
+            <option value="">{t("filters.allSectors")}</option>
+            {availableSectors.map((sector) => (
+              <option key={sector} value={sector}>
+                {sector}
+              </option>
+            ))}
+          </select>
+        )}
       </div>
 
       {/* Results count */}
@@ -469,14 +505,16 @@ function LocalWatchlist() {
   };
 
   const handleExportCsv = () => {
-    const headers = ["Ticker", "Name", "Price (EUR)", "Change (%)", "Volume", "Turnover (EUR)"];
+    const headers = ["Ticker", "Name", "Sector", "Price (EUR)", "Change (%)", "Volume", "Turnover (EUR)", "Dividend Yield (%)"];
     const rows = filtered.map((s) => [
       s.ticker,
       s.name,
+      s.sector,
       s.price.toFixed(2),
       s.changePct.toFixed(2),
       s.volume.toString(),
       s.turnover.toFixed(2),
+      s.dividendYield ? s.dividendYield.toFixed(2) : "",
     ]);
     exportToCsv(`zse-watchlist-${new Date().toISOString().split("T")[0]}`, headers, rows);
     toast.success(t("toast.exported"));
@@ -664,7 +702,7 @@ function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort, dragEnable
               <SortHeader column="name" label={t("table.name")} sort={sort} onSort={onSort} />
             </th>
             <th className="hidden px-3 py-2 text-left font-medium lg:table-cell">
-              {t("table.sector")}
+              <SortHeader column="sector" label={t("table.sector")} sort={sort} onSort={onSort} />
             </th>
             <th className="px-3 py-2 text-right font-medium">
               <SortHeader column="price" label={t("table.price")} sort={sort} onSort={onSort} />
