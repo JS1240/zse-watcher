@@ -279,25 +279,25 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
                   className="border-b border-border/50 cursor-pointer transition-all duration-150 hover:bg-accent/70"
                   onClick={() => select(h.ticker)}
                 >
-                  <td className="px-3 py-2">
+                  <td className="px-3 py-3 md:py-2">
                     <div>
                       <span className="font-data font-semibold text-foreground">{h.ticker}</span>
                       <span className="ml-1 text-[10px] text-muted-foreground">{h.name}</span>
                     </div>
                   </td>
-                  <td className="px-3 py-2 text-right font-data tabular-nums text-foreground">
+                  <td className="px-3 py-3 md:py-2 text-right font-data tabular-nums text-foreground">
                     {h.totalShares.toFixed(0)}
                   </td>
-                  <td className="px-3 py-2 text-right font-data tabular-nums text-muted-foreground">
+                  <td className="px-3 py-3 md:py-2 text-right font-data tabular-nums text-muted-foreground">
                     {formatPrice(h.avgPrice)}
                   </td>
-                  <td className="px-3 py-2 text-right font-data tabular-nums text-foreground">
+                  <td className="px-3 py-3 md:py-2 text-right font-data tabular-nums text-foreground">
                     {formatPrice(h.currentPrice)}
                   </td>
-                  <td className="hidden px-3 py-2 text-right font-data tabular-nums text-foreground md:table-cell">
+                  <td className="hidden px-3 py-3 md:py-2 text-right font-data tabular-nums text-foreground md:table-cell">
                     {formatCurrency(h.totalValue)}
                   </td>
-                  <td className="px-3 py-2 text-right">
+                  <td className="px-3 py-3 md:py-2 text-right">
                     <ChangeBadge value={h.gainPct} showIcon={false} />
                   </td>
                 </tr>

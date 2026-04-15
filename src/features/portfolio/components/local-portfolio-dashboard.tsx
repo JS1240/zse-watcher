@@ -205,12 +205,12 @@ export function LocalPortfolioDashboard() {
         {enrichedHoldings.length > 0 && (
           <>
             <div className="relative">
-              <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-muted-foreground" />
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
               <Input
                 placeholder="Search..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-32 pl-8 pr-8 py-1.5 text-xs h-7"
+                className="w-32 pl-8 pr-8 py-2.5 text-xs h-9"
               />
               {search && (
                 <button
@@ -262,28 +262,28 @@ export function LocalPortfolioDashboard() {
               {filteredHoldings.map((h) => (
                 <tr
                   key={h.ticker}
-                  className="border-b border-border/50 cursor-pointer transition-all duration-150 hover:bg-accent/70"
+                  className="border-b border-border/50 cursor-pointer transition-all duration-150 active:bg-accent/50 hover:bg-accent/70"
                   onClick={() => select(h.ticker)}
                 >
-                  <td className="px-3 py-2">
+                  <td className="px-3 py-3 md:py-2">
                     <div>
                       <span className="font-data font-semibold text-foreground">{h.ticker}</span>
                       <span className="ml-1 text-[10px] text-muted-foreground">{h.name}</span>
                     </div>
                   </td>
-                  <td className="px-3 py-2 text-right font-data tabular-nums text-foreground">
+                  <td className="px-3 py-3 md:py-2 text-right font-data tabular-nums text-foreground">
                     {h.totalShares.toFixed(0)}
                   </td>
-                  <td className="px-3 py-2 text-right font-data tabular-nums text-muted-foreground">
+                  <td className="px-3 py-3 md:py-2 text-right font-data tabular-nums text-muted-foreground">
                     {formatPrice(h.avgPrice)}
                   </td>
-                  <td className="px-3 py-2 text-right font-data tabular-nums text-foreground">
+                  <td className="px-3 py-3 md:py-2 text-right font-data tabular-nums text-foreground">
                     {formatPrice(h.currentPrice)}
                   </td>
-                  <td className="hidden px-3 py-2 text-right font-data tabular-nums text-foreground md:table-cell">
+                  <td className="hidden px-3 py-3 md:py-2 text-right font-data tabular-nums text-foreground md:table-cell">
                     {formatCurrency(h.totalValue)}
                   </td>
-                  <td className="px-3 py-2 text-right">
+                  <td className="px-3 py-3 md:py-2 text-right">
                     <ChangeBadge value={h.gainPct} showIcon={false} />
                   </td>
                 </tr>
@@ -381,22 +381,22 @@ export function LocalPortfolioDashboard() {
                     return (
                       <tr
                         key={tx.id}
-                        className="group border-b border-border/50 last:border-b-0 hover:bg-muted/30"
+                        className="group border-b border-border/50 last:border-b-0 active:bg-muted/50 hover:bg-muted/30"
                       >
-                        <td className="px-3 py-1.5 text-muted-foreground">
+                        <td className="px-3 py-2 md:py-1.5 text-muted-foreground">
                           {new Date(tx.transactionDate).toLocaleDateString("hr-HR", {
                             day: "2-digit",
                             month: "2-digit",
                             year: "2-digit",
                           })}
                         </td>
-                        <td className="px-3 py-1.5 font-data font-semibold text-foreground">
+                        <td className="px-3 py-2 md:py-1.5 font-data font-semibold text-foreground">
                           {tx.ticker}
                         </td>
-                        <td className="px-3 py-1.5">
+                        <td className="px-3 py-2 md:py-1.5">
                           <span
                             className={cn(
-                              "inline-block rounded-[3px] px-1 py-0.5 font-data text-[10px] uppercase",
+                              "inline-block rounded-[3px] px-1.5 py-0.5 font-data text-[10px] uppercase",
                               tx.transactionType === "buy"
                                 ? "bg-buy/10 text-buy"
                                 : tx.transactionType === "sell"
@@ -407,16 +407,16 @@ export function LocalPortfolioDashboard() {
                             {tx.transactionType}
                           </span>
                         </td>
-                        <td className="px-3 py-1.5 text-right font-data tabular-nums text-foreground">
+                        <td className="px-3 py-2 md:py-1.5 text-right font-data tabular-nums text-foreground">
                           {tx.shares.toFixed(0)}
                         </td>
-                        <td className="px-3 py-1.5 text-right font-data tabular-nums text-muted-foreground">
+                        <td className="px-3 py-2 md:py-1.5 text-right font-data tabular-nums text-muted-foreground">
                           {formatPrice(tx.pricePerShare)}
                         </td>
-                        <td className="px-3 py-1.5 text-right font-data tabular-nums text-foreground">
+                        <td className="px-3 py-2 md:py-1.5 text-right font-data tabular-nums text-foreground">
                           {formatCurrency(tx.totalAmount)}
                         </td>
-                        <td className="px-3 py-1.5">
+                        <td className="px-3 py-2 md:py-1.5">
                           <button
                             type="button"
                             onClick={() => removeTransaction(tx.id)}
