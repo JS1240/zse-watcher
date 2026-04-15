@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Star, Search, ArrowUp, ArrowDown, ArrowUpDown, GripVertical, Download, X } from "lucide-react";
+import { Star, Search, ArrowUp, ArrowDown, ArrowUpDown, GripVertical, Download, X, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocalWatchlist } from "@/features/watchlist/hooks/use-local-watchlist";
@@ -40,6 +40,14 @@ import type { Stock } from "@/types/stock";
 
 type SortColumn = keyof Pick<Stock, "price" | "changePct" | "turnover" | "volume" | "name">;
 type SortDirection = "asc" | "desc";
+type ChangeFilter = "all" | "gainers" | "losers" | "unchanged";
+
+const changeFilters: { value: ChangeFilter; label: string; icon: typeof TrendingUp }[] = [
+  { value: "all", label: "Svi", icon: TrendingUp },
+  { value: "gainers", label: "📈 Dobitnici", icon: TrendingUp },
+  { value: "losers", label: "📉 Gubitnici", icon: TrendingDown },
+  { value: "unchanged", label: "➡️ Nepromijenjeno", icon: Minus },
+];
 
 function SortHeader({
   column,
@@ -101,6 +109,7 @@ function AuthenticatedWatchlist() {
   const { data: stocksResult } = useStocksLive();
   const stocks = useMemo(() => stocksResult?.stocks ?? [], [stocksResult]);
   const [search, setSearch] = useState("");
+  const [changeFilter, setChangeFilter] = useState<ChangeFilter>("all");
   const [sort, setSort] = useState<{ column: SortColumn; direction: SortDirection } | null>({
     column: "turnover",
     direction: "desc",
@@ -122,6 +131,14 @@ function AuthenticatedWatchlist() {
           s.name.toLowerCase().includes(q),
       );
     }
+    // Apply change direction filter
+    if (changeFilter !== "all") {
+      result = result.filter((s) => {
+        if (changeFilter === "gainers") return s.changePct > 0;
+        if (changeFilter === "losers") return s.changePct < 0;
+        return s.changePct === 0;
+      });
+    }
     if (!sort) return result;
     return [...result].sort((a, b) => {
       const aVal = a[sort.column];
@@ -135,7 +152,7 @@ function AuthenticatedWatchlist() {
         ? (aVal as number) - (bVal as number)
         : (bVal as number) - (aVal as number);
     });
-  }, [watchedStocks, debouncedSearch, sort]);
+  }, [watchedStocks, debouncedSearch, changeFilter, sort]);
 
   const handleSort = (col: SortColumn) => {
     setSort((prev) => {
@@ -197,6 +214,25 @@ function AuthenticatedWatchlist() {
           <Download className="h-3.5 w-3.5" />
           CSV
         </Button>
+      </div>
+
+      {/* Quick filters: gainers / losers / unchanged */}
+      <div className="flex gap-1.5 flex-wrap">
+        {changeFilters.map(({ value, label, icon: Icon }) => (
+          <button
+            key={value}
+            onClick={() => setChangeFilter(value)}
+            className={cn(
+              "flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-medium transition-all",
+              changeFilter === value
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "bg-muted/60 text-muted-foreground hover:bg-muted",
+            )}
+          >
+            <Icon className="h-3 w-3" />
+            <span className="hidden sm:inline">{label.split(" ")[0]}</span>
+          </button>
+        ))}
       </div>
 
       {/* Results count */}
@@ -343,6 +379,7 @@ function LocalWatchlist() {
   const { data: stocksResult } = useStocksLive();
   const stocks = useMemo(() => stocksResult?.stocks ?? [], [stocksResult]);
   const [search, setSearch] = useState("");
+  const [changeFilter, setChangeFilter] = useState<ChangeFilter>("all");
   const [sort, setSort] = useState<{ column: SortColumn; direction: SortDirection } | null>(null);
   const [confirmRemove, setConfirmRemove] = useState<string | null>(null);
   const debouncedSearch = useDebounce(search, 200);
@@ -385,6 +422,15 @@ function LocalWatchlist() {
       );
     }
     if (!sort) return result;
+    // Apply change direction filter
+    if (changeFilter !== "all") {
+      result = result.filter((s) => {
+        if (changeFilter === "gainers") return s.changePct > 0;
+        if (changeFilter === "losers") return s.changePct < 0;
+        return s.changePct === 0;
+      });
+    }
+    if (!sort) return result;
     return [...result].sort((a, b) => {
       const aVal = a[sort.column];
       const bVal = b[sort.column];
@@ -397,7 +443,7 @@ function LocalWatchlist() {
         ? (aVal as number) - (bVal as number)
         : (bVal as number) - (aVal as number);
     });
-  }, [watchedStocks, debouncedSearch, sort]);
+  }, [watchedStocks, debouncedSearch, changeFilter, sort]);
 
   const handleSort = (col: SortColumn) => {
     setSort((prev) => {
@@ -459,6 +505,25 @@ function LocalWatchlist() {
           <Download className="h-3.5 w-3.5" />
           CSV
         </Button>
+      </div>
+
+      {/* Quick filters: gainers / losers / unchanged */}
+      <div className="flex gap-1.5 flex-wrap">
+        {changeFilters.map(({ value, label, icon: Icon }) => (
+          <button
+            key={value}
+            onClick={() => setChangeFilter(value)}
+            className={cn(
+              "flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-medium transition-all",
+              changeFilter === value
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "bg-muted/60 text-muted-foreground hover:bg-muted",
+            )}
+          >
+            <Icon className="h-3 w-3" />
+            <span className="hidden sm:inline">{label.split(" ")[0]}</span>
+          </button>
+        ))}
       </div>
 
       {/* Results count */}

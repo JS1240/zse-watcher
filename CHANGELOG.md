@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+### Added
+
+- **Watchlist Quick Filters** — filter by price direction for quick insights
+  - Filter pills: 📈 Dobitnici (gainers), 📉 Gubitnici (losers), ➡️ Nepromijenjeno (unchanged)
+  - Works in both local and authenticated watchlist views
+  - Combines with search for powerful filtering
+  - Croatian retail investors can quickly see today's movers
+
 ### Performance
 
 - **Portfolio Holdings Memoization** — memoize holdings calculations to prevent unnecessary recalculation
