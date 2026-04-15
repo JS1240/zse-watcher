@@ -12,6 +12,7 @@ import { WatchlistToggle } from "@/features/watchlist/components/watchlist-toggl
 import { WatchlistSkeleton } from "@/features/watchlist/components/watchlist-skeleton";
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { EmptyState } from "@/components/shared/empty-state";
+import { ErrorState } from "@/components/shared/error-state";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { formatPrice, formatVolume } from "@/lib/formatters";
@@ -107,7 +108,7 @@ function AuthenticatedWatchlist() {
   const { t } = useTranslation("watchlist");
   const { t: tc } = useTranslation("common");
   const watchlistItems = useWatchlistItems();
-  const { data: stocksResult } = useStocksLive();
+  const { data: stocksResult, isError, refetch } = useStocksLive();
   const stocks = useMemo(() => stocksResult?.stocks ?? [], [stocksResult]);
   const [search, setSearch] = useState("");
   const [changeFilter, setChangeFilter] = useState<ChangeFilter>("all");
@@ -179,6 +180,16 @@ function AuthenticatedWatchlist() {
 
   if (watchlistItems.isLoading) {
     return <WatchlistSkeleton />;
+  }
+
+  if (isError) {
+    return (
+      <ErrorState
+        title={tc("errors.generic")}
+        description={tc("errors.network")}
+        retry={{ onRetry: refetch, label: tc("errors.tryAgain") }}
+      />
+    );
   }
 
   const handleClearSearch = () => setSearch("");
@@ -381,7 +392,7 @@ function LocalWatchlist() {
   const { t } = useTranslation("watchlist");
   const { t: tc } = useTranslation("common");
   const { items, removeItem, reorder: reorderItems } = useLocalWatchlist();
-  const { data: stocksResult } = useStocksLive();
+  const { data: stocksResult, isError, refetch } = useStocksLive();
   const stocks = useMemo(() => stocksResult?.stocks ?? [], [stocksResult]);
   const [search, setSearch] = useState("");
   const [changeFilter, setChangeFilter] = useState<ChangeFilter>("all");
@@ -472,7 +483,17 @@ function LocalWatchlist() {
     toast.success(t("toast.exported"));
   };
 
-  if (stocksResult === undefined) {
+  if (isError) {
+    return (
+      <ErrorState
+        title={tc("errors.generic")}
+        description={tc("errors.network")}
+        retry={{ onRetry: refetch, label: tc("errors.tryAgain") }}
+      />
+    );
+  }
+
+  if (!stocksResult) {
     return <WatchlistSkeleton />;
   }
 
