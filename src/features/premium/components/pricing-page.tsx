@@ -6,25 +6,31 @@ import { useAuth } from "@/hooks/use-auth";
 import { PRICING_PLANS } from "@/features/premium/config/pricing";
 import { cn } from "@/lib/utils";
 import { createCheckoutSession } from "@/features/premium/api/stripe-api";
+import { PricingSkeleton } from "./pricing-skeleton";
 
 type BillingCycle = "monthly" | "annual";
 
 export function PricingPage() {
   const [cycle, setCycle] = useState<BillingCycle>("annual");
-  const [loading, setLoading] = useState(false);
-  const { isPremium } = useSubscription();
-  const { isAuthenticated } = useAuth();
+  const [upgradeLoading, setUpgradeLoading] = useState(false);
+  const { isPremium, loading: subLoading } = useSubscription();
+  const { isAuthenticated, loading: authLoading } = useAuth();
+
+  // Show skeleton while checking subscription status
+  if (subLoading || authLoading) {
+    return <PricingSkeleton />;
+  }
 
   const handleUpgrade = async () => {
     if (!isAuthenticated) return;
-    setLoading(true);
+    setUpgradeLoading(true);
     try {
       const url = await createCheckoutSession(cycle);
       if (url) {
         window.location.href = url;
       }
     } finally {
-      setLoading(false);
+      setUpgradeLoading(false);
     }
   };
 
@@ -125,9 +131,9 @@ export function PricingPage() {
                   <Button
                     className="w-full"
                     onClick={handleUpgrade}
-                    disabled={loading || !isAuthenticated}
+                    disabled={upgradeLoading || !isAuthenticated}
                   >
-                    {loading ? "Redirecting..." : plan.cta}
+                    {upgradeLoading ? "Redirecting..." : plan.cta}
                   </Button>
                 ) : null}
               </div>
