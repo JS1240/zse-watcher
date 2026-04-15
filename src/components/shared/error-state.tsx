@@ -1,4 +1,4 @@
-import { AlertCircle, RotateCcw } from "lucide-react";
+import { AlertCircle, RotateCcw, Lightbulb } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -58,9 +58,10 @@ export function ErrorState({
 
       {/* Hint pill */}
       {hint && (
-        <p className="mt-3 max-w-[260px] rounded-md bg-muted/40 px-3 py-1.5 text-[10px] leading-relaxed text-muted-foreground ring-1 ring-border">
-          💡 {hint}
-        </p>
+        <div className="mt-3 flex items-center gap-2 max-w-[260px] rounded-md bg-muted/40 px-3 py-1.5 text-[10px] leading-relaxed text-muted-foreground ring-1 ring-border">
+          <Lightbulb className="h-3 w-3 shrink-0 text-amber" />
+          <span>{hint}</span>
+        </div>
       )}
     </div>
   );
