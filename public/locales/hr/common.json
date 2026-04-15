@@ -78,5 +78,10 @@
     "loading": "Ucitavam...",
     "hint": "Upišite ticker ili naziv dionice",
     "recent": "Nedavno gledano"
+  },
+  "shortcuts": {
+    "title": "Tipkovnicke kratice",
+    "closeDrawer": "Zatvori plocu",
+    "showAll": "Pritisni ? za sve tipkovnice"
   }
 }

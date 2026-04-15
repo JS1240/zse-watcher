@@ -78,5 +78,10 @@
     "loading": "Loading...",
     "hint": "Enter ticker or stock name",
     "recent": "Recently Viewed"
+  },
+  "shortcuts": {
+    "title": "Keyboard Shortcuts",
+    "closeDrawer": "Close drawer",
+    "showAll": "Press ? for all shortcuts"
   }
 }

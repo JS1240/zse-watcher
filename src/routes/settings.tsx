@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Moon, Sun, Globe, Monitor } from "lucide-react";
+import { Moon, Sun, Globe, Monitor, Keyboard } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useThemeStore } from "@/hooks/use-theme";
 import { LoginPrompt } from "@/features/auth/components/login-prompt";
@@ -8,6 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import type { ThemeMode } from "@/types/user";
 import { SettingsSkeleton } from "@/features/settings/components/settings-skeleton";
+import { ShortcutsOverlay } from "@/components/layout/shortcuts-overlay";
 
 export const Route = createFileRoute("/settings")({
   component: SettingsPage,
@@ -17,6 +19,7 @@ function SettingsPage() {
   const { t, i18n } = useTranslation("common");
   const { isAuthenticated, user, loading } = useAuth();
   const { mode, setMode } = useThemeStore();
+  const [showShortcuts, setShowShortcuts] = useState(false);
 
   if (loading) return <SettingsSkeleton />;
 
@@ -112,23 +115,35 @@ function SettingsPage() {
       {/* Keyboard shortcuts reference */}
       <section className="rounded-md border border-border bg-card p-4">
         <h2 className="mb-3 text-[10px] uppercase tracking-wider text-muted-foreground">
-          Keyboard Shortcuts
+          {t("shortcuts.title") || "Keyboard Shortcuts"}
         </h2>
-        <div className="grid grid-cols-2 gap-2 text-xs">
-          {[
-            ["Cmd+K", "Command palette"],
-            ["1-6", "Switch tabs"],
-            ["T", "Toggle theme"],
-            ["Escape", "Close drawer"],
-            ["S", "Toggle watchlist"],
-          ].map(([key, desc]) => (
-            <div key={key} className="flex items-center justify-between rounded-sm bg-muted/50 px-2 py-1.5">
-              <span className="text-muted-foreground">{desc}</span>
-              <kbd className="font-data text-[10px] text-foreground">{key}</kbd>
-            </div>
-          ))}
+        <div className="space-y-3">
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            {[
+              ["K", "Command palette"],
+              ["1-9", "Navigation"],
+              ["T", "Toggle theme"],
+              ["Esc", t("shortcuts.closeDrawer") || "Close drawer"],
+            ].map(([key, desc]) => (
+              <div key={key} className="flex items-center justify-between rounded-sm bg-muted/50 px-2 py-1.5">
+                <span className="text-muted-foreground">{desc}</span>
+                <kbd className="font-data text-[10px] text-foreground">{key}</kbd>
+              </div>
+            ))}
+          </div>
+          {/* Hint to open full overlay */}
+          <button
+            onClick={() => setShowShortcuts(true)}
+            className="flex w-full items-center justify-center gap-2 rounded-md border border-dashed border-border px-3 py-2 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+          >
+            <Keyboard className="h-3.5 w-3.5" />
+            {t("shortcuts.showAll") || "Press ? for all shortcuts"}
+          </button>
         </div>
       </section>
+
+      {/* Shortcuts overlay */}
+      {showShortcuts && <ShortcutsOverlay onClose={() => setShowShortcuts(false)} />}
     </div>
   );
 }
