@@ -7,6 +7,7 @@ import { LoginPrompt } from "@/features/auth/components/login-prompt";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import type { ThemeMode } from "@/types/user";
+import { SettingsSkeleton } from "@/features/settings/components/settings-skeleton";
 
 export const Route = createFileRoute("/settings")({
   component: SettingsPage,
@@ -17,7 +18,7 @@ function SettingsPage() {
   const { isAuthenticated, user, loading } = useAuth();
   const { mode, setMode } = useThemeStore();
 
-  if (loading) return null;
+  if (loading) return <SettingsSkeleton />;
 
   if (!isAuthenticated) {
     return <LoginPrompt />;

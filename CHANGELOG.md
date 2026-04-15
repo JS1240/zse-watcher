@@ -4,6 +4,12 @@
 
 ### Added
 
+- **SettingsSkeleton Component** — polished loading state for settings page
+  - Matches the exact layout: account section, theme toggle, language selector, keyboard shortcuts
+  - Shows skeleton while checking auth state (was returning empty null before)
+  - Consistent with PortfolioSkeleton, AlertsSkeleton, PricingSkeleton patterns
+  - Croatian retail investors now see polished loading state while auth loads
+
 - **EmptyState Visual Polish** — improve empty state UX for Croatian retail investors
   - Add floating animation to empty state icons (subtle 4px vertical movement)
   - Use Lightbulb icon for hint pills instead of emoji
