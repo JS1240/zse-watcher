@@ -3,6 +3,7 @@ import { TrendingUp, TrendingDown, Clock } from "lucide-react";
 import { useMovers } from "@/features/market/api/market-queries";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
 import { ChangeBadge } from "@/components/shared/change-badge";
+import { ErrorState } from "@/components/shared/error-state";
 import { formatPrice } from "@/lib/formatters";
 import type { Mover } from "@/types/market";
 import { MoversSkeleton } from "./movers-skeleton";
@@ -14,8 +15,19 @@ function formatLastUpdated(timestamp: number | undefined): string {
 }
 
 export function MarketMovers() {
-  const { data, isLoading, dataUpdatedAt } = useMovers();
+  const { data, isLoading, isError, refetch, dataUpdatedAt } = useMovers();
   const { t } = useTranslation("stocks");
+  const { t: tc } = useTranslation("common");
+
+  if (isError) {
+    return (
+      <ErrorState
+        title={tc("errors.generic")}
+        description={tc("errors.network")}
+        retry={{ onRetry: refetch, label: tc("errors.tryAgain") }}
+      />
+    );
+  }
 
   if (isLoading || !data) {
     return <MoversSkeleton />;
