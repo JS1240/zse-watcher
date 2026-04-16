@@ -109,6 +109,16 @@ body {
   animation: empty-icon-float 2s ease-in-out infinite;
 }
 
+/* CTA button pulse animation for empty states */
+@keyframes cta-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0.4); }
+  50% { box-shadow: 0 0 0 6px hsl(var(--primary) / 0); }
+}
+
+.animate-cta-pulse {
+  animation: cta-pulse 2s ease-in-out infinite;
+}
+
 /* Focus-visible for keyboard navigation accessibility */
 *:focus-visible {
   outline: 2px solid currentColor;

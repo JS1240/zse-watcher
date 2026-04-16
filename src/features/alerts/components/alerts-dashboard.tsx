@@ -299,6 +299,7 @@ export function AlertsDashboard() {
           title={t("empty")}
           description={t("emptyDescription")}
           action={{ label: t("create"), onClick: () => setShowForm(true) }}
+          variant="action"
         />
       )}
 

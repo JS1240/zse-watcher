@@ -77,7 +77,7 @@ export function EmptyState({
         <Button
           size="sm"
           variant={variant === "action" ? "default" : "outline"}
-          className="mt-4"
+          className={cn("mt-4", variant === "action" && "animate-cta-pulse")}
           onClick={action.onClick}
         >
           {action.label}
