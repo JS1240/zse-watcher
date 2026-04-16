@@ -1,0 +1,8 @@
+{
+  "title": "News",
+  "filter": {
+    "all": "All",
+    "general": "General",
+    "trading": "Trading"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "title": "Novosti",
+  "filter": {
+    "all": "Sve",
+    "general": "Generalne",
+    "trading": "Trgovanje"
+  }
+}
