@@ -276,13 +276,6 @@ export function AlertsDashboard() {
           description={tc("empty.noResultsDescription")}
           action={{ label: tc("empty.clearFilters"), onClick: () => setSearch("") }}
         />
-      ) : (!alerts || alerts.length === 0) ? (
-        <EmptyState
-          icon={<Bell className="h-8 w-8" />}
-          title={t("empty")}
-          description={t("emptyDescription")}
-          action={{ label: t("create"), onClick: () => setShowForm(true) }}
-        />
       ) : (
         <EmptyState
           icon={<Bell className="h-8 w-8" />}
