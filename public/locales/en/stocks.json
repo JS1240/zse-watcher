@@ -56,7 +56,8 @@
     "validation": {
       "mustBeNumber": "Must be a number",
       "notNegative": "Cannot be negative",
-      "tooLarge": "Value too large"
+      "tooLarge": "Value too large",
+      "minGreaterThanMax": "Minimum cannot be greater than maximum"
     }
   },
   "empty": {

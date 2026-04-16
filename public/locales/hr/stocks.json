@@ -55,7 +55,8 @@
     "validation": {
       "mustBeNumber": "Mora biti broj",
       "notNegative": "Ne može biti negativan",
-      "tooLarge": "Prevelik iznos"
+      "tooLarge": "Prevelik iznos",
+      "minGreaterThanMax": "Minimalna vrijednost ne može biti veća od maksimalne"
     }
   },
   "empty": {

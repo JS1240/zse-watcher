@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Filter, RotateCcw, ArrowUpDown, ArrowUp, ArrowDown, Info, Download, Save, Trash2, Bookmark, Search, ChevronDown } from "lucide-react";
+import { Filter, RotateCcw, ArrowUpDown, ArrowUp, ArrowDown, Info, Download, Save, Trash2, Bookmark, Search, ChevronDown, AlertCircle } from "lucide-react";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,30 @@ import { exportToCsv } from "@/lib/export";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
 import type { Stock } from "@/types/stock";
 import { cn } from "@/lib/utils";
+
+/** Cross-field validation: check min <= max for range fields */
+function validateFilterRange(
+  filters: ScreenerFilters,
+  t: (key: string) => string
+): string | null {
+  const parse = (v: string) => (v ? parseFloat(v.replace(",", ".")) : null);
+  const minPrice = parse(filters.minPrice);
+  const maxPrice = parse(filters.maxPrice);
+  if (minPrice !== null && maxPrice !== null && minPrice > maxPrice) {
+    return t("screener.validation.minGreaterThanMax");
+  }
+  const minChange = parse(filters.minChange);
+  const maxChange = parse(filters.maxChange);
+  if (minChange !== null && maxChange !== null && minChange > maxChange) {
+    return t("screener.validation.minGreaterThanMax");
+  }
+  const minDividend = parse(filters.minDividend);
+  const maxDividend = parse(filters.maxDividend);
+  if (minDividend !== null && maxDividend !== null && minDividend > maxDividend) {
+    return t("screener.validation.minGreaterThanMax");
+  }
+  return null;
+}
 
 /** Validation helper: returns error message or null if valid */
 function validateFilterValue(value: string, field: keyof ScreenerFilters, t: (key: string) => string): string | null {
@@ -181,6 +205,9 @@ export function StockScreener() {
   const { select } = useSelectedStock();
   const [filters, setFilters] = useState<ScreenerFilters>(INITIAL_FILTERS);
   const [filtersCollapsed, setFiltersCollapsed] = useState(false);
+
+  // Cross-field range validation
+  const rangeError = useMemo(() => validateFilterRange(filters, t), [filters, t]);
 
   // Count active filters for badge
   const activeFilterCount = useMemo(() => {
@@ -379,6 +406,14 @@ export function StockScreener() {
               />
               {filtersCollapsed ? tc("common:actions.show") : tc("common:actions.hide")}
             </button>
+          </div>
+        )}
+
+        {/* Cross-field range error */}
+        {rangeError && (
+          <div className="mb-2 flex items-center gap-2 rounded-md border border-destructive/60 bg-destructive/10 px-3 py-2 text-[11px] text-destructive">
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            <span>{rangeError}</span>
           </div>
         )}
 
