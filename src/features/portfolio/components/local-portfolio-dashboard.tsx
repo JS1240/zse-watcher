@@ -14,6 +14,7 @@ import { formatPrice, formatCurrency } from "@/lib/formatters";
 import { exportToCsv } from "@/lib/export";
 import { cn } from "@/lib/utils";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 
 export function LocalPortfolioDashboard() {
   const { t } = useTranslation("portfolio");
@@ -28,6 +29,7 @@ export function LocalPortfolioDashboard() {
   const debouncedSearch = useDebounce(search, 200);
   const [showHistory, setShowHistory] = useState(false);
   const [savedFlash, setSavedFlash] = useState(false);
+  const [confirmClear, setConfirmClear] = useState(false);
 
   // Memoize holdings calculation — only recalculates when transactions change (infrequent)
   // Must be before any conditional return (React hooks rule)
@@ -447,15 +449,11 @@ export function LocalPortfolioDashboard() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
-                    if (window.confirm("Clear all local transactions?")) {
-                      clearTransactions();
-                    }
-                  }}
+                  onClick={() => setConfirmClear(true)}
                   className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-destructive"
                 >
                   <Trash2 className="h-3 w-3" />
-                  Clear all
+                  {t("clearAll") || "Clear all"}
                 </button>
               </div>
               <table className="w-full text-xs">
@@ -529,6 +527,24 @@ export function LocalPortfolioDashboard() {
           )}
         </div>
       )}
+
+      {/* Clear confirmation dialog */}
+      <ConfirmationDialog
+        open={confirmClear}
+        onOpenChange={(open) => !open && setConfirmClear(false)}
+        title={t("confirmClear") || "Clear all transactions?"}
+        description={
+          t("confirmClearDescription") ||
+          "This will permanently delete all your local transactions. This action cannot be undone."
+        }
+        confirmLabel={t("actions.clear") || "Clear"}
+        cancelLabel={t("actions.cancel") || "Cancel"}
+        variant="danger"
+        onConfirm={() => {
+          clearTransactions();
+          toast.success(t("toast.cleared") || "All transactions cleared");
+        }}
+      />
     </div>
   );
 }
