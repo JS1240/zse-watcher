@@ -7,6 +7,7 @@ import { useDebounce } from "@/hooks/use-debounce";
 import { Input } from "@/components/ui/input";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { AddPositionForm } from "@/features/portfolio/components/add-position-form";
+import { PortfolioSkeleton } from "@/features/portfolio/components/portfolio-skeleton";
 import { Button } from "@/components/ui/button";
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { EmptyState } from "@/components/shared/empty-state";
@@ -20,7 +21,7 @@ export function LocalPortfolioDashboard() {
   const { t } = useTranslation("portfolio");
   const { transactions, hasLocalTransactions, removeTransaction, clearTransactions } =
     useLocalTransactions();
-  const { data: stocksResult } = useStocksLive();
+  const { data: stocksResult, isLoading: isStocksLoading } = useStocksLive();
   const stocks = stocksResult?.stocks ?? null;
   const { select } = useSelectedStock();
   const [showAddForm, setShowAddForm] = useState(false);
@@ -30,6 +31,11 @@ export function LocalPortfolioDashboard() {
   const [showHistory, setShowHistory] = useState(false);
   const [savedFlash, setSavedFlash] = useState(false);
   const [confirmClear, setConfirmClear] = useState(false);
+
+  // Show skeleton while stocks load
+  if (isStocksLoading || (!stocksResult && transactions.length > 0)) {
+    return <PortfolioSkeleton />;
+  }
 
   // Memoize holdings calculation — only recalculates when transactions change (infrequent)
   // Must be before any conditional return (React hooks rule)
