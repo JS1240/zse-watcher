@@ -15,7 +15,10 @@
     "all": "Sve",
     "active": "Aktivne",
     "triggered": "Aktivirane",
-    "paused": "Pauzirane"
+    "paused": "Pauzirane",
+    "allConditions": "Svi uvjeti",
+    "priceAlerts": "Cijena",
+    "percentAlerts": "Postotak"
   },
   "condition": {
     "above": "Cijena iznad",

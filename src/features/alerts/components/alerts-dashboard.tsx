@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { Bell, BellOff, Pencil, Trash2, X, Check, CheckCircle2, Keyboard, Download, AlertCircle, Search, CircleDot, Pause } from "lucide-react";
+import { Bell, BellOff, Pencil, Trash2, X, Check, CheckCircle2, Keyboard, Download, AlertCircle, Search, CircleDot, Pause, TrendingUp, TrendingDown, ArrowUpDown } from "lucide-react";
 import { toast } from "sonner";
 import { useAlertsData } from "@/features/alerts/hooks/use-alerts-data";
 import { useAlerts, useUpdateAlert } from "@/features/alerts/api/alerts-queries";
@@ -67,6 +67,7 @@ export function AlertsDashboard() {
   const [showForm, setShowForm] = useState(false);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "triggered" | "paused">("all");
+  const [conditionFilter, setConditionFilter] = useState<"all" | "price" | "percent">("all");
   const [sort, setSort] = useState<{ column: "ticker" | "createdAt" | "targetValue"; direction: "asc" | "desc" }>({
     column: "createdAt",
     direction: "desc",
@@ -86,6 +87,15 @@ export function AlertsDashboard() {
         result = result.filter((a) => a.isTriggered);
       } else if (statusFilter === "paused") {
         result = result.filter((a) => !a.isActive);
+      }
+    }
+
+    // Filter by condition type
+    if (conditionFilter !== "all") {
+      if (conditionFilter === "price") {
+        result = result.filter((a) => !a.condition.includes("percent"));
+      } else if (conditionFilter === "percent") {
+        result = result.filter((a) => a.condition.includes("percent"));
       }
     }
 
@@ -219,7 +229,7 @@ export function AlertsDashboard() {
 
         {/* Status filter buttons with counts - only show when there are alerts */}
         {alerts && alerts.length > 0 && (
-          <div className="flex gap-1">
+          <div className="flex flex-wrap gap-1">
             <FilterChip
               active={statusFilter === "all"}
               onClick={() => setStatusFilter("all")}
@@ -246,6 +256,27 @@ export function AlertsDashboard() {
               label={t("filter.paused") || "Pauzirane"}
               icon={<Pause className="h-3 w-3" />}
               count={alerts.filter((a) => !a.isActive).length}
+            />
+            <span className="mx-1 h-4 w-px bg-border" />
+            <FilterChip
+              active={conditionFilter === "all"}
+              onClick={() => setConditionFilter("all")}
+              label={t("filter.allConditions") || "Svi uvjeti"}
+              icon={<ArrowUpDown className="h-3 w-3" />}
+            />
+            <FilterChip
+              active={conditionFilter === "price"}
+              onClick={() => setConditionFilter("price")}
+              label={t("filter.priceAlerts") || "Cijena"}
+              icon={<TrendingUp className="h-3 w-3" />}
+              count={alerts.filter((a) => !a.condition.includes("percent")).length}
+            />
+            <FilterChip
+              active={conditionFilter === "percent"}
+              onClick={() => setConditionFilter("percent")}
+              label={t("filter.percentAlerts") || "Postotak"}
+              icon={<TrendingDown className="h-3 w-3" />}
+              count={alerts.filter((a) => a.condition.includes("percent")).length}
             />
           </div>
         )}

@@ -15,7 +15,10 @@
     "all": "All",
     "active": "Active",
     "triggered": "Triggered",
-    "paused": "Paused"
+    "paused": "Paused",
+    "allConditions": "All conditions",
+    "priceAlerts": "Price",
+    "percentAlerts": "Percent"
   },
   "condition": {
     "above": "Price Above",
