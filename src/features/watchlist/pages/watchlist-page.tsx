@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Star, Search, ArrowUp, ArrowDown, ArrowUpDown, GripVertical, Download, X, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { toast } from "sonner";
@@ -8,6 +8,7 @@ import { useWatchlistItems } from "@/features/watchlist/api/watchlist-queries";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
 import { usePriceFlash } from "@/hooks/use-price-flash";
+import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { WatchlistToggle } from "@/features/watchlist/components/watchlist-toggle";
 import { WatchlistSkeleton } from "@/features/watchlist/components/watchlist-skeleton";
 import { ChangeBadge } from "@/components/shared/change-badge";
@@ -124,6 +125,11 @@ function AuthenticatedWatchlist() {
     direction: "desc",
   });
   const debouncedSearch = useDebounce(search, 200);
+
+  // Keyboard shortcut to focus search
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const focusSearch = useCallback(() => searchInputRef.current?.focus(), []);
+  useKeyboardShortcut({ key: "/", handler: focusSearch, enabled: true });
 
   const watchedStocks = useMemo(() => {
     const tickers = new Set(watchlistItems.data?.map((i) => i.ticker) ?? []);
@@ -432,6 +438,7 @@ function LocalWatchlist() {
   const stocks = useMemo(() => stocksResult?.stocks ?? [], [stocksResult]);
   const [search, setSearch] = useState("");
   const [changeFilter, setChangeFilter] = useState<ChangeFilter>("all");
+  const [sectorFilter, setSectorFilter] = useState<SectorFilter>(null);
   const [sort, setSort] = useState<{ column: SortColumn; direction: SortDirection } | null>(null);
   const [confirmRemove, setConfirmRemove] = useState<string | null>(null);
   const debouncedSearch = useDebounce(search, 200);
@@ -463,6 +470,9 @@ function LocalWatchlist() {
     return stocks.filter((s) => tickerSet.has(s.ticker));
   }, [stocks, items]);
 
+  // Compute unique sectors from watched stocks
+  const availableSectors = useMemo(() => getUniqueSectors(watchedStocks), [watchedStocks]);
+
   const filtered = useMemo(() => {
     let result = watchedStocks;
     if (debouncedSearch) {
@@ -472,6 +482,10 @@ function LocalWatchlist() {
           s.ticker.toLowerCase().includes(q) ||
           s.name.toLowerCase().includes(q),
       );
+    }
+    // Apply sector filter
+    if (sectorFilter) {
+      result = result.filter((s) => s.sector === sectorFilter);
     }
     // Apply change direction filter before sorting
     if (changeFilter !== "all") {
@@ -494,7 +508,7 @@ function LocalWatchlist() {
         ? (aVal as number) - (bVal as number)
         : (bVal as number) - (aVal as number);
     });
-  }, [watchedStocks, debouncedSearch, changeFilter, sort]);
+  }, [watchedStocks, debouncedSearch, sectorFilter, changeFilter, sort]);
 
   const handleSort = (col: SortColumn) => {
     setSort((prev) => {
@@ -587,6 +601,26 @@ function LocalWatchlist() {
             <span className="hidden sm:inline">{t(labelKey)}</span>
           </button>
         ))}
+        {/* Sector filter dropdown */}
+        {availableSectors.length > 0 && (
+          <select
+            value={sectorFilter ?? ""}
+            onChange={(e) => setSectorFilter(e.target.value || null)}
+            className={cn(
+              "rounded-full px-2.5 py-1 text-[10px] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
+              sectorFilter
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "bg-muted/60 text-muted-foreground hover:bg-muted",
+            )}
+          >
+            <option value="">{t("filters.allSectors")}</option>
+            {availableSectors.map((sector) => (
+              <option key={sector} value={sector}>
+                {sector}
+              </option>
+            ))}
+          </select>
+        )}
       </div>
 
       {/* Results count */}

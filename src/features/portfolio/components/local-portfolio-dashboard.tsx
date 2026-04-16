@@ -27,6 +27,7 @@ export function LocalPortfolioDashboard() {
   const [changeFilter, setChangeFilter] = useState<"all" | "gainers" | "losers" | "unchanged">("all");
   const debouncedSearch = useDebounce(search, 200);
   const [showHistory, setShowHistory] = useState(false);
+  const [savedFlash, setSavedFlash] = useState(false);
 
   // Memoize holdings calculation — only recalculates when transactions change (infrequent)
   // Must be before any conditional return (React hooks rule)
@@ -319,7 +320,11 @@ export function LocalPortfolioDashboard() {
       {showAddForm && (
         <AddPositionForm
           onClose={() => setShowAddForm(false)}
-          onSuccess={() => toast.success(t("toast.transactionAdded"))}
+          onSuccess={() => {
+            toast.success(t("toast.transactionAdded"));
+            setSavedFlash(true);
+            setTimeout(() => setSavedFlash(false), 2000);
+          }}
         />
       )}
 

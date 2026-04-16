@@ -4,6 +4,17 @@
 
 ### Added
 
+- **Sector Filter for Local Watchlist** — filter watched stocks by sector for Croatian retail investors
+  - Added sector dropdown matching authenticated watchlist pattern
+  - Shows only sectors present in watched stocks
+  - Enables quick filtering like \"Svi sektori\" → \"Telekomunikacije\"
+  - Consistent with authenticated watchlist and stock screener
+
+- **Alert Sorting** — sort alerts by newest, oldest, A-Z, or target value
+  - Dropdown selector in alerts dashboard toolbar
+  - Default sort: newest first
+  - Helps Croatian retail investors find and organize alerts faster
+
 - **Collapsible Filter Panel for Stock Screener** — improve space efficiency for Croatian retail investors
   - Active filter count badge shows number of active filters (e.g., "2" when sector + minPrice set)
   - Chevron toggle to collapse/expand filter inputs with smooth animation
