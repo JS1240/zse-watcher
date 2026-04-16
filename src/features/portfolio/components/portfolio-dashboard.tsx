@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Plus, Download, Wallet, ChevronUp, ChevronDown, Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useDebounce } from "@/hooks/use-debounce";
+import { usePriceFlash } from "@/hooks/use-price-flash";
 import { toast } from "sonner";
 import { usePortfolio } from "@/features/portfolio/api/portfolio-queries";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
@@ -123,6 +124,9 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
   }, [sortedHoldings]);
 
   const { totalValue: totalPortfolioValue, totalGain: totalPortfolioGain, gainPct: totalGainPct } = totals;
+
+  // Flash map for price change animations
+  const flashMap = usePriceFlash(stocks);
 
   const handleExportCsv = () => {
     const headers = [
@@ -273,35 +277,42 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
               </tr>
             </thead>
             <tbody>
-              {sortedHoldings.map((h) => (
-                <tr
-                  key={h.ticker}
-                  className="border-b border-border/50 cursor-pointer transition-all duration-150 hover:bg-accent/70"
-                  onClick={() => select(h.ticker)}
-                >
-                  <td className="px-3 py-3 md:py-2">
-                    <div>
-                      <span className="font-data font-semibold text-foreground">{h.ticker}</span>
-                      <span className="ml-1 text-[10px] text-muted-foreground">{h.name}</span>
-                    </div>
-                  </td>
-                  <td className="px-3 py-3 md:py-2 text-right font-data tabular-nums text-foreground">
-                    {h.totalShares.toFixed(0)}
-                  </td>
-                  <td className="px-3 py-3 md:py-2 text-right font-data tabular-nums text-muted-foreground">
-                    {formatPrice(h.avgPrice)}
-                  </td>
-                  <td className="px-3 py-3 md:py-2 text-right font-data tabular-nums text-foreground">
-                    {formatPrice(h.currentPrice)}
-                  </td>
-                  <td className="hidden px-3 py-3 md:py-2 text-right font-data tabular-nums text-foreground md:table-cell">
-                    {formatCurrency(h.totalValue)}
-                  </td>
-                  <td className="px-3 py-3 md:py-2 text-right">
-                    <ChangeBadge value={h.gainPct} showIcon={false} />
-                  </td>
-                </tr>
-              ))}
+              {sortedHoldings.map((h) => {
+                const flash = flashMap.get(h.ticker) ?? null;
+                return (
+                  <tr
+                    key={h.ticker}
+                    className={cn(
+                      "border-b border-border/50 cursor-pointer transition-all duration-150 hover:bg-accent/70",
+                      flash === "up" && "price-flash-up",
+                      flash === "down" && "price-flash-down",
+                    )}
+                    onClick={() => select(h.ticker)}
+                  >
+                    <td className="px-3 py-3 md:py-2">
+                      <div>
+                        <span className="font-data font-semibold text-foreground">{h.ticker}</span>
+                        <span className="ml-1 text-[10px] text-muted-foreground">{h.name}</span>
+                      </div>
+                    </td>
+                    <td className="px-3 py-3 md:py-2 text-right font-data tabular-nums text-foreground">
+                      {h.totalShares.toFixed(0)}
+                    </td>
+                    <td className="px-3 py-3 md:py-2 text-right font-data tabular-nums text-muted-foreground">
+                      {formatPrice(h.avgPrice)}
+                    </td>
+                    <td className="px-3 py-3 md:py-2 text-right font-data tabular-nums text-foreground">
+                      {formatPrice(h.currentPrice)}
+                    </td>
+                    <td className="hidden px-3 py-3 md:py-2 text-right font-data tabular-nums text-foreground md:table-cell">
+                      {formatCurrency(h.totalValue)}
+                    </td>
+                    <td className="px-3 py-3 md:py-2 text-right">
+                      <ChangeBadge value={h.gainPct} showIcon={false} />
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
