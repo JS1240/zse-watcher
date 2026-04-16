@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { X, Info } from "lucide-react";
+import { X, Info, Keyboard } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useStockDetail } from "@/features/stocks/api/stock-detail-queries";
 import { useRecentStocks } from "@/hooks/use-recent-stocks";
@@ -79,13 +79,19 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
               </span>
             )}
           </div>
-          <button
-            onClick={onClose}
-            className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            aria-label={t("close")}
-          >
-            <X className="h-4 w-4" />
-          </button>
+          <div className="flex items-center gap-2">
+            <span className="hidden items-center gap-1 text-[10px] text-muted-foreground md:flex">
+              <Keyboard className="h-3 w-3" />
+              Esc
+            </span>
+            <button
+              onClick={onClose}
+              className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              aria-label={t("close")}
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
         </div>
 
         {/* Content */}
