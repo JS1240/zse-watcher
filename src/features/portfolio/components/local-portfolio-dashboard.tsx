@@ -32,6 +32,37 @@ export function LocalPortfolioDashboard() {
   const [savedFlash, setSavedFlash] = useState(false);
   const [confirmClear, setConfirmClear] = useState(false);
 
+  // Sort state for transactions
+  type TxSortColumn = "transactionDate" | "ticker" | "transactionType" | "shares" | "pricePerShare" | "totalAmount";
+  const [txSort, setTxSort] = useState<{ column: TxSortColumn; direction: "asc" | "desc" }>({
+    column: "transactionDate",
+    direction: "desc",
+  });
+
+  // Sort transactions
+  const sortedTransactions = useMemo(() => {
+    return [...transactions].sort((a, b) => {
+      if (txSort.column === "transactionDate") {
+        const aTime = new Date(a.transactionDate).getTime();
+        const bTime = new Date(b.transactionDate).getTime();
+        return txSort.direction === "asc" ? aTime - bTime : bTime - aTime;
+      }
+      if (txSort.column === "ticker") {
+        return txSort.direction === "asc"
+          ? a.ticker.localeCompare(b.ticker)
+          : b.ticker.localeCompare(a.ticker);
+      }
+      if (txSort.column === "transactionType") {
+        return txSort.direction === "asc"
+          ? a.transactionType.localeCompare(b.transactionType)
+          : b.transactionType.localeCompare(a.transactionType);
+      }
+      const aVal = a[txSort.column] as number;
+      const bVal = b[txSort.column] as number;
+      return txSort.direction === "asc" ? aVal - bVal : bVal - aVal;
+    });
+  }, [transactions, txSort]);
+
   // Show skeleton while stocks load
   if (isStocksLoading || (!stocksResult && transactions.length > 0)) {
     return <PortfolioSkeleton />;
@@ -427,40 +458,58 @@ export function LocalPortfolioDashboard() {
 
           {showHistory && (
             <div className="border-t border-border">
-              <div className="flex justify-end gap-2 px-3 py-1.5">
-                <button
-                  type="button"
-                  onClick={() => {
-                    const headers = ["Date", "Ticker", "Type", "Shares", "Price (EUR)", "Total (EUR)", "Notes"];
-                    const rows = transactions.map((tx) => [
-                      new Date(tx.transactionDate).toISOString().split("T")[0],
-                      tx.ticker,
-                      tx.transactionType,
-                      tx.shares.toString(),
-                      tx.pricePerShare.toFixed(2),
-                      tx.totalAmount.toFixed(2),
-                      tx.notes || "",
-                    ]);
-                    exportToCsv(
-                      `zse-transactions-${new Date().toISOString().split("T")[0]}`,
-                      headers,
-                      rows,
-                    );
-                    toast.success(t("toast.exported"));
+              <div className="flex items-center justify-between gap-2 px-3 py-1.5">
+                {/* Sort dropdown */}
+                <select
+                  value={`${txSort.column}-${txSort.direction}`}
+                  onChange={(e) => {
+                    const [column, direction] = e.target.value.split("-") as [TxSortColumn, "asc" | "desc"];
+                    setTxSort({ column, direction });
                   }}
-                  className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground"
+                  className="rounded border border-border bg-background px-2 py-1 text-[10px] text-foreground"
                 >
-                  <Download className="h-3 w-3" />
-                  CSV
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setConfirmClear(true)}
-                  className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-destructive"
-                >
-                  <Trash2 className="h-3 w-3" />
-                  {t("clearAll") || "Clear all"}
-                </button>
+                  <option value="transactionDate-desc">{t("sort.newest") || "Najnovije"}</option>
+                  <option value="transactionDate-asc">{t("sort.oldest") || "Najstarije"}</option>
+                  <option value="ticker-asc">{t("sort.tickerAsc") || "A-Z"}</option>
+                  <option value="ticker-desc">{t("sort.tickerDesc") || "Z-A"}</option>
+                  <option value="totalAmount-desc">{t("sort.valueDesc") || "Vrijednost ↓"}</option>
+                  <option value="totalAmount-asc">{t("sort.valueAsc") || "Vrijednost ↑"}</option>
+                </select>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const headers = ["Date", "Ticker", "Type", "Shares", "Price (EUR)", "Total (EUR)", "Notes"];
+                      const rows = sortedTransactions.map((tx) => [
+                        new Date(tx.transactionDate).toISOString().split("T")[0],
+                        tx.ticker,
+                        tx.transactionType,
+                        tx.shares.toString(),
+                        tx.pricePerShare.toFixed(2),
+                        tx.totalAmount.toFixed(2),
+                        tx.notes || "",
+                      ]);
+                      exportToCsv(
+                        `zse-transactions-${new Date().toISOString().split("T")[0]}`,
+                        headers,
+                        rows,
+                      );
+                      toast.success(t("toast.exported"));
+                    }}
+                    className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground"
+                  >
+                    <Download className="h-3 w-3" />
+                    CSV
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setConfirmClear(true)}
+                    className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-destructive"
+                  >
+                    <Trash2 className="h-3 w-3" />
+                    {t("clearAll") || "Clear all"}
+                  </button>
+                </div>
               </div>
               <table className="w-full text-xs">
                 <thead>
@@ -475,7 +524,7 @@ export function LocalPortfolioDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {transactions.map((tx) => {
+                  {sortedTransactions.map((tx) => {
                     return (
                       <tr
                         key={tx.id}

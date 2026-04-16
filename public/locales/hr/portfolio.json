@@ -6,6 +6,14 @@
   "totalValue": "Ukupna vrijednost",
   "totalGain": "Ukupni dobitak/gubitak",
   "allocation": "Alokacija",
+  "sort": {
+    "newest": "Najnovije",
+    "oldest": "Najstarije",
+    "tickerAsc": "Oznaka A-Z",
+    "tickerDesc": "Oznaka Z-A",
+    "valueDesc": "Vrijednost ↓",
+    "valueAsc": "Vrijednost ↑"
+  },
   "fields": {
     "ticker": "Oznaka",
     "shares": "Broj dionica",

@@ -6,6 +6,14 @@
   "totalValue": "Total Value",
   "totalGain": "Total Gain/Loss",
   "allocation": "Allocation",
+  "sort": {
+    "newest": "Newest",
+    "oldest": "Oldest",
+    "tickerAsc": "Ticker A-Z",
+    "tickerDesc": "Ticker Z-A",
+    "valueDesc": "Value ↓",
+    "valueAsc": "Value ↑"
+  },
   "fields": {
     "ticker": "Ticker",
     "shares": "Shares",
