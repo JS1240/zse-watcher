@@ -26,9 +26,10 @@ interface FilterChipProps {
   onClick: () => void;
   label: string;
   icon?: React.ReactNode;
+  count?: number;
 }
 
-function FilterChip({ active, onClick, label, icon }: FilterChipProps) {
+function FilterChip({ active, onClick, label, icon, count }: FilterChipProps) {
   return (
     <button
       onClick={onClick}
@@ -41,6 +42,18 @@ function FilterChip({ active, onClick, label, icon }: FilterChipProps) {
     >
       {icon}
       {label}
+      {typeof count === "number" && (
+        <span
+          className={cn(
+            "ml-0.5 rounded-full px-1.5 py-0.5 text-[9px] font-semibold",
+            active
+              ? "bg-primary-foreground/20 text-primary-foreground"
+              : "bg-muted-foreground/20 text-muted-foreground"
+          )}
+        >
+          {count}
+        </span>
+      )}
     </button>
   );
 }
@@ -204,31 +217,35 @@ export function AlertsDashboard() {
           </div>
         </div>
 
-        {/* Status filter buttons - only show when there are alerts */}
+        {/* Status filter buttons with counts - only show when there are alerts */}
         {alerts && alerts.length > 0 && (
           <div className="flex gap-1">
             <FilterChip
               active={statusFilter === "all"}
               onClick={() => setStatusFilter("all")}
               label={t("filter.all") || "Sve"}
+              count={alerts.length}
             />
             <FilterChip
               active={statusFilter === "active"}
               onClick={() => setStatusFilter("active")}
               label={t("filter.active") || "Aktivne"}
               icon={<CircleDot className="h-3 w-3" />}
+              count={alerts.filter((a) => a.isActive && !a.isTriggered).length}
             />
             <FilterChip
               active={statusFilter === "triggered"}
               onClick={() => setStatusFilter("triggered")}
               label={t("filter.triggered") || "Aktivirane"}
               icon={<AlertCircle className="h-3 w-3" />}
+              count={alerts.filter((a) => a.isTriggered).length}
             />
             <FilterChip
               active={statusFilter === "paused"}
               onClick={() => setStatusFilter("paused")}
               label={t("filter.paused") || "Pauzirane"}
               icon={<Pause className="h-3 w-3" />}
+              count={alerts.filter((a) => !a.isActive).length}
             />
           </div>
         )}
