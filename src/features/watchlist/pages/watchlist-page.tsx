@@ -214,12 +214,26 @@ function AuthenticatedWatchlist() {
     );
   }
 
+  // Count active filters for badge
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (debouncedSearch) count++;
+    if (sectorFilter) count++;
+    if (changeFilter !== "all") count++;
+    return count;
+  }, [debouncedSearch, sectorFilter, changeFilter]);
+
   const handleClearSearch = () => setSearch("");
+  const handleClearFilters = () => {
+    setSearch("");
+    setChangeFilter("all");
+    setSectorFilter(null);
+  };
 
   return (
     <div className="flex flex-col gap-3">
-      {/* Search + CSV */}
-      <div className="flex gap-2">
+      {/* Search + filters badge + CSV */}
+      <div className="flex items-center gap-2">
         <div className="relative flex-1">
           <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-muted-foreground" />
           <Input
@@ -238,6 +252,17 @@ function AuthenticatedWatchlist() {
             </button>
           )}
         </div>
+        {/* Active filters badge */}
+        {activeFilterCount > 0 && (
+          <button
+            onClick={handleClearFilters}
+            className="flex items-center gap-1 rounded-full bg-primary px-2 py-1 text-[10px] font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-destructive"
+            title={tc("actions.clear")}
+          >
+            {activeFilterCount}
+            <X className="h-3 w-3" />
+          </button>
+        )}
         <Button
           size="sm"
           variant="outline"
@@ -549,11 +574,25 @@ function LocalWatchlist() {
   }
 
   const handleClearSearch = () => setSearch("");
+  const handleClearFilters = () => {
+    setSearch("");
+    setChangeFilter("all");
+    setSectorFilter(null);
+  };
+
+  // Count active filters for badge
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (debouncedSearch) count++;
+    if (sectorFilter) count++;
+    if (changeFilter !== "all") count++;
+    return count;
+  }, [debouncedSearch, sectorFilter, changeFilter]);
 
   return (
     <div className="flex flex-col gap-3">
-      {/* Search + CSV */}
-      <div className="flex gap-2">
+      {/* Search + filters badge + CSV */}
+      <div className="flex items-center gap-2">
         <div className="relative flex-1">
           <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-muted-foreground" />
           <Input
@@ -572,6 +611,17 @@ function LocalWatchlist() {
             </button>
           )}
         </div>
+        {/* Active filters badge */}
+        {activeFilterCount > 0 && (
+          <button
+            onClick={handleClearFilters}
+            className="flex items-center gap-1 rounded-full bg-primary px-2 py-1 text-[10px] font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-destructive"
+            title={tc("actions.clear")}
+          >
+            {activeFilterCount}
+            <X className="h-3 w-3" />
+          </button>
+        )}
         <Button
           size="sm"
           variant="outline"
