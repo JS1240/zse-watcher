@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
+import { StockDetailDrawer } from "@/features/stocks/components/stock-detail-drawer";
+import { useSelectedStock } from "@/hooks/use-selected-stock";
 import { formatDate, formatCurrency } from "@/lib/formatters";
 import { exportToCsv } from "@/lib/export";
 import { cn } from "@/lib/utils";
@@ -22,6 +24,7 @@ export function DividendsCalendar() {
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [showYearFilter, setShowYearFilter] = useState(false);
+  const { select, selectedTicker } = useSelectedStock();
 
   // Extract unique years from dividends
   const availableYears = useMemo(() => {
@@ -329,50 +332,57 @@ export function DividendsCalendar() {
             {group.label}
           </h3>
           <div className="space-y-1">
-              {group.items!.map((d) => {
-                const isPast = new Date(d.exDivDate) < new Date();
-                return (
-                  <div
-                    key={`${d.ticker}-${d.exDivDate}`}
-                    className={cn(
-                      "flex items-center justify-between rounded-md border border-border bg-card px-3 py-2.5 transition-colors hover:bg-accent/30",
-                      isPast && "opacity-50",
-                    )}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary/10">
-                        <CalendarDays className="h-4 w-4 text-primary" />
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-data text-xs font-semibold text-foreground">
-                            {d.ticker}
-                          </span>
-                          <span className="text-[10px] text-muted-foreground">{d.name}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
-                          <span>Ex-div: {formatDate(d.exDivDate)}</span>
-                          <span>Pay: {formatDate(d.payDate)}</span>
-                        </div>
-                      </div>
+            {group.items!.map((d) => {
+              const isPast = new Date(d.exDivDate) < new Date();
+              return (
+                <button
+                  key={`${d.ticker}-${d.exDivDate}`}
+                  onClick={() => select(d.ticker)}
+                  className={cn(
+                    "flex w-full items-center justify-between rounded-md border border-border bg-card px-3 py-2.5 text-left transition-colors hover:bg-accent/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                    isPast && "opacity-50",
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary/10">
+                      <CalendarDays className="h-4 w-4 text-primary" />
                     </div>
-
-                    <div className="flex items-center gap-3 text-right">
-                      <div>
-                        <div className="font-data text-xs font-medium tabular-nums text-foreground">
-                          {formatCurrency(d.amountEur)}
-                        </div>
-                        <Badge variant="success" className="text-[9px]">
-                          {d.yield.toFixed(1)}%
-                        </Badge>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-data text-xs font-semibold text-foreground">
+                          {d.ticker}
+                        </span>
+                        <span className="text-[10px] text-muted-foreground">{d.name}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                        <span>Ex-div: {formatDate(d.exDivDate)}</span>
+                        <span>Pay: {formatDate(d.payDate)}</span>
                       </div>
                     </div>
                   </div>
-                );
-              })}
-            </div>
+
+                  <div className="flex items-center gap-3 text-right">
+                    <div>
+                      <div className="font-data text-xs font-medium tabular-nums text-foreground">
+                        {formatCurrency(d.amountEur)}
+                      </div>
+                      <Badge variant="success" className="text-[9px]">
+                        {d.yield.toFixed(1)}%
+                      </Badge>
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
         </div>
       ))}
+
+      {/* Stock detail drawer from dividend row click */}
+      <StockDetailDrawer
+        ticker={selectedTicker}
+        onClose={() => {}}
+      />
     </div>
   );
 }
