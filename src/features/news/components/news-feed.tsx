@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { ExternalLink, Newspaper, Search } from "lucide-react";
+import { ExternalLink, Newspaper, Search, ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import { useNews } from "@/features/news/api/news-queries";
 import { ArticleDrawer } from "@/features/news/components/article-drawer";
 import { NewsSkeleton } from "@/features/news/components/news-skeleton";
@@ -24,7 +24,41 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
   const { t: tn } = useTranslation("news");
   const [selectedArticle, setSelectedArticle] = useState<NewsArticle | null>(null);
   const [search, setSearch] = useState("");
+  const [sortField, setSortField] = useState<"date" | "ticker">("date");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const debouncedSearch = useDebounce(search, 200);
+
+  // Toggle sort handler
+  const handleSort = (field: "date" | "ticker") => {
+    if (sortField === field) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortField(field);
+      setSortDir(field === "ticker" ? "asc" : "desc");
+    }
+  };
+
+  // Sort header component
+  function SortHeader({ field, label }: { field: "date" | "ticker"; label: string }) {
+    const isActive = sortField === field;
+    const direction = isActive ? sortDir : null;
+    return (
+      <button
+        onClick={() => handleSort(field)}
+        className="flex items-center gap-1 text-[10px] font-medium transition-colors hover:text-foreground"
+        aria-sort={isActive ? (direction === "asc" ? "ascending" : "descending") : "none"}
+      >
+        <span>{label}</span>
+        {direction === "asc" ? (
+          <ArrowUp className="h-3 w-3 shrink-0" />
+        ) : direction === "desc" ? (
+          <ArrowDown className="h-3 w-3 shrink-0" />
+        ) : (
+          <ArrowUpDown className="h-3 w-3 shrink-0 text-muted-foreground/40" />
+        )}
+      </button>
+    );
+  }
 
   const filtered = useMemo(() => {
     if (!articles) return [];
@@ -48,8 +82,23 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
       result = result.slice(0, limit);
     }
 
+    // Apply sorting
+    result = [...result].sort((a, b) => {
+      if (sortField === "ticker") {
+        const aTicker = a.ticker ?? "";
+        const bTicker = b.ticker ?? "";
+        return sortDir === "asc"
+          ? aTicker.localeCompare(bTicker)
+          : bTicker.localeCompare(aTicker);
+      }
+      // Date sorting (newest first by default)
+      const aDate = new Date(a.publishedAt).getTime();
+      const bDate = new Date(b.publishedAt).getTime();
+      return sortDir === "asc" ? aDate - bDate : bDate - aDate;
+    });
+
     return result;
-  }, [articles, ticker, category, limit, debouncedSearch]);
+  }, [articles, ticker, category, limit, debouncedSearch, sortField, sortDir]);
 
   // Only show search when not limited (inline usage)
   const showSearch = !limit && articles && articles.length > 0;
@@ -76,14 +125,20 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
     return (
       <div className="space-y-3">
         {showSearch && (
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-muted-foreground" />
-            <Input
-              placeholder={t("actions.search")}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-8"
-            />
+          <div className="flex items-center gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-muted-foreground" />
+              <Input
+                placeholder={t("actions.search")}
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-8"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <SortHeader field="date" label={t("sort.date") || "Datum"} />
+              <SortHeader field="ticker" label={t("sort.ticker") || "Dionica"} />
+            </div>
           </div>
         )}
         {totalCount > 0 ? (
@@ -107,15 +162,22 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
   return (
     <>
       <div className="space-y-1">
+        {/* Search + Sort controls */}
         {showSearch && (
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-muted-foreground" />
-            <Input
-              placeholder={t("actions.search")}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-8"
-            />
+          <div className="flex items-center gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-muted-foreground" />
+              <Input
+                placeholder={t("actions.search")}
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-8"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <SortHeader field="date" label={t("sort.date") || "Datum"} />
+              <SortHeader field="ticker" label={t("sort.ticker") || "Dionica"} />
+            </div>
           </div>
         )}
 
