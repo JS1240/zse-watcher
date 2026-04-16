@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useCallback, useState } from "react";
 import {
   createChart,
   type IChartApi,
@@ -9,6 +9,20 @@ import {
   CrosshairMode,
 } from "lightweight-charts";
 import type { PricePoint } from "@/types/stock";
+
+/** Get responsive chart height based on container width */
+function getResponsiveHeight(containerWidth: number, requestedHeight?: number): number {
+  const baseHeight = requestedHeight ?? 300;
+  
+  // Scale down on narrow screens
+  if (containerWidth < 400) {
+    return Math.min(200, baseHeight * 0.65);
+  }
+  if (containerWidth < 640) {
+    return Math.min(250, baseHeight * 0.8);
+  }
+  return baseHeight;
+}
 
 interface TradingChartProps {
   data: PricePoint[];
@@ -25,6 +39,7 @@ export function TradingChart({
 }: TradingChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
+  const [currentHeight, setCurrentHeight] = useState(height);
 
   const getThemeColors = useCallback(() => {
     const isDark = document.documentElement.classList.contains("dark");
@@ -140,11 +155,18 @@ export function TradingChart({
       chart.timeScale().fitContent();
     }
 
-    // Resize observer
+    // Resize observer with responsive height
     const resizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
         const { width } = entry.contentRect;
         chart.applyOptions({ width });
+        
+        // Adjust height for screen size
+        const newHeight = getResponsiveHeight(width, height);
+        if (newHeight !== currentHeight) {
+          setCurrentHeight(newHeight);
+          chart.applyOptions({ height: newHeight });
+        }
       }
     });
     resizeObserver.observe(containerRef.current);
@@ -154,13 +176,13 @@ export function TradingChart({
       chart.remove();
       chartRef.current = null;
     };
-  }, [data, chartType, height, getThemeColors]);
+  }, [data, chartType, height, getThemeColors, currentHeight]);
 
   return (
     <div
       ref={containerRef}
       className={className}
-      style={{ width: "100%", height: `${height}px` }}
+      style={{ width: "100%", height: `${currentHeight}px` }}
     />
   );
 }

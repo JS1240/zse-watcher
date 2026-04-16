@@ -4,6 +4,12 @@
 
 ### Added
 
+- **Responsive Chart Height for Mobile** — charts adapt to screen size for Croatian investors
+  - getResponsiveHeight() scales chart based on container width
+  - <400px width → 200px height; <640px → 250px height; ≥640px → 300px
+  - Smoothly adjusts when drawer resizes or screen rotates
+  - Better mobile experience in stock detail drawer
+
 - **Sector Filter for Local Watchlist** — filter watched stocks by sector for Croatian retail investors
   - Added sector dropdown matching authenticated watchlist pattern
   - Shows only sectors present in watched stocks
