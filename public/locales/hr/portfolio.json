@@ -28,14 +28,15 @@
   "toast": {
     "transactionAdded": "Transakcija dodana",
     "transactionAddFailed": "Neuspjelo dodavanje transakcije",
-    "exported": "Portfelj izvezen u CSV"
+    "exported": "Portfelj izvezen u CSV",
+    "positionAdded": "Pozicija dodana"
   },
   "exportCsv": "CSV",
   "empty": "Nemate pozicija u portfelju",
   "emptyDescription": "Dodajte svoju prvu poziciju kako biste pratili vrijednost i dobit.",
   "searchPlaceholder": "Pretraži oznaku ili ime...",
   "searchNoResults": "Nema rezultata",
-  "clearSearch": "Očisti pretraživanje"
+  "clearSearch": "Očisti pretraživanje",
   "emptySold": "Sve pozicije prodane",
   "emptySoldDescription": "Imate transakcije u povijesti, ali nema aktivnih pozicija jer su sve prodane. Dodajte novu kupnju da biste nastavili.",
   "history": "Povijest transakcija",

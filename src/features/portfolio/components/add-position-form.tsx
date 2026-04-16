@@ -4,6 +4,7 @@ import { z } from "zod/v4";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
 import { X, Keyboard, AlertCircle, CheckCircle2 } from "lucide-react";
+import { toast } from "sonner";
 import { useAddTransaction } from "@/features/portfolio/api/portfolio-queries";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -110,6 +111,7 @@ export function AddPositionForm({ onClose, onSuccess }: AddPositionFormProps) {
       notes: data.notes,
     });
     onSuccess?.();
+    toast.success(t("toast.positionAdded"));
     onClose();
   };
 
