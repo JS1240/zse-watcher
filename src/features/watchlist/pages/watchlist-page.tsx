@@ -727,7 +727,7 @@ function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort, dragEnable
   const { t } = useTranslation("watchlist");
   const flashMap = usePriceFlash(stocks);
   return (
-    <div className="overflow-auto rounded-md border border-border max-h-[60vh]">
+    <div className="overflow-auto rounded-md border border-border max-h-[75vh] scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted-foreground/30 hover:scrollbar-thumb-muted-foreground/50">
       <table className="w-full text-xs">
         <thead className="sticky top-0 z-10 bg-muted/95 backdrop-blur supports-[backdrop-filter]:bg-muted/80">
           <tr className="border-b border-border text-[10px] uppercase tracking-wider text-muted-foreground">
