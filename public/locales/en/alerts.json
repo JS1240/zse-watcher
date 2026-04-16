@@ -1,5 +1,14 @@
 {
   "title": "Price Alerts",
+  "sortBy": "Sort by",
+  "sort": {
+    "newest": "Newest",
+    "oldest": "Oldest",
+    "tickerAsc": "A-Z",
+    "tickerDesc": "Z-A",
+    "targetDesc": "Target ↓",
+    "targetAsc": "Target ↑"
+  },
   "create": "Create Alert",
   "exportCsv": "CSV",
   "filter": {

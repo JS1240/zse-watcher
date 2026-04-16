@@ -1,5 +1,14 @@
 {
   "title": "Alarmi cijena",
+  "sortBy": "Sortiraj",
+  "sort": {
+    "newest": "Najnovije",
+    "oldest": "Najstarije",
+    "tickerAsc": "A-Z",
+    "tickerDesc": "Z-A",
+    "targetDesc": "Cilj ↓",
+    "targetAsc": "Cilj ↑"
+  },
   "create": "Stvori alarm",
   "exportCsv": "CSV",
   "filter": {

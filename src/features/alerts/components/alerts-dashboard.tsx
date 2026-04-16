@@ -54,6 +54,10 @@ export function AlertsDashboard() {
   const [showForm, setShowForm] = useState(false);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "triggered" | "paused">("all");
+  const [sort, setSort] = useState<{ column: "ticker" | "createdAt" | "targetValue"; direction: "asc" | "desc" }>({
+    column: "createdAt",
+    direction: "desc",
+  });
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const debouncedSearch = useDebounce(search, 200);
 
@@ -78,8 +82,28 @@ export function AlertsDashboard() {
       result = result.filter((a) => a.ticker.toLowerCase().includes(q));
     }
 
+    // Apply sorting
+    if (sort) {
+      result = [...result].sort((a, b) => {
+        if (sort.column === "ticker") {
+          return sort.direction === "asc"
+            ? a.ticker.localeCompare(b.ticker)
+            : b.ticker.localeCompare(a.ticker);
+        }
+        if (sort.column === "createdAt") {
+          const aTime = new Date(a.createdAt).getTime();
+          const bTime = new Date(b.createdAt).getTime();
+          return sort.direction === "asc" ? aTime - bTime : bTime - aTime;
+        }
+        // targetValue
+        return sort.direction === "asc"
+          ? a.targetValue - b.targetValue
+          : b.targetValue - a.targetValue;
+      });
+    }
+
     return result;
-  }, [alerts, debouncedSearch, statusFilter]);
+  }, [alerts, debouncedSearch, statusFilter, sort]);
 
   if (isLoading) {
     return <AlertsSkeleton />;
@@ -146,10 +170,32 @@ export function AlertsDashboard() {
           )}
           <div className="flex gap-2">
             {filteredAlerts.length > 0 && (
-              <Button size="sm" variant="secondary" onClick={handleExport}>
-                <Download className="h-3.5 w-3.5" />
-                {t("exportCsv")}
-              </Button>
+              <>
+                {/* Sort dropdown */}
+                <select
+                  value={`${sort.column}-${sort.direction}`}
+                  onChange={(e) => {
+                    const [column, direction] = e.target.value.split("-") as [
+                      "ticker" | "createdAt" | "targetValue",
+                      "asc" | "desc",
+                    ];
+                    setSort({ column, direction });
+                  }}
+                  className="h-8 rounded-md border border-input bg-background px-2 py-1 text-xs text-foreground"
+                  aria-label={t("sortBy") || "Sortiraj"}
+                >
+                  <option value="createdAt-desc">{t("sort.newest") || "Najnovije"}</option>
+                  <option value="createdAt-asc">{t("sort.oldest") || "Najstarije"}</option>
+                  <option value="ticker-asc">{t("sort.tickerAsc") || "A-Z"}</option>
+                  <option value="ticker-desc">{t("sort.tickerDesc") || "Z-A"}</option>
+                  <option value="targetValue-desc">{t("sort.targetDesc") || "Cilj ↓"}</option>
+                  <option value="targetValue-asc">{t("sort.targetAsc") || "Cilj ↑"}</option>
+                </select>
+                <Button size="sm" variant="secondary" onClick={handleExport}>
+                  <Download className="h-3.5 w-3.5" />
+                  {t("exportCsv")}
+                </Button>
+              </>
             )}
             <Button size="sm" onClick={() => setShowForm(!showForm)}>
               <Bell className="h-3.5 w-3.5" />
