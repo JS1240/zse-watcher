@@ -1,5 +1,5 @@
-import { memo, useMemo, useCallback } from "react";
-import { Star } from "lucide-react";
+import { memo, useMemo, useCallback, useState } from "react";
+import { Star, Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import {
   useWatchlistTickers,
@@ -21,6 +21,9 @@ export const WatchlistToggle = memo(function WatchlistToggle({ ticker, className
   const addMutation = useAddToWatchlist();
   const removeMutation = useRemoveFromWatchlist();
 
+  // Local loading state for instant localStorage feedback
+  const [isAnimating, setIsAnimating] = useState(false);
+
   // Compute isWatched based on auth state - hooks always called
   const isWatched = useMemo(() => {
     if (isAuthenticated) {
@@ -34,9 +37,16 @@ export const WatchlistToggle = memo(function WatchlistToggle({ ticker, className
     [addMutation.isPending, removeMutation.isPending]
   );
 
+  // Show spinner when mutation is pending (authenticated users)
+  const showLoading = isPending && isAuthenticated;
+
   const handleToggle = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
     if (isPending) return;
+
+    // Trigger animation
+    setIsAnimating(true);
+    setTimeout(() => setIsAnimating(false), 300);
 
     if (isAuthenticated) {
       if (isWatched) {
@@ -68,18 +78,27 @@ export const WatchlistToggle = memo(function WatchlistToggle({ ticker, className
       aria-label={isWatched ? "Remove from watchlist" : "Add to watchlist"}
       className={cn(
         "rounded-sm p-1 transition-colors hover:bg-accent",
+        "disabled:opacity-50 disabled:cursor-not-allowed",
+        isAnimating && "scale-125",
         className,
       )}
       title={isWatched ? "Remove from watchlist" : "Add to watchlist"}
     >
-      <Star
-        className={cn(
-          "h-3.5 w-3.5 transition-colors",
-          isWatched
-            ? "fill-amber text-amber"
-            : "text-muted-foreground hover:text-amber",
-        )}
-      />
+      {showLoading ? (
+        <Loader2
+          className="h-3.5 w-3.5 animate-spin text-amber"
+        />
+      ) : (
+        <Star
+          className={cn(
+            "h-3.5 w-3.5 transition-all duration-200",
+            isAnimating && "rotate-12",
+            isWatched
+              ? "fill-amber text-amber"
+              : "text-muted-foreground hover:text-amber",
+          )}
+        />
+      )}
     </button>
   );
 });
