@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { X, ExternalLink } from "lucide-react";
+import { X, ExternalLink, Keyboard } from "lucide-react";
 import type { NewsArticle } from "@/types/news";
 import { formatDate, formatTime } from "@/lib/formatters";
 
@@ -42,6 +42,10 @@ export function ArticleDrawer({ article, onClose }: ArticleDrawerProps) {
             )}
           </div>
           <div className="flex items-center gap-2">
+            <span className="hidden items-center gap-1 text-[10px] text-muted-foreground md:flex">
+              <Keyboard className="h-3 w-3" />
+              Esc
+            </span>
             <a
               href={article.url}
               target="_blank"
