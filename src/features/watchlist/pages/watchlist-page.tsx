@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useLocalWatchlist } from "@/features/watchlist/hooks/use-local-watchlist";
 import { useWatchlistItems } from "@/features/watchlist/api/watchlist-queries";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
+import { LiveDataIndicator } from "@/components/shared/live-data-indicator";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
 import { usePriceFlash } from "@/hooks/use-price-flash";
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
@@ -115,7 +116,7 @@ function AuthenticatedWatchlist() {
   const { t } = useTranslation("watchlist");
   const { t: tc } = useTranslation("common");
   const watchlistItems = useWatchlistItems();
-  const { data: stocksResult, isError, refetch } = useStocksLive();
+  const { data: stocksResult, isError, refetch, dataUpdatedAt, isFetching } = useStocksLive();
   const stocks = useMemo(() => stocksResult?.stocks ?? [], [stocksResult]);
   const [search, setSearch] = useState("");
   const [changeFilter, setChangeFilter] = useState<ChangeFilter>("all");
@@ -263,6 +264,10 @@ function AuthenticatedWatchlist() {
             <X className="h-3 w-3" />
           </button>
         )}
+        <LiveDataIndicator
+          updatedAt={dataUpdatedAt}
+          isFetching={isFetching}
+        />
         <Button
           size="sm"
           variant="outline"
@@ -459,7 +464,7 @@ function LocalWatchlist() {
   const { t } = useTranslation("watchlist");
   const { t: tc } = useTranslation("common");
   const { items, removeItem, reorder: reorderItems } = useLocalWatchlist();
-  const { data: stocksResult, isError, refetch } = useStocksLive();
+  const { data: stocksResult, isError, refetch, dataUpdatedAt, isFetching } = useStocksLive();
   const stocks = useMemo(() => stocksResult?.stocks ?? [], [stocksResult]);
   const [search, setSearch] = useState("");
   const [changeFilter, setChangeFilter] = useState<ChangeFilter>("all");
@@ -622,6 +627,10 @@ function LocalWatchlist() {
             <X className="h-3 w-3" />
           </button>
         )}
+        <LiveDataIndicator
+          updatedAt={dataUpdatedAt}
+          isFetching={isFetching}
+        />
         <Button
           size="sm"
           variant="outline"
