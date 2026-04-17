@@ -14,6 +14,13 @@
     "valueDesc": "Value ↓",
     "valueAsc": "Value ↑"
   },
+  "filters": {
+    "all": "All",
+    "gainers": "Gainers",
+    "losers": "Losers",
+    "unchanged": "Unchanged",
+    "allSectors": "All sectors"
+  },
   "fields": {
     "ticker": "Ticker",
     "shares": "Shares",

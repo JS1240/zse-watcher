@@ -14,6 +14,13 @@
     "valueDesc": "Vrijednost ↓",
     "valueAsc": "Vrijednost ↑"
   },
+  "filters": {
+    "all": "Sve",
+    "gainers": "Dobitnici",
+    "losers": "Gubitnici",
+    "unchanged": "Nepromijenjeno",
+    "allSectors": "Svi sektori"
+  },
   "fields": {
     "ticker": "Oznaka",
     "shares": "Broj dionica",
