@@ -4,6 +4,14 @@
 
 ### Added
 
+- **Keyboard Navigation for Stock Table Headers** — sort columns with keyboard for Croatian investors
+  - Added onKeyDown handler for Enter/Space to sort table columns
+  - Added tabIndex=0 and role=columnheader for accessibility
+  - Screen reader support with aria-sort and descriptive labels
+  - Aligns with alert row keyboard patterns already in codebase
+
+### Added
+
 - **Responsive Chart Height for Mobile** — charts adapt to screen size for Croatian investors
   - getResponsiveHeight() scales chart based on container width
   - <400px width → 200px height; <640px → 250px height; ≥640px → 300px
