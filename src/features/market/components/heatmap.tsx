@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, memo } from "react";
 import { useTranslation } from "react-i18next";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
@@ -180,7 +180,7 @@ function LegendItem({
   );
 }
 
-function SectorCell({
+const SectorCell = memo(function SectorCell({
   sector,
   maxTurnover,
   onSelectTicker,
@@ -246,7 +246,7 @@ function SectorCell({
       </div>
     </div>
   );
-}
+});
 
 function getHeatColor(changePct: number): string {
   if (changePct > 1) return "bg-price-up/10";
