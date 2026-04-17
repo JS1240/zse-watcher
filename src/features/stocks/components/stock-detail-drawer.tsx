@@ -136,16 +136,16 @@ function DrawerSkeleton() {
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <Skeleton className="h-6 w-32" />
-        <Skeleton className="h-8 w-48" />
-        <Skeleton className="h-4 w-64" />
+        <Skeleton className="h-6 w-32 animate-shimmer" />
+        <Skeleton className="h-8 w-48 animate-shimmer" />
+        <Skeleton className="h-4 w-64 animate-shimmer" />
       </div>
-      <Skeleton className="h-px w-full" />
-      <Skeleton className="h-[260px] w-full" />
-      <Skeleton className="h-px w-full" />
+      <Skeleton className="h-px w-full animate-shimmer" />
+      <Skeleton className="h-[260px] w-full animate-shimmer" />
+      <Skeleton className="h-px w-full animate-shimmer" />
       <div className="grid grid-cols-2 gap-3">
         {Array.from({ length: 6 }).map((_, i) => (
-          <Skeleton key={i} className="h-10" />
+          <Skeleton key={i} className="h-10 animate-shimmer" />
         ))}
       </div>
     </div>
