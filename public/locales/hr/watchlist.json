@@ -24,6 +24,8 @@
     "volume": "Volumen",
     "turnover": "Promet"
   },
+  "confirmRemove": "Ukloni iz liste praćenja?",
+  "confirmRemoveDescription": "Uklonite {ticker} iz liste praćenja.",
   "toast": {
     "added": "Dionica dodana u listu praćenja",
     "removed": "Dionica uklonjena iz liste praćenja",

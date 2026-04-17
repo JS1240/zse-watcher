@@ -17,6 +17,8 @@ interface EmptyStateProps {
   /** variant 'no-results' shows a prominent action button for clearing filters/search */
   variant?: EmptyStateVariant;
   className?: string;
+  /** Additional class for the icon wrapper div (e.g. 'h-10 w-10') */
+  iconClassName?: string;
 }
 
 const variantClasses: Record<EmptyStateVariant, { container: string; icon: string }> = {
@@ -46,6 +48,7 @@ export function EmptyState({
   action,
   variant = "info",
   className,
+  iconClassName,
 }: EmptyStateProps) {
   return (
     <div className={cn("flex flex-col items-center justify-center py-8 px-4 text-center animate-empty-state", className)}>
@@ -57,7 +60,7 @@ export function EmptyState({
           variantClasses[variant].container,
         )}
       >
-        <div className={cn("transition-transform", variantClasses[variant].icon)}>{icon}</div>
+        <div className={cn("transition-transform", variantClasses[variant].icon, iconClassName)}>{icon}</div>
       </div>
 
       {/* Title */}

@@ -24,6 +24,8 @@
     "volume": "Volume",
     "turnover": "Turnover"
   },
+  "confirmRemove": "Remove from watchlist?",
+  "confirmRemoveDescription": "Remove {ticker} from your watchlist.",
   "toast": {
     "added": "Added to watchlist",
     "removed": "Removed from watchlist",

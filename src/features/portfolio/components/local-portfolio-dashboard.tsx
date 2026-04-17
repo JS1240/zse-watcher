@@ -1,6 +1,6 @@
 import { useState, useMemo, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, Trash2, ChevronDown, ChevronUp, Wallet, Download, Search, X, ArrowUp, ArrowDown, ArrowUpDown, TrendingUp, TrendingDown, Keyboard } from "lucide-react";
+import { Plus, Trash2, ChevronDown, ChevronUp, Download, Search, X, ArrowUp, ArrowDown, ArrowUpDown, TrendingUp, TrendingDown, Keyboard } from "lucide-react";
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { toast } from "sonner";
 import { useLocalTransactions } from "@/features/portfolio/hooks/use-local-transactions";
@@ -12,6 +12,7 @@ import { PortfolioSkeleton } from "@/features/portfolio/components/portfolio-ske
 import { Button } from "@/components/ui/button";
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { EmptyState } from "@/components/shared/empty-state";
+import { PortfolioEmptyIllustration, PortfolioSoldIllustration } from "@/components/shared/empty-illustrations";
 import { formatPrice, formatCurrency } from "@/lib/formatters";
 import { exportToCsv } from "@/lib/export";
 import { cn } from "@/lib/utils";
@@ -453,10 +454,11 @@ export function LocalPortfolioDashboard() {
       ) : (
         <div className="rounded-md border border-border bg-card">
           <EmptyState
-            icon={<Wallet className="h-8 w-8" />}
+            icon={hasLocalTransactions ? <PortfolioSoldIllustration className="h-10 w-10" /> : <PortfolioEmptyIllustration className="h-10 w-10" />}
             title={hasLocalTransactions ? t("emptySold") : t("empty")}
             description={hasLocalTransactions ? t("emptySoldDescription") : t("emptyDescription")}
             action={{ label: t("addPosition"), onClick: () => setShowAddForm(true) }}
+            variant="action"
           />
         </div>
       )}

@@ -14,6 +14,7 @@ import { WatchlistToggle } from "@/features/watchlist/components/watchlist-toggl
 import { WatchlistSkeleton } from "@/features/watchlist/components/watchlist-skeleton";
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { EmptyState } from "@/components/shared/empty-state";
+import { WatchlistEmptyIllustration } from "@/components/shared/empty-illustrations";
 import { ErrorState } from "@/components/shared/error-state";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -358,13 +359,15 @@ function AuthenticatedWatchlist() {
         />
       ) : (
         <EmptyState
-          icon={<Star className="h-8 w-8" />}
+          icon={<WatchlistEmptyIllustration className="h-10 w-10" />}
           title={t("empty")}
           description={t("emptyDescription")}
           action={{ label: t("browseAction"), onClick: () => { window.location.href = "/"; } }}
           hint={t("emptyHint")}
+          variant="action"
         />
       )}
+
     </div>
   );
 }
@@ -771,7 +774,7 @@ function LocalWatchlist() {
         />
       ) : items.length === 0 ? (
         <EmptyState
-          icon={<Star className="h-8 w-8" />}
+          icon={<WatchlistEmptyIllustration className="h-10 w-10" />}
           title={t("empty")}
           description={t("emptyDescription")}
           action={{
@@ -779,6 +782,7 @@ function LocalWatchlist() {
             onClick: () => { window.location.href = "/"; },
           }}
           hint={t("emptyHint")}
+          variant="action"
         />
       ) : (
         <EmptyState
