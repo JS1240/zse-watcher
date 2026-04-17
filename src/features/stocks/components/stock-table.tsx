@@ -4,7 +4,7 @@ import { Search, ArrowUpDown, ArrowUp, ArrowDown, Download, TrendingUp } from "l
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { StockRow } from "@/features/stocks/components/stock-row";
-import { Skeleton } from "@/components/ui/skeleton";
+import { StockTableSkeleton } from "./stock-table-skeleton";
 import { LiveDataIndicator } from "@/components/shared/live-data-indicator";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { usePriceFlash } from "@/hooks/use-price-flash";
@@ -262,15 +262,4 @@ function ColumnHeader({
   );
 }
 
-function StockTableSkeleton() {
-  return (
-    <div className="flex flex-col gap-2">
-      <Skeleton className="h-8 w-full" />
-      <div className="space-y-1">
-        {Array.from({ length: 12 }).map((_, i) => (
-          <Skeleton key={i} className="h-9 w-full" />
-        ))}
-      </div>
-    </div>
-  );
-}
+
