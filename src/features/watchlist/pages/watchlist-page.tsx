@@ -1,6 +1,6 @@
 import { useMemo, useState, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Star, Search, ArrowUp, ArrowDown, ArrowUpDown, GripVertical, Download, X, TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { Star, Search, Keyboard, ArrowUp, ArrowDown, ArrowUpDown, GripVertical, Download, X, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocalWatchlist } from "@/features/watchlist/hooks/use-local-watchlist";
@@ -241,12 +241,18 @@ function AuthenticatedWatchlist() {
             placeholder={tc("actions.search")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-8 pr-8"
+            className="pl-8 pr-14"
           />
+          {!search && watchedStocks.length > 0 && (
+            <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-0.5 rounded bg-muted px-1.5 py-0.5 text-[9px] text-muted-foreground">
+              <Keyboard className="h-2.5 w-2.5" />
+              /
+            </span>
+          )}
           {search && (
             <button
               onClick={handleClearSearch}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              className="absolute right-8 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
               title={tc("actions.clear")}
             >
               <X className="h-3.5 w-3.5" />
@@ -604,12 +610,18 @@ function LocalWatchlist() {
             placeholder={tc("actions.search")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-8 pr-8"
+            className="pl-8 pr-14"
           />
+          {!search && watchedStocks.length > 0 && (
+            <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-0.5 rounded bg-muted px-1.5 py-0.5 text-[9px] text-muted-foreground">
+              <Keyboard className="h-2.5 w-2.5" />
+              /
+            </span>
+          )}
           {search && (
             <button
               onClick={handleClearSearch}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              className="absolute right-8 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
               title={tc("actions.clear")}
             >
               <X className="h-3.5 w-3.5" />
