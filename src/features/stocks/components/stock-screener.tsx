@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Filter, RotateCcw, ArrowUpDown, ArrowUp, ArrowDown, Info, Download, Save, Trash2, Bookmark, Search, ChevronDown, AlertTriangle } from "lucide-react";
+import { Filter, RotateCcw, ArrowUpDown, ArrowUp, ArrowDown, Info, Download, Save, Trash2, Bookmark, Search, ChevronDown, AlertTriangle, X } from "lucide-react";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { Button } from "@/components/ui/button";
@@ -229,6 +229,14 @@ export function StockScreener() {
   const [presets, setPresets] = useLocalStorage<ScreenerPreset[]>("zse-screener-presets", []);
   const [savePresetName, setSavePresetName] = useState("");
   const [showSaveInput, setShowSaveInput] = useState(false);
+  const [presetSearch, setPresetSearch] = useState("");
+
+  // Filter presets by search
+  const filteredPresets = useMemo(() => {
+    if (!presetSearch.trim()) return presets;
+    const q = presetSearch.toLowerCase();
+    return presets.filter((p) => p.name.toLowerCase().includes(q));
+  }, [presets, presetSearch]);
 
   const sectors = useMemo(() => {
     if (!stocks) return [];
@@ -379,8 +387,30 @@ export function StockScreener() {
           <div className="mb-2 flex flex-wrap items-center gap-1">
             {presets.length > 0 && (
               <>
+                {presets.length > 3 && (
+                  <div className="relative">
+                    <Input
+                      value={presetSearch}
+                      onChange={(e) => setPresetSearch(e.target.value)}
+                      placeholder={tc("common:actions.filter") || "Filter..."}
+                      className="h-5 w-20 text-[9px] pl-1.5 pr-5 py-0 transition-all focus:w-32"
+                      onFocus={(e) => e.target.classList.add("w-32")}
+                      onBlur={(e) => {
+                        if (!e.target.value) e.target.classList.remove("w-32");
+                      }}
+                    />
+                    {presetSearch && (
+                      <button
+                        onClick={() => setPresetSearch("")}
+                        className="absolute right-1 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    )}
+                  </div>
+                )}
                 <Bookmark className="h-3 w-3 shrink-0 text-muted-foreground" />
-                {presets.map((p) => (
+                {filteredPresets.map((p) => (
                   <div key={p.id} className="flex items-center gap-0.5 rounded-sm bg-accent/70 px-1.5 py-0.5">
                     <button
                       onClick={() => loadPreset(p)}
@@ -396,6 +426,11 @@ export function StockScreener() {
                     </button>
                   </div>
                 ))}
+                {presetSearch && filteredPresets.length === 0 && (
+                  <span className="text-[10px] text-muted-foreground">
+                    {tc("common:empty.noResults") || "No results"}
+                  </span>
+                )}
               </>
             )}
             {/* Collapse/expand toggle */}
