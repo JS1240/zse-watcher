@@ -45,6 +45,7 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
 
   const [showAddForm, setShowAddForm] = useState(false);
   const [search, setSearch] = useState("");
+  const [searchFocused, setSearchFocused] = useState(false);
 
   // Keyboard shortcut to focus search
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -298,7 +299,9 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
               placeholder={t("searchPlaceholder") || "Search ticker or name..."}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-8 pr-14"
+              onFocus={() => setSearchFocused(true)}
+              onBlur={() => setSearchFocused(false)}
+              className={`pl-8 pr-14 transition-shadow ${searchFocused ? "ring-2 ring-ring ring-offset-1 ring-offset-background" : ""}`}
             />
             {!search && enrichedHoldings.length > 0 && (
               <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-0.5 rounded bg-muted px-1.5 py-0.5 text-[9px] text-muted-foreground">
