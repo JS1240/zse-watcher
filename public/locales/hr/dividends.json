@@ -3,6 +3,15 @@
     "exDiv": "Ex-div",
     "pay": "Isplata"
   },
+  "sort": {
+    "newest": "Najnoviji datum",
+    "oldest": "Najstariji datum",
+    "yieldDesc": "Prinos ↓",
+    "yieldAsc": "Prinos ↑",
+    "amountDesc": "Iznos ↓",
+    "amountAsc": "Iznos ↑"
+  },
+  "sortBy": "Sortiraj",
   "tickers": {
     "HT-R-A": "HT d.d.",
     "ADRS-P-A": "Adris grupa d.d.",

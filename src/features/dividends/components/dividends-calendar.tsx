@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { CalendarDays, Search, ArrowUp, ArrowDown, ArrowUpDown, TrendingUp, Euro, Calendar, Download, ChevronDown, ChevronUp } from "lucide-react";
+import { CalendarDays, Search, Calendar, Download, ChevronDown, ChevronUp } from "lucide-react";
 import { toast } from "sonner";
 import { useDividends } from "@/features/dividends/api/dividends-queries";
 import { DividendsSkeleton } from "./dividends-skeleton";
@@ -127,26 +127,6 @@ export function DividendsCalendar() {
       }));
   }, [sortedDividends]);
 
-  const handleSort = (field: "yield" | "amount" | "exDivDate") => {
-    if (sortField === field) {
-      setSortDir(sortDir === "asc" ? "desc" : "asc");
-    } else {
-      setSortField(field);
-      setSortDir("desc");
-    }
-  };
-
-  const SortIcon = ({ field }: { field: "yield" | "amount" | "exDivDate" }) => {
-    if (sortField !== field) {
-      return <ArrowUpDown className="h-3 w-3 opacity-30" />;
-    }
-    return sortDir === "asc" ? (
-      <ArrowUp className="h-3 w-3" />
-    ) : (
-      <ArrowDown className="h-3 w-3" />
-    );
-  };
-
   if (isLoading) {
     return <DividendsSkeleton rows={3} />;
   }
@@ -265,6 +245,28 @@ export function DividendsCalendar() {
           </div>
         )}
 
+        {/* Sort dropdown */}
+        <select
+          value={`${sortField}-${sortDir}`}
+          onChange={(e) => {
+            const [field, direction] = e.target.value.split("-") as [
+              "yield" | "amount" | "exDivDate",
+              "asc" | "desc",
+            ];
+            setSortField(field);
+            setSortDir(direction);
+          }}
+          className="h-8 rounded-md border border-input bg-background px-2 py-1 text-xs text-foreground"
+          aria-label={t("sortBy") || "Sortiraj"}
+        >
+          <option value="exDivDate-desc">{t("sort.newest") || "Najnoviji datum"}</option>
+          <option value="exDivDate-asc">{t("sort.oldest") || "Najstariji datum"}</option>
+          <option value="yield-desc">{t("sort.yieldDesc") || "Prinos ↓"}</option>
+          <option value="yield-asc">{t("sort.yieldAsc") || "Prinos ↑"}</option>
+          <option value="amount-desc">{t("sort.amountDesc") || "Iznos ↓"}</option>
+          <option value="amount-asc">{t("sort.amountAsc") || "Iznos ↑"}</option>
+        </select>
+
         <Button
           size="sm"
           variant="outline"
@@ -275,47 +277,6 @@ export function DividendsCalendar() {
           <Download className="h-3.5 w-3.5" />
           CSV
         </Button>
-        <div className="flex items-center gap-1">
-          <button
-            onClick={() => handleSort("yield")}
-            className={cn(
-              "flex items-center gap-1 rounded px-2 py-1 text-[10px] uppercase tracking-wider transition-colors",
-              sortField === "yield"
-                ? "bg-primary text-primary-foreground"
-                : "bg-muted text-muted-foreground hover:bg-muted/70"
-            )}
-          >
-            <TrendingUp className="h-3 w-3" />
-            Yield
-            <SortIcon field="yield" />
-          </button>
-          <button
-            onClick={() => handleSort("amount")}
-            className={cn(
-              "flex items-center gap-1 rounded px-2 py-1 text-[10px] uppercase tracking-wider transition-colors",
-              sortField === "amount"
-                ? "bg-primary text-primary-foreground"
-                : "bg-muted text-muted-foreground hover:bg-muted/70"
-            )}
-          >
-            <Euro className="h-3 w-3" />
-            {t("fields.amount")}
-            <SortIcon field="amount" />
-          </button>
-          <button
-            onClick={() => handleSort("exDivDate")}
-            className={cn(
-              "flex items-center gap-1 rounded px-2 py-1 text-[10px] uppercase tracking-wider transition-colors",
-              sortField === "exDivDate"
-                ? "bg-primary text-primary-foreground"
-                : "bg-muted text-muted-foreground hover:bg-muted/70"
-            )}
-          >
-            <Calendar className="h-3 w-3" />
-            {t("fields.date")}
-            <SortIcon field="exDivDate" />
-          </button>
-        </div>
       </div>
 
       {/* Results count */}
