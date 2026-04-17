@@ -274,6 +274,13 @@ function AuthenticatedWatchlist() {
           updatedAt={dataUpdatedAt}
           isFetching={isFetching}
         />
+        {/* Results count badge */}
+        {filtered.length > 0 && (
+          <span className="flex items-center gap-1 rounded-full bg-muted/60 px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+            {filtered.length}
+            <span className="text-[9px]">rezultat{filtered.length !== 1 ? "a" : ""}</span>
+          </span>
+        )}
         <Button
           size="sm"
           variant="outline"
@@ -643,6 +650,13 @@ function LocalWatchlist() {
           updatedAt={dataUpdatedAt}
           isFetching={isFetching}
         />
+        {/* Results count badge */}
+        {filtered.length > 0 && (
+          <span className="flex items-center gap-1 rounded-full bg-muted/60 px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+            {filtered.length}
+            <span className="text-[9px]">rezultat{filtered.length !== 1 ? "a" : ""}</span>
+          </span>
+        )}
         <Button
           size="sm"
           variant="outline"
