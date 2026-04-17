@@ -1,6 +1,6 @@
 import { useMemo, useState, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, Download, Wallet, ChevronUp, ChevronDown, Search, X, Keyboard } from "lucide-react";
+import { Plus, Download, Wallet, ChevronUp, ChevronDown, Search, X, Keyboard, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { Input } from "@/components/ui/input";
 import { useDebounce } from "@/hooks/use-debounce";
@@ -50,6 +50,7 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
 
   const [sortField, setSortField] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+  const [gainFilter, setGainFilter] = useState<"all" | "gainers" | "losers" | "unchanged">("all");
   const debouncedSearch = useDebounce(search, 200);
 
   const holdings = useMemo(() => {
@@ -73,9 +74,20 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
     );
   }, [enrichedHoldings, debouncedSearch]);
 
+  // Filter by gain/loss
+  const filteredByGain = useMemo(() => {
+    if (gainFilter === "all") return filteredHoldings;
+    return filteredHoldings.filter((h) => {
+      if (gainFilter === "gainers") return h.gainPct > 0;
+      if (gainFilter === "losers") return h.gainPct < 0;
+      if (gainFilter === "unchanged") return h.gainPct === 0;
+      return true;
+    });
+  }, [filteredHoldings, gainFilter]);
+
   const sortedHoldings = useMemo(() => {
-    if (!sortField) return filteredHoldings;
-    return [...filteredHoldings].sort((a, b) => {
+    if (!sortField) return filteredByGain;
+    return [...filteredByGain].sort((a, b) => {
       let aVal: number | string;
       let bVal: number | string;
       switch (sortField) {
@@ -261,6 +273,39 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
         </div>
       </div>
 
+      {/* Filter chips */}
+      {enrichedHoldings.length > 0 && (
+        <div className="flex flex-wrap gap-1">
+          <FilterChip
+            active={gainFilter === "all"}
+            onClick={() => setGainFilter("all")}
+            label={t("filters.all") || "Sve"}
+            count={enrichedHoldings.length}
+          />
+          <FilterChip
+            active={gainFilter === "gainers"}
+            onClick={() => setGainFilter("gainers")}
+            label={t("filters.gainers") || "Dobitnici"}
+            icon={<TrendingUp className="h-3 w-3" />}
+            count={enrichedHoldings.filter((h) => h.gainPct > 0).length}
+          />
+          <FilterChip
+            active={gainFilter === "losers"}
+            onClick={() => setGainFilter("losers")}
+            label={t("filters.losers") || "Gubitnici"}
+            icon={<TrendingDown className="h-3 w-3" />}
+            count={enrichedHoldings.filter((h) => h.gainPct < 0).length}
+          />
+          <FilterChip
+            active={gainFilter === "unchanged"}
+            onClick={() => setGainFilter("unchanged")}
+            label={t("filters.unchanged") || "Nepromijenjeno"}
+            icon={<Minus className="h-3 w-3" />}
+            count={enrichedHoldings.filter((h) => h.gainPct === 0).length}
+          />
+        </div>
+      )}
+
       {/* Results count */}
       {enrichedHoldings.length > 0 && (
         <div className="text-[10px] text-muted-foreground">
@@ -359,6 +404,43 @@ interface SortableThProps {
   onSort: (field: string) => void;
   align?: "left" | "right";
   className?: string;
+}
+
+interface FilterChipProps {
+  active: boolean;
+  onClick: () => void;
+  label: string;
+  icon?: React.ReactNode;
+  count?: number;
+}
+
+function FilterChip({ active, onClick, label, icon, count }: FilterChipProps) {
+  return (
+    <button
+      onClick={onClick}
+      className={cn(
+        "flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium transition-colors",
+        active
+          ? "bg-primary text-primary-foreground"
+          : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
+      )}
+    >
+      {icon}
+      {label}
+      {typeof count === "number" && (
+        <span
+          className={cn(
+            "ml-0.5 rounded-full px-1.5 py-0.5 text-[9px] font-semibold",
+            active
+              ? "bg-primary-foreground/20 text-primary-foreground"
+              : "bg-muted-foreground/20 text-muted-foreground"
+          )}
+        >
+          {count}
+        </span>
+      )}
+    </button>
+  );
 }
 
 function SortableTh({ field, label, sortField, sortDir, onSort, align = "left", className }: SortableThProps) {
