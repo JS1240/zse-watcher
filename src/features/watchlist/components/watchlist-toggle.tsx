@@ -1,3 +1,4 @@
+import { memo, useMemo, useCallback } from "react";
 import { Star } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import {
@@ -13,47 +14,57 @@ interface WatchlistToggleProps {
   className?: string;
 }
 
-export function WatchlistToggle({ ticker, className }: WatchlistToggleProps) {
+export const WatchlistToggle = memo(function WatchlistToggle({ ticker, className }: WatchlistToggleProps) {
   const { isAuthenticated } = useAuth();
   const { items: localItems, addItem, removeItem } = useLocalWatchlist();
   const watchlistTickers = useWatchlistTickers();
   const addMutation = useAddToWatchlist();
   const removeMutation = useRemoveFromWatchlist();
 
-  if (isAuthenticated) {
-    return <AuthenticatedToggle
-      ticker={ticker}
-      watchlistTickers={watchlistTickers}
-      addMutation={addMutation}
-      removeMutation={removeMutation}
-      className={className}
-    />;
-  }
-
-  // Guests can use local watchlist too
-  const localTickers = new Set(localItems.map((i) => i.ticker));
-  const isWatched = localTickers.has(ticker);
-
-  const handleToggle = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (isWatched) {
-      removeItem(ticker);
-    } else {
-      addItem(ticker);
+  // Compute isWatched based on auth state - hooks always called
+  const isWatched = useMemo(() => {
+    if (isAuthenticated) {
+      return watchlistTickers.has(ticker);
     }
-  };
+    return localItems.some((item) => item.ticker === ticker);
+  }, [isAuthenticated, watchlistTickers, localItems, ticker]);
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const isPending = useMemo(() => 
+    addMutation.isPending || removeMutation.isPending,
+    [addMutation.isPending, removeMutation.isPending]
+  );
+
+  const handleToggle = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (isPending) return;
+
+    if (isAuthenticated) {
+      if (isWatched) {
+        removeMutation.mutate(ticker);
+      } else {
+        addMutation.mutate(ticker);
+      }
+    } else {
+      if (isWatched) {
+        removeItem(ticker);
+      } else {
+        addItem(ticker);
+      }
+    }
+  }, [isAuthenticated, isWatched, isPending, addMutation, removeMutation, addItem, removeItem, ticker]);
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       handleToggle(e as unknown as React.MouseEvent);
     }
-  };
+  }, [handleToggle]);
 
   return (
     <button
       onClick={handleToggle}
       onKeyDown={handleKeyDown}
+      disabled={isPending}
       aria-label={isWatched ? "Remove from watchlist" : "Add to watchlist"}
       className={cn(
         "rounded-sm p-1 transition-colors hover:bg-accent",
@@ -71,54 +82,4 @@ export function WatchlistToggle({ ticker, className }: WatchlistToggleProps) {
       />
     </button>
   );
-}
-
-function AuthenticatedToggle({
-  ticker,
-  watchlistTickers,
-  addMutation,
-  removeMutation,
-  className,
-}: {
-  ticker: string;
-  watchlistTickers: ReturnType<typeof useWatchlistTickers>;
-  addMutation: ReturnType<typeof useAddToWatchlist>;
-  removeMutation: ReturnType<typeof useRemoveFromWatchlist>;
-  className?: string;
-}) {
-  const isWatched = watchlistTickers.has(ticker);
-  const isPending = addMutation.isPending || removeMutation.isPending;
-
-  const handleToggle = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (isPending) return;
-
-
-    if (isWatched) {
-      removeMutation.mutate(ticker);
-    } else {
-      addMutation.mutate(ticker);
-    }
-  };
-
-  return (
-    <button
-      onClick={handleToggle}
-      disabled={isPending}
-      className={cn(
-        "rounded-sm p-1 transition-colors hover:bg-accent",
-        className,
-      )}
-      title={isWatched ? "Remove from watchlist" : "Add to watchlist"}
-    >
-      <Star
-        className={cn(
-          "h-3.5 w-3.5 transition-colors",
-          isWatched
-            ? "fill-amber text-amber"
-            : "text-muted-foreground hover:text-amber",
-        )}
-      />
-    </button>
-  );
-}
+});
