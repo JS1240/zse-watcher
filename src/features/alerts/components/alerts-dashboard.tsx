@@ -1,6 +1,7 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Bell, BellOff, Pencil, Trash2, X, Check, CheckCircle2, Keyboard, Download, AlertCircle, Search, CircleDot, Pause, TrendingUp, TrendingDown, ArrowUpDown } from "lucide-react";
+import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { toast } from "sonner";
 import { useAlertsData } from "@/features/alerts/hooks/use-alerts-data";
 import { useAlerts, useUpdateAlert } from "@/features/alerts/api/alerts-queries";
@@ -66,6 +67,12 @@ export function AlertsDashboard() {
   const updateAlert = useUpdateAlert();
   const [showForm, setShowForm] = useState(false);
   const [search, setSearch] = useState("");
+
+  // Keyboard shortcut to focus search
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const focusSearch = useCallback(() => searchInputRef.current?.focus(), []);
+  useKeyboardShortcut({ key: "/", handler: focusSearch, enabled: true });
+
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "triggered" | "paused">("all");
   const [conditionFilter, setConditionFilter] = useState<"all" | "price" | "percent">("all");
   const [sort, setSort] = useState<{ column: "ticker" | "createdAt" | "targetValue"; direction: "asc" | "desc" }>({
@@ -175,15 +182,22 @@ export function AlertsDashboard() {
             <div className="relative flex-1">
               <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-muted-foreground" />
               <Input
+                ref={searchInputRef}
                 placeholder={tc("actions.search")}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-8 pr-8"
+                className="pl-8 pr-14"
               />
+              {!search && (
+                <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-0.5 rounded bg-muted px-1.5 py-0.5 text-[9px] text-muted-foreground">
+                  <Keyboard className="h-2.5 w-2.5" />
+                  /
+                </span>
+              )}
               {search && (
                 <button
                   onClick={() => setSearch("")}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  className="absolute right-8 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   title={tc("actions.clear")}
                 >
                   <X className="h-3.5 w-3.5" />

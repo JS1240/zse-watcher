@@ -1,6 +1,7 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, Trash2, ChevronDown, ChevronUp, Wallet, Download, Search, X, ArrowUp, ArrowDown, ArrowUpDown, TrendingUp, TrendingDown } from "lucide-react";
+import { Plus, Trash2, ChevronDown, ChevronUp, Wallet, Download, Search, X, ArrowUp, ArrowDown, ArrowUpDown, TrendingUp, TrendingDown, Keyboard } from "lucide-react";
+import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { toast } from "sonner";
 import { useLocalTransactions } from "@/features/portfolio/hooks/use-local-transactions";
 import { useDebounce } from "@/hooks/use-debounce";
@@ -26,6 +27,12 @@ export function LocalPortfolioDashboard() {
   const { select } = useSelectedStock();
   const [showAddForm, setShowAddForm] = useState(false);
   const [search, setSearch] = useState("");
+
+  // Keyboard shortcut to focus search (matching watchlist pattern)
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const focusSearch = useCallback(() => searchInputRef.current?.focus(), []);
+  useKeyboardShortcut({ key: "/", handler: focusSearch, enabled: true });
+
   const [changeFilter, setChangeFilter] = useState<"all" | "gainers" | "losers" | "unchanged">("all");
   const debouncedSearch = useDebounce(search, 200);
   const [showHistory, setShowHistory] = useState(false);
@@ -142,7 +149,7 @@ export function LocalPortfolioDashboard() {
   }, [enrichedHoldings, debouncedSearch, changeFilter]);
 
   // Sort state for holdings table
-  type SortColumn = "totalShares" | "avgPrice" | "currentPrice" | "totalValue" | "totalGain" | "gainPct";
+  type SortColumn = "name" | "totalShares" | "avgPrice" | "currentPrice" | "totalValue" | "totalGain" | "gainPct";
   const [sort, setSort] = useState<{ column: SortColumn; direction: "asc" | "desc" } | null>(null);
 
   // Apply sorting to holdings
@@ -151,7 +158,16 @@ export function LocalPortfolioDashboard() {
     return [...filteredHoldings].sort((a, b) => {
       const aVal = a[sort.column];
       const bVal = b[sort.column];
-      return sort.direction === "asc" ? aVal - bVal : bVal - aVal;
+      // Handle string columns
+      if (typeof aVal === "string" && typeof bVal === "string") {
+        return sort.direction === "asc"
+          ? aVal.localeCompare(bVal)
+          : bVal.localeCompare(aVal);
+      }
+      // Handle number columns
+      return sort.direction === "asc"
+        ? (aVal as number) - (bVal as number)
+        : (bVal as number) - (aVal as number);
     });
   }, [filteredHoldings, sort]);
 
@@ -289,15 +305,22 @@ export function LocalPortfolioDashboard() {
             <div className="relative">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
               <Input
+                ref={searchInputRef}
                 placeholder={t("searchPlaceholder")}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-32 pl-8 pr-8 py-2.5 text-xs h-9"
+                className="w-32 pl-8 pr-14 py-2.5 text-xs h-9"
               />
+              {!search && (
+                <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-0.5 rounded bg-muted px-1.5 py-0.5 text-[9px] text-muted-foreground">
+                  <Keyboard className="h-2.5 w-2.5" />
+                  /
+                </span>
+              )}
               {search && (
                 <button
                   onClick={() => setSearch("")}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  className="absolute right-8 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   title="Clear"
                 >
                   <X className="h-3.5 w-3.5" />
@@ -374,6 +397,9 @@ export function LocalPortfolioDashboard() {
             <thead>
               <tr className="border-b border-border bg-muted/50 text-[10px] uppercase tracking-wider text-muted-foreground">
                 <th className="px-3 py-2 text-left font-medium">{t("fields.ticker")}</th>
+                <th className="hidden px-3 py-2 text-left font-medium md:table-cell">
+                  <SortHeader column="name" label={t("fields.name") || "Name"} />
+                </th>
                 <th className="px-3 py-2 text-right font-medium">
                   <SortHeader column="totalShares" label={t("fields.shares")} />
                 </th>
