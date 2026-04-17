@@ -172,6 +172,51 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
     toast.success(t("toast.exported"));
   };
 
+  // Export transaction history as CSV for Croatian tax reporting
+  const handleExportTransactions = () => {
+    // Combine Supabase and local transactions - properly map each to common format
+    const supabaseTxs = (portfolioData?.transactions ?? []).map((tx) => ({
+      date: tx.transaction_date,
+      ticker: tx.ticker,
+      type: tx.transaction_type,
+      shares: tx.shares,
+      price: tx.price_per_share,
+      total: tx.total_amount,
+      notes: tx.notes ?? "",
+    }));
+
+    const localTxsFormatted = localTxs.map((tx) => ({
+      date: tx.transactionDate,
+      ticker: tx.ticker,
+      type: tx.transactionType,
+      shares: tx.shares,
+      price: tx.pricePerShare,
+      total: tx.totalAmount,
+      notes: tx.notes ?? "",
+    }));
+
+    const allTransactions = [...supabaseTxs, ...localTxsFormatted].sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+    );
+
+    const headers = ["Date", "Ticker", "Type", "Shares", "Price (EUR)", "Total (EUR)", "Notes"];
+    const rows = allTransactions.map((tx) => [
+      new Date(tx.date).toISOString().split("T")[0],
+      tx.ticker,
+      tx.type,
+      tx.shares.toString(),
+      tx.price.toFixed(2),
+      tx.total.toFixed(2),
+      tx.notes,
+    ]);
+    exportToCsv(
+      `zse-transactions-${new Date().toISOString().split("T")[0]}`,
+      headers,
+      rows,
+    );
+    toast.success(t("toast.exported"));
+  };
+
   if (isLoading) {
     return <PortfolioSkeleton />;
   }
@@ -265,6 +310,15 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
           >
             <Download className="h-3.5 w-3.5" />
             {t("exportCsv")}
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={handleExportTransactions}
+            disabled={!hasLocalTransactions && !(portfolioData?.transactions?.length)}
+          >
+            <Download className="h-3.5 w-3.5" />
+            {t("exportTransactions") || "Transactions"}
           </Button>
           <Button size="sm" id="add-position-btn" onClick={() => setShowAddForm(!showAddForm)}>
             <Plus className="h-3.5 w-3.5" />

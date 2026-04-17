@@ -40,6 +40,7 @@
     "positionAdded": "Position added"
   },
   "exportCsv": "CSV",
+  "exportTransactions": "Transactions",
   "empty": "No positions in portfolio",
   "emptyDescription": "Add your first position to start tracking your holdings and gains.",
   "searchPlaceholder": "Search ticker or name...",
