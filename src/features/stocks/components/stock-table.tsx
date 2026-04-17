@@ -189,6 +189,7 @@ export function StockTable() {
                 key={stock.ticker}
                 stock={stock}
                 flash={flashMap.get(stock.ticker) ?? null}
+                searchQuery={debouncedSearch}
               />
             ))}
           </tbody>

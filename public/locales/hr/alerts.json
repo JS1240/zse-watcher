@@ -56,6 +56,8 @@
     "created": "Alarm stvoren",
     "deleted": "Alarm obrisan",
     "updated": "Alarm azuriran",
+    "activated": "Alarm aktiviran",
+    "paused": "Alarm pauziran",
     "createFailed": "Neuspjelo stvaranje alarma",
     "deleteFailed": "Neuspjelo brisanje alarma",
     "updateFailed": "Neuspjelo azuriranje alarma",

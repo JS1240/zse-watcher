@@ -318,7 +318,11 @@ export function AlertsDashboard() {
               key={alert.id}
               alert={alert}
               onDelete={() => setConfirmDelete(alert.id)}
-              onToggle={() => toggleAlert(alert.id)}
+              onToggle={() => {
+                const wasActive = alert.isActive;
+                toggleAlert(alert.id);
+                toast.success(wasActive ? t("toast.paused") : t("toast.activated"));
+              }}
               onUpdate={async (id, data) => {
                 // Proper update mutation — preserves alert ID and createdAt
                 await updateAlert.mutateAsync({
@@ -536,7 +540,7 @@ function AlertRow({ alert, onDelete, onToggle, onUpdate }: AlertRowProps) {
             <button
               onClick={handleSave}
               disabled={saving}
-              className="rounded-sm p-1 text-muted-foreground hover:bg-accent hover:text-foreground disabled:opacity-50"
+              className="rounded-sm p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               title="Save"
             >
               <Check className="h-3.5 w-3.5" />
@@ -544,7 +548,7 @@ function AlertRow({ alert, onDelete, onToggle, onUpdate }: AlertRowProps) {
             <button
               onClick={handleCancel}
               disabled={saving}
-              className="rounded-sm p-1 text-muted-foreground hover:bg-accent hover:text-foreground"
+              className="rounded-sm p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               title="Cancel"
             >
               <X className="h-3.5 w-3.5" />
@@ -712,7 +716,7 @@ tabIndex={0}
       <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
         <button
           onClick={() => setEditing(true)}
-          className="rounded-sm p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+          className="rounded-sm p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           title="Edit alert (E)"
           aria-label={`Edit ${alert.ticker} alert`}
         >
@@ -720,7 +724,7 @@ tabIndex={0}
         </button>
         <button
           onClick={onDelete}
-          className="rounded-sm p-1 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+          className="rounded-sm p-1.5 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           title={`Delete ${alert.ticker} alert (Del)`}
           aria-label={`Delete ${alert.ticker} alert`}
         >

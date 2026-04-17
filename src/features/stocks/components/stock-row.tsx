@@ -3,19 +3,23 @@ import { cn } from "@/lib/utils";
 import { formatPrice, formatVolume } from "@/lib/formatters";
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { WatchlistToggle } from "@/features/watchlist/components/watchlist-toggle";
+import { Highlight } from "@/components/shared/highlight";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
 import type { Stock } from "@/types/stock";
 
 type FlashDirection = "up" | "down" | null;
 
+
 interface StockRowProps {
   stock: Stock;
   flash?: FlashDirection;
+  /** Search query to highlight matching text */
+  searchQuery?: string;
 }
 
 // Memoize to prevent re-renders when stock data hasn't changed
 // Selection state comes from global store, not props
-const StockRowBase = ({ stock, flash }: StockRowProps) => {
+const StockRowBase = ({ stock, flash, searchQuery }: StockRowProps) => {
   const { selectedTicker, select } = useSelectedStock();
   const isSelected = selectedTicker === stock.ticker;
 
@@ -47,14 +51,16 @@ const StockRowBase = ({ stock, flash }: StockRowProps) => {
         <div className="flex items-center gap-1">
           <WatchlistToggle ticker={stock.ticker} />
           <span className="font-data text-xs font-semibold text-foreground">
-            {stock.ticker}
+            <Highlight text={stock.ticker} highlight={searchQuery ?? ""} />
           </span>
         </div>
       </td>
 
       {/* Name */}
       <td className="hidden px-3 py-2 md:table-cell">
-        <span className="truncate text-xs text-muted-foreground">{stock.name}</span>
+        <span className="truncate text-xs text-muted-foreground">
+          <Highlight text={stock.name} highlight={searchQuery ?? ""} />
+        </span>
       </td>
 
       {/* Price */}

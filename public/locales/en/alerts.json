@@ -56,6 +56,8 @@
     "created": "Alert created",
     "deleted": "Alert deleted",
     "updated": "Alert updated",
+    "activated": "Alert activated",
+    "paused": "Alert paused",
     "createFailed": "Failed to create alert",
     "deleteFailed": "Failed to delete alert",
     "updateFailed": "Failed to update alert",
