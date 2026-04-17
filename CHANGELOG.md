@@ -8,6 +8,7 @@
   - WatchlistEmptyIllustration: stock chart trending up with star accent
   - PortfolioEmptyIllustration: bar chart portfolio-building metaphor
   - PortfolioSoldIllustration: empty bag with X for sold-out state
+  - SearchEmptyIllustration: magnifying glass with question mark for no-search-results
   - AnalyticsEmptyIllustration: pie chart + bars for empty analytics
   - EmptyState variant changed to 'action' for better CTA prominence
   - iconClassName prop added to EmptyState for precise sizing

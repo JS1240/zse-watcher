@@ -111,6 +111,53 @@ export function PortfolioSoldIllustration({ className }: { className?: string })
   );
 }
 
+/** Magnifying glass illustration for no search results */
+export function SearchEmptyIllustration({ className }: { className?: string }): ReactNode {
+  return (
+    <svg
+      viewBox="0 0 80 80"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      aria-hidden="true"
+    >
+      {/* Background circle */}
+      <circle cx="40" cy="40" r="36" className="fill-muted/40" />
+      {/* Magnifying glass handle */}
+      <path
+        d="M54 54 L64 64"
+        stroke="currentColor"
+        strokeWidth="3"
+        strokeLinecap="round"
+        className="stroke-muted-foreground"
+      />
+      {/* Magnifying glass rim */}
+      <circle
+        cx="36"
+        cy="36"
+        r="16"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="3"
+        className="stroke-muted-foreground"
+      />
+      {/* Question mark inside - indicating not found */}
+      <text
+        x="36"
+        y="42"
+        textAnchor="middle"
+        fontSize="20"
+        fontWeight="700"
+        fontFamily="system-ui"
+        className="fill-muted-foreground"
+        style={{ fontFamily: 'var(--font-data), ui-monospace, monospace' }}
+      >
+        ?
+      </text>
+    </svg>
+  );
+}
+
 /** Pie chart illustration for portfolio analytics empty state */
 export function AnalyticsEmptyIllustration({ className }: { className?: string }): ReactNode {
   return (
