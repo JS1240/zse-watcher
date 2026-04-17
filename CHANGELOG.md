@@ -4,6 +4,17 @@
 
 ### Added
 
+- **Custom SVG Illustrations for Empty States** — replace generic icons with purpose-built SVGs for Croatian retail investors
+  - WatchlistEmptyIllustration: stock chart trending up with star accent
+  - PortfolioEmptyIllustration: bar chart portfolio-building metaphor
+  - PortfolioSoldIllustration: empty bag with X for sold-out state
+  - AnalyticsEmptyIllustration: pie chart + bars for empty analytics
+  - EmptyState variant changed to 'action' for better CTA prominence
+  - iconClassName prop added to EmptyState for precise sizing
+  - Missing confirmRemove translations added to watchlist locales (HR + EN)
+
+### Added
+
 - **Keyboard Navigation for Stock Table Headers** — sort columns with keyboard for Croatian investors
   - Added onKeyDown handler for Enter/Space to sort table columns
   - Added tabIndex=0 and role=columnheader for accessibility
