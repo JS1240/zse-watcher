@@ -25,9 +25,9 @@ export function ErrorState({
   className,
 }: ErrorStateProps) {
   return (
-    <div className={cn("flex flex-col items-center justify-center py-8 px-4 text-center", className)}>
+    <div className={cn("flex flex-col items-center justify-center py-8 px-4 text-center animate-empty-state", className)}>
       {/* Icon container */}
-      <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl ring-1 bg-red-500/5 ring-red-500/20">
+      <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl ring-1 bg-red-500/5 ring-red-500/20 animate-empty-icon">
         <AlertCircle className="h-7 w-7 text-red-500" />
       </div>
 
