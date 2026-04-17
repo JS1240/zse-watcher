@@ -21,6 +21,7 @@ import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 
 export function LocalPortfolioDashboard() {
   const { t } = useTranslation("portfolio");
+  const { t: tc } = useTranslation("common");
   const { transactions, hasLocalTransactions, removeTransaction, clearTransactions } =
     useLocalTransactions();
   const { data: stocksResult, isLoading: isStocksLoading } = useStocksLive();
@@ -35,6 +36,7 @@ export function LocalPortfolioDashboard() {
   useKeyboardShortcut({ key: "/", handler: focusSearch, enabled: true });
 
   const [changeFilter, setChangeFilter] = useState<"all" | "gainers" | "losers" | "unchanged">("all");
+  const [sectorFilter, setSectorFilter] = useState<string | null>(null);
   const debouncedSearch = useDebounce(search, 200);
   const [showHistory, setShowHistory] = useState(false);
   const [savedFlash, setSavedFlash] = useState(false);
@@ -123,6 +125,7 @@ export function LocalPortfolioDashboard() {
           totalGain,
           gainPct,
           name: h.name,
+          sector: stock?.sector ?? "N/A",
         };
       });
   }, [holdingsMap, stocks]);
@@ -149,6 +152,27 @@ export function LocalPortfolioDashboard() {
     return result;
   }, [enrichedHoldings, debouncedSearch, changeFilter]);
 
+  // Compute unique sectors from holdings
+  const availableSectors = useMemo(() => {
+    const sectors = new Set(enrichedHoldings.map((h) => h.sector).filter(Boolean));
+    return Array.from(sectors).sort();
+  }, [enrichedHoldings]);
+
+  // Apply sector filter
+  const filteredBySector = useMemo(() => {
+    if (!sectorFilter) return filteredHoldings;
+    return filteredHoldings.filter((h) => h.sector === sectorFilter);
+  }, [filteredHoldings, sectorFilter]);
+
+  // Active filter count
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (debouncedSearch) count++;
+    if (sectorFilter) count++;
+    if (changeFilter !== "all") count++;
+    return count;
+  }, [debouncedSearch, sectorFilter, changeFilter]);
+
   // Sort state for holdings table
   type SortColumn = "name" | "totalShares" | "avgPrice" | "currentPrice" | "totalValue" | "totalGain" | "gainPct";
   const [sort, setSort] = useState<{ column: SortColumn; direction: "asc" | "desc" } | null>(null);
@@ -170,7 +194,7 @@ export function LocalPortfolioDashboard() {
         ? (aVal as number) - (bVal as number)
         : (bVal as number) - (aVal as number);
     });
-  }, [filteredHoldings, sort]);
+  }, [filteredBySector, sort]);
 
   const handleSort = (column: SortColumn) => {
     setSort((prev) => {
@@ -367,6 +391,42 @@ export function LocalPortfolioDashboard() {
                 <span className="hidden sm:inline">-</span>
               </button>
             </div>
+            {/* Active filters badge */}
+            {activeFilterCount > 0 && (
+              <button
+                onClick={() => {
+                  setSearch("");
+                  setChangeFilter("all");
+                  setSectorFilter(null);
+                }}
+                className="flex items-center gap-1 rounded-full bg-destructive px-2.5 py-1.5 text-[10px] font-semibold text-destructive-foreground shadow-sm transition-colors hover:bg-destructive/90"
+                title={tc("actions.clear")}
+                aria-label={`${activeFilterCount} ${tc("actions.clear")}`}
+              >
+                {activeFilterCount}
+                <X className="h-3 w-3" />
+              </button>
+            )}
+            {/* Sector filter dropdown */}
+            {availableSectors.length > 0 && (
+              <select
+                value={sectorFilter ?? ""}
+                onChange={(e) => setSectorFilter(e.target.value || null)}
+                className={cn(
+                  "rounded-full px-2.5 py-1 text-[10px] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
+                  sectorFilter
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "bg-muted/60 text-muted-foreground hover:bg-muted"
+                )}
+              >
+                <option value="">{t("filters.allSectors")}</option>
+                {availableSectors.map((sector) => (
+                  <option key={sector} value={sector}>
+                    {sector}
+                  </option>
+                ))}
+              </select>
+            )}
             <Button size="sm" variant="outline" onClick={handleExportCsv}>
               <Download className="h-3.5 w-3.5" />
               CSV
