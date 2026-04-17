@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Newspaper } from "lucide-react";
+import { Newspaper, HelpCircle } from "lucide-react";
 import { useNews } from "@/features/news/api/news-queries";
 import { ArticleDrawer } from "@/features/news/components/article-drawer";
 import { EmptyState } from "@/components/shared/empty-state";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { formatPrice, formatMarketCap } from "@/lib/formatters";
 import { formatDate } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
@@ -48,14 +49,17 @@ export function StockFundamentals({ stock }: StockFundamentalsProps) {
           <MetricItem
             label={t("detail.marketCap")}
             value={stock.marketCapM > 0 ? formatMarketCap(stock.marketCapM) : "N/A"}
+            tooltip={t("detail.marketCapTooltip")}
           />
           <MetricItem
             label={t("detail.pe")}
             value={stock.peRatio !== null ? stock.peRatio.toFixed(1) : "N/A"}
+            tooltip={t("detail.peTooltip")}
           />
           <MetricItem
             label={t("detail.dividendYield")}
             value={stock.dividendYield !== null ? `${stock.dividendYield.toFixed(2)}%` : "N/A"}
+            tooltip={t("detail.dividendYieldTooltip")}
           />
           <MetricItem
             label={t("detail.shares")}
@@ -147,11 +151,39 @@ function MetricItem({
   label,
   value,
   mono,
+  tooltip,
 }: {
   label: string;
   value: string;
   mono?: boolean;
+  tooltip?: string;
 }) {
+  if (tooltip) {
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div className="cursor-help">
+            <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+              {label}
+              <HelpCircle className="h-3 w-3 text-muted-foreground/50" />
+            </span>
+            <div
+              className={cn(
+                "text-xs font-medium text-foreground",
+                mono && "font-data",
+              )}
+            >
+              {value}
+            </div>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="top" className="max-w-xs">
+          <p>{tooltip}</p>
+        </TooltipContent>
+      </Tooltip>
+    );
+  }
+
   return (
     <div>
       <span className="text-[10px] text-muted-foreground">{label}</span>
