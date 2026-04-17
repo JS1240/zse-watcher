@@ -3,12 +3,14 @@ import { useForm } from "react-hook-form";
 import { z } from "zod/v4";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
-import { X, Keyboard, AlertCircle, CheckCircle2 } from "lucide-react";
+import { X, Keyboard, AlertCircle, CheckCircle2, TrendingUp } from "lucide-react";
 import { useCreateAlert } from "@/features/alerts/api/alerts-queries";
+import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TickerSelect } from "@/components/shared/ticker-select";
 import { normalizeNumberInput, formatInputNumber, parseLocalizedNumber } from "@/lib/format-input";
+import { formatPrice } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import { useDebounce } from "@/hooks/use-debounce";
 import type { AlertCondition } from "@/types/alert";
@@ -35,6 +37,8 @@ interface AlertFormProps {
 export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps) {
   const { t } = useTranslation("alerts");
   const createAlert = useCreateAlert();
+  const { data: stocksResult } = useStocksLive();
+  const stocks = useMemo(() => stocksResult?.stocks ?? [], [stocksResult]);
 
   const {
     register,
@@ -54,6 +58,22 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
   const conditionValue = watch("condition");
   const targetInputValue = watch("targetValue");
   const isPercentCondition = conditionValue?.includes("percent");
+
+  // Get current price for selected ticker (moved after form values are defined)
+  const currentPrice = useMemo(() => {
+    if (!tickerValue) return null;
+    const stock = stocks.find((s) => s.ticker.toUpperCase() === tickerValue.toUpperCase());
+    return stock?.price ?? null;
+  }, [tickerValue, stocks]);
+
+  // Suggested target based on current price (5% bump for quick setting)
+  const suggestedTarget = useMemo(() => {
+    if (!currentPrice || !conditionValue) return null;
+    const isPercent = conditionValue.includes("percent");
+    if (isPercent) return "+5.00%";
+    const bump = conditionValue === "above" || conditionValue === "percent_change_up" ? currentPrice * 1.05 : currentPrice * 0.95;
+    return formatPrice(bump).replace("EUR", "").trim();
+  }, [currentPrice, conditionValue]);
 
   // Focus state for validation timing
   const [focused, setFocused] = useState({ ticker: false, target: false });
@@ -149,6 +169,27 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
             <p className="mt-1.5 flex items-center gap-1.5 rounded-md bg-destructive/10 px-2.5 py-1.5 text-xs font-medium text-destructive">
               <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
               {translateError(errors.ticker?.message, t) || t("validation.selectTicker")}
+            </p>
+          ) : isTickerValid && currentPrice ? (
+            <p className="mt-1.5 flex items-center gap-1.5 rounded-md bg-emerald-500/10 px-2.5 py-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-400">
+              <TrendingUp className="h-3.5 w-3.5 flex-shrink-0" />
+              <span>{formatPrice(currentPrice)}</span>
+              {suggestedTarget && (
+                <span className="text-muted-foreground">·</span>
+              )}
+              {suggestedTarget && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const clean = suggestedTarget.replace("%", "").replace("+", "");
+                    setValue("targetValue", clean, { shouldValidate: true });
+                    setTouched((prev) => ({ ...prev, target: true }));
+                  }}
+                  className="ml-auto underline hover:no-underline"
+                >
+                  {t("useSuggested") || `Koristi ${suggestedTarget}`}
+                </button>
+              )}
             </p>
           ) : isTickerValid ? (
             <p className="mt-1.5 flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400">
