@@ -245,6 +245,13 @@ function ColumnHeader({
         : "descending"
       : "none";
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onClick(field);
+    }
+  };
+
   return (
     <th
       aria-sort={sortDirection}
@@ -253,6 +260,9 @@ function ColumnHeader({
       <button
         className="inline-flex items-center gap-1"
         onClick={() => onClick(field)}
+        onKeyDown={handleKeyDown}
+        tabIndex={0}
+        role="columnheader"
         aria-label={`${label}: ${sortDirection === "none" ? "unsorted" : sortDirection + ","} click to sort`}
       >
         {label}
