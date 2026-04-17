@@ -231,6 +231,9 @@ function AuthenticatedWatchlist() {
     setSectorFilter(null);
   };
 
+  // Track focus for search input accessibility
+  const [searchFocused, setSearchFocused] = useState(false);
+
   return (
     <div className="flex flex-col gap-3">
       {/* Search + filters badge + CSV */}
@@ -241,7 +244,9 @@ function AuthenticatedWatchlist() {
             placeholder={tc("actions.search")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-8 pr-14"
+            onFocus={() => setSearchFocused(true)}
+            onBlur={() => setSearchFocused(false)}
+            className={`pl-8 pr-14 transition-shadow ${searchFocused ? "ring-2 ring-ring ring-offset-1 ring-offset-background" : ""}`}
           />
           {!search && watchedStocks.length > 0 && (
             <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-0.5 rounded bg-muted px-1.5 py-0.5 text-[9px] text-muted-foreground">
@@ -252,10 +257,11 @@ function AuthenticatedWatchlist() {
           {search && (
             <button
               onClick={handleClearSearch}
-              className="absolute right-8 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              className="absolute right-8 top-1/2 -translate-y-1/2 flex h-6 w-6 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
               title={tc("actions.clear")}
+              aria-label={tc("actions.clear")}
             >
-              <X className="h-3.5 w-3.5" />
+              <X className="h-4 w-4" />
             </button>
           )}
         </div>
@@ -263,8 +269,9 @@ function AuthenticatedWatchlist() {
         {activeFilterCount > 0 && (
           <button
             onClick={handleClearFilters}
-            className="flex items-center gap-1 rounded-full bg-primary px-2 py-1 text-[10px] font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-destructive"
+            className="flex items-center gap-1 rounded-full bg-primary px-2.5 py-1.5 text-[10px] font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-destructive"
             title={tc("actions.clear")}
+            aria-label={`${activeFilterCount} ${tc("actions.clear")}`}
           >
             {activeFilterCount}
             <X className="h-3 w-3" />
@@ -598,6 +605,9 @@ function LocalWatchlist() {
     setSectorFilter(null);
   };
 
+  // Track focus for search input accessibility
+  const [searchFocused, setSearchFocused] = useState(false);
+
   // Count active filters for badge
   const activeFilterCount = useMemo(() => {
     let count = 0;
@@ -617,7 +627,9 @@ function LocalWatchlist() {
             placeholder={tc("actions.search")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-8 pr-14"
+            onFocus={() => setSearchFocused(true)}
+            onBlur={() => setSearchFocused(false)}
+            className={`pl-8 pr-14 transition-shadow ${searchFocused ? "ring-2 ring-ring ring-offset-1 ring-offset-background" : ""}`}
           />
           {!search && watchedStocks.length > 0 && (
             <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-0.5 rounded bg-muted px-1.5 py-0.5 text-[9px] text-muted-foreground">
@@ -628,10 +640,11 @@ function LocalWatchlist() {
           {search && (
             <button
               onClick={handleClearSearch}
-              className="absolute right-8 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              className="absolute right-8 top-1/2 -translate-y-1/2 flex h-6 w-6 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
               title={tc("actions.clear")}
+              aria-label={tc("actions.clear")}
             >
-              <X className="h-3.5 w-3.5" />
+              <X className="h-4 w-4" />
             </button>
           )}
         </div>
@@ -639,8 +652,9 @@ function LocalWatchlist() {
         {activeFilterCount > 0 && (
           <button
             onClick={handleClearFilters}
-            className="flex items-center gap-1 rounded-full bg-primary px-2 py-1 text-[10px] font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-destructive"
+            className="flex items-center gap-1 rounded-full bg-primary px-2.5 py-1.5 text-[10px] font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-destructive"
             title={tc("actions.clear")}
+            aria-label={`${activeFilterCount} ${tc("actions.clear")}`}
           >
             {activeFilterCount}
             <X className="h-3 w-3" />
