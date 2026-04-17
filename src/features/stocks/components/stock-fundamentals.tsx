@@ -64,15 +64,18 @@ export function StockFundamentals({ stock }: StockFundamentalsProps) {
           <MetricItem
             label={t("detail.shares")}
             value={stock.sharesM > 0 ? `${stock.sharesM.toFixed(1)}M` : "N/A"}
+            tooltip={t("detail.sharesTooltip")}
           />
           <MetricItem
             label={t("detail.founded")}
             value={stock.founded || "N/A"}
+            tooltip={t("detail.foundedTooltip")}
           />
           <MetricItem
             label={t("detail.isin")}
             value={stock.isin}
             mono
+            tooltip={t("detail.isinTooltip")}
           />
         </div>
 

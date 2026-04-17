@@ -24,9 +24,12 @@
     "high52w": "52W High",
     "low52w": "52W Low",
     "shares": "Shares Outstanding",
+    "sharesTooltip": "Total number of issued shares in millions.",
     "founded": "Founded",
+    "foundedTooltip": "Year of company founding or first stock exchange listing.",
     "website": "Website",
-    "isin": "ISIN"
+    "isin": "ISIN",
+    "isinTooltip": "International Securities Identification Number — unique identifier for securities."
   },
   "chart": {
     "noData": "No chart data available",

@@ -24,9 +24,12 @@
     "high52w": "Najvisa (52t)",
     "low52w": "Najniza (52t)",
     "shares": "Broj dionica",
+    "sharesTooltip": "Ukupan broj izdanih dionica u milijunima.",
     "founded": "Osnovan",
+    "foundedTooltip": "Godina osnivanja ili prvo uvrštenje dionice na burzu.",
     "website": "Web stranica",
-    "isin": "ISIN"
+    "isin": "ISIN",
+    "isinTooltip": "Međunarodni identifikacijski broj vrijednosnih papira (International Securities Identification Number)."
   },
   "chart": {
     "noData": "Nema podataka za graf"
