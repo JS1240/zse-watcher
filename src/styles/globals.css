@@ -43,23 +43,23 @@ body {
   animation: flash-red 0.8s ease-out;
 }
 
-/* Custom scrollbar for Bloomberg aesthetic */
+/* Custom scrollbar using theme variables */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: var(--scrollbar-track, transparent);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: hsl(220 8% 25%);
+  background: var(--scrollbar-thumb, hsl(220 8% 25%));
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: hsl(220 8% 35%);
+  background: var(--scrollbar-thumb-hover, hsl(220 8% 35%));
 }
 
 /* Drawer slide animation */
