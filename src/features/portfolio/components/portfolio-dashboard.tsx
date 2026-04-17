@@ -26,7 +26,10 @@ interface EnrichedHolding extends Holding {
   totalGain: number;
   gainPct: number;
   name: string;
+  sector: string;
 }
+
+type SectorFilter = string | null;
 
 interface PortfolioDashboardProps {
   isLocal?: boolean;
@@ -51,6 +54,7 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
   const [sortField, setSortField] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [gainFilter, setGainFilter] = useState<"all" | "gainers" | "losers" | "unchanged">("all");
+  const [sectorFilter, setSectorFilter] = useState<SectorFilter>(null);
   const debouncedSearch = useDebounce(search, 200);
 
   const holdings = useMemo(() => {
@@ -63,6 +67,12 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
     [holdings, stocks],
   );
 
+  // Compute unique sectors from holdings
+  const availableSectors = useMemo(() => {
+    const sectors = new Set(enrichedHoldings.map((h) => h.sector).filter(Boolean));
+    return Array.from(sectors).sort();
+  }, [enrichedHoldings]);
+
   // Filter by search term
   const filteredHoldings = useMemo(() => {
     if (!debouncedSearch) return enrichedHoldings;
@@ -74,16 +84,22 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
     );
   }, [enrichedHoldings, debouncedSearch]);
 
+  // Filter by sector
+  const filteredBySector = useMemo(() => {
+    if (!sectorFilter) return filteredHoldings;
+    return filteredHoldings.filter((h) => h.sector === sectorFilter);
+  }, [filteredHoldings, sectorFilter]);
+
   // Filter by gain/loss
   const filteredByGain = useMemo(() => {
-    if (gainFilter === "all") return filteredHoldings;
-    return filteredHoldings.filter((h) => {
+    if (gainFilter === "all") return filteredBySector;
+    return filteredBySector.filter((h) => {
       if (gainFilter === "gainers") return h.gainPct > 0;
       if (gainFilter === "losers") return h.gainPct < 0;
       if (gainFilter === "unchanged") return h.gainPct === 0;
       return true;
     });
-  }, [filteredHoldings, gainFilter]);
+  }, [filteredBySector, gainFilter]);
 
   const sortedHoldings = useMemo(() => {
     if (!sortField) return filteredByGain;
@@ -357,6 +373,26 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
             icon={<Minus className="h-3 w-3" />}
             count={enrichedHoldings.filter((h) => h.gainPct === 0).length}
           />
+          {/* Sector filter dropdown */}
+          {availableSectors.length > 0 && (
+            <select
+              value={sectorFilter ?? ""}
+              onChange={(e) => setSectorFilter(e.target.value || null)}
+              className={cn(
+                "rounded-full px-2.5 py-1 text-[10px] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
+                sectorFilter
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "bg-muted text-muted-foreground hover:bg-muted",
+              )}
+            >
+              <option value="">{t("filters.allSectors") || "Svi sektori"}</option>
+              {availableSectors.map((sector) => (
+                <option key={sector} value={sector}>
+                  {sector}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
       )}
 
@@ -520,7 +556,7 @@ function SortableTh({ field, label, sortField, sortDir, onSort, align = "left", 
 
 function computeEnrichedHoldings(
   holdings: Holding[],
-  stocks: Array<{ ticker: string; price: number; name: string }> | null,
+  stocks: Array<{ ticker: string; price: number; name: string; sector: string }> | null,
 ): EnrichedHolding[] {
   return holdings.map((h) => {
     const stock = stocks?.find((s) => s.ticker === h.ticker);
@@ -529,7 +565,7 @@ function computeEnrichedHoldings(
     const totalGain = totalValue - h.totalCost;
     const gainPct = h.totalCost > 0 ? (totalGain / h.totalCost) * 100 : 0;
 
-    return { ...h, currentPrice, totalValue, totalGain, gainPct, name: stock?.name ?? h.ticker };
+    return { ...h, currentPrice, totalValue, totalGain, gainPct, name: stock?.name ?? h.ticker, sector: stock?.sector ?? "N/A" };
   });
 }
 
