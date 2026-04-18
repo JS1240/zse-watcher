@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { X, Info, Keyboard } from "lucide-react";
+import { X, Info, Keyboard, RefreshCw } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useStockDetail } from "@/features/stocks/api/stock-detail-queries";
 import { useRecentStocks } from "@/hooks/use-recent-stocks";
@@ -10,6 +10,7 @@ import { HistoryChart } from "@/features/charts/components/history-chart";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface StockDetailDrawerProps {
@@ -19,7 +20,8 @@ interface StockDetailDrawerProps {
 
 export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
   const { t } = useTranslation("stocks");
-  const { data: result, isLoading } = useStockDetail(ticker);
+  const { t: tc } = useTranslation("common");
+  const { data: result, isLoading, isError, refetch } = useStockDetail(ticker);
   const stock = result?.stock ?? null;
   const isMockData = result?.isMockData ?? false;
   const { addRecentStock } = useRecentStocks();
@@ -99,6 +101,22 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
           <div className="space-y-4 p-4">
             {isLoading || !stock ? (
               <DrawerSkeleton />
+            ) : isError ? (
+              <div className="flex flex-col items-center justify-center gap-4 py-8 text-center">
+                <div className="flex items-center gap-2 rounded-md border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                  <Info className="h-4 w-4" />
+                  <span>{tc("errors.network")}</span>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => refetch()}
+                  className="gap-2"
+                >
+                  <RefreshCw className="h-3.5 w-3.5" />
+                  {tc("errors.tryAgain")}
+                </Button>
+              </div>
             ) : (
               <>
                 {isMockData && (

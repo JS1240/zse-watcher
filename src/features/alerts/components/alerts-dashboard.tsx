@@ -5,6 +5,7 @@ import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { toast } from "sonner";
 import { useAlertsData } from "@/features/alerts/hooks/use-alerts-data";
 import { useAlerts, useUpdateAlert } from "@/features/alerts/api/alerts-queries";
+import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { AlertForm } from "@/features/alerts/components/alert-form";
 import { Button } from "@/components/ui/button";
 
@@ -65,6 +66,8 @@ export function AlertsDashboard() {
   const { alerts, isLoading, deleteAlert, toggleAlert } = useAlertsData();
   const { isError, refetch } = useAlerts();
   const updateAlert = useUpdateAlert();
+  const { data: stocksResult } = useStocksLive();
+  const stocks = useMemo(() => stocksResult?.stocks ?? [], [stocksResult]);
   const [showForm, setShowForm] = useState(false);
   const [search, setSearch] = useState("");
 
@@ -317,6 +320,7 @@ export function AlertsDashboard() {
             <AlertRow
               key={alert.id}
               alert={alert}
+              stocks={stocks}
               onDelete={() => setConfirmDelete(alert.id)}
               onToggle={() => {
                 const wasActive = alert.isActive;
@@ -394,9 +398,10 @@ interface AlertRowProps {
     id: string,
     data: { ticker: string; condition: AlertCondition; targetValue: number },
   ) => Promise<void>;
+  stocks?: { ticker: string; name: string; price: number | null }[];
 }
 
-function AlertRow({ alert, onDelete, onToggle, onUpdate }: AlertRowProps) {
+function AlertRow({ alert, onDelete, onToggle, onUpdate, stocks }: AlertRowProps) {
   const { t } = useTranslation("alerts");
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -446,8 +451,20 @@ function AlertRow({ alert, onDelete, onToggle, onUpdate }: AlertRowProps) {
   // Real-time validation logic (matching AlertForm pattern)
   const isEditTickerValid = useMemo(() => {
     if (!editTicker) return false;
+    if (!/^[A-Z0-9_-]{3,10}$/i.test(editTicker)) return false;
+    // Check if ticker exists in stocks list (passed from parent)
+    if (!stocks) return false;
+    return stocks.some((s) => s.ticker.toUpperCase() === editTicker.toUpperCase());
+  }, [editTicker, stocks]);
+
+  const isEditTickerFormatValid = useMemo(() => {
+    if (!editTicker) return false;
     return /^[A-Z0-9_-]{3,10}$/i.test(editTicker);
   }, [editTicker]);
+
+  const showEditTickerNotFound = useMemo(() => {
+    return isEditTickerFormatValid && !isEditTickerValid && editTicker.length >= 3;
+  }, [isEditTickerFormatValid, isEditTickerValid, editTicker]);
 
   const isEditTargetValid = useMemo(() => {
     if (!editTarget) return false;
@@ -578,6 +595,11 @@ function AlertRow({ alert, onDelete, onToggle, onUpdate }: AlertRowProps) {
               <p className="mt-1.5 flex items-center gap-1.5 rounded-md bg-destructive/10 px-2.5 py-1.5 text-xs font-medium text-destructive">
                 <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
                 {t("validation.selectTicker")}
+              </p>
+            ) : showEditTickerNotFound ? (
+              <p className="mt-1.5 flex items-center gap-1.5 rounded-md bg-amber-500/10 px-2.5 py-1.5 text-xs font-medium text-amber-600 dark:text-amber-400">
+                <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
+                {t("tickerNotFound")}
               </p>
             ) : isEditTickerValid ? (
               <p className="mt-1.5 flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400">

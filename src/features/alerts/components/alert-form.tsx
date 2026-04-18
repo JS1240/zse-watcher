@@ -86,8 +86,20 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
   const isTickerValid = useMemo(() => {
     if (!tickerValue) return false;
     // Valid ticker: 3-10 chars, alphanumeric with optional - and _
+    if (!/^[A-Z0-9_-]{3,10}$/i.test(tickerValue)) return false;
+    // Check if ticker exists in stocks list
+    return stocks.some((s) => s.ticker.toUpperCase() === tickerValue.toUpperCase());
+  }, [tickerValue, stocks]);
+
+  // Track if ticker format is valid but not found in list
+  const isTickerFormatValid = useMemo(() => {
+    if (!tickerValue) return false;
     return /^[A-Z0-9_-]{3,10}$/i.test(tickerValue);
   }, [tickerValue]);
+
+  const showTickerNotFound = useMemo(() => {
+    return isTickerFormatValid && !isTickerValid && tickerValue.length >= 3;
+  }, [isTickerFormatValid, isTickerValid, tickerValue]);
 
   const isTargetValid = useMemo(() => {
     if (!debouncedTarget) return false;
@@ -98,6 +110,11 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
   // Show errors: field was touched AND (has error OR valid check failed when not focused)
   const showTickerError = touched.ticker && (errors.ticker || (tickerValue && !isTickerValid));
   const showTargetError = touched.target && (errors.targetValue || (debouncedTarget && !isTargetValid));
+
+  // Combined ticker error message
+  const tickerErrorMessage = showTickerNotFound
+    ? t("tickerNotFound")
+    : translateError(errors.ticker?.message, t) || t("validation.selectTicker");
 
   // Keyboard hint based on condition
   const keyboardHint = isPercentCondition
@@ -168,7 +185,12 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
           {showTickerError ? (
             <p className="mt-1.5 flex items-center gap-1.5 rounded-md bg-destructive/10 px-2.5 py-1.5 text-xs font-medium text-destructive">
               <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
-              {translateError(errors.ticker?.message, t) || t("validation.selectTicker")}
+              {tickerErrorMessage}
+            </p>
+          ) : showTickerNotFound ? (
+            <p className="mt-1.5 flex items-center gap-1.5 rounded-md bg-amber-500/10 px-2.5 py-1.5 text-xs font-medium text-amber-600 dark:text-amber-400">
+              <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
+              {tickerErrorMessage}
             </p>
           ) : isTickerValid && currentPrice ? (
             <p className="mt-1.5 flex items-center gap-1.5 rounded-md bg-emerald-500/10 px-2.5 py-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-400">
