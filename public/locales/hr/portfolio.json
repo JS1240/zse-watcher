@@ -12,7 +12,10 @@
     "tickerAsc": "Oznaka A-Z",
     "tickerDesc": "Oznaka Z-A",
     "valueDesc": "Vrijednost ↓",
-    "valueAsc": "Vrijednost ↑"
+    "valueAsc": "Vrijednost ↑",
+    "gainPctDesc": "Dobitak % ↓",
+    "gainPctAsc": "Dobitak % ↑",
+    "label": "Sortiraj"
   },
   "filters": {
     "all": "Sve",

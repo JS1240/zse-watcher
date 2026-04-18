@@ -12,7 +12,10 @@
     "tickerAsc": "Ticker A-Z",
     "tickerDesc": "Ticker Z-A",
     "valueDesc": "Value ↓",
-    "valueAsc": "Value ↑"
+    "valueAsc": "Value ↑",
+    "gainPctDesc": "Gain % ↓",
+    "gainPctAsc": "Gain % ↑",
+    "label": "Sort"
   },
   "filters": {
     "all": "All",

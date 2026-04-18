@@ -538,6 +538,12 @@ function FilterChip({ active, onClick, label, icon, count }: FilterChipProps) {
 
 function SortableTh({ field, label, sortField, sortDir, onSort, align = "left", className }: SortableThProps) {
   const isActive = sortField === field;
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onSort(field);
+    }
+  };
   return (
     <th
       className={cn(
@@ -547,6 +553,10 @@ function SortableTh({ field, label, sortField, sortDir, onSort, align = "left", 
         className,
       )}
       onClick={() => onSort(field)}
+      onKeyDown={handleKeyDown}
+      tabIndex={0}
+      role="columnheader"
+      aria-sort={isActive ? (sortDir === "asc" ? "ascending" : "descending") : undefined}
     >
       <span className={cn("inline-flex items-center gap-0.5", align === "right" ? "flex-row-reverse" : "flex-row")}>
         {label}
