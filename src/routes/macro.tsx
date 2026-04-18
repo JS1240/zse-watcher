@@ -8,6 +8,7 @@ import { formatPrice } from "@/lib/formatters";
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { MacroSkeleton } from "@/features/market/components/macro-skeleton";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ErrorState } from "@/components/shared/error-state";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/macro")({
@@ -16,12 +17,38 @@ export const Route = createFileRoute("/macro")({
 
 function MacroPage() {
   const { t } = useTranslation("macro");
-  const { data: macro, isLoading } = useMacro();
-  const { data: forex } = useForexRates();
+  const { t: tc } = useTranslation("common");
+  const { data: macro, isLoading, isError, refetch: refetchMacro } = useMacro();
+  const { data: forex, isError: forexError, refetch: refetchForex } = useForexRates();
+
+  // Combined error state - show error if either macro or forex fails
+  const hasError = isError || forexError;
+
+  if (hasError) {
+    return (
+      <div className="flex h-full flex-col gap-4 overflow-auto p-4">
+        <div className="flex items-center justify-between">
+          <h1 className="font-data text-lg font-bold">{t("title")}</h1>
+          <MarketStatus />
+        </div>
+        <ErrorState
+          title={tc("errors.generic")}
+          description={tc("errors.macro")}
+          retry={{
+            onRetry: () => {
+              refetchMacro();
+              refetchForex();
+            },
+            label: tc("errors.tryAgain"),
+          }}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-full flex-col gap-4 overflow-auto p-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         <h1 className="font-data text-lg font-bold">{t("title")}</h1>
         <MarketStatus />
       </div>
@@ -58,7 +85,7 @@ function MacroPage() {
                 {t("forex.title")}
               </h3>
               {forex ? (
-                <div className="mt-3 grid grid-cols-2 gap-3">
+                <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 sm:gap-3">
                   {[
                     { pair: "EUR/USD", value: forex.eurUsd },
                     { pair: "USD/HRK", value: forex.usdHrk },

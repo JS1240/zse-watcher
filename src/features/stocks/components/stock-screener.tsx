@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Filter, RotateCcw, ArrowUpDown, ArrowUp, ArrowDown, Info, Download, Save, Trash2, Bookmark, Search, ChevronDown, AlertTriangle, X } from "lucide-react";
+import { toast } from "sonner";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { Button } from "@/components/ui/button";
@@ -580,6 +581,7 @@ export function StockScreener() {
               s.volume.toString(),
             ]);
             exportToCsv(`zse-screener-${new Date().toISOString().split("T")[0]}`, headers, rows);
+            toast.success(t("toast.exported") || "Exported to CSV");
           }}
           className="h-6 text-[10px]"
         >

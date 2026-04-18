@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Search, ArrowUpDown, ArrowUp, ArrowDown, Download, TrendingUp } from "lucide-react";
+import { Search, ArrowUpDown, ArrowUp, ArrowDown, Download, TrendingUp, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { StockRow } from "@/features/stocks/components/stock-row";
@@ -109,8 +109,17 @@ export function StockTable() {
             placeholder={t("table.ticker") + ", " + t("table.name") + "..."}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-8"
+            className={cn("pl-8 pr-8", search && "pr-8")}
           />
+          {search && (
+            <button
+              onClick={() => setSearch("")}
+              aria-label={tc("actions.clear")}
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-0.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          )}
         </div>
         <LiveDataIndicator
           updatedAt={dataUpdatedAt}

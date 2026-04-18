@@ -16,6 +16,7 @@ import { ChangeBadge } from "@/components/shared/change-badge";
 import { EmptyState } from "@/components/shared/empty-state";
 import { WatchlistEmptyIllustration } from "@/components/shared/empty-illustrations";
 import { ErrorState } from "@/components/shared/error-state";
+import { Highlight } from "@/components/shared/highlight";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { formatPrice, formatVolume } from "@/lib/formatters";
@@ -377,11 +378,13 @@ function SortableRow({
   showRemove,
   onRemove,
   flash,
+  search,
 }: {
   stock: Stock;
   showRemove?: boolean;
   onRemove?: (ticker: string) => void;
   flash?: "up" | "down" | null;
+  search?: string;
 }) {
   const {
     attributes,
@@ -824,9 +827,10 @@ interface WatchlistTableProps {
   sort: { column: SortColumn; direction: SortDirection } | null;
   onSort: (col: SortColumn) => void;
   dragEnabled?: boolean;
+  search?: string;
 }
 
-function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort, dragEnabled }: WatchlistTableProps) {
+function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort, dragEnabled, search }: WatchlistTableProps) {
   const { t } = useTranslation("watchlist");
   const flashMap = usePriceFlash(stocks);
   return (
@@ -865,6 +869,7 @@ function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort, dragEnable
                 showRemove={showRemove}
                 onRemove={onRemove}
                 flash={flashMap.get(stock.ticker) ?? null}
+                search={search}
               />
             ) : (
               <WatchlistRow
@@ -873,6 +878,7 @@ function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort, dragEnable
                 showRemove={showRemove}
                 onRemove={onRemove}
                 flash={flashMap.get(stock.ticker) ?? null}
+                search={search}
               />
             )
           )}

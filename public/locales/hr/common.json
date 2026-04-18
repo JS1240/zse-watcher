@@ -51,7 +51,8 @@
     "generic": "Doslo je do pogreske",
     "network": "Greska mreze. Pokusajte ponovo.",
     "notFound": "Stranica nije pronadjena",
-    "tryAgain": "Pokusaj ponovo"
+    "tryAgain": "Pokusaj ponovo",
+    "macro": "Nije moguce ucitati makro podatke. Provjerite vezu."
   },
   "empty": {
     "noData": "Nema podataka",
