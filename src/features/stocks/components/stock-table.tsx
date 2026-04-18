@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Search, ArrowUpDown, ArrowUp, ArrowDown, Download, TrendingUp } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -58,14 +58,14 @@ export function StockTable() {
     return result;
   }, [stocks, debouncedSearch, sortField, sortDir]);
 
-  const toggleSort = (field: SortField) => {
+  const toggleSort = useCallback((field: SortField) => {
     if (sortField === field) {
       setSortDir((d) => (d === "asc" ? "desc" : "asc"));
     } else {
       setSortField(field);
       setSortDir(field === "ticker" ? "asc" : "desc");
     }
-  };
+  }, [sortField]);
 
   const SortIcon = ({ field }: { field: SortField }) => {
     if (sortField !== field)
@@ -79,7 +79,7 @@ export function StockTable() {
 
   const { canAccess } = useSubscription();
 
-  const handleExport = () => {
+  const handleExport = useCallback(() => {
     if (!filtered.length) return;
     exportToCsv(
       `zse-stocks-${new Date().toISOString().slice(0, 10)}`,
@@ -94,7 +94,7 @@ export function StockTable() {
         s.turnover.toString(),
       ]),
     );
-  };
+  }, [filtered]);
 
   if (isLoading) return <StockTableSkeleton />;
 
