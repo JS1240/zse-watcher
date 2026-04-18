@@ -258,7 +258,7 @@ function AuthenticatedWatchlist() {
           {search && (
             <button
               onClick={handleClearSearch}
-              className="absolute right-8 top-1/2 -translate-y-1/2 flex h-6 w-6 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
+              className="absolute right-8 top-1/2 -translate-y-1/2 flex h-11 w-11 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
               title={tc("actions.clear")}
               aria-label={tc("actions.clear")}
             >
@@ -308,7 +308,7 @@ function AuthenticatedWatchlist() {
             key={value}
             onClick={() => setChangeFilter(value)}
             className={cn(
-              "flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
+              "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
               changeFilter === value
                 ? "bg-primary text-primary-foreground shadow-sm"
                 : "bg-muted/60 text-muted-foreground hover:bg-muted",
@@ -645,7 +645,7 @@ function LocalWatchlist() {
           {search && (
             <button
               onClick={handleClearSearch}
-              className="absolute right-8 top-1/2 -translate-y-1/2 flex h-6 w-6 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
+              className="absolute right-8 top-1/2 -translate-y-1/2 flex h-11 w-11 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
               title={tc("actions.clear")}
               aria-label={tc("actions.clear")}
             >
@@ -695,7 +695,7 @@ function LocalWatchlist() {
             key={value}
             onClick={() => setChangeFilter(value)}
             className={cn(
-              "flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-medium transition-all",
+              "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all",
               changeFilter === value
                 ? "bg-primary text-primary-foreground shadow-sm"
                 : "bg-muted/60 text-muted-foreground hover:bg-muted",
