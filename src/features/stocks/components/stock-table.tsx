@@ -12,6 +12,7 @@ import { useDebounce } from "@/hooks/use-debounce";
 import { useSubscription } from "@/features/premium/hooks/use-subscription";
 import { exportToCsv } from "@/lib/export";
 import { EmptyState } from "@/components/shared/empty-state";
+import { cn } from "@/lib/utils";
 
 type SortField = "ticker" | "price" | "changePct" | "turnover" | "volume";
 type SortDir = "asc" | "desc";
@@ -138,7 +139,7 @@ export function StockTable() {
       </div>
 
       {/* Table */}
-      <div className="overflow-auto rounded-md border border-border max-h-[70vh]">
+      <div className="overflow-auto rounded-md border border-border max-h-[70vh] scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted-foreground/30 hover:scrollbar-thumb-muted-foreground/50">
         <table aria-label={t("table.label")} className="w-full text-xs">
           <thead className="sticky top-0 z-10 bg-muted/95 backdrop-blur supports-[backdrop-filter]:bg-muted/80">
             <tr className="border-b border-border text-[10px] uppercase tracking-wider text-muted-foreground">
@@ -265,7 +266,7 @@ function ColumnHeader({
   return (
     <th
       aria-sort={sortDirection}
-      className={`cursor-pointer px-3 py-2 font-medium ${className ?? ""}`}
+      className={`cursor-pointer px-3 py-2 font-medium sticky left-0 z-10 bg-muted/95 ${className ?? ""}`}
     >
       <button
         className="inline-flex items-center gap-1"

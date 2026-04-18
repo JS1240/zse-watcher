@@ -16,7 +16,6 @@ import { ChangeBadge } from "@/components/shared/change-badge";
 import { EmptyState } from "@/components/shared/empty-state";
 import { WatchlistEmptyIllustration } from "@/components/shared/empty-illustrations";
 import { ErrorState } from "@/components/shared/error-state";
-import { Highlight } from "@/components/shared/highlight";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { formatPrice, formatVolume } from "@/lib/formatters";
@@ -428,7 +427,7 @@ function SortableRow({
         flash === "down" && "price-flash-down",
       )}
     >
-      <td className="px-3 py-2">
+      <td className="sticky left-0 z-[1] bg-card px-3 py-2">
         <div className="flex items-center gap-1">
           <button
             {...attributes}
@@ -838,7 +837,7 @@ function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort, dragEnable
       <table className="w-full text-xs">
         <thead className="sticky top-0 z-10 bg-muted/95 backdrop-blur supports-[backdrop-filter]:bg-muted/80">
           <tr className="border-b border-border text-[10px] uppercase tracking-wider text-muted-foreground">
-            <th className="px-3 py-2 text-left font-medium">{t("table.ticker")}</th>
+            <th className="sticky left-0 z-10 bg-muted/95 px-3 py-2 text-left font-medium">{t("table.ticker")}</th>
             <th className="hidden px-3 py-2 text-left font-medium md:table-cell">
               <SortHeader column="name" label={t("table.name")} sort={sort} onSort={onSort} />
             </th>
@@ -919,7 +918,7 @@ function WatchlistRow({ stock, showRemove, onRemove, flash }: WatchlistRowProps)
         flash === "down" && "price-flash-down",
       )}
     >
-      <td className="px-3 py-2">
+      <td className="sticky left-0 z-[1] bg-card px-3 py-2">
         <div className="flex items-center gap-1">
           {showRemove ? (
             <button
@@ -934,7 +933,7 @@ function WatchlistRow({ stock, showRemove, onRemove, flash }: WatchlistRowProps)
             </button>
           ) : (
             <WatchlistToggle ticker={stock.ticker} />
-          )}
+          )
           <span className="font-data text-xs font-semibold text-foreground">
             {stock.ticker}
           </span>
