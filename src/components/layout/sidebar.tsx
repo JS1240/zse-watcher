@@ -10,6 +10,7 @@ import {
   SlidersHorizontal,
   Star,
 } from "lucide-react";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
@@ -34,23 +35,29 @@ export function Sidebar() {
         const Icon = item.icon;
 
         return (
-          <Link
-            key={item.path}
-            to={item.path}
-            className={cn(
-              "group flex items-center justify-center gap-2 rounded-md px-2 py-2 text-xs transition-colors lg:justify-start",
-              isActive
-                ? "bg-accent text-foreground"
-                : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
-            )}
-            title={`${t(item.labelKey)} (press ${item.shortcut})`}
-          >
-            <Icon className="h-4 w-4 shrink-0" />
-            <span className="hidden lg:inline">{t(item.labelKey)}</span>
-            <kbd className="ml-auto hidden font-data text-[10px] text-muted-foreground lg:inline">
-              {item.shortcut}
-            </kbd>
-          </Link>
+          <Tooltip key={item.path}>
+            <TooltipTrigger asChild>
+              <Link
+                to={item.path}
+                className={cn(
+                  "group flex items-center justify-center gap-2 rounded-md px-2 py-2 text-xs transition-colors lg:justify-start",
+                  isActive
+                    ? "bg-accent text-foreground"
+                    : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
+                )}
+              >
+                <Icon className="h-4 w-4 shrink-0" />
+                <span className="hidden lg:inline">{t(item.labelKey)}</span>
+                <kbd className="ml-auto hidden font-data text-[10px] text-muted-foreground lg:inline">
+                  {item.shortcut}
+                </kbd>
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent>
+              {t(item.labelKey)}
+              <kbd className="ml-2 font-data">{item.shortcut}</kbd>
+            </TooltipContent>
+          </Tooltip>
         );
       })}
     </nav>
