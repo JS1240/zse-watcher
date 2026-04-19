@@ -65,8 +65,22 @@ interface OverviewCardProps {
 }
 
 function OverviewCard({ icon: Icon, label, value, changePct, accent }: OverviewCardProps) {
+  const { i18n } = useTranslation("common");
+  const isCroatian = i18n.language === "hr";
+
+  // Accessible label for screen readers - Croatian investors
+  const changeLabel = changePct > 0
+    ? isCroatian ? `porast ${Math.abs(changePct).toFixed(2)}%` : `up ${Math.abs(changePct).toFixed(2)}%`
+    : changePct < 0
+      ? isCroatian ? `pad ${Math.abs(changePct).toFixed(2)}%` : `down ${Math.abs(changePct).toFixed(2)}%`
+      : isCroatian ? "nema promjene" : "no change";
+
   return (
-    <div className={`rounded-md border p-3 ${accent ? "border-primary/30 bg-primary/5" : "border-border bg-card"}`}>
+    <div
+      className={`rounded-md border p-3 ${accent ? "border-primary/30 bg-primary/5" : "border-border bg-card"}`}
+      role="group"
+      aria-label={`${label}: ${value}, ${changeLabel}`}
+    >
       <div className="flex items-center gap-2">
         <Icon className={`h-3.5 w-3.5 ${accent ? "text-primary" : "text-muted-foreground"}`} />
         <span className="text-[10px] uppercase tracking-wider text-muted-foreground">

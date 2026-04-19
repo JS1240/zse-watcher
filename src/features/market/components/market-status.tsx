@@ -4,12 +4,28 @@ import { cn } from "@/lib/utils";
 
 export function MarketStatus() {
   const { data: status } = useMarketStatus();
-  const { t } = useTranslation("common");
+  const { t, i18n } = useTranslation("common");
 
   const isOpen = status?.isOpen ?? false;
+  const isCroatian = i18n.language === "hr";
+
+  // Accessible label for Croatian retail investors
+  const ariaLabel = isOpen
+    ? isCroatian
+      ? "Burza je otvorena za trgovanje"
+      : "Market is open for trading"
+    : isCroatian
+      ? "Burza je zatvorena"
+      : "Market is closed";
 
   return (
-    <div className="flex items-center gap-2">
+    <div
+      className="flex items-center gap-2"
+      role="status"
+      aria-live="polite"
+      aria-label={ariaLabel}
+      aria-atomic="true"
+    >
       <div
         className={cn(
           "h-2 w-2 rounded-full",
