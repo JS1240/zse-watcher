@@ -9,6 +9,11 @@
   "title": "Watchlist",
   "empty": "No stocks in watchlist",
   "emptyDescription": "Click the star next to a stock to add it to your watchlist.",
+  "emptyHints": {
+    "step1": "Browse stocks by clicking 'Browse stocks'",
+    "step2": "Click the star ☆ next to any stock you want to track",
+    "step3": " track price and changes from this list"
+  },
   "emptyHint": "Track stocks you're interested in and easily monitor their value.",
   "add": "Add to watchlist",
   "remove": "Remove from watchlist",

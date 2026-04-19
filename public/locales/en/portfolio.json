@@ -57,8 +57,12 @@
   "exportTransactions": "Transactions",
   "empty": "No positions in portfolio",
   "emptyDescription": "Add your first position to start tracking your holdings and gains.",
-  "searchPlaceholder": "Search ticker or name...",
-  "searchNoResults": "No results found",
+  "quickStart": {
+    "step1": "Click 'Add Position' to enter a buy",
+    "step2": "Select a stock and enter number of shares",
+    "step3": " track your portfolio value and gains"
+  },
+  "searchPlaceholder": "Search ticker or name...",  "searchNoResults": "No results found",
   "clearSearch": "Clear search",
   "emptySold": "All positions sold",
   "emptySoldDescription": "You have transactions in history but no active holdings — all positions have been sold. Add a new buy to continue tracking.",

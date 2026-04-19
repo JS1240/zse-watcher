@@ -481,6 +481,10 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
             icon={<Wallet className="h-8 w-8" />}
             title={t("empty")}
             description={t("emptyDescription")}
+            steps={[
+              { label: t("quickStart.step1"), description: t("quickStart.step2") },
+              { label: t("quickStart.step3"), description: "" },
+            ]}
             action={{ label: t("addPosition"), onClick: () => setShowAddForm(true) }}
           />
         </div>

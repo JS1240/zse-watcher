@@ -378,8 +378,11 @@ function AuthenticatedWatchlist() {
           icon={<WatchlistEmptyIllustration className="h-10 w-10" />}
           title={t("empty")}
           description={t("emptyDescription")}
+          steps={[
+            { label: t("emptyHints.step1"), description: t("emptyHints.step2") },
+            { label: t("emptyHints.step3"), description: "" },
+          ]}
           action={{ label: t("browseAction"), onClick: () => { window.location.href = "/"; } }}
-          hint={t("emptyHint")}
           variant="action"
         />
       )}
@@ -793,11 +796,14 @@ function LocalWatchlist() {
           icon={<WatchlistEmptyIllustration className="h-10 w-10" />}
           title={t("empty")}
           description={t("emptyDescription")}
+          steps={[
+            { label: t("emptyHints.step1"), description: t("emptyHints.step2") },
+            { label: t("emptyHints.step3"), description: "" },
+          ]}
           action={{
             label: t("browseAction"),
             onClick: () => { window.location.href = "/"; },
           }}
-          hint={t("emptyHint")}
           variant="action"
         />
       ) : (

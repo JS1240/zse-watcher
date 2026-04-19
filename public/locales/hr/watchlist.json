@@ -9,6 +9,11 @@
   "title": "Praćenje",
   "empty": "Nema dionica u listi praćenja",
   "emptyDescription": "Kliknite zvjezdicu pokraj dionice da je dodate u listu.",
+  "emptyHints": {
+    "step1": "Pregledajte dionice klikom na 'Pregledaj dionice'",
+    "step2": "Kliknite zvjezdicu ☆ pokraj dionice koju želite pratiti",
+    "step3": " pratite cijenu i promjene iz ove liste"
+  },
   "emptyHint": "Pratite dionice koje vas zanimaju i lako pratite njihovu vrijednost.",
   "add": "Dodaj u listu praćenja",
   "remove": "Ukloni iz liste praćenja",
