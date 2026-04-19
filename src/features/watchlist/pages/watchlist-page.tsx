@@ -949,7 +949,7 @@ function WatchlistRow({ stock, showRemove, onRemove, flash }: WatchlistRowProps)
             </button>
           ) : (
             <WatchlistToggle ticker={stock.ticker} />
-          )
+          )}
           <span className="font-data text-xs font-semibold text-foreground">
             {stock.ticker}
           </span>
