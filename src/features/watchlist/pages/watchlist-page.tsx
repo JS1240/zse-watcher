@@ -423,6 +423,15 @@ function SortableRow({
 
   const { select, selectedTicker } = useSelectedStock();
   const isSelected = selectedTicker === stock.ticker;
+  const [copiedField, setCopiedField] = useState<string | null>(null);
+
+  const handleCopyTicker = useCallback(async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    await navigator.clipboard.writeText(stock.ticker);
+    toast.success("Kopirano: " + stock.ticker);
+    setCopiedField("ticker");
+    setTimeout(() => setCopiedField(null), 1200);
+  }, [stock.ticker]);
 
   return (
     <tr
@@ -471,9 +480,18 @@ function SortableRow({
           ) : (
             <WatchlistToggle ticker={stock.ticker} />
           )}
-          <span className="font-data text-xs font-semibold text-foreground">
+          <button
+            type="button"
+            onClick={handleCopyTicker}
+            className={cn(
+              "font-data text-xs font-semibold text-foreground",
+              "cursor-pointer transition-colors hover:text-primary",
+              copiedField === "ticker" && "text-primary",
+            )}
+            title="Click to copy ticker"
+          >
             <Highlight text={stock.ticker} highlight={searchQuery ?? ""} />
-          </span>
+          </button>
         </div>
       </td>
       <td className="hidden px-3 py-2 md:table-cell">
@@ -935,6 +953,15 @@ interface WatchlistRowProps {
 function WatchlistRow({ stock, showRemove, onRemove, flash, searchQuery }: WatchlistRowProps) {
   const { select, selectedTicker } = useSelectedStock();
   const isSelected = selectedTicker === stock.ticker;
+  const [copiedField, setCopiedField] = useState<string | null>(null);
+
+  const handleCopyTicker = useCallback(async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    await navigator.clipboard.writeText(stock.ticker);
+    toast.success("Kopirano: " + stock.ticker);
+    setCopiedField("ticker");
+    setTimeout(() => setCopiedField(null), 1200);
+  }, [stock.ticker]);
 
   return (
     <tr
@@ -972,9 +999,18 @@ function WatchlistRow({ stock, showRemove, onRemove, flash, searchQuery }: Watch
           ) : (
             <WatchlistToggle ticker={stock.ticker} />
           )}
-          <span className="font-data text-xs font-semibold text-foreground">
+          <button
+            type="button"
+            onClick={handleCopyTicker}
+            className={cn(
+              "font-data text-xs font-semibold text-foreground",
+              "cursor-pointer transition-colors hover:text-primary",
+              copiedField === "ticker" && "text-primary",
+            )}
+            title="Click to copy ticker"
+          >
             <Highlight text={stock.ticker} highlight={searchQuery ?? ""} />
-          </span>
+          </button>
         </div>
       </td>
       <td className="hidden px-3 py-2 md:table-cell">
