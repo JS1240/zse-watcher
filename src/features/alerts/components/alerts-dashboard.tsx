@@ -335,6 +335,7 @@ export function AlertsDashboard() {
                   condition: data.condition,
                   targetValue: data.targetValue,
                 });
+                toast.success(t("toast.updated") || "Alert updated");
               }}
             />
           ))}
