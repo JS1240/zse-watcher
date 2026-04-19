@@ -52,11 +52,23 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
   const SortHeader = memo(function SortHeader({ field, label }: { field: "date" | "ticker"; label: string }) {
     const isActive = sortField === field;
     const direction = isActive ? sortDir : null;
+    const sortDirection = isActive ? (direction === "asc" ? "ascending" : "descending") : "none";
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        handleSort(field);
+      }
+    };
+
     return (
       <button
         onClick={() => handleSort(field)}
-        className="flex items-center gap-1 text-[10px] font-medium transition-colors hover:text-foreground"
-        aria-sort={isActive ? (direction === "asc" ? "ascending" : "descending") : "none"}
+        onKeyDown={handleKeyDown}
+        tabIndex={0}
+        className="flex items-center gap-1 text-[10px] font-medium transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        aria-sort={sortDirection}
+        aria-label={`${label}: ${sortDirection === "none" ? "unsorted" : sortDirection}, click to sort`}
       >
         <span>{label}</span>
         {direction === "asc" ? (
