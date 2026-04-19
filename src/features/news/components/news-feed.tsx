@@ -138,6 +138,46 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
   // Clear search handler
   const handleClearSearch = useCallback(() => setSearch(""), []);
 
+  // Memoized article item to prevent re-renders on sort/search state changes
+  const ArticleItem = memo(function ArticleItem({
+    article,
+    onClick,
+  }: {
+    article: NewsArticle;
+    onClick: (article: NewsArticle) => void;
+  }) {
+    return (
+      <button
+        onClick={() => onClick(article)}
+        className="group flex w-full items-start justify-between gap-2 rounded-md px-2 py-2 text-left transition-colors hover:bg-accent/50"
+      >
+        <div className="min-w-0 flex-1">
+          <h4 className="line-clamp-2 text-xs font-medium text-foreground group-hover:text-primary">
+            {article.title}
+          </h4>
+          {article.summary && (
+            <p className="mt-0.5 line-clamp-1 text-[10px] text-muted-foreground">
+              {article.summary}
+            </p>
+          )}
+          <div className="mt-1 flex items-center gap-2 text-[10px] text-muted-foreground">
+            {article.ticker && (
+              <span className="rounded-sm bg-accent px-1 py-0.5 font-data font-medium">
+                {article.ticker}
+              </span>
+            )}
+            <span>{formatDate(article.publishedAt)}</span>
+            <span>{formatTime(article.publishedAt)}</span>
+            <span className="rounded-sm bg-muted px-1 py-0.5 text-[9px] uppercase">
+              {article.category}
+            </span>
+          </div>
+        </div>
+        <ExternalLink className="mt-0.5 h-3 w-3 shrink-0 flex-none text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
+      </button>
+    );
+  });
+
   if (isLoading) {
     return <NewsSkeleton />;
   }
@@ -281,35 +321,11 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
         )}
 
         {filtered.map((article) => (
-          <button
+          <ArticleItem
             key={article.id}
-            onClick={() => handleArticleClick(article)}
-            className="group flex w-full items-start justify-between gap-2 rounded-md px-2 py-2 text-left transition-colors hover:bg-accent/50"
-          >
-            <div className="min-w-0 flex-1">
-              <h4 className="line-clamp-2 text-xs font-medium text-foreground group-hover:text-primary">
-                {article.title}
-              </h4>
-              {article.summary && (
-                <p className="mt-0.5 line-clamp-1 text-[10px] text-muted-foreground">
-                  {article.summary}
-                </p>
-              )}
-              <div className="mt-1 flex items-center gap-2 text-[10px] text-muted-foreground">
-                {article.ticker && (
-                  <span className="rounded-sm bg-accent px-1 py-0.5 font-data font-medium">
-                    {article.ticker}
-                  </span>
-                )}
-                <span>{formatDate(article.publishedAt)}</span>
-                <span>{formatTime(article.publishedAt)}</span>
-                <span className="rounded-sm bg-muted px-1 py-0.5 text-[9px] uppercase">
-                  {article.category}
-                </span>
-              </div>
-            </div>
-            <ExternalLink className="mt-0.5 h-3 w-3 shrink-0 flex-none text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
-          </button>
+            article={article}
+            onClick={handleArticleClick}
+          />
         ))}
       </div>
 
