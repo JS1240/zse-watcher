@@ -13,8 +13,17 @@ function ChangeBadgeBase({ value, className, showIcon = true }: ChangeBadgeProps
   const isPositive = value > 0;
   const isNegative = value < 0;
 
+  // Accessible label for screen readers - Croatian investors
+  const ariaLabel = isPositive
+    ? `Porast ${Math.abs(value).toFixed(2)}%`
+    : isNegative
+      ? `Pad ${Math.abs(value).toFixed(2)}%`
+      : `Nema promjene`;
+
   return (
     <span
+      role="status"
+      aria-label={ariaLabel}
       className={cn(
         "inline-flex items-center gap-1 rounded-sm px-1.5 py-0.5 font-data text-[11px] font-medium tabular-nums",
         isPositive && "bg-price-up/15 text-price-up",
