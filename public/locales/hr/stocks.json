@@ -50,6 +50,10 @@
     "6M": "6M",
     "1Y": "1G"
   },
+  "toast": {
+    "exported": "Podaci o dionici izvezeni u CSV"
+  },
+  "exportCsv": "Izvoz",
   "movers": {
     "title": "Pokretaci trzista",
     "gainers": "Dobitnici",

@@ -51,6 +51,10 @@
     "6M": "6M",
     "1Y": "1Y"
   },
+  "toast": {
+    "exported": "Stock data exported to CSV"
+  },
+  "exportCsv": "Export",
   "movers": {
     "title": "Market Movers",
     "gainers": "Gainers",

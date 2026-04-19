@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { X, Info, Keyboard, RefreshCw } from "lucide-react";
+import { X, Info, Keyboard, RefreshCw, Download } from "lucide-react";
+import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useStockDetail } from "@/features/stocks/api/stock-detail-queries";
 import { useRecentStocks } from "@/hooks/use-recent-stocks";
@@ -12,6 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { exportToCsv } from "@/lib/export";
 
 interface StockDetailDrawerProps {
   ticker: string | null;
@@ -25,6 +27,47 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
   const stock = result?.stock ?? null;
   const isMockData = result?.isMockData ?? false;
   const { addRecentStock } = useRecentStocks();
+  // Export stock fundamentals as CSV for Croatian investors
+  const handleExportCsv = () => {
+    if (!stock) return;
+    const headers = [
+      "Ticker",
+      "Name",
+      "Price (EUR)",
+      "Change (%)",
+      "Market Cap (M EUR)",
+      "P/E Ratio",
+      "Dividend Yield (%)",
+      "52W High (EUR)",
+      "52W Low (EUR)",
+      "Volume",
+      "Turnover (EUR)",
+      "Sector",
+      "Shares (M)",
+      "ISIN",
+    ];
+    const rows = [
+      [
+        stock.ticker,
+        stock.name,
+        stock.price.toFixed(2),
+        stock.changePct.toFixed(2),
+        stock.marketCapM > 0 ? stock.marketCapM.toFixed(2) : "N/A",
+        stock.peRatio !== null ? stock.peRatio.toFixed(1) : "N/A",
+        stock.dividendYield !== null ? stock.dividendYield.toFixed(2) : "N/A",
+        stock.high52w.toFixed(2),
+        stock.low52w.toFixed(2),
+        stock.volume.toString(),
+        stock.turnover.toFixed(2),
+        stock.sector || "N/A",
+        stock.sharesM > 0 ? stock.sharesM.toFixed(1) : "N/A",
+        stock.isin,
+      ],
+    ];
+    exportToCsv(`zse-${stock.ticker}-${new Date().toISOString().split("T")[0]}`, headers, rows);
+    toast.success(t("toast.exported"));
+  };
+
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   // Focus trap for keyboard accessibility
@@ -83,6 +126,16 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
             )}
           </div>
           <div className="flex items-center gap-2">
+            {stock && (
+              <button
+                onClick={handleExportCsv}
+                className="flex items-center gap-1 rounded-md px-2 py-1 text-[10px] text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                title={t("exportCsv")}
+              >
+                <Download className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">{t("exportCsv")}</span>
+              </button>
+            )}
             <span className="hidden items-center gap-1 text-[10px] text-muted-foreground md:flex">
               <Keyboard className="h-3 w-3" />
               Esc
