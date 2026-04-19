@@ -27,7 +27,8 @@
     "price": "Price",
     "change": "Change",
     "volume": "Volume",
-    "turnover": "Turnover"
+    "turnover": "Turnover",
+    "dividendYield": "Div. %"
   },
   "confirmRemove": "Remove from watchlist?",
   "confirmRemoveDescription": "Remove {ticker} from your watchlist.",
