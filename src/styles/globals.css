@@ -143,6 +143,25 @@ tr[data-clickable]:focus-visible {
   outline-offset: -2px;
 }
 
+/* Fade animations for drawers and modals */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out forwards;
+}
+
+.animate-fade-out {
+  animation: fade-out 0.15s ease-in forwards;
+}
+
 /* Edit mode slide-down animation for alert rows */
 @keyframes edit-expand {
   0% { opacity: 0; max-height: 0; }

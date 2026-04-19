@@ -69,6 +69,7 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
   };
 
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
 
   // Focus trap for keyboard accessibility
   const { setContainerRef } = useFocusTrap({
@@ -76,28 +77,38 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
     onEscape: onClose,
   });
 
-  // Record stock view when drawer opens with valid stock
+  // Handle drawer open/close animations and stock tracking
   useEffect(() => {
     if (ticker && stock?.name) {
       addRecentStock(ticker, stock.name);
     }
-    // Set drawer open state after mount to enable focus trap
-    if (ticker) {
-      const timer = setTimeout(() => setDrawerOpen(true), 0);
-      return () => {
-        clearTimeout(timer);
-        setDrawerOpen(false);
-      };
-    }
-  }, [ticker, stock?.name, addRecentStock]);
 
-  if (!ticker) return null;
+    if (ticker) {
+      // Opening: enable focus trap immediately
+      setDrawerOpen(true);
+      setIsClosing(false);
+    } else if (drawerOpen) {
+      // Closing: play exit animation first
+      setIsClosing(true);
+      const timer = setTimeout(() => {
+        setDrawerOpen(false);
+        setIsClosing(false);
+      }, 200); // Match animation duration
+      return () => clearTimeout(timer);
+    }
+  }, [ticker, stock?.name, addRecentStock, drawerOpen]);
+
+  // Don't render anything until first open
+  if (!ticker && !drawerOpen) return null;
 
   return (
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-40 bg-background/60 backdrop-blur-sm"
+        className={cn(
+          "fixed inset-0 z-40 bg-background/60 backdrop-blur-sm",
+          isClosing ? "animate-fade-out" : "animate-fade-in",
+        )}
         onClick={onClose}
       />
 
@@ -106,7 +117,9 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
         ref={setContainerRef}
         className={cn(
           "fixed right-0 top-0 z-50 flex h-full w-full flex-col border-l border-border bg-card shadow-2xl",
-          "animate-[slide-in-right_0.2s_ease-out]",
+          isClosing
+            ? "animate-[slide-out-right_0.2s_ease-in]"
+            : "animate-[slide-in-right_0.2s_ease-out]",
           "max-w-[85vw] md:max-w-xl lg:max-w-2xl xl:max-w-[42rem] 2xl:max-w-[48rem]",
         )}
         role="dialog"
