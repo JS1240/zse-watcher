@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { ChangeBadge } from "@/components/shared/change-badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { formatPrice, formatVolume } from "@/lib/formatters";
 import { formatPercent } from "@/lib/formatters";
 import type { SectorGroup } from "./heatmap";
@@ -17,7 +18,7 @@ interface SectorDrawerProps {
 export function SectorDrawer({ sector, onClose }: SectorDrawerProps) {
   const { t } = useTranslation("heatmap");
   const { select: selectTicker } = useSelectedStock();
-  const { data: result } = useStocksLive();
+  const { data: result, isLoading: isStocksLoading } = useStocksLive();
   const stocks = result?.stocks ?? null;
 
   const sectorStocks = stocks
@@ -77,7 +78,32 @@ export function SectorDrawer({ sector, onClose }: SectorDrawerProps) {
               </tr>
             </thead>
             <tbody>
-              {sectorStocks.map((stock) => (
+              {isStocksLoading ? (
+                // Loading skeleton rows for Croatian investors
+                Array.from({ length: 8 }).map((_, i) => (
+                  <tr key={i} className="border-b border-border/50 last:border-b-0">
+                    <td className="px-3 py-2">
+                      <div className="flex flex-col items-start gap-1">
+                        <Skeleton className="h-3.5 w-12 animate-shimmer" />
+                        <Skeleton className="h-2 w-16 animate-shimmer lg:hidden" />
+                      </div>
+                    </td>
+                    <td className="px-2 py-2 text-right">
+                      <Skeleton className="ml-auto h-3.5 w-14 animate-shimmer" />
+                    </td>
+                    <td className="px-2 py-2 text-right">
+                      <Skeleton className="ml-auto h-5 w-16 animate-shimmer" />
+                    </td>
+                    <td className="hidden px-2 py-2 text-right lg:table-cell">
+                      <Skeleton className="ml-auto h-3.5 w-20 animate-shimmer" />
+                    </td>
+                    <td className="hidden px-2 py-2 text-right lg:table-cell">
+                      <Skeleton className="ml-auto h-3.5 w-16 animate-shimmer" />
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                sectorStocks.map((stock) => (
                 <tr
                   key={stock.ticker}
                   className="border-b border-border/50 last:border-b-0 hover:bg-accent/50"
@@ -109,7 +135,8 @@ export function SectorDrawer({ sector, onClose }: SectorDrawerProps) {
                     {formatVolume(stock.volume)}
                   </td>
                 </tr>
-              ))}
+              ))
+              )}
             </tbody>
           </table>
         </div>
