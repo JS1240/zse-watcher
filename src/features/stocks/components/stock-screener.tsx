@@ -1,6 +1,6 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Filter, RotateCcw, ArrowUpDown, ArrowUp, ArrowDown, Info, Download, Save, Trash2, Bookmark, Search, ChevronDown, AlertTriangle, X } from "lucide-react";
+import { Filter, RotateCcw, ArrowUpDown, ArrowUp, ArrowDown, Info, Download, Save, Trash2, Bookmark, Search, ChevronDown, AlertTriangle, X, Keyboard } from "lucide-react";
 import { toast } from "sonner";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { useLocalStorage } from "@/hooks/use-local-storage";
@@ -13,6 +13,8 @@ import { ScreenerSkeleton } from "@/features/stocks/components/screener-skeleton
 import { formatPrice, formatVolume } from "@/lib/formatters";
 import { exportToCsv } from "@/lib/export";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
+import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
+import { useDebounce } from "@/hooks/use-debounce";
 import type { Stock } from "@/types/stock";
 import { cn } from "@/lib/utils";
 
@@ -231,6 +233,13 @@ export function StockScreener() {
   const [savePresetName, setSavePresetName] = useState("");
   const [showSaveInput, setShowSaveInput] = useState(false);
   const [presetSearch, setPresetSearch] = useState("");
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 200);
+
+  // Keyboard shortcut to focus search
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const focusSearch = useCallback(() => searchInputRef.current?.focus(), []);
+  useKeyboardShortcut({ key: "/", handler: focusSearch, enabled: true });
 
   // Filter presets by search
   const filteredPresets = useMemo(() => {
@@ -247,18 +256,30 @@ export function StockScreener() {
   const filtered = useMemo(() => {
     if (!stocks) return [];
 
+    const q = debouncedSearch.toLowerCase();
+
     return stocks.filter((s) => {
+      // Search filter
+      if (q && !s.ticker.toLowerCase().includes(q) && !s.name.toLowerCase().includes(q)) return false;
+      // Sector filter
       if (filters.sector && s.sector !== filters.sector) return false;
+      // Price filters
       if (filters.minPrice && s.price < parseFloat(filters.minPrice)) return false;
       if (filters.maxPrice && s.price > parseFloat(filters.maxPrice)) return false;
+      // Change filters
       if (filters.minChange && s.changePct < parseFloat(filters.minChange)) return false;
       if (filters.maxChange && s.changePct > parseFloat(filters.maxChange)) return false;
+      // Turnover filter
       if (filters.minTurnover && s.turnover < parseFloat(filters.minTurnover)) return false;
+      // Dividend filters
       if (filters.minDividend && (s.dividendYield === null || s.dividendYield < parseFloat(filters.minDividend))) return false;
       if (filters.maxDividend && (s.dividendYield === null || s.dividendYield > parseFloat(filters.maxDividend))) return false;
       return true;
     });
-  }, [stocks, filters]);
+  }, [stocks, filters, debouncedSearch]);
+
+  // Stock count for search UI
+  const stockCount = stocks?.length ?? 0;
 
   const results = useMemo(() => {
     if (!sort) return filtered;
@@ -330,6 +351,42 @@ export function StockScreener() {
         <div className="flex items-center gap-2 rounded-md border border-border bg-muted/60 px-3 py-2 text-[11px] text-muted-foreground">
           <Info className="h-3 w-3 shrink-0" />
           <span>{t("detail.demoData")}</span>
+        </div>
+      )}
+
+      {/* Search bar */}
+      {stockCount > 0 && (
+        <div className="mb-2 flex items-center justify-between">
+          <div className="relative flex-1 max-w-xs">
+            <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-muted-foreground" />
+            <Input
+              ref={searchInputRef}
+              placeholder={tc("actions.search")}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-8 pr-14"
+            />
+            {!search && stockCount > 0 && (
+              <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-muted-foreground">
+                <Keyboard className="h-2.5 w-2.5" />
+              </span>
+            )}
+            {search && (
+              <button
+                onClick={() => setSearch("")}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+          <button
+            onClick={() => setFiltersCollapsed(!filtersCollapsed)}
+            className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground"
+          >
+            <span>{activeFilterCount > 0 ? `${activeFilterCount} ` : ""}{tc("common:actions.filter")}</span>
+            <ChevronDown className={cn("h-3 w-3 transition-transform", filtersCollapsed && "-rotate-90")} />
+          </button>
         </div>
       )}
 
