@@ -162,3 +162,54 @@ tr[data-clickable]:focus-visible {
 input, select, textarea {
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
+
+/* Accessibility: Respect user preference for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  /* Button hover scale disabled */
+  button,
+  [role="button"] {
+    transition: none !important;
+    transform: none !important;
+  }
+
+  /* Skeleton shimmer disabled - show static instead */
+  .animate-shimmer {
+    background: var(--color-muted);
+    animation: none !important;
+  }
+
+  /* Empty state animations disabled */
+  .animate-empty-state,
+  .animate-empty-icon,
+  .animate-cta-pulse {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  /* Price flash disabled */
+  .price-flash-up,
+  .price-flash-down {
+    animation: none !important;
+  }
+
+  /* Drawer animations disabled */
+  .animate-slide-in,
+  .animate-slide-out {
+    animation: none !important;
+  }
+
+  /* Edit expand animation disabled */
+  .animate-edit-expand {
+    animation: none !important;
+    max-height: none !important;
+    opacity: 1 !important;
+  }
+}
