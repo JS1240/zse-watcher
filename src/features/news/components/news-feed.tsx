@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback, memo } from "react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { ExternalLink, Newspaper, Search, ArrowUp, ArrowDown, ArrowUpDown, Download } from "lucide-react";
@@ -31,18 +31,18 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const debouncedSearch = useDebounce(search, 200);
 
-  // Toggle sort handler
-  const handleSort = (field: "date" | "ticker") => {
+  // Toggle sort handler - memoized to prevent re-renders
+  const handleSort = useCallback((field: "date" | "ticker") => {
     if (sortField === field) {
       setSortDir((d) => (d === "asc" ? "desc" : "asc"));
     } else {
       setSortField(field);
       setSortDir(field === "ticker" ? "asc" : "desc");
     }
-  };
+  }, [sortField]);
 
-  // Sort header component
-  function SortHeader({ field, label }: { field: "date" | "ticker"; label: string }) {
+  // Sort header component - memoized to prevent re-renders of sort controls
+  const SortHeader = memo(function SortHeader({ field, label }: { field: "date" | "ticker"; label: string }) {
     const isActive = sortField === field;
     const direction = isActive ? sortDir : null;
     return (
@@ -61,7 +61,7 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
         )}
       </button>
     );
-  }
+  });
 
   const filtered = useMemo(() => {
     if (!articles) return [];
@@ -106,8 +106,8 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
   // Only show search/export when not limited (inline usage)
   const showSearch = !limit && articles && articles.length > 0;
 
-  // CSV export handler
-  const handleExport = () => {
+  // CSV export handler - memoized to prevent re-renders
+  const handleExport = useCallback(() => {
     if (!filtered.length) return;
     const headers = ["Date", "Time", "Ticker", "Title", "Summary", "Source", "Category"];
     const rows = filtered.map((a) => [
@@ -121,7 +121,15 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
     ]);
     exportToCsv(`zse-news-${new Date().toISOString().split("T")[0]}`, headers, rows);
     toast.success(t("toast.exported"));
-  };
+  }, [filtered, t]);
+
+  // Article click handler - memoized
+  const handleArticleClick = useCallback((article: NewsArticle) => {
+    setSelectedArticle(article);
+  }, []);
+
+  // Clear search handler
+  const handleClearSearch = useCallback(() => setSearch(""), []);
 
   if (isLoading) {
     return <NewsSkeleton />;
@@ -176,7 +184,7 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
             icon={<Search className="h-8 w-8" />}
             title={t("empty.noResults")}
             description={t("empty.noResultsDescription")}
-            action={{ label: t("empty.clearFilters"), onClick: () => setSearch("") }}
+            action={{ label: t("empty.clearFilters"), onClick: handleClearSearch }}
           />
         ) : (
           <EmptyState
@@ -232,7 +240,7 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
         {filtered.map((article) => (
           <button
             key={article.id}
-            onClick={() => setSelectedArticle(article)}
+            onClick={() => handleArticleClick(article)}
             className="group flex w-full items-start justify-between gap-2 rounded-md px-2 py-2 text-left transition-colors hover:bg-accent/50"
           >
             <div className="min-w-0 flex-1">
