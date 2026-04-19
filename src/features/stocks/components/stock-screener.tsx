@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { EmptyState } from "@/components/shared/empty-state";
+import { Highlight } from "@/components/shared/highlight";
 import { SearchEmptyIllustration } from "@/components/shared/empty-illustrations";
 import { ErrorState } from "@/components/shared/error-state";
 import { ScreenerSkeleton } from "@/features/stocks/components/screener-skeleton";
@@ -712,9 +713,11 @@ export function StockScreener() {
                 onClick={() => select(s.ticker)}
               >
                 <td className="px-3 py-2 font-data font-semibold text-foreground">
-                  {s.ticker}
+                  <Highlight text={s.ticker} highlight={debouncedSearch} />
                 </td>
-                <td className="px-1 py-2 text-muted-foreground">{s.name}</td>
+                <td className="px-1 py-2 text-muted-foreground">
+                  <Highlight text={s.name} highlight={debouncedSearch} />
+                </td>
                 <td className="px-1 py-2">
                   <span className="rounded-sm bg-accent px-1.5 py-0.5 text-[10px]">
                     {s.sector}
