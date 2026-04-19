@@ -46,6 +46,32 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
   const [showAddForm, setShowAddForm] = useState(false);
   const [search, setSearch] = useState("");
   const [searchFocused, setSearchFocused] = useState(false);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
+
+  // Click-to-copy handlers for holding values
+  const handleCopyTicker = useCallback(async (e: React.MouseEvent, ticker: string) => {
+    e.stopPropagation();
+    await navigator.clipboard.writeText(ticker);
+    toast.success("Kopirano: " + ticker);
+    setCopiedField(`ticker-${ticker}`);
+    setTimeout(() => setCopiedField(null), 1200);
+  }, []);
+
+  const handleCopyPrice = useCallback(async (e: React.MouseEvent, price: number) => {
+    e.stopPropagation();
+    await navigator.clipboard.writeText(price.toFixed(2));
+    toast.success(formatPrice(price));
+    setCopiedField(`price-${price}`);
+    setTimeout(() => setCopiedField(null), 1200);
+  }, []);
+
+  const handleCopyValue = useCallback(async (e: React.MouseEvent, value: number) => {
+    e.stopPropagation();
+    await navigator.clipboard.writeText(value.toFixed(2));
+    toast.success(formatCurrency(value));
+    setCopiedField(`value-${value}`);
+    setTimeout(() => setCopiedField(null), 1200);
+  }, []);
 
   // Keyboard shortcut to focus search
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -442,9 +468,19 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
                     onClick={() => select(h.ticker)}
                   >
                     <td className="px-3 py-3 md:py-2">
-                      <div>
-                        <span className="font-data font-semibold text-foreground">{h.ticker}</span>
-                        <span className="ml-1 text-[10px] text-muted-foreground">{h.name}</span>
+                      <div className="flex items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={(e) => handleCopyTicker(e, h.ticker)}
+                          className={cn(
+                            "font-data font-semibold text-foreground transition-colors hover:text-primary",
+                            copiedField === `ticker-${h.ticker}` && "text-primary",
+                          )}
+                          title="Kopiraj ticker"
+                        >
+                          {h.ticker}
+                        </button>
+                        <span className="text-[10px] text-muted-foreground">{h.name}</span>
                       </div>
                     </td>
                     <td className="px-3 py-3 md:py-2 text-right font-data tabular-nums text-foreground">
@@ -453,11 +489,31 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
                     <td className="px-3 py-3 md:py-2 text-right font-data tabular-nums text-muted-foreground">
                       {formatPrice(h.avgPrice)}
                     </td>
-                    <td className="px-3 py-3 md:py-2 text-right font-data tabular-nums text-foreground">
-                      {formatPrice(h.currentPrice)}
+                    <td className="px-3 py-3 md:py-2 text-right">
+                      <button
+                        type="button"
+                        onClick={(e) => handleCopyPrice(e, h.currentPrice)}
+                        className={cn(
+                          "font-data tabular-nums text-foreground transition-colors hover:text-primary",
+                          copiedField === `price-${h.currentPrice}` && "text-primary",
+                        )}
+                        title="Kopiraj cijenu"
+                      >
+                        {formatPrice(h.currentPrice)}
+                      </button>
                     </td>
-                    <td className="hidden px-3 py-3 md:py-2 text-right font-data tabular-nums text-foreground md:table-cell">
-                      {formatCurrency(h.totalValue)}
+                    <td className="hidden px-3 py-3 md:py-2 text-right md:table-cell">
+                      <button
+                        type="button"
+                        onClick={(e) => handleCopyValue(e, h.totalValue)}
+                        className={cn(
+                          "font-data tabular-nums text-foreground transition-colors hover:text-primary",
+                          copiedField === `value-${h.totalValue}` && "text-primary",
+                        )}
+                        title="Kopiraj vrijednost"
+                      >
+                        {formatCurrency(h.totalValue)}
+                      </button>
                     </td>
                     <td className="px-3 py-3 md:py-2 text-right">
                       <ChangeBadge value={h.gainPct} showIcon={false} />
