@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { EmptyState } from "@/components/shared/empty-state";
+import { SearchEmptyIllustration } from "@/components/shared/empty-illustrations";
 import { ErrorState } from "@/components/shared/error-state";
 import { ScreenerSkeleton } from "@/features/stocks/components/screener-skeleton";
 import { formatPrice, formatVolume } from "@/lib/formatters";
@@ -741,7 +742,7 @@ export function StockScreener() {
 
         {results.length === 0 && stocks && (
           <EmptyState
-            icon={<Search className="h-8 w-8" />}
+            icon={<SearchEmptyIllustration className="h-8 w-8" />}
             title={t("screener.noResults")}
             description={tc("empty.noResultsDescription")}
             action={{
