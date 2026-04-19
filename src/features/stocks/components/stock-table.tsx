@@ -211,6 +211,7 @@ export function StockTable() {
               icon={<Search className="h-8 w-8" />}
               title={t("noResults")}
               description={tc("empty.noResultsDescription")}
+              variant="no-results"
               action={{ label: tc("empty.clearFilters"), onClick: () => setSearch("") }}
             />
           ) : (
