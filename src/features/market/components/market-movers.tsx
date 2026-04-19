@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { memo } from "react";
 import { TrendingUp, TrendingDown, Clock } from "lucide-react";
 import { useMovers } from "@/features/market/api/market-queries";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
@@ -64,7 +65,7 @@ export function MarketMovers() {
   );
 }
 
-function MoverRow({ mover }: { mover: Mover }) {
+const MoverRow = memo(function MoverRow({ mover }: { mover: Mover }) {
   const select = useSelectedStock((state) => state.select);
 
   const handleClick = () => {
@@ -93,4 +94,4 @@ function MoverRow({ mover }: { mover: Mover }) {
       </div>
     </button>
   );
-}
+});
