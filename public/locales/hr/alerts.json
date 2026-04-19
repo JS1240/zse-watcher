@@ -65,6 +65,11 @@
     "updateFailed": "Neuspjelo azuriranje alarma",
     "exported": "Alarmi izvezeni u CSV"
   },
+  "shortcut": {
+    "toggle": "aktiviraj",
+    "edit": "uredi",
+    "delete": "obrisi"
+  },
   "notification": {
     "title": "Obavijesti",
     "priceAbove": "Cijena iznad {{value}}",

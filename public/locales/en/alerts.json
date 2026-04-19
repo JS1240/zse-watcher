@@ -65,6 +65,11 @@
     "updateFailed": "Failed to update alert",
     "exported": "Alerts exported to CSV"
   },
+  "shortcut": {
+    "toggle": "toggle",
+    "edit": "edit",
+    "delete": "delete"
+  },
   "notification": {
     "title": "Notifications",
     "priceAbove": "Price above {{value}}",

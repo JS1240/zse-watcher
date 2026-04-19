@@ -310,8 +310,25 @@ export function AlertsDashboard() {
 
       {/* Results count */}
       {alerts && alerts.length > 0 && (
-        <div className="text-[10px] text-muted-foreground">
-          {filteredAlerts.length} {filteredAlerts.length === 1 ? "alert" : "alerta"}
+        <div className="flex items-center justify-between">
+          <span className="text-[10px] text-muted-foreground">
+            {filteredAlerts.length} {filteredAlerts.length === 1 ? "alert" : "alerta"}
+          </span>
+          {/* Keyboard shortcuts hint - only show when alerts exist */}
+          <div className="flex items-center gap-2 text-[9px] text-muted-foreground">
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
+              <span>{t("shortcut.toggle") || "aktiviraj"}</span>
+            </span>
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">E</kbd>
+              <span>{t("shortcut.edit") || "uredi"}</span>
+            </span>
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Del</kbd>
+              <span>{t("shortcut.delete") || "obrisi"}</span>
+            </span>
+          </div>
         </div>
       )}
 
