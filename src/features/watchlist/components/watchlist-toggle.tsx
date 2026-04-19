@@ -1,5 +1,6 @@
 import { memo, useMemo, useCallback, useState } from "react";
 import { Star, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
 import {
   useWatchlistTickers,
@@ -47,6 +48,13 @@ export const WatchlistToggle = memo(function WatchlistToggle({ ticker, className
     // Trigger animation
     setIsAnimating(true);
     setTimeout(() => setIsAnimating(false), 300);
+
+    // Show toast feedback
+    if (isWatched) {
+      toast.success(`${ticker} removed from watchlist`);
+    } else {
+      toast.success(`${ticker} added to watchlist`);
+    }
 
     if (isAuthenticated) {
       if (isWatched) {
