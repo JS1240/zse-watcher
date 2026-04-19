@@ -15,6 +15,7 @@ import {
   SlidersHorizontal,
   Star,
   TrendingUp,
+  Keyboard,
 } from "lucide-react";
 import { useThemeStore } from "@/hooks/use-theme";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
@@ -110,7 +111,30 @@ export function CommandPalette() {
           className="h-11 w-full border-b border-border bg-transparent px-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
         />
 
-        <Command.List className="max-h-80 overflow-y-auto p-2">
+        {/* Keyboard hints bar */}
+        <div className="flex items-center justify-between border-b border-border bg-muted/30 px-4 py-2 text-[10px] text-muted-foreground">
+          <div className="flex items-center gap-4">
+            <span className="flex items-center gap-1">
+              <kbd className="rounded bg-muted px-1.5 py-0.5 font-data">↑</kbd>
+              <kbd className="rounded bg-muted px-1.5 py-0.5 font-data">↓</kbd>
+              <span>navigate</span>
+            </span>
+            <span className="flex items-center gap-1">
+              <kbd className="rounded bg-muted px-1.5 py-0.5 font-data">↵</kbd>
+              <span>select</span>
+            </span>
+            <span className="flex items-center gap-1">
+              <kbd className="rounded bg-muted px-1.5 py-0.5 font-data">esc</kbd>
+              <span>close</span>
+            </span>
+          </div>
+          <div className="flex items-center gap-1">
+            <Keyboard className="h-3 w-3" />
+            <span>K {t("commandPalette.toOpen") || "to open"}</span>
+          </div>
+        </div>
+
+        <Command.List className="max-h-[70vh] overflow-y-auto p-2">
           {/* Recently viewed stocks - show when no search */}
           {search.length < 2 && recentStocksWithData.length > 0 && (
             <Command.Group
