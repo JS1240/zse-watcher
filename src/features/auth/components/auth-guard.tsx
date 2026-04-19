@@ -46,6 +46,7 @@ export function AuthGuard({ children, fallback }: AuthGuardProps) {
 
   if (loading) {
     return <AuthLoadingSkeleton />;
+  }
 
   if (!isAuthenticated) {
     return fallback ?? <LoginPrompt />;

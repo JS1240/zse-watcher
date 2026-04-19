@@ -29,7 +29,7 @@ export function App() {
           closeButton
           toastOptions={{
             className: "bg-card text-foreground border-border",
-            descriptionClasses: "text-muted-foreground text-xs",
+            descriptionClassName: "text-muted-foreground text-xs",
           }}
         />
       <ReactQueryDevtools initialIsOpen={false} />
