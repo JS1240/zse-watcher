@@ -3,6 +3,9 @@
     "name": "ZSE Watcher",
     "tagline": "Hrvatski burzovni terminal"
   },
+  "offline": {
+    "message": "Niste povezani s internetom. Podaci možda nisu ažurirani."
+  },
   "nav": {
     "stocks": "Dionice",
     "macro": "Makro",

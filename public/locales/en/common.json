@@ -3,6 +3,9 @@
     "name": "ZSE Watcher",
     "tagline": "Croatian Stock Market Terminal"
   },
+  "offline": {
+    "message": "You're offline. Data may not be up to date."
+  },
   "nav": {
     "stocks": "Stocks",
     "macro": "Macro",
