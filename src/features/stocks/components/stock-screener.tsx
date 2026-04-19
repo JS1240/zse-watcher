@@ -385,6 +385,9 @@ export function StockScreener() {
           <button
             onClick={() => setFiltersCollapsed(!filtersCollapsed)}
             className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground"
+            aria-expanded={!filtersCollapsed}
+            aria-controls="stock-screener-filters"
+            aria-label={filtersCollapsed ? tc("common:actions.show") + " " + tc("common:actions.filter") : tc("common:actions.hide") + " " + tc("common:actions.filter")}
           >
             <span>{activeFilterCount > 0 ? `${activeFilterCount} ` : ""}{tc("common:actions.filter")}</span>
             <ChevronDown className={cn("h-3 w-3 transition-transform", filtersCollapsed && "-rotate-90")} />
@@ -393,7 +396,7 @@ export function StockScreener() {
       )}
 
       {/* Filter bar */}
-      <div className="rounded-md border border-border bg-card p-3">
+      <div id="stock-screener-filters" className="rounded-md border border-border bg-card p-3">
         <div className="mb-2 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Filter className="h-3 w-3 text-muted-foreground" />
