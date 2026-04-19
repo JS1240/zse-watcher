@@ -318,7 +318,7 @@ export function AlertsDashboard() {
       {filteredAlerts.length > 0 ? (
         <div className="space-y-1">
           {filteredAlerts.map((alert) => (
-            <AlertRowBase
+            <AlertRow
               key={alert.id}
               alert={alert}
               stocks={stocks}
@@ -403,7 +403,7 @@ interface AlertRowProps {
   stocks?: { ticker: string; name: string; price: number | null }[];
 }
 
-const AlertRowBase = memo(function AlertRow({ alert, onDelete, onToggle, onUpdate, stocks }: AlertRowProps) {
+export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUpdate, stocks }: AlertRowProps) {
   const { t } = useTranslation("alerts");
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);

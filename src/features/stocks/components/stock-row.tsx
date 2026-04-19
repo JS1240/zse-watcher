@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useState, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import { formatPrice, formatVolume } from "@/lib/formatters";
 import { ChangeBadge } from "@/components/shared/change-badge";
@@ -18,11 +18,27 @@ interface StockRowProps {
   searchQuery?: string;
 }
 
-// Memoize to prevent re-renders when stock data hasn't changed
-// Selection state comes from global store, not props
+// Click-to-copy state for tickers and prices
 const StockRowBase = ({ stock, flash, searchQuery }: StockRowProps) => {
   const { selectedTicker, select } = useSelectedStock();
   const isSelected = selectedTicker === stock.ticker;
+  const [copiedField, setCopiedField] = useState<string | null>(null);
+
+  const handleCopyTicker = useCallback(async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    await navigator.clipboard.writeText(stock.ticker);
+    toast.success("Kopirano: " + stock.ticker);
+    setCopiedField("ticker");
+    setTimeout(() => setCopiedField(null), 1200);
+  }, [stock.ticker]);
+
+  const handleCopyPrice = useCallback(async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    await navigator.clipboard.writeText(stock.price.toFixed(2));
+    toast.success(formatPrice(stock.price));
+    setCopiedField("price");
+    setTimeout(() => setCopiedField(null), 1200);
+  }, [stock.price]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTableRowElement>) => {
     if (e.key === "Enter" || e.key === " ") {
@@ -55,9 +71,19 @@ const StockRowBase = ({ stock, flash, searchQuery }: StockRowProps) => {
       <td className="sticky left-0 z-[1] bg-card px-3 py-2">
         <div className="flex items-center gap-1">
           <WatchlistToggle ticker={stock.ticker} />
-          <span className="font-data text-xs font-semibold text-foreground">
+          <button
+            type="button"
+            onClick={handleCopyTicker}
+            onKeyDown={(e) => e.key === "Enter" && handleCopyTicker(e as unknown as React.MouseEvent)}
+            className={cn(
+              "font-data text-xs font-semibold text-foreground",
+              "cursor-pointer transition-colors hover:text-primary",
+              copiedField === "ticker" && "text-primary",
+            )}
+            title="Click to copy ticker"
+          >
             <Highlight text={stock.ticker} highlight={searchQuery ?? ""} />
-          </span>
+          </button>
         </div>
       </td>
 
@@ -70,9 +96,18 @@ const StockRowBase = ({ stock, flash, searchQuery }: StockRowProps) => {
 
       {/* Price */}
       <td className="px-3 py-2 text-right">
-        <span className="font-data text-xs tabular-nums font-medium text-foreground">
+        <button
+          type="button"
+          onClick={handleCopyPrice}
+          className={cn(
+            "font-data cursor-pointer text-xs tabular-nums font-medium",
+            "transition-colors hover:text-primary",
+            copiedField === "price" && "text-primary",
+          )}
+          title="Click to copy price"
+        >
           {formatPrice(stock.price)}
-        </span>
+        </button>
       </td>
 
       {/* Change */}

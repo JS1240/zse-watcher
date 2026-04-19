@@ -30,6 +30,8 @@ const stock1: Stock = {
   volume: 12500,
   turnover: 515000,
   sector: 'Hoteli i turizam',
+  isin: 'HRRIVP0001',
+  dividendYield: 4.2,
 };
 
 const stock2: Stock = {
@@ -40,6 +42,8 @@ const stock2: Stock = {
   volume: 8900,
   turnover: 257100,
   sector: 'Telekomunikacije',
+  isin: 'HRHT0001',
+  dividendYield: 5.1,
 };
 
 const stock3: Stock = {
@@ -50,6 +54,8 @@ const stock3: Stock = {
   volume: 3200,
   turnover: 176000,
   sector: 'Hoteli i turizam',
+  isin: 'HRAD0001',
+  dividendYield: 6.3,
 };
 
 export const Default: Story = {

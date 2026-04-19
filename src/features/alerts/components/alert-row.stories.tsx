@@ -92,7 +92,7 @@ export const Paused: Story = {
 export const PercentCondition: Story = {
   args: {
     alert: createAlert({
-      condition: 'pct_up',
+      condition: 'percent_change_up',
       targetValue: 5.0,
     }),
     stocks: mockStocks,

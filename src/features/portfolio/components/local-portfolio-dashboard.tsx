@@ -487,7 +487,18 @@ export function LocalPortfolioDashboard() {
                 >
                   <td className="px-3 py-3 md:py-2">
                     <div>
-                      <span className="font-data font-semibold text-foreground">{h.ticker}</span>
+                      <button
+                        type="button"
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          await navigator.clipboard.writeText(h.ticker);
+                          toast.success("Kopirano: " + h.ticker);
+                        }}
+                        className="font-data cursor-pointer font-semibold text-foreground hover:text-primary"
+                        title="Click to copy"
+                      >
+                        {h.ticker}
+                      </button>
                       <span className="ml-1 text-[10px] text-muted-foreground">{h.name}</span>
                     </div>
                   </td>
@@ -497,8 +508,19 @@ export function LocalPortfolioDashboard() {
                   <td className="px-3 py-3 md:py-2 text-right font-data tabular-nums text-muted-foreground">
                     {formatPrice(h.avgPrice)}
                   </td>
-                  <td className="px-3 py-3 md:py-2 text-right font-data tabular-nums text-foreground">
-                    {formatPrice(h.currentPrice)}
+                  <td className="px-3 py-3 md:py-2">
+                    <button
+                      type="button"
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        await navigator.clipboard.writeText(h.currentPrice.toFixed(2));
+                        toast.success(formatPrice(h.currentPrice));
+                      }}
+                      className="font-data cursor-pointer text-right tabular-nums text-foreground hover:text-primary"
+                      title="Click to copy"
+                    >
+                      {formatPrice(h.currentPrice)}
+                    </button>
                   </td>
                   <td className="hidden px-3 py-3 md:py-2 text-right font-data tabular-nums text-foreground md:table-cell">
                     {formatCurrency(h.totalValue)}
