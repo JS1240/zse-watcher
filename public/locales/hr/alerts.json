@@ -48,7 +48,8 @@
     "tickerValid": "Odabrano",
     "targetValid": "Ispravno"
   },
-  "edit": "Urediivanje",
+  "edit": "Uređivanje",
+  "useSuggested": "Koristi {{value}}",
   "pressEnter": "Enter za spremanje",
   "cancelHint": "Esc za odustanak",
   "empty": "Nemate postavljenih alarma",

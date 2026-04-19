@@ -49,6 +49,7 @@
     "targetValid": "Valid"
   },
   "edit": "Edit",
+  "useSuggested": "Use {{value}}",
   "pressEnter": "Enter to save",
   "cancelHint": "Esc to cancel",
   "empty": "No alerts configured",

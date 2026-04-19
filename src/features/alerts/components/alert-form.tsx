@@ -209,7 +209,7 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
                   }}
                   className="ml-auto underline hover:no-underline"
                 >
-                  {t("useSuggested") || `Koristi ${suggestedTarget}`}
+                  {t("useSuggested", { value: suggestedTarget }) || `Koristi ${suggestedTarget}`}
                 </button>
               )}
             </p>
