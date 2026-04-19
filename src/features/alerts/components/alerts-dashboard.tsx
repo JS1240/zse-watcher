@@ -17,6 +17,7 @@ import { normalizeNumberInput, formatInputNumber, parseLocalizedNumber } from "@
 import { cn } from "@/lib/utils";
 import type { AlertCondition } from "@/types/alert";
 import { EmptyState } from "@/components/shared/empty-state";
+import { SearchEmptyIllustration } from "@/components/shared/empty-illustrations";
 import { ErrorState } from "@/components/shared/error-state";
 import { exportToCsv } from "@/lib/export";
 import { useDebounce } from "@/hooks/use-debounce";
@@ -342,7 +343,7 @@ export function AlertsDashboard() {
         </div>
       ) : debouncedSearch ? (
         <EmptyState
-          icon={<Search className="h-8 w-8" />}
+          icon={<SearchEmptyIllustration className="h-8 w-8" />}
           title={tc("empty.noResults")}
           description={tc("empty.noResultsDescription")}
           action={{ label: tc("empty.clearFilters"), onClick: () => setSearch("") }}
