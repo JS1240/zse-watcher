@@ -1,6 +1,6 @@
 import { useState, useMemo, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, Trash2, ChevronDown, ChevronUp, Download, Search, X, ArrowUp, ArrowDown, ArrowUpDown, TrendingUp, TrendingDown, Keyboard } from "lucide-react";
+import { Plus, Trash2, ChevronDown, ChevronUp, Download, Search, X, ArrowUp, ArrowDown, ArrowUpDown, TrendingUp, TrendingDown, Keyboard, CheckCircle2 } from "lucide-react";
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { toast } from "sonner";
 import { useLocalTransactions } from "@/features/portfolio/hooks/use-local-transactions";
@@ -264,7 +264,7 @@ export function LocalPortfolioDashboard() {
       h.gainPct.toFixed(2),
     ]);
     exportToCsv(`zse-portfolio-local-${new Date().toISOString().split("T")[0]}`, headers, rows);
-    toast.success(t("toast.exported"));
+    toast.success(t("toast.exported"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
   };
 
   return (
@@ -444,7 +444,7 @@ export function LocalPortfolioDashboard() {
         <AddPositionForm
           onClose={() => setShowAddForm(false)}
           onSuccess={() => {
-            toast.success(t("toast.transactionAdded"));
+            toast.success(t("toast.transactionAdded"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
             setSavedFlash(true);
             setTimeout(() => setSavedFlash(false), 2000);
           }}
@@ -582,7 +582,7 @@ export function LocalPortfolioDashboard() {
                         headers,
                         rows,
                       );
-                      toast.success(t("toast.exported"));
+                      toast.success(t("toast.exported"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
                     }}
                     className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground"
                   >
@@ -685,7 +685,7 @@ export function LocalPortfolioDashboard() {
         variant="danger"
         onConfirm={() => {
           clearTransactions();
-          toast.success(t("toast.cleared") || "All transactions cleared");
+          toast.success(t("toast.cleared") || "All transactions cleared", { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
         }}
       />
     </div>

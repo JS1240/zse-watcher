@@ -1,5 +1,5 @@
 import { memo, useMemo, useCallback, useState } from "react";
-import { Star, Loader2 } from "lucide-react";
+import { Star, Loader2, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
 import {
@@ -51,9 +51,9 @@ export const WatchlistToggle = memo(function WatchlistToggle({ ticker, className
 
     // Show toast feedback
     if (isWatched) {
-      toast.success(`${ticker} removed from watchlist`);
+      toast.success(`${ticker} removed from watchlist`, { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
     } else {
-      toast.success(`${ticker} added to watchlist`);
+      toast.success(`${ticker} added to watchlist`, { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
     }
 
     if (isAuthenticated) {

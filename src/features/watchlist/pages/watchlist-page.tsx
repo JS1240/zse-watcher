@@ -1,6 +1,6 @@
 import { useMemo, useState, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Star, Search, Keyboard, ArrowUp, ArrowDown, ArrowUpDown, GripVertical, Download, X, TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { Star, Search, Keyboard, ArrowUp, ArrowDown, ArrowUpDown, GripVertical, Download, X, TrendingUp, TrendingDown, Minus, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocalWatchlist } from "@/features/watchlist/hooks/use-local-watchlist";
@@ -216,7 +216,7 @@ function AuthenticatedWatchlist() {
       s.dividendYield ? s.dividendYield.toFixed(2) : "",
     ]);
     exportToCsv(`zse-watchlist-${new Date().toISOString().split("T")[0]}`, headers, rows);
-    toast.success(t("toast.exported"));
+    toast.success(t("toast.exported"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
   };
 
   if (watchlistItems.isLoading) {
@@ -608,7 +608,7 @@ function LocalWatchlist() {
       s.dividendYield ? s.dividendYield.toFixed(2) : "",
     ]);
     exportToCsv(`zse-watchlist-${new Date().toISOString().split("T")[0]}`, headers, rows);
-    toast.success(t("toast.exported"));
+    toast.success(t("toast.exported"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
   };
 
   if (isError) {
@@ -838,7 +838,7 @@ function LocalWatchlist() {
         onConfirm={() => {
           if (confirmRemove) {
             removeItem(confirmRemove);
-            toast.success(t("toast.removed") || "Removed from watchlist");
+            toast.success(t("toast.removed") || "Removed from watchlist", { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
           }
         }}
       />

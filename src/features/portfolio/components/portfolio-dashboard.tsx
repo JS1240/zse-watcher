@@ -1,6 +1,6 @@
 import { useMemo, useState, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, Download, Wallet, ChevronUp, ChevronDown, Search, X, Keyboard, TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { Plus, Download, Wallet, ChevronUp, ChevronDown, Search, X, Keyboard, TrendingUp, TrendingDown, Minus, CheckCircle2 } from "lucide-react";
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { Input } from "@/components/ui/input";
 import { useDebounce } from "@/hooks/use-debounce";
@@ -186,7 +186,7 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
       h.gainPct.toFixed(2),
     ]);
     exportToCsv(`zse-portfolio-${new Date().toISOString().split("T")[0]}`, headers, rows);
-    toast.success(t("toast.exported"));
+    toast.success(t("toast.exported"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
   };
 
   // Export transaction history as CSV for Croatian tax reporting
@@ -231,7 +231,7 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
       headers,
       rows,
     );
-    toast.success(t("toast.exported"));
+    toast.success(t("toast.exported"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
   };
 
   if (isLoading) {
@@ -410,7 +410,7 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
       {showAddForm && (
         <AddPositionForm
           onClose={() => setShowAddForm(false)}
-          onSuccess={() => toast.success(t("toast.transactionAdded"))}
+          onSuccess={() => toast.success(t("toast.transactionAdded"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> })}
         />
       )}
 

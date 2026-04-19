@@ -174,7 +174,7 @@ export function AlertsDashboard() {
       ];
     });
     exportToCsv(`zse-alerts-${new Date().toISOString().split("T")[0]}`, headers, rows);
-    toast.success(t("toast.exported") || "Exported to CSV");
+    toast.success(t("toast.exported") || "Exported to CSV", { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
   };
 
   return (
@@ -303,7 +303,7 @@ export function AlertsDashboard() {
       {showForm && (
         <AlertForm
           onClose={() => setShowForm(false)}
-          onSuccess={() => toast.success(t("toast.created"))}
+          onSuccess={() => toast.success(t("toast.created"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> })}
         />
       )}
 
@@ -326,7 +326,7 @@ export function AlertsDashboard() {
               onToggle={() => {
                 const wasActive = alert.isActive;
                 toggleAlert(alert.id);
-                toast.success(wasActive ? t("toast.paused") : t("toast.activated"));
+                toast.success(wasActive ? t("toast.paused") : t("toast.activated"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
               }}
               onUpdate={async (id, data) => {
                 // Proper update mutation — preserves alert ID and createdAt
@@ -336,7 +336,7 @@ export function AlertsDashboard() {
                   condition: data.condition,
                   targetValue: data.targetValue,
                 });
-                toast.success(t("toast.updated") || "Alert updated");
+                toast.success(t("toast.updated") || "Alert updated", { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
               }}
             />
           ))}
@@ -375,7 +375,7 @@ export function AlertsDashboard() {
         onConfirm={() => {
           if (confirmDelete) {
             deleteAlert(confirmDelete);
-            toast.success(t("toast.deleted"));
+            toast.success(t("toast.deleted"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
           }
         }}
       />
