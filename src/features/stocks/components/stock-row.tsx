@@ -5,6 +5,7 @@ import { ChangeBadge } from "@/components/shared/change-badge";
 import { WatchlistToggle } from "@/features/watchlist/components/watchlist-toggle";
 import { Highlight } from "@/components/shared/highlight";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
+import { toast } from "sonner";
 import type { Stock } from "@/types/stock";
 
 type FlashDirection = "up" | "down" | null;
@@ -27,6 +28,10 @@ const StockRowBase = ({ stock, flash, searchQuery }: StockRowProps) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       select(stock.ticker);
+    } else if (e.key === "c" || e.key === "C") {
+      e.preventDefault();
+      navigator.clipboard.writeText(stock.ticker);
+      toast.success("Kopirano: " + stock.ticker);
     }
   };
 
@@ -36,7 +41,7 @@ const StockRowBase = ({ stock, flash, searchQuery }: StockRowProps) => {
       tabIndex={0}
       onClick={() => select(stock.ticker)}
       onKeyDown={handleKeyDown}
-      aria-label={`${stock.ticker} — ${stock.name}: ${stock.price} EUR, ${stock.changePct > 0 ? "+" : ""}${stock.changePct}%`}
+      aria-label={`${stock.ticker} — ${stock.name}: ${stock.price} EUR, ${stock.changePct > 0 ? "+" : ""}${stock.changePct}%. Press C to copy ticker`}
       className={cn(
         "group cursor-pointer border-b border-border/50 transition-all duration-150 hover:bg-accent/70",
         "last:border-b-0",
