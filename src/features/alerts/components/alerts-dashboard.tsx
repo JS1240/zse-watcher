@@ -549,7 +549,7 @@ const AlertRowBase = memo(function AlertRow({ alert, onDelete, onToggle, onUpdat
 
   if (editing) {
     return (
-      <div className="rounded-md border border-primary/50 bg-card px-3 py-2.5">
+      <div className="animate-edit-expand rounded-md border border-primary/50 bg-card px-3 py-2.5">
         <div className="mb-2 flex items-center justify-between">
           <span className="text-[10px] font-semibold uppercase tracking-wider text-primary">
             {t("edit")}

@@ -113,6 +113,21 @@ export function TickerSelect({
 
   const showDropdown = isOpen && suggestions.length > 0;
 
+  // Keyboard hint text
+  const hint = !text || !isOpen ? null : suggestions.length > 0 ? (
+    <span className="mt-1 flex items-center gap-1 text-[9px] text-muted-foreground">
+      <kbd className="rounded bg-muted px-1 py-0.5 font-data text-[8px]">↑</kbd>
+      <kbd className="rounded bg-muted px-1 py-0.5 font-data text-[8px]">↓</kbd>
+      <span className="mx-1"> navigiraj</span>
+      <kbd className="rounded bg-muted px-1 py-0.5 font-data text-[8px]">↵</kbd>
+      <span className="mx-1"> odaberi</span>
+      <kbd className="rounded bg-muted px-1 py-0.5 font-data text-[8px]">⇥</kbd>
+      <span className="mx-1"> prvi</span>
+    </span>
+  ) : text.length >= 3 ? (
+    <span className="mt-1 text-[9px] text-muted-foreground">Nema rezultata</span>
+  ) : null;
+
   return (
     <div className={cn("relative", className)}>
       <div className="relative flex items-center">
@@ -142,6 +157,8 @@ export function TickerSelect({
         />
         <ChevronDown className="pointer-events-none absolute right-2 h-3.5 w-3.5 text-muted-foreground" />
       </div>
+
+      {hint}
 
       {showDropdown && (
         <ul
