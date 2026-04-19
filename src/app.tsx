@@ -23,11 +23,15 @@ export function App() {
           <RouterProvider router={router} />
         </Suspense>
         <Toaster
-        position="bottom-right"
-        toastOptions={{
-          className: "bg-card text-foreground border-border",
-        }}
-      />
+          position="bottom-right"
+          duration={3000}
+          visibleToasts={3}
+          closeButton
+          toastOptions={{
+            className: "bg-card text-foreground border-border",
+            descriptionClasses: "text-muted-foreground text-xs",
+          }}
+        />
       <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </TooltipProvider>
