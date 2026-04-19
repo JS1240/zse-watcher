@@ -73,12 +73,28 @@ function SortHeader({
 }) {
   const isActive = sort?.column === column;
   const direction = isActive ? sort.direction : null;
+  const sortDirection = isActive
+    ? direction === "asc"
+      ? "ascending"
+      : "descending"
+    : "none";
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onSort(column);
+    }
+  };
 
   return (
     <button
       onClick={() => onSort(column)}
+      onKeyDown={handleKeyDown}
+      tabIndex={0}
+      role="columnheader"
+      aria-sort={sortDirection}
+      aria-label={`${label}: ${sortDirection === "none" ? "unsorted" : sortDirection}, click to sort`}
       className="flex items-center gap-1 transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background rounded-sm"
-      aria-sort={isActive ? (direction === "asc" ? "ascending" : "descending") : "none"}
     >
       <span>{label}</span>
       {direction === "asc" ? (
