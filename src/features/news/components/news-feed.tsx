@@ -1,14 +1,17 @@
 import { useState } from "react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { ExternalLink, Newspaper, Search, ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
+import { ExternalLink, Newspaper, Search, ArrowUp, ArrowDown, ArrowUpDown, Download } from "lucide-react";
+import { toast } from "sonner";
 import { useNews } from "@/features/news/api/news-queries";
 import { ArticleDrawer } from "@/features/news/components/article-drawer";
 import { NewsSkeleton } from "@/features/news/components/news-skeleton";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { formatDate, formatTime } from "@/lib/formatters";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
+import { exportToCsv } from "@/lib/export";
 import type { NewsArticle } from "@/types/news";
 import { useDebounce } from "@/hooks/use-debounce";
 
@@ -100,8 +103,25 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
     return result;
   }, [articles, ticker, category, limit, debouncedSearch, sortField, sortDir]);
 
-  // Only show search when not limited (inline usage)
+  // Only show search/export when not limited (inline usage)
   const showSearch = !limit && articles && articles.length > 0;
+
+  // CSV export handler
+  const handleExport = () => {
+    if (!filtered.length) return;
+    const headers = ["Date", "Time", "Ticker", "Title", "Summary", "Source", "Category"];
+    const rows = filtered.map((a) => [
+      formatDate(a.publishedAt),
+      formatTime(a.publishedAt),
+      a.ticker || "",
+      a.title,
+      a.summary || "",
+      a.source,
+      a.category,
+    ]);
+    exportToCsv(`zse-news-${new Date().toISOString().split("T")[0]}`, headers, rows);
+    toast.success(t("toast.exported"));
+  };
 
   if (isLoading) {
     return <NewsSkeleton />;
@@ -138,6 +158,16 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
             <div className="flex items-center gap-2">
               <SortHeader field="date" label={t("sort.date") || "Datum"} />
               <SortHeader field="ticker" label={t("sort.ticker") || "Dionica"} />
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleExport}
+                disabled={!filtered.length}
+                title={t("exportCsv") || "Export CSV"}
+              >
+                <Download className="h-3.5 w-3.5" />
+                CSV
+              </Button>
             </div>
           </div>
         )}
@@ -177,6 +207,16 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
             <div className="flex items-center gap-2">
               <SortHeader field="date" label={t("sort.date") || "Datum"} />
               <SortHeader field="ticker" label={t("sort.ticker") || "Dionica"} />
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleExport}
+                disabled={!filtered.length}
+                title={t("exportCsv") || "Export CSV"}
+              >
+                <Download className="h-3.5 w-3.5" />
+                CSV
+              </Button>
             </div>
           </div>
         )}
