@@ -4,6 +4,7 @@ import { Newspaper, HelpCircle } from "lucide-react";
 import { useNews } from "@/features/news/api/news-queries";
 import { ArticleDrawer } from "@/features/news/components/article-drawer";
 import { EmptyState } from "@/components/shared/empty-state";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { formatPrice, formatMarketCap } from "@/lib/formatters";
 import { formatDate } from "@/lib/formatters";
@@ -17,7 +18,7 @@ interface StockFundamentalsProps {
 
 export function StockFundamentals({ stock }: StockFundamentalsProps) {
   const { t } = useTranslation("stocks");
-  const { data: allNews } = useNews();
+  const { data: allNews, isLoading: isNewsLoading } = useNews();
   const [selectedArticle, setSelectedArticle] = useState<NewsArticle | null>(null);
   const relatedNews = allNews
     ? allNews.filter((a) => a.ticker === stock.ticker).slice(0, 5)
@@ -110,7 +111,22 @@ export function StockFundamentals({ stock }: StockFundamentalsProps) {
           <h4 className="mb-2 text-[10px] uppercase tracking-wider text-muted-foreground">
             Latest News
           </h4>
-          {relatedNews.length > 0 ? (
+          {isNewsLoading ? (
+            <div className="space-y-1.5">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="flex w-full items-start justify-between gap-2 rounded-sm border border-border/50 bg-card px-2 py-1.5"
+                >
+                  <div className="min-w-0 flex-1 space-y-1">
+                    <Skeleton className="h-3 w-4/5 animate-shimmer" />
+                    <Skeleton className="h-2 w-1/3 animate-shimmer" />
+                  </div>
+                  <Skeleton className="h-3 w-3 shrink-0 animate-shimmer" />
+                </div>
+              ))}
+            </div>
+          ) : relatedNews.length > 0 ? (
             <div className="space-y-1.5">
               {relatedNews.map((article) => (
                 <button
