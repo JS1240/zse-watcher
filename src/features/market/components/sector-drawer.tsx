@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { X } from "lucide-react";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
@@ -26,13 +26,13 @@ export function SectorDrawer({ sector, onClose }: SectorDrawerProps) {
         .sort((a, b) => b.turnover - a.turnover)
     : [];
 
-  useState(() => {
+  useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  });
+  }, [onClose]);
 
   if (!sector) return null;
 
