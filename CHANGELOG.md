@@ -4,6 +4,15 @@
 
 ### Added
 
+- **Keyboard Navigation for Watchlist Table Headers** — sort columns with keyboard for Croatian investors
+  - Added onKeyDown handler for Enter/Space to sort watchlist columns
+  - Added tabIndex=0 and role=columnheader for keyboard accessibility
+  - Fixed aria-sort to use explicit variable (matching stock-table pattern)
+  - Descriptive aria-label communicates sort state to screen readers
+  - Aligns with stock table accessibility patterns
+
+### Added
+
 - **Custom SVG Illustrations for Empty States** — replace generic icons with purpose-built SVGs for Croatian retail investors
   - WatchlistEmptyIllustration: stock chart trending up with star accent
   - PortfolioEmptyIllustration: bar chart portfolio-building metaphor
