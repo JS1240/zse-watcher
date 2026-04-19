@@ -1,4 +1,12 @@
 {
+  "header": {
+    "tickerLabel": "Stock ticker",
+    "priceLabel": "Current price",
+    "changeLabel": "Price change percentage",
+    "sectorLabel": "Sector",
+    "isinLabel": "ISIN number",
+    "openDetail": "Open stock details"
+  },
   "table": {
     "label": "ZSE stock listing",
     "ticker": "Ticker",

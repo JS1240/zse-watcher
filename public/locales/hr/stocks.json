@@ -1,4 +1,12 @@
 {
+  "header": {
+    "tickerLabel": "Oznaka dionice",
+    "priceLabel": "Trenutačna cijena",
+    "changeLabel": "Postotak promjene cijene",
+    "sectorLabel": "Sektor",
+    "isinLabel": "ISIN broj",
+    "openDetail": "Otvori detalje dionice"
+  },
   "table": {
     "label": "Popis dionica ZSE",
     "ticker": "Oznaka",
