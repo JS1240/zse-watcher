@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback, memo } from "react";
 import { useTranslation } from "react-i18next";
 import { Bell, BellOff, Pencil, Trash2, X, Check, CheckCircle2, Keyboard, Download, AlertCircle, Search, CircleDot, Pause, TrendingUp, TrendingDown, ArrowUpDown } from "lucide-react";
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
@@ -317,7 +317,7 @@ export function AlertsDashboard() {
       {filteredAlerts.length > 0 ? (
         <div className="space-y-1">
           {filteredAlerts.map((alert) => (
-            <AlertRow
+            <AlertRowBase
               key={alert.id}
               alert={alert}
               stocks={stocks}
@@ -402,7 +402,7 @@ interface AlertRowProps {
   stocks?: { ticker: string; name: string; price: number | null }[];
 }
 
-function AlertRow({ alert, onDelete, onToggle, onUpdate, stocks }: AlertRowProps) {
+const AlertRowBase = memo(function AlertRow({ alert, onDelete, onToggle, onUpdate, stocks }: AlertRowProps) {
   const { t } = useTranslation("alerts");
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -756,4 +756,14 @@ tabIndex={0}
       </div>
     </div>
   );
-}
+}, (prev, next) => {
+  // Only re-render if alert data changed
+  return (
+    prev.alert.id === next.alert.id &&
+    prev.alert.ticker === next.alert.ticker &&
+    prev.alert.condition === next.alert.condition &&
+    prev.alert.targetValue === next.alert.targetValue &&
+    prev.alert.isActive === next.alert.isActive &&
+    prev.alert.isTriggered === next.alert.isTriggered
+  );
+});
