@@ -33,10 +33,14 @@
     "gain": "Dobitak/Gubitak",
     "gainPercent": "Dobitak %",
     "date": "Datum",
-    "tickerValid": "Odabrano",
-    "valid": "Ispravno",
     "sharesHint": "unesite broj dionica",
     "priceHint": "cijena po dionici (npr. 142,50)"
+  },
+  "validation": {
+    "required": "Obavezno polje",
+    "positiveNumber": "Unesite pozitivan broj",
+    "tickerValid": "Odabrano",
+    "targetValid": "Ispravno"
   },
   "type": {
     "buy": "Kupnja",

@@ -216,7 +216,7 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
           ) : isTickerValid ? (
             <p className="mt-1.5 flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400">
               <CheckCircle2 className="h-3.5 w-3.5 flex-shrink-0" />
-              {t("fields.tickerValid") || "Odabrano"}
+              {t("validation.tickerValid")}
             </p>
           ) : null}
         </div>
@@ -273,7 +273,7 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
           ) : isTargetValid && !focused.target ? (
             <p className="mt-1.5 flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400">
               <CheckCircle2 className="h-3.5 w-3.5 flex-shrink-0" />
-              {t("fields.targetValid") || "Ispravno"}
+              {t("validation.targetValid")}
             </p>
           ) : (
             <p className="mt-1.5 flex items-center gap-1.5 text-[9px] text-muted-foreground">

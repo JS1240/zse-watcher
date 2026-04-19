@@ -33,10 +33,14 @@
     "gain": "Gain/Loss",
     "gainPercent": "Gain %",
     "date": "Date",
-    "tickerValid": "Selected",
-    "valid": "Valid",
     "sharesHint": "enter number of shares",
     "priceHint": "price per share (e.g. 142.50)"
+  },
+  "validation": {
+    "required": "Required field",
+    "positiveNumber": "Enter a positive number",
+    "tickerValid": "Selected",
+    "targetValid": "Valid"
   },
   "type": {
     "buy": "Buy",

@@ -38,14 +38,15 @@
     "target": "Target Value",
     "targetHint": "Example: 150.00 or 10.5%",
     "status": "Status",
-    "created": "Created",
-    "tickerValid": "Selected",
-    "targetValid": "Valid"
+    "created": "Created"
   },
   "validation": {
     "required": "Required field",
     "positiveNumber": "Enter a positive number",
-    "selectTicker": "Select a stock from the list"
+    "selectTicker": "Select a stock from the list",
+    "tickerNotFound": "Stock does not exist on ZSE",
+    "tickerValid": "Selected",
+    "targetValid": "Valid"
   },
   "edit": "Edit",
   "pressEnter": "Enter to save",

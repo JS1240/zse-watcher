@@ -605,7 +605,7 @@ function AlertRow({ alert, onDelete, onToggle, onUpdate, stocks }: AlertRowProps
             ) : isEditTickerValid ? (
               <p className="mt-1.5 flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400">
                 <CheckCircle2 className="h-3.5 w-3.5 flex-shrink-0" />
-                {t("fields.tickerValid") || "Odabrano"}
+                {t("validation.tickerValid")}
               </p>
             ) : null}
           </div>
@@ -662,7 +662,7 @@ function AlertRow({ alert, onDelete, onToggle, onUpdate, stocks }: AlertRowProps
             ) : isEditTargetValid && !editFocused.target ? (
               <p className="mt-1.5 flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400">
                 <CheckCircle2 className="h-3.5 w-3.5 flex-shrink-0" />
-                {t("fields.targetValid") || "Ispravno"}
+                {t("validation.targetValid")}
               </p>
             ) : (
               <p className="mt-1.5 flex items-center gap-1.5 text-[9px] text-muted-foreground">

@@ -38,14 +38,15 @@
     "target": "Ciljna vrijednost",
     "targetHint": "Primjer: 150,00 ili 10.5%",
     "status": "Status",
-    "created": "Stvoreno",
-    "tickerValid": "Odabrano",
-    "targetValid": "Ispravno"
+    "created": "Stvoreno"
   },
   "validation": {
     "required": "Obavezno polje",
     "positiveNumber": "Unesite pozitivan broj",
-    "selectTicker": "Odaberite dionicu s popisa"
+    "selectTicker": "Odaberite dionicu s popisa",
+    "tickerNotFound": "Dionica ne postoji na ZSE",
+    "tickerValid": "Odabrano",
+    "targetValid": "Ispravno"
   },
   "edit": "Urediivanje",
   "pressEnter": "Enter za spremanje",
