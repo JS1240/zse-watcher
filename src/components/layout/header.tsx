@@ -3,10 +3,14 @@ import { Activity, Moon, Sun, Globe } from "lucide-react";
 import { useThemeStore } from "@/hooks/use-theme";
 import { UserMenu } from "@/features/auth/components/user-menu";
 import { NotificationCenter } from "@/features/alerts/components/notification-center";
+import { useMarketStatus } from "@/features/market/api/market-queries";
+import { cn } from "@/lib/utils";
 
 export function Header() {
   const { t, i18n } = useTranslation("common");
   const { mode, toggle: toggleTheme } = useThemeStore();
+  const { data: marketStatus } = useMarketStatus();
+  const isMarketOpen = marketStatus?.isOpen ?? false;
 
   const toggleLanguage = () => {
     const next = i18n.language === "hr" ? "en" : "hr";
@@ -15,15 +19,42 @@ export function Header() {
 
   return (
     <header className="flex h-14 shrink-0 items-center justify-between border-b border-border bg-card px-4">
-      {/* Left: Brand */}
-      <div className="flex items-center gap-3">
+      {/* Left: Brand + Market Status */}
+      <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
           <Activity className="h-5 w-5 text-primary" />
           <span className="font-data text-lg font-bold tracking-tight text-foreground">
             {t("app.name")}
           </span>
         </div>
-        <span className="hidden text-xs text-muted-foreground sm:inline">
+
+        {/* Market status indicator - compact for header */}
+        <div
+          className={cn(
+            "flex items-center gap-1.5 rounded-full border px-2 py-1 transition-colors",
+            isMarketOpen
+              ? "border-green-500/30 bg-green-500/10"
+              : "border-red-500/30 bg-red-500/10"
+          )}
+          title={isMarketOpen ? t("market.status.open") : t("market.status.closed")}
+        >
+          <div
+            className={cn(
+              "h-1.5 w-1.5 rounded-full",
+              isMarketOpen ? "bg-price-up animate-pulse" : "bg-price-down"
+            )}
+          />
+          <span
+            className={cn(
+              "font-data text-[9px] font-semibold uppercase tracking-wider",
+              isMarketOpen ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"
+            )}
+          >
+            {isMarketOpen ? "OTVORENO" : "ZATVORENO"}
+          </span>
+        </div>
+
+        <span className="hidden text-xs text-muted-foreground lg:inline">
           {t("app.tagline")}
         </span>
       </div>
