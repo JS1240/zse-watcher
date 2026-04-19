@@ -39,7 +39,7 @@ export function SectorDrawer({ sector, onClose }: SectorDrawerProps) {
   return (
     <>
       <div className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="fixed right-0 top-0 z-50 flex h-full w-full flex-col bg-card shadow-xl sm:max-w-md">
+      <div className="fixed right-0 top-0 z-50 flex h-full w-full flex-col bg-card shadow-xl sm:max-w-[85vw] md:max-w-xl lg:max-w-2xl xl:max-w-[42rem] 2xl:max-w-[48rem]">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <div>

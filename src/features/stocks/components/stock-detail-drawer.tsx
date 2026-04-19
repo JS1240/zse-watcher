@@ -62,8 +62,9 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
       <div
         ref={setContainerRef}
         className={cn(
-          "fixed right-0 top-0 z-50 flex h-full w-full max-w-lg flex-col border-l border-border bg-card shadow-2xl",
+          "fixed right-0 top-0 z-50 flex h-full w-full flex-col border-l border-border bg-card shadow-2xl",
           "animate-[slide-in-right_0.2s_ease-out]",
+          "max-w-[85vw] md:max-w-xl lg:max-w-2xl xl:max-w-[42rem] 2xl:max-w-[48rem]",
         )}
         role="dialog"
         aria-modal="true"
