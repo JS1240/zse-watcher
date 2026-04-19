@@ -13,6 +13,12 @@ interface PortfolioAnalyticsSkeletonProps {
 export function PortfolioAnalyticsSkeleton({ className }: PortfolioAnalyticsSkeletonProps) {
   return (
     <div className={cn("space-y-4", className)}>
+      {/* Loading label */}
+      <div className="flex items-center justify-between">
+        <Skeleton className="h-3 w-32 animate-shimmer" />
+        <Skeleton className="h-2 w-16 animate-shimmer" />
+      </div>
+
       {/* Performance chart skeleton */}
       <div className="rounded-md border border-border bg-card p-4">
         <Skeleton className="h-[10px] w-24 animate-shimmer" />
