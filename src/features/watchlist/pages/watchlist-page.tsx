@@ -16,6 +16,7 @@ import { ChangeBadge } from "@/components/shared/change-badge";
 import { EmptyState } from "@/components/shared/empty-state";
 import { WatchlistEmptyIllustration } from "@/components/shared/empty-illustrations";
 import { ErrorState } from "@/components/shared/error-state";
+import { Highlight } from "@/components/shared/highlight";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { formatPrice, formatVolume } from "@/lib/formatters";
@@ -364,7 +365,7 @@ function AuthenticatedWatchlist() {
       )}
 
       {filtered.length > 0 ? (
-        <WatchlistTable stocks={filtered} sort={sort} onSort={handleSort} />
+        <WatchlistTable stocks={filtered} sort={sort} onSort={handleSort} searchQuery={debouncedSearch} />
       ) : debouncedSearch ? (
         <EmptyState
           icon={<Search className="h-8 w-8" />}
@@ -396,11 +397,13 @@ function SortableRow({
   showRemove,
   onRemove,
   flash,
+  searchQuery,
 }: {
   stock: Stock;
   showRemove?: boolean;
   onRemove?: (ticker: string) => void;
   flash?: "up" | "down" | null;
+  searchQuery?: string;
 }) {
   const {
     attributes,
@@ -469,12 +472,14 @@ function SortableRow({
             <WatchlistToggle ticker={stock.ticker} />
           )}
           <span className="font-data text-xs font-semibold text-foreground">
-            {stock.ticker}
+            <Highlight text={stock.ticker} highlight={searchQuery ?? ""} />
           </span>
         </div>
       </td>
       <td className="hidden px-3 py-2 md:table-cell">
-        <span className="truncate text-xs text-muted-foreground">{stock.name}</span>
+        <span className="truncate text-xs text-muted-foreground">
+          <Highlight text={stock.name} highlight={searchQuery ?? ""} />
+        </span>
       </td>
       <td className="hidden px-3 py-2 lg:table-cell">
         <span className="text-xs text-muted-foreground">{stock.sector || "-"}</span>
@@ -770,6 +775,7 @@ function LocalWatchlist() {
                 showRemove
                 onRemove={(ticker) => setConfirmRemove(ticker)}
                 dragEnabled
+                searchQuery={debouncedSearch}
               />
             </SortableContext>
           </DndContext>
@@ -781,6 +787,7 @@ function LocalWatchlist() {
             showRemove
             onRemove={(ticker) => setConfirmRemove(ticker)}
             dragEnabled={false}
+            searchQuery={debouncedSearch}
           />
         )
       ) : debouncedSearch ? (
@@ -846,9 +853,10 @@ interface WatchlistTableProps {
   sort: { column: SortColumn; direction: SortDirection } | null;
   onSort: (col: SortColumn) => void;
   dragEnabled?: boolean;
+  searchQuery?: string;
 }
 
-function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort, dragEnabled }: WatchlistTableProps) {
+function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort, dragEnabled, searchQuery }: WatchlistTableProps) {
   const { t } = useTranslation("watchlist");
   const flashMap = usePriceFlash(stocks);
   return (
@@ -887,6 +895,7 @@ function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort, dragEnable
                 showRemove={showRemove}
                 onRemove={onRemove}
                 flash={flashMap.get(stock.ticker) ?? null}
+                searchQuery={searchQuery}
               />
             ) : (
               <WatchlistRow
@@ -895,6 +904,7 @@ function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort, dragEnable
                 showRemove={showRemove}
                 onRemove={onRemove}
                 flash={flashMap.get(stock.ticker) ?? null}
+                searchQuery={searchQuery}
               />
             )
           )}
@@ -909,9 +919,10 @@ interface WatchlistRowProps {
   showRemove?: boolean;
   onRemove?: (ticker: string) => void;
   flash?: "up" | "down" | null;
+  searchQuery?: string;
 }
 
-function WatchlistRow({ stock, showRemove, onRemove, flash }: WatchlistRowProps) {
+function WatchlistRow({ stock, showRemove, onRemove, flash, searchQuery }: WatchlistRowProps) {
   const { select, selectedTicker } = useSelectedStock();
   const isSelected = selectedTicker === stock.ticker;
 
@@ -952,12 +963,14 @@ function WatchlistRow({ stock, showRemove, onRemove, flash }: WatchlistRowProps)
             <WatchlistToggle ticker={stock.ticker} />
           )}
           <span className="font-data text-xs font-semibold text-foreground">
-            {stock.ticker}
+            <Highlight text={stock.ticker} highlight={searchQuery ?? ""} />
           </span>
         </div>
       </td>
       <td className="hidden px-3 py-2 md:table-cell">
-        <span className="truncate text-xs text-muted-foreground">{stock.name}</span>
+        <span className="truncate text-xs text-muted-foreground">
+          <Highlight text={stock.name} highlight={searchQuery ?? ""} />
+        </span>
       </td>
       <td className="hidden px-3 py-2 lg:table-cell">
         <span className="text-xs text-muted-foreground">{stock.sector || "-"}</span>
