@@ -84,5 +84,11 @@
     "title": "Tipkovnicke kratice",
     "closeDrawer": "Zatvori plocu",
     "showAll": "Pritisni ? za sve tipkovnice"
+  },
+  "tickerSelect": {
+    "navigate": "navigiraj",
+    "select": "odaberi",
+    "first": "prvi",
+    "noResults": "Nema rezultata"
   }
 }

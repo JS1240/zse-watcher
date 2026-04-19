@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { ChevronDown, Check } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { useDebounce } from "@/hooks/use-debounce";
 import { cn } from "@/lib/utils";
@@ -21,6 +22,7 @@ export function TickerSelect({
   error,
   id,
 }: TickerSelectProps) {
+  const { t } = useTranslation("common");
   const [text, setText] = useState(value);
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
@@ -118,14 +120,14 @@ export function TickerSelect({
     <span className="mt-1 flex items-center gap-1 text-[9px] text-muted-foreground">
       <kbd className="rounded bg-muted px-1 py-0.5 font-data text-[8px]">↑</kbd>
       <kbd className="rounded bg-muted px-1 py-0.5 font-data text-[8px]">↓</kbd>
-      <span className="mx-1"> navigiraj</span>
+      <span className="mx-1"> {t("tickerSelect.navigate")}</span>
       <kbd className="rounded bg-muted px-1 py-0.5 font-data text-[8px]">↵</kbd>
-      <span className="mx-1"> odaberi</span>
+      <span className="mx-1"> {t("tickerSelect.select")}</span>
       <kbd className="rounded bg-muted px-1 py-0.5 font-data text-[8px]">⇥</kbd>
-      <span className="mx-1"> prvi</span>
+      <span className="mx-1"> {t("tickerSelect.first")}</span>
     </span>
   ) : text.length >= 3 ? (
-    <span className="mt-1 text-[9px] text-muted-foreground">Nema rezultata</span>
+    <span className="mt-1 text-[9px] text-muted-foreground">{t("tickerSelect.noResults")}</span>
   ) : null;
 
   return (

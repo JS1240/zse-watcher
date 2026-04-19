@@ -83,5 +83,11 @@
     "title": "Keyboard Shortcuts",
     "closeDrawer": "Close drawer",
     "showAll": "Press ? for all shortcuts"
+  },
+  "tickerSelect": {
+    "navigate": "navigate",
+    "select": "select",
+    "first": "first",
+    "noResults": "No results"
   }
 }

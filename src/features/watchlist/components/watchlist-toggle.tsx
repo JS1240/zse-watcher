@@ -1,6 +1,7 @@
 import { memo, useMemo, useCallback, useState } from "react";
 import { Star, Loader2, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/hooks/use-auth";
 import {
   useWatchlistTickers,
@@ -16,6 +17,7 @@ interface WatchlistToggleProps {
 }
 
 export const WatchlistToggle = memo(function WatchlistToggle({ ticker, className }: WatchlistToggleProps) {
+  const { t } = useTranslation("watchlist");
   const { isAuthenticated } = useAuth();
   const { items: localItems, addItem, removeItem } = useLocalWatchlist();
   const watchlistTickers = useWatchlistTickers();
@@ -51,9 +53,9 @@ export const WatchlistToggle = memo(function WatchlistToggle({ ticker, className
 
     // Show toast feedback
     if (isWatched) {
-      toast.success(`${ticker} removed from watchlist`, { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
+      toast.success(t("toast.removed"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
     } else {
-      toast.success(`${ticker} added to watchlist`, { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
+      toast.success(t("toast.added"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
     }
 
     if (isAuthenticated) {
