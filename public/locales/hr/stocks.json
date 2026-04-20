@@ -1,4 +1,10 @@
 {
+  "shortcut": {
+    "search": "pretraži",
+    "details": "detalji",
+    "watch": "prati",
+    "copy": "kopiraj"
+  },
   "header": {
     "tickerLabel": "Oznaka dionice",
     "priceLabel": "Trenutačna cijena",

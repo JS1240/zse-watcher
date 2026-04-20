@@ -622,34 +622,54 @@ export function StockScreener() {
         </div>
       </div>
 
-      {/* Results count + export */}
+      {/* Results count + keyboard shortcuts hint + export */}
       <div className="flex items-center justify-between">
         <span className="text-[10px] text-muted-foreground">
           {t("screener.results", { count: results.length, total: stocks?.length ?? 0 })}
         </span>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => {
-            const headers = ["Ticker", "Name", "Sector", "Price (EUR)", "Change (%)", "Turnover (EUR)", "Dividend Yield (%)", "Volume"];
-            const rows = results.map((s) => [
-              s.ticker,
-              s.name,
-              s.sector,
-              s.price.toFixed(2),
-              s.changePct.toFixed(2),
-              s.turnover.toFixed(0),
-              s.dividendYield !== null ? s.dividendYield.toFixed(1) : "",
-              s.volume.toString(),
-            ]);
-            exportToCsv(`zse-screener-${new Date().toISOString().split("T")[0]}`, headers, rows);
-            toast.success(t("toast.exported") || "Exported to CSV");
-          }}
-          className="h-6 text-[10px]"
-        >
-          <Download className="h-3 w-3" />
-          CSV
-        </Button>
+        <div className="flex items-center gap-3">
+          {results.length > 0 && (
+            /* Keyboard shortcuts hint */
+            <div className="flex items-center gap-2 text-[9px] text-muted-foreground">
+              <span className="flex items-center gap-0.5">
+                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
+                <span>{t("shortcut.details")}</span>
+              </span>
+              <span className="flex items-center gap-0.5">
+                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">S</kbd>
+                <span>{t("shortcut.watch")}</span>
+              </span>
+              <span className="flex items-center gap-0.5">
+                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">C</kbd>
+                <span>{t("shortcut.copy")}</span>
+              </span>
+            </div>
+          )}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              const headers = ["Ticker", "Name", "Sector", "Price (EUR)", "Change (%)", "Turnover (EUR)", "Dividend Yield (%)", "Volume"];
+              const rows = results.map((s) => [
+                s.ticker,
+                s.name,
+                s.sector,
+                s.price.toFixed(2),
+                s.changePct.toFixed(2),
+                s.turnover.toFixed(0),
+                s.dividendYield !== null ? s.dividendYield.toFixed(1) : "",
+                s.volume.toString(),
+              ]);
+              exportToCsv(`zse-screener-${new Date().toISOString().split("T")[0]}`, headers, rows);
+              toast.success(t("toast.exported") || "Exported to CSV");
+            }}
+            className="h-6 text-[10px]"
+            disabled={results.length === 0}
+          >
+            <Download className="h-3 w-3" />
+            CSV
+          </Button>
+        </div>
       </div>
 
       {/* Results table */}

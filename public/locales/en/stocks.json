@@ -1,4 +1,10 @@
 {
+  "shortcut": {
+    "search": "search",
+    "details": "details",
+    "watch": "watch",
+    "copy": "copy"
+  },
   "header": {
     "tickerLabel": "Stock ticker",
     "priceLabel": "Current price",

@@ -5,6 +5,9 @@ import { ChangeBadge } from "@/components/shared/change-badge";
 import { WatchlistToggle } from "@/features/watchlist/components/watchlist-toggle";
 import { Highlight } from "@/components/shared/highlight";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
+import { useAuth } from "@/hooks/use-auth";
+import { useAddToWatchlist, useRemoveFromWatchlist, useWatchlistTickers } from "@/features/watchlist/api/watchlist-queries";
+import { useLocalWatchlist } from "@/features/watchlist/hooks/use-local-watchlist";
 import { toast } from "sonner";
 import type { Stock } from "@/types/stock";
 
@@ -21,7 +24,15 @@ interface StockRowProps {
 // Click-to-copy state for tickers and prices
 const StockRowBase = ({ stock, flash, searchQuery }: StockRowProps) => {
   const { selectedTicker, select } = useSelectedStock();
+  const { isAuthenticated } = useAuth();
+  const watchlistTickers = useWatchlistTickers();
+  const { items: localItems, addItem, removeItem } = useLocalWatchlist();
+  const addMutation = useAddToWatchlist();
+  const removeMutation = useRemoveFromWatchlist();
   const isSelected = selectedTicker === stock.ticker;
+  const isWatched = isAuthenticated
+    ? watchlistTickers.has(stock.ticker)
+    : localItems.some((item) => item.ticker === stock.ticker);
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
   const handleCopyTicker = useCallback(async (e: React.MouseEvent) => {
@@ -44,6 +55,26 @@ const StockRowBase = ({ stock, flash, searchQuery }: StockRowProps) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       select(stock.ticker);
+    } else if (e.key === "s" || e.key === "S") {
+      e.preventDefault();
+      // Toggle watchlist - same logic as WatchlistToggle
+      if (isAuthenticated) {
+        if (isWatched) {
+          removeMutation.mutate(stock.ticker);
+          toast.success("Uklonjeno s popisa praćenja");
+        } else {
+          addMutation.mutate(stock.ticker);
+          toast.success("Dodano na popis praćenja");
+        }
+      } else {
+        if (isWatched) {
+          removeItem(stock.ticker);
+          toast.success("Uklonjeno s popisa praćenja");
+        } else {
+          addItem(stock.ticker);
+          toast.success("Dodano na popis praćenja");
+        }
+      }
     } else if (e.key === "c" || e.key === "C") {
       e.preventDefault();
       navigator.clipboard.writeText(stock.ticker);
@@ -57,7 +88,7 @@ const StockRowBase = ({ stock, flash, searchQuery }: StockRowProps) => {
       tabIndex={0}
       onClick={() => select(stock.ticker)}
       onKeyDown={handleKeyDown}
-      aria-label={`${stock.ticker} — ${stock.name}: ${stock.price} EUR, ${stock.changePct > 0 ? "+" : ""}${stock.changePct}%. Press C to copy ticker`}
+      aria-label={`${stock.ticker} — ${stock.name}: ${stock.price} EUR, ${stock.changePct > 0 ? "+" : ""}${stock.changePct}%. Press Enter for details, S to ${isWatched ? "remove from" : "add to"} watchlist, C to copy ticker`}
       className={cn(
         "group cursor-pointer border-b border-border/50 transition-all duration-150 hover:bg-accent/70",
         "last:border-b-0",
