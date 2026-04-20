@@ -49,12 +49,12 @@ function SettingsPage() {
         <h2 className="mb-3 text-[10px] uppercase tracking-wider text-muted-foreground">
           Account
         </h2>
-        <div className="space-y-2 text-xs">
-          <div className="flex justify-between">
+        <div className="space-y-3 text-xs sm:space-y-2">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <span className="text-muted-foreground">Email</span>
-            <span className="font-data text-foreground">{user?.email}</span>
+            <span className="font-data break-all text-foreground sm:text-right">{user?.email}</span>
           </div>
-          <div className="flex justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <span className="text-muted-foreground">Plan</span>
             <span className={cn(
               "font-data font-medium",
@@ -71,7 +71,7 @@ function SettingsPage() {
         <h2 className="mb-3 text-[10px] uppercase tracking-wider text-muted-foreground">
           Theme
         </h2>
-        <div className="flex gap-2">
+        <div className="flex gap-2 sm:grid sm:grid-cols-3">
           {themeOptions.map((opt) => {
             const Icon = opt.icon;
             return (
@@ -79,14 +79,14 @@ function SettingsPage() {
                 key={opt.value}
                 onClick={() => setMode(opt.value)}
                 className={cn(
-                  "flex flex-1 items-center justify-center gap-2 rounded-md border px-3 py-2 text-xs transition-colors",
+                  "flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-md border px-3 py-2.5 text-xs transition-colors",
                   mode === opt.value
                     ? "border-primary bg-primary/10 text-foreground"
                     : "border-border text-muted-foreground hover:bg-accent",
                 )}
               >
-                <Icon className="h-3.5 w-3.5" />
-                {opt.label}
+                <Icon className="h-4 w-4 flex-shrink-0" />
+                <span className="hidden sm:inline">{opt.label}</span>
               </button>
             );
           })}
@@ -98,20 +98,20 @@ function SettingsPage() {
         <h2 className="mb-3 text-[10px] uppercase tracking-wider text-muted-foreground">
           Language
         </h2>
-        <div className="flex gap-2">
+        <div className="flex gap-2 sm:grid sm:grid-cols-2">
           {languageOptions.map((opt) => (
             <button
               key={opt.value}
               onClick={() => i18n.changeLanguage(opt.value)}
               className={cn(
-                "flex flex-1 items-center justify-center gap-2 rounded-md border px-3 py-2 text-xs transition-colors",
+                "flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-md border px-3 py-2.5 text-xs transition-colors",
                 i18n.language === opt.value
                   ? "border-primary bg-primary/10 text-foreground"
                   : "border-border text-muted-foreground hover:bg-accent",
               )}
             >
-              <Globe className="h-3.5 w-3.5" />
-              {opt.label}
+              <Globe className="h-4 w-4 flex-shrink-0" />
+              <span className="hidden sm:inline">{opt.label}</span>
             </button>
           ))}
         </div>
@@ -141,9 +141,9 @@ function SettingsPage() {
           {/* Hint to open full overlay */}
           <button
             onClick={() => setShowShortcuts(true)}
-            className="flex w-full items-center justify-center gap-2 rounded-md border border-dashed border-border px-3 py-2 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+            className="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-md border border-dashed border-border px-3 py-2.5 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
           >
-            <Keyboard className="h-3.5 w-3.5" />
+            <Keyboard className="h-4 w-4" />
             {t("shortcuts.showAll") || "Press ? for all shortcuts"}
           </button>
         </div>
