@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, memo } from "react";
-import { X, Info, Keyboard, RefreshCw, Download } from "lucide-react";
+import { X, Info, Keyboard, RefreshCw, Download, Bell } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useStockDetail } from "@/features/stocks/api/stock-detail-queries";
@@ -14,6 +14,8 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { exportToCsv } from "@/lib/export";
+import { AlertForm } from "@/features/alerts/components/alert-form";
+import { CheckCircle2 } from "lucide-react";
 
 interface StockDetailDrawerProps {
   ticker: string | null;
@@ -22,11 +24,13 @@ interface StockDetailDrawerProps {
 
 export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
   const { t } = useTranslation("stocks");
+  const { t: ta } = useTranslation("alerts");
   const { t: tc } = useTranslation("common");
   const { data: result, isLoading, isError, refetch } = useStockDetail(ticker);
   const stock = result?.stock ?? null;
   const isMockData = result?.isMockData ?? false;
   const { addRecentStock } = useRecentStocks();
+  const [showAlertForm, setShowAlertForm] = useState(false);
 
   // Export stock fundamentals as CSV for Croatian investors
   const handleExportCsv = useCallback(() => {
@@ -141,14 +145,24 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
           </div>
           <div className="flex items-center gap-2">
             {stock && (
-              <button
-                onClick={handleExportCsv}
-                className="flex items-center gap-1 rounded-md px-2 py-1 text-[10px] text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-                title={t("exportCsv")}
-              >
-                <Download className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">{t("exportCsv")}</span>
-              </button>
+              <>
+                <button
+                  onClick={() => setShowAlertForm(true)}
+                  className="flex items-center gap-1 rounded-md px-2 py-1 text-[10px] text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                  title={ta("create")}
+                >
+                  <Bell className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">{ta("create")}</span>
+                </button>
+                <button
+                  onClick={handleExportCsv}
+                  className="flex items-center gap-1 rounded-md px-2 py-1 text-[10px] text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                  title={t("exportCsv")}
+                >
+                  <Download className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">{t("exportCsv")}</span>
+                </button>
+              </>
             )}
             <span className="hidden items-center gap-1 text-[10px] text-muted-foreground md:flex">
               <Keyboard className="h-3 w-3" />
@@ -187,6 +201,19 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
               </div>
             ) : (
               <>
+                {showAlertForm && (
+                  <div className="rounded-md border border-primary/30 bg-primary/5 p-3">
+                    <AlertForm
+                      defaultTicker={ticker ?? undefined}
+                      onClose={() => setShowAlertForm(false)}
+                      onSuccess={() => {
+                        toast.success(ta("toast.created"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
+                        setShowAlertForm(false);
+                      }}
+                    />
+                  </div>
+                )}
+
                 {isMockData && (
                   <div className="flex items-center gap-2 rounded-md border border-border bg-muted/60 px-3 py-2 text-[11px] text-muted-foreground">
                     <Info className="h-3 w-3 shrink-0" />
