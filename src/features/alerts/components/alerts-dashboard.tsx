@@ -746,7 +746,7 @@ tabIndex={0}
         {/* Status toggle */}
         <button
           onClick={onToggle}
-          className="text-muted-foreground transition-colors hover:text-foreground"
+          className="flex h-11 w-11 items-center justify-center text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-md"
           title={alert.isActive ? "Pause alert (Enter)" : "Resume alert (Enter)"}
           aria-label={`${alert.isActive ? "Pause" : "Resume"} ${alert.ticker} alert`}
         >
@@ -793,10 +793,10 @@ tabIndex={0}
       </div>
 
       {/* Actions — visible on hover/focus */}
-      <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
+      <div className="alert-actions flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
         <button
           onClick={() => setEditing(true)}
-          className="rounded-sm p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           title="Edit alert (E)"
           aria-label={`Edit ${alert.ticker} alert`}
         >
@@ -804,7 +804,7 @@ tabIndex={0}
         </button>
         <button
           onClick={onDelete}
-          className="rounded-sm p-1.5 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           title={`Delete ${alert.ticker} alert (Del)`}
           aria-label={`Delete ${alert.ticker} alert`}
         >

@@ -182,6 +182,64 @@ input, select, textarea {
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
+/* Touch optimization for mobile investors - ensure minimum 44px touch targets */
+button,
+[role="button"],
+input[type="checkbox"],
+input[type="radio"],
+select,
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Stock row touch optimization - larger tap area for mobile */
+@media (max-width: 768px) {
+  tr[data-clickable],
+  .stock-row {
+    min-height: 56px;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+  
+  /* Watchlist toggle larger touch target */
+  .watchlist-toggle {
+    padding: 12px;
+    margin: -12px;
+  }
+  
+  /* Filter chips easier to tap */
+  .filter-chip {
+    min-height: 40px;
+    padding: 8px 16px;
+  }
+  
+  /* Alert action buttons larger on mobile */
+  .alert-actions button {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 12px;
+  }
+}
+
+/* Prevent zoom on input focus for iOS */
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="tel"],
+input[type="search"],
+select,
+textarea {
+  font-size: 16px;
+}
+
+/* Smooth scrolling for mobile */
+@supports (-webkit-touch-callout: none) {
+  html {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
 /* Accessibility: Respect user preference for reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *,

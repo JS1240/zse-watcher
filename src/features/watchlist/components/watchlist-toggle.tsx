@@ -88,7 +88,7 @@ export const WatchlistToggle = memo(function WatchlistToggle({ ticker, className
       disabled={isPending}
       aria-label={isWatched ? "Remove from watchlist" : "Add to watchlist"}
       className={cn(
-        "rounded-sm p-1.5 transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        "watchlist-toggle flex h-11 w-11 items-center justify-center rounded-md transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         "disabled:opacity-50 disabled:cursor-not-allowed",
         isAnimating && "scale-125",
         className,
