@@ -1,6 +1,6 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { Search, ArrowUpDown, ArrowUp, ArrowDown, Download, TrendingUp, X } from "lucide-react";
+import { Search, ArrowUpDown, ArrowUp, ArrowDown, Download, TrendingUp, X, ArrowUp as ScrollToTopIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { StockRow } from "@/features/stocks/components/stock-row";
@@ -25,6 +25,8 @@ export function StockTable() {
   const [search, setSearch] = useState("");
   const [sortField, setSortField] = useState<SortField>("changePct");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
+  const [scrollTop, setScrollTop] = useState(false);
+  const tableRef = useRef<HTMLDivElement>(null);
 
   const flashMap = usePriceFlash(stocks);
   const debouncedSearch = useDebounce(search, 200);
@@ -139,7 +141,11 @@ export function StockTable() {
       </div>
 
       {/* Table */}
-      <div className="overflow-auto rounded-md border border-border max-h-[70vh] scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted-foreground/30 hover:scrollbar-thumb-muted-foreground/50">
+      <div
+        ref={tableRef}
+        onScroll={(e) => setScrollTop((e.target as HTMLDivElement).scrollTop > 200)}
+        className="overflow-auto rounded-md border border-border max-h-[70vh] scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted-foreground/30 hover:scrollbar-thumb-muted-foreground/50"
+      >
         <table aria-label={t("table.label")} className="w-full text-xs">
           <thead className="sticky top-0 z-10 bg-muted/95 backdrop-blur supports-[backdrop-filter]:bg-muted/80">
             <tr className="border-b border-border text-[10px] uppercase tracking-wider text-muted-foreground">
@@ -227,6 +233,20 @@ export function StockTable() {
       <div className="text-[10px] text-muted-foreground">
         {filtered.length} / {stocks?.length ?? 0} stocks
       </div>
+
+      {/* Scroll to top button */}
+      {filtered.length > 10 && (
+        <button
+          onClick={() => tableRef.current?.scrollTo({ top: 0, behavior: "smooth" })}
+          className={cn(
+            "fixed bottom-6 right-6 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-all duration-200 hover:bg-primary/90",
+            scrollTop ? "opacity-100 translate-y-0" : "pointer-events-none opacity-0 translate-y-2"
+          )}
+          aria-label={tc("scrollToTop") || "Pomakni na vrh"}
+        >
+          <ScrollToTopIcon className="h-4 w-4" />
+        </button>
+      )}
     </div>
   );
 }
