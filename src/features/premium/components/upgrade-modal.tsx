@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Crown, X, Zap } from "lucide-react";
+import { Crown, X, Check, Zap, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { createCheckoutSession } from "@/features/premium/api/stripe-api";
 import { PRICING_PLANS } from "@/features/premium/config/pricing";
+import { cn } from "@/lib/utils";
 
 interface UpgradeModalProps {
   open: boolean;
@@ -13,12 +14,13 @@ interface UpgradeModalProps {
 
 export function UpgradeModal({ open, onClose, featureContext }: UpgradeModalProps) {
   const [loading, setLoading] = useState(false);
+  const [cycle, setCycle] = useState<"monthly" | "annual">("annual");
   const { isAuthenticated } = useAuth();
   const premiumPlan = PRICING_PLANS.find((p) => p.id === "premium");
 
   if (!open) return null;
 
-  const handleUpgrade = async (cycle: "monthly" | "annual") => {
+  const handleUpgrade = async () => {
     if (!isAuthenticated) return;
     setLoading(true);
     try {
@@ -59,38 +61,75 @@ export function UpgradeModal({ open, onClose, featureContext }: UpgradeModalProp
         </div>
 
         {/* Quick feature highlights */}
-        <div className="mt-4 space-y-1.5">
+        <div className="mt-5 space-y-2">
           {[
-            "Candlestick charts + technical indicators",
-            "Stock screener with advanced filters",
-            "Portfolio analytics & sector allocation",
-            "Unlimited watchlists, portfolios & alerts",
-            "CSV data export",
+            { text: "Candlestick charts + technical indicators", included: true },
+            { text: "Stock screener with advanced filters", included: true },
+            { text: "Portfolio analytics & sector allocation", included: true },
+            { text: "Unlimited watchlists, portfolios & alerts", included: true },
+            { text: "CSV data export", included: true },
           ].map((feature) => (
-            <div key={feature} className="flex items-center gap-2 text-[11px] text-foreground">
-              <Zap className="h-3 w-3 shrink-0 text-amber" />
-              {feature}
+            <div key={feature.text} className="flex items-center gap-2.5 text-xs text-foreground">
+              <div className="flex h-4 w-4 items-center justify-center rounded-full bg-emerald/10">
+                <Check className="h-2.5 w-2.5 text-emerald" />
+              </div>
+              {feature.text}
             </div>
           ))}
         </div>
 
+        {/* Toggle */}
+        <div className="mt-5 flex items-center justify-center gap-3">
+          <span className={cn("text-xs font-medium", cycle === "monthly" ? "text-foreground" : "text-muted-foreground")}>
+            Monthly
+          </span>
+          <button
+            onClick={() => setCycle(cycle === "monthly" ? "annual" : "monthly")}
+            className={cn(
+              "relative h-6 w-11 rounded-full transition-colors",
+              cycle === "annual" ? "bg-amber" : "bg-muted"
+            )}
+            role="switch"
+            aria-checked={cycle === "annual"}
+          >
+            <span
+              className={cn(
+                "absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform",
+                cycle === "annual" ? "translate-x-5" : "translate-x-0.5"
+              )}
+            />
+          </button>
+          <span className={cn("text-xs font-medium", cycle === "annual" ? "text-foreground" : "text-muted-foreground")}>
+            Annual
+            <span className="ml-1.5 rounded-sm bg-emerald/10 px-1.5 py-0.5 text-[10px] font-semibold text-emerald">
+              Save 17%
+            </span>
+          </span>
+        </div>
+
         {/* CTA buttons */}
-        <div className="mt-5 space-y-2">
+        <div className="mt-4 space-y-2">
           <Button
-            className="w-full"
-            onClick={() => handleUpgrade("annual")}
+            className="w-full gap-2"
+            onClick={handleUpgrade}
             disabled={loading}
           >
-            {loading ? "Redirecting..." : `${premiumPlan?.annualPrice.toFixed(2)} EUR/year (Save 17%)`}
+            {loading ? (
+              "Redirecting..."
+            ) : (
+              <>
+                <Sparkles className="h-4 w-4" />
+                {cycle === "annual"
+                  ? `${premiumPlan?.annualPrice.toFixed(2)} EUR/year`
+                  : `${premiumPlan?.monthlyPrice.toFixed(2)} EUR/month`}
+              </>
+            )}
           </Button>
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={() => handleUpgrade("monthly")}
-            disabled={loading}
-          >
-            {premiumPlan?.monthlyPrice.toFixed(2)} EUR/month
-          </Button>
+          {cycle === "annual" && (
+            <p className="text-center text-[10px] text-muted-foreground">
+              12 months for the price of 10
+            </p>
+          )}
         </div>
 
         <p className="mt-3 text-center text-[10px] text-muted-foreground">
