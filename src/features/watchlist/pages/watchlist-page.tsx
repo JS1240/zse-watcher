@@ -1,6 +1,6 @@
 import { useMemo, useState, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Star, Search, Keyboard, ArrowUp, ArrowDown, ArrowUpDown, GripVertical, Download, X, TrendingUp, TrendingDown, Minus, CheckCircle2 } from "lucide-react";
+import { Star, Search, Keyboard, ArrowUp, ArrowDown, ArrowUpDown, GripVertical, Download, X, TrendingUp, TrendingDown, Minus, CheckCircle2, ChevronUp } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocalWatchlist } from "@/features/watchlist/hooks/use-local-watchlist";
@@ -901,8 +901,14 @@ interface WatchlistTableProps {
 function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort, dragEnabled, searchQuery }: WatchlistTableProps) {
   const { t } = useTranslation("watchlist");
   const flashMap = usePriceFlash(stocks);
+  const [scrollTop, setScrollTop] = useState(false);
+  const tableRef = useRef<HTMLDivElement>(null);
   return (
-    <div className="overflow-auto rounded-md border border-border max-h-[75vh] scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted-foreground/30 hover:scrollbar-thumb-muted-foreground/50">
+    <div
+      ref={tableRef}
+      onScroll={(e) => setScrollTop((e.target as HTMLDivElement).scrollTop > 200)}
+      className="relative overflow-auto rounded-md border border-border max-h-[75vh] scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted-foreground/30 hover:scrollbar-thumb-muted-foreground/50"
+    >
       <table className="w-full text-xs">
         <thead className="sticky top-0 z-10 bg-muted/95 backdrop-blur supports-[backdrop-filter]:bg-muted/80">
           <tr className="border-b border-border text-[10px] uppercase tracking-wider text-muted-foreground">
@@ -955,6 +961,19 @@ function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort, dragEnable
           )}
         </tbody>
       </table>
+
+      {/* Scroll to top button */}
+      <button
+        onClick={() => tableRef.current?.scrollTo({ top: 0, behavior: "smooth" })}
+        className={cn(
+          "absolute bottom-6 right-6 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-border bg-card text-muted-foreground shadow-md transition-all hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+          scrollTop ? "opacity-100 translate-y-0" : "pointer-events-none opacity-0 translate-y-2"
+        )}
+        aria-label="Povratak na vrh"
+        title="Povratak na vrh"
+      >
+        <ChevronUp className="h-4 w-4" />
+      </button>
     </div>
   );
 }

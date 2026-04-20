@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Filter, RotateCcw, ArrowUpDown, ArrowUp, ArrowDown, Info, Download, Save, Trash2, Bookmark, Search, ChevronDown, AlertTriangle, X, Keyboard } from "lucide-react";
+import { Filter, RotateCcw, ArrowUpDown, ArrowUp, ArrowDown, Info, Download, Save, Trash2, Bookmark, Search, ChevronDown, AlertTriangle, X, Keyboard, ChevronUp } from "lucide-react";
 import { toast } from "sonner";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { useLocalStorage } from "@/hooks/use-local-storage";
@@ -236,6 +236,8 @@ export function StockScreener() {
   const [showSaveInput, setShowSaveInput] = useState(false);
   const [presetSearch, setPresetSearch] = useState("");
   const [search, setSearch] = useState("");
+  const [scrollTop, setScrollTop] = useState(false);
+  const tableRef = useRef<HTMLDivElement>(null);
   const debouncedSearch = useDebounce(search, 200);
 
   // Keyboard shortcut to focus search
@@ -673,7 +675,11 @@ export function StockScreener() {
       </div>
 
       {/* Results table */}
-      <div className="overflow-auto rounded-md border border-border max-h-[60vh]">
+      <div
+        ref={tableRef}
+        onScroll={(e) => setScrollTop((e.target as HTMLDivElement).scrollTop > 200)}
+        className="relative overflow-auto rounded-md border border-border max-h-[60vh]"
+      >
         <table className="w-full text-xs">
           <thead className="sticky top-0 z-10 bg-muted/95 backdrop-blur supports-[backdrop-filter]:bg-muted/80">
             <tr className="border-b border-border text-[10px] uppercase tracking-wider text-muted-foreground">
@@ -782,6 +788,19 @@ export function StockScreener() {
           />
         )}
       </div>
+
+      {/* Scroll to top button */}
+      <button
+        onClick={() => tableRef.current?.scrollTo({ top: 0, behavior: "smooth" })}
+        className={cn(
+          "absolute bottom-6 right-6 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-border bg-card text-muted-foreground shadow-md transition-all hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+          scrollTop ? "opacity-100 translate-y-0" : "pointer-events-none opacity-0 translate-y-2"
+        )}
+        aria-label="Povratak na vrh"
+        title="Povratak na vrh"
+      >
+        <ChevronUp className="h-4 w-4" />
+      </button>
     </div>
   );
 }
