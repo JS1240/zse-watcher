@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, memo } from "react";
 import { X, Info, Keyboard, RefreshCw, Download } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
@@ -27,8 +27,9 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
   const stock = result?.stock ?? null;
   const isMockData = result?.isMockData ?? false;
   const { addRecentStock } = useRecentStocks();
+
   // Export stock fundamentals as CSV for Croatian investors
-  const handleExportCsv = () => {
+  const handleExportCsv = useCallback(() => {
     if (!stock) return;
     const headers = [
       "Ticker",
@@ -66,7 +67,7 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
     ];
     exportToCsv(`zse-${stock.ticker}-${new Date().toISOString().split("T")[0]}`, headers, rows);
     toast.success(t("toast.exported"));
-  };
+  }, [stock, t]);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
@@ -217,7 +218,7 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
   );
 }
 
-function DrawerSkeleton() {
+const DrawerSkeleton = memo(function DrawerSkeleton() {
   return (
     <div className="space-y-4">
       <div className="space-y-2">
@@ -235,4 +236,4 @@ function DrawerSkeleton() {
       </div>
     </div>
   );
-}
+});
