@@ -267,7 +267,7 @@ function ColumnHeader({
   return (
     <th
       aria-sort={sortDirection}
-      className={`cursor-pointer px-3 py-2 font-medium sticky left-0 z-10 bg-muted/95 ${className ?? ""}`}
+      className={`cursor-pointer px-3 py-2 font-medium sticky left-0 z-10 bg-card shadow-[2px_0_4px_hsl(var(--border))] ${className ?? ""}`}
     >
       <button
         className="inline-flex items-center gap-1"

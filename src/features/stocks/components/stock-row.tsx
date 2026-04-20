@@ -99,7 +99,7 @@ const StockRowBase = ({ stock, flash, searchQuery }: StockRowProps) => {
       )}
     >
       {/* Star + Ticker */}
-      <td className="sticky left-0 z-[1] bg-card px-3 py-2">
+      <td className="sticky left-0 z-[1] bg-card shadow-[2px_0_4px_hsl(var(--border))] px-3 py-2">
         <div className="flex items-center gap-1">
           <WatchlistToggle ticker={stock.ticker} />
           <button
