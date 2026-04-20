@@ -1,7 +1,7 @@
 import { useState, useCallback, memo, useRef } from "react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { ExternalLink, Newspaper, Search, ArrowUp, ArrowDown, ArrowUpDown, Download, Keyboard, X } from "lucide-react";
+import { ExternalLink, Newspaper, Search, ArrowUp, ArrowDown, ArrowUpDown, Download, Keyboard, X, ArrowUp as ScrollTop } from "lucide-react";
 import { toast } from "sonner";
 import { useNews } from "@/features/news/api/news-queries";
 import { ArticleDrawer } from "@/features/news/components/article-drawer";
@@ -12,6 +12,7 @@ import { formatDate, formatTime } from "@/lib/formatters";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
 import { exportToCsv } from "@/lib/export";
+import { cn } from "@/lib/utils";
 import type { NewsArticle } from "@/types/news";
 import { useDebounce } from "@/hooks/use-debounce";
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
@@ -149,6 +150,10 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
 
   // Clear search handler
   const handleClearSearch = useCallback(() => setSearch(""), []);
+
+  // Scroll to top state
+  const [scrollTop, setScrollTop] = useState(false);
+  const newsFeedRef = useRef<HTMLDivElement>(null);
 
   // Memoized article item to prevent re-renders on sort/search state changes
   const ArticleItem = memo(function ArticleItem({
@@ -332,13 +337,32 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
           </div>
         )}
 
-        {filtered.map((article) => (
-          <ArticleItem
-            key={article.id}
-            article={article}
-            onClick={handleArticleClick}
-          />
-        ))}
+        <div
+          ref={newsFeedRef}
+          onScroll={(e) => setScrollTop((e.target as HTMLDivElement).scrollTop > 200)}
+          className="space-y-1 max-h-[calc(100vh-280px)] overflow-y-auto pr-1"
+        >
+          {filtered.map((article) => (
+            <ArticleItem
+              key={article.id}
+              article={article}
+              onClick={handleArticleClick}
+            />
+          ))}
+        </div>
+
+        {/* Scroll to top button */}
+        <button
+          onClick={() => newsFeedRef.current?.scrollTo({ top: 0, behavior: "smooth" })}
+          className={cn(
+            "fixed bottom-6 right-6 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-all duration-200 hover:bg-primary/90",
+            scrollTop ? "opacity-100 translate-y-0" : "pointer-events-none opacity-0 translate-y-2"
+          )}
+          aria-label="Povratak na vrh"
+          title="Povratak na vrh"
+        >
+          <ScrollTop className="h-4 w-4" />
+        </button>
       </div>
 
       <ArticleDrawer
