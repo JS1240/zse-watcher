@@ -4,7 +4,8 @@
     "all": "Svi",
     "gainers": "Dobitnici",
     "losers": "Gubitnici",
-    "unchanged": "Nepromijenjeno"
+    "unchanged": "Nepromijenjeno",
+    "allSectors": "Svi sektori"
   },
   "title": "Praćenje",
   "empty": "Nema dionica u listi praćenja",
@@ -38,5 +39,11 @@
     "addFailed": "Neuspjelo dodavanje u listu praćenja",
     "removeFailed": "Neuspjelo uklanjanje iz liste praćenja",
     "exported": "Izvezeno u CSV"
+  },
+  "shortcut": {
+    "search": "pretraži",
+    "details": "detalji",
+    "toggle": "prati/odustani",
+    "delete": "obrisi"
   }
 }

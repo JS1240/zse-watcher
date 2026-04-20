@@ -4,7 +4,8 @@
     "all": "All",
     "gainers": "Gainers",
     "losers": "Losers",
-    "unchanged": "Unchanged"
+    "unchanged": "Unchanged",
+    "allSectors": "All sectors"
   },
   "title": "Watchlist",
   "empty": "No stocks in watchlist",
@@ -38,5 +39,11 @@
     "addFailed": "Failed to add to watchlist",
     "removeFailed": "Failed to remove from watchlist",
     "exported": "Exported to CSV"
+  },
+  "shortcut": {
+    "search": "search",
+    "details": "details",
+    "toggle": "watch/unwatch",
+    "delete": "delete"
   }
 }

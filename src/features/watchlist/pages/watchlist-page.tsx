@@ -774,10 +774,27 @@ function LocalWatchlist() {
         )}
       </div>
 
-      {/* Results count */}
+      {/* Results count + keyboard shortcuts hint */}
       {items.length > 0 && (
-        <div className="text-[10px] text-muted-foreground">
-          {filtered.length} {filtered.length === 1 ? "stock" : "stockova"}
+        <div className="flex items-center justify-between">
+          <span className="text-[10px] text-muted-foreground">
+            {filtered.length} {filtered.length === 1 ? "stock" : "stockova"}
+          </span>
+          {/* Keyboard shortcuts hint - only show when stocks exist */}
+          <div className="flex items-center gap-2 text-[9px] text-muted-foreground">
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
+              <span>{t("shortcut.details")}</span>
+            </span>
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">S</kbd>
+              <span>{t("shortcut.toggle")}</span>
+            </span>
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Del</kbd>
+              <span>{t("shortcut.delete")}</span>
+            </span>
+          </div>
         </div>
       )}
 
