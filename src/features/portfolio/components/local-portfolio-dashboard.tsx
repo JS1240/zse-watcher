@@ -1,6 +1,6 @@
 import { useState, useMemo, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, Trash2, ChevronDown, ChevronUp, Download, Search, X, ArrowUp, ArrowDown, ArrowUpDown, TrendingUp, TrendingDown, Keyboard, CheckCircle2 } from "lucide-react";
+import { Plus, Trash2, ChevronDown, ChevronUp, Download, Search, X, ArrowUp, ArrowDown, ArrowUpDown, TrendingUp, TrendingDown, Keyboard, CheckCircle2, ArrowUp as ScrollToTopIcon } from "lucide-react";
 import { Highlight } from "@/components/shared/highlight";
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { toast } from "sonner";
@@ -31,6 +31,8 @@ export function LocalPortfolioDashboard() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [search, setSearch] = useState("");
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [scrollTop, setScrollTop] = useState(false);
+  const portfolioRef = useRef<HTMLDivElement>(null);
 
   // Click-to-copy handlers
   const handleCopyTicker = useCallback(async (e: React.MouseEvent, ticker: string) => {
@@ -510,7 +512,11 @@ export function LocalPortfolioDashboard() {
 
       {/* Holdings table - horizontal scroll on mobile */}
       {sortedHoldings.length > 0 ? (
-        <div className="overflow-x-auto rounded-md border border-border [-webkit-overflow-scrolling:touch] [scrollbar-gutter:stable]">
+        <div
+          className="overflow-x-auto rounded-md border border-border [-webkit-overflow-scrolling:touch] [scrollbar-gutter:stable]"
+          onScroll={(e) => setScrollTop((e.target as HTMLDivElement).scrollTop > 200)}
+          ref={portfolioRef}
+        >
           <table className="min-w-[400px] w-full text-xs">
             <thead>
               <tr className="border-b border-border bg-muted/50 text-[10px] uppercase tracking-wider text-muted-foreground">
@@ -777,6 +783,20 @@ export function LocalPortfolioDashboard() {
           toast.success(t("toast.cleared") || "All transactions cleared", { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
         }}
       />
+
+      {/* Scroll to top button */}
+      {sortedHoldings.length > 10 && (
+        <button
+          onClick={() => portfolioRef.current?.scrollTo({ top: 0, behavior: "smooth" })}
+          className={cn(
+            "fixed bottom-6 right-6 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-all duration-200 hover:bg-primary/90",
+            scrollTop ? "opacity-100 translate-y-0" : "pointer-events-none opacity-0 translate-y-2"
+          )}
+          aria-label="Pomakni na vrh"
+        >
+          <ScrollToTopIcon className="h-4 w-4" />
+        </button>
+      )}
     </div>
   );
 }
