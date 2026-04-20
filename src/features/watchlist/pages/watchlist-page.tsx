@@ -219,19 +219,9 @@ function AuthenticatedWatchlist() {
     toast.success(t("toast.exported"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
   };
 
-  if (watchlistItems.isLoading) {
-    return <WatchlistSkeleton />;
-  }
-
-  if (isError) {
-    return (
-      <ErrorState
-        title={tc("errors.generic")}
-        description={tc("errors.network")}
-        retry={{ onRetry: refetch, label: tc("errors.tryAgain") }}
-      />
-    );
-  }
+  // Loading and error states (conditional render instead of early return for React hooks compliance)
+  const isLoading = watchlistItems.isLoading;
+  const showError = isError;
 
   // Count active filters for badge
   const activeFilterCount = useMemo(() => {
@@ -251,6 +241,21 @@ function AuthenticatedWatchlist() {
 
   // Track focus for search input accessibility
   const [searchFocused, setSearchFocused] = useState(false);
+
+  // Render loading skeleton or error state
+  if (isLoading) {
+    return <WatchlistSkeleton />;
+  }
+
+  if (showError) {
+    return (
+      <ErrorState
+        title={tc("errors.generic")}
+        description={tc("errors.network")}
+        retry={{ onRetry: refetch, label: tc("errors.tryAgain") }}
+      />
+    );
+  }
 
   return (
     <div className="flex flex-col gap-3">
@@ -636,19 +641,8 @@ function LocalWatchlist() {
     toast.success(t("toast.exported"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
   };
 
-  if (isError) {
-    return (
-      <ErrorState
-        title={tc("errors.generic")}
-        description={tc("errors.network")}
-        retry={{ onRetry: refetch, label: tc("errors.tryAgain") }}
-      />
-    );
-  }
-
-  if (!stocksResult) {
-    return <WatchlistSkeleton />;
-  }
+  // Track loading and error states for conditional rendering (moved before any hooks for React compliance)
+  const showLoadingSkeleton = !stocksResult;
 
   const handleClearSearch = () => setSearch("");
   const handleClearFilters = () => {
@@ -668,6 +662,21 @@ function LocalWatchlist() {
     if (changeFilter !== "all") count++;
     return count;
   }, [debouncedSearch, sectorFilter, changeFilter]);
+
+  // Render error, loading, or main content
+  if (isError) {
+    return (
+      <ErrorState
+        title={tc("errors.generic")}
+        description={tc("errors.network")}
+        retry={{ onRetry: refetch, label: tc("errors.tryAgain") }}
+      />
+    );
+  }
+
+  if (showLoadingSkeleton) {
+    return <WatchlistSkeleton />;
+  }
 
   return (
     <div className="flex flex-col gap-3">

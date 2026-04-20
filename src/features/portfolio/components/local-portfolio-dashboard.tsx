@@ -100,10 +100,8 @@ export function LocalPortfolioDashboard() {
     });
   }, [transactions, txSort]);
 
-  // Show skeleton while stocks load
-  if (isStocksLoading || (!stocksResult && transactions.length > 0)) {
-    return <PortfolioSkeleton />;
-  }
+  // Show skeleton while stocks load (conditional render instead of early return for React hooks compliance)
+  const showSkeleton = isStocksLoading || (!stocksResult && transactions.length > 0);
 
   // Memoize holdings calculation — only recalculates when transactions change (infrequent)
   // Must be before any conditional return (React hooks rule)
@@ -294,7 +292,9 @@ export function LocalPortfolioDashboard() {
     toast.success(t("toast.exported"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
   };
 
-  return (
+  return showSkeleton ? (
+    <PortfolioSkeleton />
+  ) : (
     <div className="space-y-4">
       {/* Local indicator */}
       <div className="flex items-center justify-between rounded-sm bg-muted/50 px-2 py-1">
