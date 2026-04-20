@@ -5,9 +5,10 @@ import { ChangeBadge } from "@/components/shared/change-badge";
 import { ErrorState } from "@/components/shared/error-state";
 import { formatPrice } from "@/lib/formatters";
 import { MarketOverviewSkeleton } from "./market-overview-skeleton";
+import { LiveDataIndicator } from "@/components/shared/live-data-indicator";
 
 export function MarketOverview() {
-  const { data: macro, isLoading, isError, refetch } = useMacro();
+  const { data: macro, isLoading, isError, refetch, dataUpdatedAt, isFetching } = useMacro();
   const { t } = useTranslation("macro");
   const { t: tc } = useTranslation("common");
 
@@ -26,7 +27,11 @@ export function MarketOverview() {
   }
 
   return (
-    <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
+    <div className="space-y-2">
+      {/* Live data freshness indicator */}
+      <LiveDataIndicator updatedAt={dataUpdatedAt} isFetching={isFetching} />
+
+      <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
       <OverviewCard
         icon={Activity}
         label={t("indices.crobex")}
@@ -52,6 +57,7 @@ export function MarketOverview() {
         value={macro.eurUsd.toFixed(4)}
         changePct={0}
       />
+      </div>
     </div>
   );
 }

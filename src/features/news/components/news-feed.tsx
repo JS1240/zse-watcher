@@ -177,16 +177,23 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
               {article.summary}
             </p>
           )}
-          <div className="mt-1 flex items-center gap-2 text-[10px] text-muted-foreground">
+          <div className="mt-1 flex flex-wrap items-center gap-2 text-[10px] text-muted-foreground">
             {article.ticker && (
-              <span className="rounded-sm bg-accent px-1 py-0.5 font-data font-medium">
+              <span className="rounded-sm bg-accent px-1 py-0.5 font-data font-medium text-foreground">
                 {article.ticker}
               </span>
             )}
             <span>{formatDate(article.publishedAt)}</span>
             <span>{formatTime(article.publishedAt)}</span>
-            <span className="rounded-sm bg-muted px-1 py-0.5 text-[9px] uppercase">
-              {article.category}
+            <span
+              className={cn(
+                "rounded-sm px-1.5 py-0.5 text-[9px] uppercase font-semibold tracking-wide",
+                article.category === "trading"
+                  ? "bg-amber-500/20 text-amber-700 dark:text-amber-400"
+                  : "bg-slate-500/20 text-slate-600 dark:text-slate-400"
+              )}
+            >
+              {article.category === "trading" ? "TRGOVANJE" : "VIJESTI"}
             </span>
           </div>
         </div>
