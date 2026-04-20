@@ -80,7 +80,7 @@ function MacroPage() {
               changePct={macro.euroStoxx50.changePct}
               description="Vodeci europski indeks 50 najvecih kompanija eurozone"
             />
-            <div className="rounded-md border border-border bg-card p-4">
+            <div className="rounded-md border border-border bg-card p-4 transition-all duration-200 hover:border-primary/20 hover:shadow-md hover:shadow-foreground/5 hover:-translate-y-0.5">
               <h3 className="text-[10px] uppercase tracking-wider text-muted-foreground">
                 {t("forex.title")}
               </h3>
@@ -120,7 +120,7 @@ function MacroPage() {
       </div>
 
       {/* Investment factors */}
-      <div className="rounded-md border border-border bg-card p-4">
+      <div className="rounded-md border border-border bg-card p-4 transition-all duration-200 hover:border-primary/20">
         <h3 className="mb-3 text-[10px] uppercase tracking-wider text-muted-foreground">
           {t("factors.title")}
         </h3>
@@ -151,8 +151,8 @@ function IndexCard({
   return (
     <div
       className={cn(
-        "rounded-md border p-4",
-        primary ? "border-primary/30 bg-primary/5" : "border-border bg-card",
+        "rounded-md border p-4 transition-all duration-200",
+        primary ? "border-primary/30 bg-primary/5 hover:border-primary/50 hover:shadow-md hover:shadow-primary/5" : "border-border bg-card hover:border-primary/20 hover:shadow-md hover:shadow-foreground/5 hover:-translate-y-0.5",
       )}
     >
       <h3 className="text-[10px] uppercase tracking-wider text-muted-foreground">{name}</h3>
@@ -177,7 +177,7 @@ function FactorItem({
   trend: "up" | "down" | "neutral";
 }) {
   return (
-    <div className="text-center">
+    <div className="text-center transition-transform duration-200 hover:scale-110">
       <span className="text-[10px] text-muted-foreground">{label}</span>
       <div
         className={cn(

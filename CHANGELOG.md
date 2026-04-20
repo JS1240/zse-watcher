@@ -4,6 +4,14 @@
 
 ### Added
 
+- **Interactive Hover States for Macro Cards** — improve tactile feel for Croatian retail investors
+  - IndexCard: hover lift with shadow and border color change
+  - Forex card: subtle lift effect on hover
+  - FactorItem: scale-up transform on hover for emphasis
+  - Smooth 200ms transitions for polished feel
+
+### Added
+
 - **Keyboard Navigation for Watchlist Table Headers** — sort columns with keyboard for Croatian investors
   - Added onKeyDown handler for Enter/Space to sort watchlist columns
   - Added tabIndex=0 and role=columnheader for keyboard accessibility
