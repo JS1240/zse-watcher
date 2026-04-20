@@ -16,7 +16,7 @@
   --color-secondary-foreground: hsl(222 14% 15%);
 
   --color-muted: hsl(220 14% 94%);
-  --color-muted-foreground: hsl(220 10% 55%);
+  --color-muted-foreground: hsl(220 10% 42%);
 
   --color-accent: hsl(220 14% 93%);
   --color-accent-foreground: hsl(222 14% 10%);
@@ -26,12 +26,12 @@
 
   --color-border: hsl(220 13% 85%);
   --color-input: hsl(220 13% 85%);
-  --color-ring: hsl(3 74% 49% / 0.3);
+  --color-ring: hsl(3 74% 49% / 0.5);
 
   /* Financial colors — increased saturation for light theme accessibility */
   --color-price-up: hsl(142 85% 32%);
   --color-price-down: hsl(0 80% 48%);
-  --color-price-neutral: hsl(220 10% 55%);
+  --color-price-neutral: hsl(220 10% 42%);
 
   /* Accent palette */
   --color-amber: hsl(38 92% 45%);

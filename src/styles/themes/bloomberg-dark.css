@@ -17,7 +17,7 @@
   --color-secondary-foreground: hsl(215 20% 85%);
 
   --color-muted: hsl(220 10% 15%);
-  --color-muted-foreground: hsl(215 10% 55%);
+  --color-muted-foreground: hsl(215 10% 60%);
 
   --color-accent: hsl(220 10% 18%);
   --color-accent-foreground: hsl(215 20% 90%);
@@ -27,12 +27,12 @@
 
   --color-border: hsl(220 8% 18%);
   --color-input: hsl(220 8% 18%);
-  --color-ring: hsl(3 74% 49% / 0.4);
+  --color-ring: hsl(3 74% 49% / 0.6);
 
   /* Financial colors */
   --color-price-up: hsl(142 71% 45%);
   --color-price-down: hsl(0 84% 60%);
-  --color-price-neutral: hsl(215 10% 55%);
+  --color-price-neutral: hsl(215 10% 60%);
 
   /* Accent palette */
   --color-amber: hsl(38 92% 50%);
