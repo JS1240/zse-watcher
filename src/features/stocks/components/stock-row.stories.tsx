@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { StockRow } from './stock-row';
 import type { Stock } from '@/types/stock';
 
@@ -10,11 +11,25 @@ const meta: Meta<typeof StockRow> = {
   },
   tags: ['autodocs'],
   decorators: [
-    (Story) => (
-      <div className="min-w-[600px] rounded-lg border border-border overflow-hidden">
-        <Story />
-      </div>
-    ),
+    (Story) => {
+      const mockClient = new QueryClient({
+        defaultOptions: {
+          queries: {
+            staleTime: Infinity,
+            gcTime: Infinity,
+          },
+        },
+      });
+      // Seed empty watchlist to satisfy useWatchlistTickers in StockRowBase
+      mockClient.setQueryData(['watchlist', null], []);
+      return (
+        <QueryClientProvider client={mockClient}>
+          <div className="min-w-[600px] rounded-lg border border-border overflow-hidden">
+            <Story />
+          </div>
+        </QueryClientProvider>
+      );
+    },
   ],
 };
 
