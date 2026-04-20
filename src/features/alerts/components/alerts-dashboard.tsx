@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useRef, useCallback, memo } from "react";
 import { useTranslation } from "react-i18next";
-import { Bell, BellOff, Pencil, Trash2, X, Check, CheckCircle2, Keyboard, Download, AlertCircle, Search, CircleDot, Pause, TrendingUp, TrendingDown, ArrowUpDown, ArrowUp } from "lucide-react";
+import { Bell, BellOff, Pencil, Trash2, X, Check, CheckCircle2, Keyboard, Download, AlertCircle, Search, CircleDot, Pause, TrendingUp, TrendingDown, ArrowUpDown, ArrowUp, HelpCircle } from "lucide-react";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { toast } from "sonner";
 import { useAlertsData } from "@/features/alerts/hooks/use-alerts-data";
@@ -317,21 +318,31 @@ export function AlertsDashboard() {
           <span className="text-[10px] text-muted-foreground">
             {filteredAlerts.length} {filteredAlerts.length === 1 ? "alert" : "alerta"}
           </span>
-          {/* Keyboard shortcuts hint - only show when alerts exist */}
-          <div className="flex items-center gap-2 text-[9px] text-muted-foreground">
-            <span className="flex items-center gap-0.5">
-              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
-              <span>{t("shortcut.toggle") || "aktiviraj"}</span>
-            </span>
-            <span className="flex items-center gap-0.5">
-              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">E</kbd>
-              <span>{t("shortcut.edit") || "uredi"}</span>
-            </span>
-            <span className="flex items-center gap-0.5">
-              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Del</kbd>
-              <span>{t("shortcut.delete") || "obrisi"}</span>
-            </span>
-          </div>
+          {/* Keyboard shortcuts hint with tooltip */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                className="flex items-center gap-1.5 text-[9px] text-muted-foreground transition-colors hover:text-foreground"
+                aria-label="Keyboard shortcuts"
+              >
+                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
+                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">E</kbd>
+                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Del</kbd>
+                <HelpCircle className="h-3 w-3" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" align="end" className="space-y-1 p-2.5">
+              <p className="text-[10px] font-semibold text-foreground">{t("shortcuts") || "Tipkovnički prečaci"}</p>
+              <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-[9px]">
+                <kbd className="rounded bg-muted px-1.5 py-0.5 text-[8px] font-sans">Enter</kbd>
+                <span className="text-muted-foreground">{t("shortcut.toggle") || "aktiviraj/pauziraj"}</span>
+                <kbd className="rounded bg-muted px-1.5 py-0.5 text-[8px] font-sans">E</kbd>
+                <span className="text-muted-foreground">{t("shortcut.edit") || "uredi"}</span>
+                <kbd className="rounded bg-muted px-1.5 py-0.5 text-[8px] font-sans">Del</kbd>
+                <span className="text-muted-foreground">{t("shortcut.delete") || "obriši"}</span>
+              </div>
+            </TooltipContent>
+          </Tooltip>
         </div>
       )}
 
