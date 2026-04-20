@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef, useCallback, memo } from "react";
 import { useTranslation } from "react-i18next";
-import { Bell, BellOff, Pencil, Trash2, X, Check, CheckCircle2, Keyboard, Download, AlertCircle, Search, CircleDot, Pause, TrendingUp, TrendingDown, ArrowUpDown } from "lucide-react";
+import { Bell, BellOff, Pencil, Trash2, X, Check, CheckCircle2, Keyboard, Download, AlertCircle, Search, CircleDot, Pause, TrendingUp, TrendingDown, ArrowUpDown, ArrowUp } from "lucide-react";
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { toast } from "sonner";
 import { useAlertsData } from "@/features/alerts/hooks/use-alerts-data";
@@ -80,6 +80,8 @@ export function AlertsDashboard() {
   useKeyboardShortcut({ key: "/", handler: focusSearch, enabled: true });
 
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "triggered" | "paused">("all");
+  const [scrollTop, setScrollTop] = useState(false);
+  const alertsListRef = useRef<HTMLDivElement>(null);
   const [conditionFilter, setConditionFilter] = useState<"all" | "price" | "percent">("all");
   const [sort, setSort] = useState<{ column: "ticker" | "createdAt" | "targetValue"; direction: "asc" | "desc" }>({
     column: "createdAt",
@@ -335,32 +337,50 @@ export function AlertsDashboard() {
 
       {/* Alert list */}
       {filteredAlerts.length > 0 ? (
-        <div className="space-y-1">
-          {filteredAlerts.map((alert) => (
-            <AlertRow
-              key={alert.id}
-              alert={alert}
-              stocks={stocks}
-              searchHighlight={debouncedSearch}
-              onDelete={() => setConfirmDelete(alert.id)}
-              onToggle={() => {
-                const wasActive = alert.isActive;
-                toggleAlert(alert.id);
-                toast.success(wasActive ? t("toast.paused") : t("toast.activated"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
-              }}
-              onUpdate={async (id, data) => {
-                // Proper update mutation — preserves alert ID and createdAt
-                await updateAlert.mutateAsync({
-                  alertId: id,
-                  ticker: data.ticker,
-                  condition: data.condition,
-                  targetValue: data.targetValue,
-                });
-                toast.success(t("toast.updated") || "Alert updated", { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
-              }}
-            />
-          ))}
-        </div>
+        <>
+          <div
+            ref={alertsListRef}
+            onScroll={(e) => setScrollTop((e.target as HTMLDivElement).scrollTop > 200)}
+            className="max-h-[calc(100vh-280px)] space-y-1 overflow-y-auto pr-1"
+          >
+            {filteredAlerts.map((alert) => (
+              <AlertRow
+                key={alert.id}
+                alert={alert}
+                stocks={stocks}
+                searchHighlight={debouncedSearch}
+                onDelete={() => setConfirmDelete(alert.id)}
+                onToggle={() => {
+                  const wasActive = alert.isActive;
+                  toggleAlert(alert.id);
+                  toast.success(wasActive ? t("toast.paused") : t("toast.activated"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
+                }}
+                onUpdate={async (id, data) => {
+                  // Proper update mutation — preserves alert ID and createdAt
+                  await updateAlert.mutateAsync({
+                    alertId: id,
+                    ticker: data.ticker,
+                    condition: data.condition,
+                    targetValue: data.targetValue,
+                  });
+                  toast.success(t("toast.updated") || "Alert updated", { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
+                }}
+              />
+            ))}
+          </div>
+
+          {/* Scroll to top button */}
+          <button
+            onClick={() => alertsListRef.current?.scrollTo({ top: 0, behavior: "smooth" })}
+            className={cn(
+              "fixed bottom-6 right-6 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-all duration-200 hover:bg-primary/90",
+              scrollTop ? "opacity-100 translate-y-0" : "pointer-events-none opacity-0 translate-y-2"
+            )}
+            aria-label={tc("scrollToTop") || "Scroll to top"}
+          >
+            <ArrowUp className="h-4 w-4" />
+          </button>
+        </>
       ) : debouncedSearch ? (
         <EmptyState
           icon={<SearchEmptyIllustration className="h-8 w-8" />}
