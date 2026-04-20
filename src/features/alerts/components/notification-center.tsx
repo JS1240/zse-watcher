@@ -5,18 +5,23 @@ import type { TFunction } from "i18next";
 
 import { useAuth } from "@/hooks/use-auth";
 import { useTriggeredAlerts, useActiveAlertCount } from "@/features/alerts/api/alerts-queries";
+import { useLocalAlerts } from "@/features/alerts/hooks/use-local-alerts";
 import { formatPrice, formatDate } from "@/lib/formatters";
 import type { AlertCondition } from "@/types/alert";
 
 export function NotificationCenter() {
   const { t } = useTranslation("alerts");
   const { isAuthenticated } = useAuth();
-  const triggeredAlerts = useTriggeredAlerts();
-  const activeCount = useActiveAlertCount();
+  const { alerts: localAlerts } = useLocalAlerts();
+  const remoteTriggeredAlerts = useTriggeredAlerts();
+  const remoteActiveCount = useActiveAlertCount();
 
-  if (!isAuthenticated) return null;
-
-  const hasNotifications = triggeredAlerts.length > 0;
+  // Combine local and remote triggered alerts
+  const localTriggeredAlerts = localAlerts.filter((a) => a.isTriggered);
+  const allTriggeredAlerts = [...localTriggeredAlerts, ...remoteTriggeredAlerts];
+  const hasLocalAlerts = localAlerts.length > 0;
+  const hasNotifications = allTriggeredAlerts.length > 0;
+  const totalActiveCount = (hasLocalAlerts ? localAlerts.filter((a) => a.isActive).length : 0) + (isAuthenticated ? remoteActiveCount : 0);
 
   return (
     <Popover.Root>
@@ -25,7 +30,7 @@ export function NotificationCenter() {
           <Bell className="h-3.5 w-3.5" />
           {hasNotifications && (
             <span className="absolute -right-0.5 -top-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-destructive text-[8px] font-bold text-white">
-              {triggeredAlerts.length}
+              {allTriggeredAlerts.length}
             </span>
           )}
         </button>
@@ -44,8 +49,8 @@ export function NotificationCenter() {
           </div>
 
           <div className="max-h-64 overflow-y-auto">
-            {triggeredAlerts.length > 0 ? (
-              triggeredAlerts.map((alert) => (
+            {allTriggeredAlerts.length > 0 ? (
+              allTriggeredAlerts.map((alert) => (
                 <div
                   key={alert.id}
                   className="border-b border-border/50 px-3 py-2 last:border-b-0"
@@ -57,6 +62,11 @@ export function NotificationCenter() {
                     <span className="text-[10px] text-amber">
                       {t("status.triggered")}
                     </span>
+                    {"id" in alert && alert.id.startsWith("local-") && (
+                      <span className="rounded bg-muted px-1 py-0.5 text-[8px] text-muted-foreground">
+                        local
+                      </span>
+                    )}
                   </div>
                   <p className="text-[10px] text-muted-foreground">
                     {formatConditionText(alert.condition, alert.targetValue, t)}
@@ -70,8 +80,8 @@ export function NotificationCenter() {
               ))
             ) : (
               <div className="px-3 py-6 text-center text-[10px] text-muted-foreground">
-                {activeCount > 0
-                  ? t("notification.active", { count: activeCount })
+                {totalActiveCount > 0
+                  ? t("notification.active", { count: totalActiveCount })
                   : t("notification.none")}
               </div>
             )}
