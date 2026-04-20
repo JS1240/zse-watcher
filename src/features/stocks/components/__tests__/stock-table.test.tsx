@@ -5,7 +5,7 @@ import { StockTable } from "@/features/stocks/components/stock-table";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { useSubscription } from "@/features/premium/hooks/use-subscription";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
-import { useWatchlistTickers } from "@/features/watchlist/api/watchlist-queries";
+import { useWatchlistTickers, useAddToWatchlist, useRemoveFromWatchlist } from "@/features/watchlist/api/watchlist-queries";
 import { exportToCsv } from "@/lib/export";
 import type { Stock } from "@/types/stock";
 
@@ -26,6 +26,8 @@ const mockUseStocksLive = vi.mocked(useStocksLive);
 const mockUseSubscription = vi.mocked(useSubscription);
 const mockUseSelectedStock = vi.mocked(useSelectedStock);
 const mockUseWatchlistTickers = vi.mocked(useWatchlistTickers);
+const mockUseAddToWatchlist = vi.mocked(useAddToWatchlist);
+const mockUseRemoveFromWatchlist = vi.mocked(useRemoveFromWatchlist);
 
 function setupMocks() {
   mockUseStocksLive.mockReturnValue({
@@ -44,6 +46,8 @@ function setupMocks() {
   } as unknown as ReturnType<typeof useSelectedStock>);
 
   mockUseWatchlistTickers.mockReturnValue(new Set<string>());
+  mockUseAddToWatchlist.mockReturnValue({ isPending: false, mutate: vi.fn() } as unknown as ReturnType<typeof useAddToWatchlist>);
+  mockUseRemoveFromWatchlist.mockReturnValue({ isPending: false, mutate: vi.fn() } as unknown as ReturnType<typeof useRemoveFromWatchlist>);
 }
 
 describe("StockTable", () => {
