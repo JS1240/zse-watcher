@@ -204,7 +204,7 @@ function AuthenticatedWatchlist() {
   };
 
   const handleExportCsv = () => {
-    const headers = ["Ticker", "Name", "Sector", "Price (EUR)", "Change (%)", "Volume", "Turnover (EUR)", "Dividend Yield (%)"];
+    const headers = ["Ticker", "Name", "Sector", "Price (EUR)", "Change (%)", "Volume", "Turnover (EUR)", "Dividend Yield (%)", "P/E Ratio", "Market Cap (MEUR)"];
     const rows = filtered.map((s) => [
       s.ticker,
       s.name,
@@ -214,6 +214,8 @@ function AuthenticatedWatchlist() {
       s.volume.toString(),
       s.turnover.toFixed(2),
       s.dividendYield ? s.dividendYield.toFixed(2) : "",
+      (s as any).peRatio ? (s as any).peRatio.toFixed(2) : "",
+      (s as any).marketCapM ? (s as any).marketCapM.toFixed(1) : "",
     ]);
     exportToCsv(`zse-watchlist-${new Date().toISOString().split("T")[0]}`, headers, rows);
     toast.success(t("toast.exported"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
@@ -626,7 +628,7 @@ function LocalWatchlist() {
   };
 
   const handleExportCsv = () => {
-    const headers = ["Ticker", "Name", "Sector", "Price (EUR)", "Change (%)", "Volume", "Turnover (EUR)", "Dividend Yield (%)"];
+    const headers = ["Ticker", "Name", "Sector", "Price (EUR)", "Change (%)", "Volume", "Turnover (EUR)", "Dividend Yield (%)", "P/E Ratio", "Market Cap (MEUR)"];
     const rows = filtered.map((s) => [
       s.ticker,
       s.name,
@@ -636,6 +638,8 @@ function LocalWatchlist() {
       s.volume.toString(),
       s.turnover.toFixed(2),
       s.dividendYield ? s.dividendYield.toFixed(2) : "",
+      (s as any).peRatio ? (s as any).peRatio.toFixed(2) : "",
+      (s as any).marketCapM ? (s as any).marketCapM.toFixed(1) : "",
     ]);
     exportToCsv(`zse-watchlist-${new Date().toISOString().split("T")[0]}`, headers, rows);
     toast.success(t("toast.exported"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
