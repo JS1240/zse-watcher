@@ -76,5 +76,9 @@
     "empty": "No dividends recorded yet",
     "emptyDescription": "Record your first dividends to start tracking your investment returns.",
     "recordAction": "Record"
+  },
+  "errors": {
+    "stocksLoadFailed": "Cannot load stock data",
+    "stocksLoadFailedDesc": "Portfolio requires live stock prices to calculate values."
   }
 }

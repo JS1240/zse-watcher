@@ -17,6 +17,7 @@ import { formatPrice, formatCurrency } from "@/lib/formatters";
 import { exportToCsv } from "@/lib/export";
 import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/shared/empty-state";
+import { ErrorState } from "@/components/shared/error-state";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
 import type { Holding } from "@/features/portfolio/api/portfolio-queries";
 
@@ -38,7 +39,7 @@ interface PortfolioDashboardProps {
 export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps) {
   const { t } = useTranslation("portfolio");
   const { isLoading, data: portfolioData } = usePortfolio();
-  const { data: stocksResult } = useStocksLive();
+  const { data: stocksResult, isError: isStocksError, refetch: refetchStocks } = useStocksLive();
   const stocks = stocksResult?.stocks ?? null;
   const { transactions: localTxs, hasLocalTransactions } = useLocalTransactions();
   const { select } = useSelectedStock();
@@ -262,6 +263,17 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
 
   if (isLoading) {
     return <PortfolioSkeleton />;
+  }
+
+  // Show error state if stocks fail to load (needed for current prices)
+  if (isStocksError) {
+    return (
+      <ErrorState
+        title={t("errors.stocksLoadFailed") || "Cannot load stock data"}
+        description={t("errors.stocksLoadFailedDesc") || "Portfolio requires live stock prices to calculate values."}
+        retry={{ onRetry: () => refetchStocks(), label: t("errors.tryAgain") || "Pokušaj ponovo" }}
+      />
+    );
   }
 
   return (
