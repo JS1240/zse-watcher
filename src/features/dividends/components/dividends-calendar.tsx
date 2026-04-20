@@ -1,6 +1,6 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { CalendarDays, Search, Calendar, Download, ChevronDown, ChevronUp } from "lucide-react";
+import { CalendarDays, Search, Calendar, Download, ChevronDown, ChevronUp, ArrowUp } from "lucide-react";
 import { toast } from "sonner";
 import { useDividends } from "@/features/dividends/api/dividends-queries";
 import { DividendsSkeleton } from "./dividends-skeleton";
@@ -24,6 +24,8 @@ export function DividendsCalendar() {
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [showYearFilter, setShowYearFilter] = useState(false);
+  const [scrollTop, setScrollTop] = useState(false);
+  const dividendsListRef = useRef<HTMLDivElement>(null);
   const { select, selectedTicker } = useSelectedStock();
 
   // Extract unique years from dividends
@@ -287,57 +289,80 @@ export function DividendsCalendar() {
         )}
       </div>
 
-      {grouped.map((group) => (
-        <div key={group.month}>
-          <h3 className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-            {group.label}
-          </h3>
-          <div className="space-y-1">
-            {group.items!.map((d) => {
-              const isPast = new Date(d.exDivDate) < new Date();
-              return (
-                <button
-                  key={`${d.ticker}-${d.exDivDate}`}
-                  onClick={() => select(d.ticker)}
-                  className={cn(
-                    "flex w-full items-center justify-between rounded-md border border-border bg-card px-3 py-2.5 text-left transition-colors hover:bg-accent/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                    isPast && "opacity-50",
-                  )}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary/10">
-                      <CalendarDays className="h-4 w-4 text-primary" />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-data text-xs font-semibold text-foreground">
-                          {d.ticker}
-                        </span>
-                        <span className="text-[10px] text-muted-foreground">{d.name}</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
-                        <span>Ex-div: {formatDate(d.exDivDate)}</span>
-                        <span>Pay: {formatDate(d.payDate)}</span>
-                      </div>
-                    </div>
-                  </div>
+      {grouped.length > 0 && (
+        <>
+          <div
+            ref={dividendsListRef}
+            onScroll={(e) => setScrollTop((e.target as HTMLDivElement).scrollTop > 200)}
+            className="max-h-[calc(100vh-280px)] space-y-4 overflow-y-auto pr-1"
+          >
+            {grouped.map((group) => (
+              <div key={group.month}>
+                <h3 className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  {group.label}
+                </h3>
+                <div className="space-y-1">
+                  {group.items?.map((d) => {
+                    const isPast = new Date(d.exDivDate) < new Date();
+                    return (
+                      <button
+                        key={`${d.ticker}-${d.exDivDate}`}
+                        onClick={() => select(d.ticker)}
+                        className={cn(
+                          "flex w-full items-center justify-between rounded-md border border-border bg-card px-3 py-2.5 text-left transition-colors hover:bg-accent/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                          isPast && "opacity-50",
+                        )}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary/10">
+                            <CalendarDays className="h-4 w-4 text-primary" />
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="font-data text-xs font-semibold text-foreground">
+                                {d.ticker}
+                              </span>
+                              <span className="text-[10px] text-muted-foreground">{d.name}</span>
+                            </div>
+                            <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                              <span>Ex-div: {formatDate(d.exDivDate)}</span>
+                              <span>Pay: {formatDate(d.payDate)}</span>
+                            </div>
+                          </div>
+                        </div>
 
-                  <div className="flex items-center gap-3 text-right">
-                    <div>
-                      <div className="font-data text-xs font-medium tabular-nums text-foreground">
-                        {formatCurrency(d.amountEur)}
-                      </div>
-                      <Badge variant="success" className="text-[9px]">
-                        {d.yield.toFixed(1)}%
-                      </Badge>
-                    </div>
-                  </div>
-                </button>
-              );
-            })}
+                        <div className="flex items-center gap-3 text-right">
+                          <div>
+                            <div className="font-data text-xs font-medium tabular-nums text-foreground">
+                              {formatCurrency(d.amountEur)}
+                            </div>
+                            <Badge variant="success" className="text-[9px]">
+                              {d.yield.toFixed(1)}%
+                            </Badge>
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
           </div>
-        </div>
-      ))}
+
+          {/* Scroll to top button */}
+          <button
+            onClick={() => dividendsListRef.current?.scrollTo({ top: 0, behavior: "smooth" })}
+            className={cn(
+              "fixed bottom-6 right-6 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-all duration-200 hover:bg-primary/90",
+              scrollTop ? "opacity-100 translate-y-0" : "pointer-events-none opacity-0 translate-y-2"
+            )}
+            aria-label={t("scrollToTop") || "Pomakni na vrh"}
+            title={t("scrollToTop") || "Pomakni na vrh"}
+          >
+            <ArrowUp className="h-4 w-4" />
+          </button>
+        </>
+      )}
 
       {/* Stock detail drawer from dividend row click */}
       <StockDetailDrawer
