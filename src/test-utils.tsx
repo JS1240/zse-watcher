@@ -17,10 +17,22 @@ const TEST_RESOURCES = {
         turnover: "Promet",
         stocks: "dionica",
       },
+      noResults: "Nijedna dionica ne odgovara trenutnim filterima",
+      noStocks: "Nema dionica za prikaz",
+    },
+    actions: {
+      search: "Traži...",
+      filter: "Filter",
+      reset: "Poništi",
+      show: "Prikaži",
+      hide: "Sakrij",
+      clear: "Očisti",
     },
     common: {
       empty: {
         noResults: "Nema rezultata",
+        noResultsDescription: "Pokušajte s drugačijim upitom ili očistite filtere.",
+        clearFilters: "Očisti filtere",
       },
       time: {
         justNow: "upravo sada",
@@ -46,10 +58,22 @@ const TEST_RESOURCES = {
         turnover: "Turnover",
         stocks: "stocks",
       },
+      noResults: "No stocks match your current filters",
+      noStocks: "No stocks to display",
+    },
+    actions: {
+      search: "Search...",
+      filter: "Filter",
+      reset: "Reset",
+      show: "Show",
+      hide: "Hide",
+      clear: "Clear",
     },
     common: {
       empty: {
         noResults: "No results found",
+        noResultsDescription: "Try a different query or clear your filters.",
+        clearFilters: "Clear filters",
       },
       time: {
         justNow: "just now",

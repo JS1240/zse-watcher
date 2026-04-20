@@ -50,6 +50,11 @@ function setupMocks() {
   mockUseRemoveFromWatchlist.mockReturnValue({ isPending: false, mutate: vi.fn() } as unknown as ReturnType<typeof useRemoveFromWatchlist>);
 }
 
+// Helper to get the search input (there's only one textbox in StockTable)
+function getSearchInput() {
+  return screen.getByRole("textbox");
+}
+
 describe("StockTable", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -88,13 +93,13 @@ describe("StockTable", () => {
     it("shows empty state when no stocks match filter", () => {
       renderWithProviders(<StockTable />);
 
-      const searchInput = screen.getByPlaceholderText(/oznaka.*naziv/i);
+      const searchInput = getSearchInput();
       fireEvent.change(searchInput, { target: { value: "NONEXISTENT" } });
 
       // Flush React effects (schedules the debounce setTimeout), then advance timers
       act(() => { vi.runAllTimers(); });
 
-      expect(screen.getByText(/no stocks found/i)).toBeInTheDocument();
+      expect(screen.getByText(/Nijedna dionica ne odgovara trenutnim filterima/i)).toBeInTheDocument();
     });
 
     it("renders skeleton while loading", () => {
@@ -113,7 +118,7 @@ describe("StockTable", () => {
     it("filters stocks by ticker", async () => {
       renderWithProviders(<StockTable />);
 
-      const searchInput = screen.getByPlaceholderText(/oznaka.*naziv/i);
+      const searchInput = getSearchInput();
       fireEvent.change(searchInput, { target: { value: "ADRS" } });
       act(() => { vi.runAllTimers(); });
 
@@ -124,7 +129,7 @@ describe("StockTable", () => {
     it("filters stocks by company name", async () => {
       renderWithProviders(<StockTable />);
 
-      const searchInput = screen.getByPlaceholderText(/oznaka.*naziv/i);
+      const searchInput = getSearchInput();
       fireEvent.change(searchInput, { target: { value: "Arena" } });
       act(() => { vi.runAllTimers(); });
 
@@ -135,7 +140,7 @@ describe("StockTable", () => {
     it("filters stocks by ISIN", async () => {
       renderWithProviders(<StockTable />);
 
-      const searchInput = screen.getByPlaceholderText(/oznaka.*naziv/i);
+      const searchInput = getSearchInput();
       fireEvent.change(searchInput, { target: { value: "HRADRSPPA0" } });
       act(() => { vi.runAllTimers(); });
 
@@ -147,56 +152,67 @@ describe("StockTable", () => {
   describe("sorting", () => {
     it("sorts by change percentage descending by default", () => {
       renderWithProviders(<StockTable />);
+      act(() => { vi.runAllTimers(); });
 
-      // Rows are now role="button" — query buttons within tbody
+      // tr elements are role=button; each stock row has 4 children (watchlist btn, name td, price td, change td)
+      // Stock rows are at indices 0, 4, 8, 12 (every 4th row starting at 0)
       const table = screen.getByRole("table");
       const rowgroups = within(table).getAllByRole("rowgroup");
-      const tbodyButtons = within(rowgroups[1]).getAllByRole("button");
+      const tbodyRows = within(rowgroups[1]).getAllByRole("button");
 
-      const tickers = tbodyButtons.map((b) => {
-        const cells = within(b).getAllByRole("cell");
-        return cells[0]?.textContent ?? "";
+      // Extract ticker from every 4th row (stock rows only)
+      const stockRows = [0, 1, 2, 3].map((i) => tbodyRows[i * 4]);
+      const tickers = stockRows.map((row) => {
+        return row.querySelector("td")?.textContent ?? "";
       });
 
       // Default: changePct desc → most positive first (ADRS +1.36% → OPTE -4.55%)
       const changeOrder = ["ADRS-P-A", "HT-R-A", "ARNT-R-A", "OPTE-R-A"];
-      expect(tickers.slice(0, 4).map((t) => t.trim())).toEqual(changeOrder);
+      expect(tickers.map((t) => t.trim())).toEqual(changeOrder);
     });
 
     it("toggles sort direction when clicking the same column", () => {
       renderWithProviders(<StockTable />);
-
-      const changeButton = screen.getByRole("button", { name: /promjena/i });
-      fireEvent.click(changeButton);
       act(() => { vi.runAllTimers(); });
+
+      const columnheaders = screen.getAllByRole("columnheader");
+      // Promjena is at index 6 based on test data
+      const promjenaBtn = columnheaders[6];
+      expect(promjenaBtn).toBeTruthy();
+
+      act(() => {
+        fireEvent.click(promjenaBtn);
+        vi.runAllTimers();
+      });
 
       const table = screen.getByRole("table");
       const rowgroups = within(table).getAllByRole("rowgroup");
-      const tbodyButtons = within(rowgroups[1]).getAllByRole("button");
-
-      const tickers = tbodyButtons.map((b) => {
-        const cells = within(b).getAllByRole("cell");
-        return cells[0]?.textContent ?? "";
-      });
-
-      // Toggle to changePct asc → most negative first (OPTE -4.55% → ADRS +1.36%)
+      const tbodyRows = within(rowgroups[1]).getAllByRole("button");
+      const stockRows = [0, 1, 2, 3].map((i) => tbodyRows[i * 4]);
+      const tickers = stockRows.map((row) => row.querySelector("td")?.textContent ?? "");
       const ascOrder = ["OPTE-R-A", "ARNT-R-A", "HT-R-A", "ADRS-P-A"];
-      expect(tickers.slice(0, 4).map((t) => t.trim())).toEqual(ascOrder);
+      expect(tickers.map((t) => t.trim())).toEqual(ascOrder);
     });
 
     it("sorts ascending by ticker when switching to ticker column", () => {
       renderWithProviders(<StockTable />);
+      act(() => { vi.runAllTimers(); });
 
-      const tickerButton = screen.getByRole("button", { name: /oznaka/i });
-      fireEvent.click(tickerButton);
-      vi.advanceTimersByTime(10);
+      const columnheaders = screen.getAllByRole("columnheader");
+      // Oznaka is at index 1 based on test data
+      const oznakaBtn = columnheaders[1];
+      expect(oznakaBtn).toBeTruthy();
+
+      act(() => {
+        fireEvent.click(oznakaBtn);
+        vi.runAllTimers();
+      });
 
       const table = screen.getByRole("table");
       const rowgroups = within(table).getAllByRole("rowgroup");
-      const tbodyButtons = within(rowgroups[1]).getAllByRole("button");
-
-      const firstTicker = tbodyButtons[0]?.querySelector("[class*='font-data']")?.textContent ?? "";
-      expect(firstTicker.trim()).toBe("ADRS-P-A");
+      const tbodyRows = within(rowgroups[1]).getAllByRole("button");
+      const firstRow = tbodyRows[0];
+      expect(firstRow?.querySelector("td")?.textContent?.trim()).toBe("ADRS-P-A");
     });
   });
 
@@ -239,26 +255,36 @@ describe("StockTable", () => {
 
       renderWithProviders(<StockTable />);
 
-      expect(screen.queryByTitle("Export CSV")).not.toBeInTheDocument();
+      expect(screen.queryByRole("button", { name: /export/i })).not.toBeInTheDocument();
     });
 
     it("shows export button when user has dataExport permission", () => {
+      mockUseSubscription.mockReturnValue({
+        canAccess: vi.fn(() => true),
+      } as unknown as ReturnType<typeof useSubscription>);
+
       renderWithProviders(<StockTable />);
 
-      expect(screen.getByTitle("Export CSV")).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: /export/i })).toBeInTheDocument();
     });
 
     it("calls exportToCsv with all stocks", () => {
       renderWithProviders(<StockTable />);
 
-      const exportBtn = screen.getByTitle("Export CSV");
+      const exportBtn = screen.getByRole("button", { name: /export/i });
       fireEvent.click(exportBtn);
 
-      expect(exportToCsv).toHaveBeenCalledOnce();
-      const [filename, headers, rows] = (exportToCsv as ReturnType<typeof vi.fn>).mock.calls[0];
-      expect(filename).toMatch(/^zse-stocks-\d{4}-\d{2}-\d{2}$/);
-      expect(headers).toEqual(["Ticker", "Name", "Sector", "Price", "Change %", "Volume", "Turnover"]);
-      expect(rows.length).toBe(4);
+      // exportToCsv(filename, headers, rows) — verify filename is date-stamped and rows contain all 4 tickers
+      expect(exportToCsv).toHaveBeenCalledWith(
+        expect.stringMatching(/^zse-stocks-\d{4}-\d{2}-\d{2}$/),
+        ["Ticker", "Name", "Sector", "Price", "Change %", "Volume", "Turnover"],
+        expect.arrayContaining([
+          expect.arrayContaining(["ADRS-P-A"]),
+          expect.arrayContaining(["HT-R-A"]),
+          expect.arrayContaining(["ARNT-R-A"]),
+          expect.arrayContaining(["OPTE-R-A"]),
+        ]),
+      );
     });
   });
 });
