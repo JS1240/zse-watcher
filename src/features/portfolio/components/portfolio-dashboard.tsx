@@ -1,6 +1,7 @@
 import { useMemo, useState, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Plus, Download, Wallet, ChevronUp, ChevronDown, Search, X, Keyboard, TrendingUp, TrendingDown, Minus, CheckCircle2 } from "lucide-react";
+import { Highlight } from "@/components/shared/highlight";
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { Input } from "@/components/ui/input";
 import { useDebounce } from "@/hooks/use-debounce";
@@ -490,9 +491,11 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
                           )}
                           title="Kopiraj ticker"
                         >
-                          {h.ticker}
+                          <Highlight text={h.ticker} highlight={debouncedSearch} />
                         </button>
-                        <span className="text-[10px] text-muted-foreground">{h.name}</span>
+                        <span className="text-[10px] text-muted-foreground">
+                          <Highlight text={h.name} highlight={debouncedSearch} />
+                        </span>
                       </div>
                     </td>
                     <td className="px-3 py-3 md:py-2 text-right font-data tabular-nums text-foreground">

@@ -1,6 +1,7 @@
 import { useState, useMemo, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Plus, Trash2, ChevronDown, ChevronUp, Download, Search, X, ArrowUp, ArrowDown, ArrowUpDown, TrendingUp, TrendingDown, Keyboard, CheckCircle2 } from "lucide-react";
+import { Highlight } from "@/components/shared/highlight";
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { toast } from "sonner";
 import { useLocalTransactions } from "@/features/portfolio/hooks/use-local-transactions";
@@ -522,9 +523,11 @@ export function LocalPortfolioDashboard() {
                         )}
                         title="Kopiraj ticker"
                       >
-                        {h.ticker}
+                        <Highlight text={h.ticker} highlight={debouncedSearch} />
                       </button>
-                      <span className="text-[10px] text-muted-foreground">{h.name}</span>
+                      <span className="text-[10px] text-muted-foreground">
+                        <Highlight text={h.name} highlight={debouncedSearch} />
+                      </span>
                     </div>
                   </td>
                   <td className="px-3 py-3 md:py-2 text-right font-data tabular-nums text-foreground">
