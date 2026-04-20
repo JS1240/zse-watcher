@@ -292,6 +292,30 @@ export function LocalPortfolioDashboard() {
     toast.success(t("toast.exported"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
   };
 
+  // Export transaction history as CSV for Croatian tax reporting
+  const handleExportTransactions = () => {
+    if (!transactions.length) return;
+
+    const headers = ["Date", "Ticker", "Type", "Shares", "Price (EUR)", "Total (EUR)", "Notes"];
+    const rows = transactions
+      .sort((a, b) => new Date(b.transactionDate).getTime() - new Date(a.transactionDate).getTime())
+      .map((tx) => [
+        new Date(tx.transactionDate).toISOString().split("T")[0],
+        tx.ticker,
+        tx.transactionType,
+        tx.shares.toString(),
+        tx.pricePerShare.toFixed(2),
+        tx.totalAmount.toFixed(2),
+        tx.notes ?? "",
+      ]);
+    exportToCsv(
+      `zse-transactions-local-${new Date().toISOString().split("T")[0]}`,
+      headers,
+      rows,
+    );
+    toast.success(t("toast.exported"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
+  };
+
   return showSkeleton ? (
     <PortfolioSkeleton />
   ) : (
@@ -456,8 +480,14 @@ export function LocalPortfolioDashboard() {
             )}
             <Button size="sm" variant="outline" onClick={handleExportCsv}>
               <Download className="h-3.5 w-3.5" />
-              CSV
+              {t("exportCsv") || "CSV"}
             </Button>
+            {transactions.length > 0 && (
+              <Button size="sm" variant="outline" onClick={handleExportTransactions}>
+                <Download className="h-3.5 w-3.5" />
+                {t("exportTransactions") || "Transactions"}
+              </Button>
+            )}
           </>
         )}
         <Button size="sm" onClick={() => setShowAddForm(!showAddForm)}>
