@@ -19,6 +19,7 @@ import type { AlertCondition } from "@/types/alert";
 import { EmptyState } from "@/components/shared/empty-state";
 import { SearchEmptyIllustration } from "@/components/shared/empty-illustrations";
 import { ErrorState } from "@/components/shared/error-state";
+import { Highlight } from "@/components/shared/highlight";
 import { exportToCsv } from "@/lib/export";
 import { useDebounce } from "@/hooks/use-debounce";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
@@ -340,6 +341,7 @@ export function AlertsDashboard() {
               key={alert.id}
               alert={alert}
               stocks={stocks}
+              searchHighlight={debouncedSearch}
               onDelete={() => setConfirmDelete(alert.id)}
               onToggle={() => {
                 const wasActive = alert.isActive;
@@ -419,9 +421,10 @@ interface AlertRowProps {
     data: { ticker: string; condition: AlertCondition; targetValue: number },
   ) => Promise<void>;
   stocks?: { ticker: string; name: string; price: number | null }[];
+  searchHighlight?: string;
 }
 
-export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUpdate, stocks }: AlertRowProps) {
+export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUpdate, stocks, searchHighlight }: AlertRowProps) {
   const { t } = useTranslation("alerts");
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -727,7 +730,11 @@ tabIndex={0}
         <div>
           <div className="flex items-center gap-2">
             <span className="font-data text-xs font-semibold text-foreground">
-              {alert.ticker}
+              {searchHighlight ? (
+                <Highlight text={alert.ticker} highlight={searchHighlight} />
+              ) : (
+                alert.ticker
+              )}
             </span>
             <span className="text-[10px] text-muted-foreground">
               {conditionOptions.find((o) => o.value === alert.condition)?.label}
@@ -776,13 +783,14 @@ tabIndex={0}
     </div>
   );
 }, (prev, next) => {
-  // Only re-render if alert data changed
+  // Only re-render if alert data or search highlight changed
   return (
     prev.alert.id === next.alert.id &&
     prev.alert.ticker === next.alert.ticker &&
     prev.alert.condition === next.alert.condition &&
     prev.alert.targetValue === next.alert.targetValue &&
     prev.alert.isActive === next.alert.isActive &&
-    prev.alert.isTriggered === next.alert.isTriggered
+    prev.alert.isTriggered === next.alert.isTriggered &&
+    prev.searchHighlight === next.searchHighlight
   );
 });
