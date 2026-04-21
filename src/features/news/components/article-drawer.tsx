@@ -1,7 +1,8 @@
-import { useEffect } from "react";
+
 import { X, ExternalLink, Keyboard } from "lucide-react";
 import type { NewsArticle } from "@/types/news";
 import { formatDate, formatTime } from "@/lib/formatters";
+import { useFocusTrap } from "@/hooks/use-focus-trap";
 
 interface ArticleDrawerProps {
   article: NewsArticle | null;
@@ -9,13 +10,10 @@ interface ArticleDrawerProps {
 }
 
 export function ArticleDrawer({ article, onClose }: ArticleDrawerProps) {
-  useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, [onClose]);
+  const { setContainerRef } = useFocusTrap({
+    active: !!article,
+    onEscape: onClose,
+  });
 
   if (!article) return null;
 
@@ -28,7 +26,7 @@ export function ArticleDrawer({ article, onClose }: ArticleDrawerProps) {
       />
 
       {/* Drawer */}
-      <div className="fixed right-0 top-0 z-50 flex h-full w-full flex-col bg-card shadow-xl sm:max-w-xl">
+      <div ref={setContainerRef} className="fixed right-0 top-0 z-50 flex h-full w-full flex-col bg-card shadow-xl sm:max-w-xl">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <div className="flex items-center gap-2">

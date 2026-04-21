@@ -1,13 +1,13 @@
-import { useEffect } from "react";
+
 import { useTranslation } from "react-i18next";
 import { X } from "lucide-react";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatPrice, formatVolume } from "@/lib/formatters";
-import { formatPercent } from "@/lib/formatters";
+import { formatPrice, formatVolume, formatPercent } from "@/lib/formatters";
 import type { SectorGroup } from "./heatmap";
+import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { cn } from "@/lib/utils";
 
 interface SectorDrawerProps {
@@ -20,6 +20,10 @@ export function SectorDrawer({ sector, onClose }: SectorDrawerProps) {
   const { select: selectTicker } = useSelectedStock();
   const { data: result, isLoading: isStocksLoading } = useStocksLive();
   const stocks = result?.stocks ?? null;
+  const { setContainerRef } = useFocusTrap({
+    active: !!sector,
+    onEscape: onClose,
+  });
 
   const sectorStocks = stocks
     ? stocks
@@ -27,20 +31,12 @@ export function SectorDrawer({ sector, onClose }: SectorDrawerProps) {
         .sort((a, b) => b.turnover - a.turnover)
     : [];
 
-  useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, [onClose]);
-
   if (!sector) return null;
 
   return (
     <>
       <div className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="fixed right-0 top-0 z-50 flex h-full w-full flex-col bg-card shadow-xl sm:max-w-[85vw] md:max-w-xl lg:max-w-2xl xl:max-w-[42rem] 2xl:max-w-[48rem]">
+      <div ref={setContainerRef} className="fixed right-0 top-0 z-50 flex h-full w-full flex-col bg-card shadow-xl sm:max-w-[85vw] md:max-w-xl lg:max-w-2xl xl:max-w-[42rem] 2xl:max-w-[48rem]">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <div>
