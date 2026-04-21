@@ -8,6 +8,7 @@ import { useCreateAlert } from "@/features/alerts/api/alerts-queries";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import { TickerSelect } from "@/components/shared/ticker-select";
 import { normalizeNumberInput, formatInputNumber, parseLocalizedNumber } from "@/lib/format-input";
 import { formatPrice } from "@/lib/formatters";
@@ -221,17 +222,18 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
           ) : null}
         </div>
 
-        <div>
-          <label className="mb-1 block text-[10px] text-muted-foreground">{t("fields.condition")}</label>
-          <select
-            {...register("condition")}
-            className="flex h-8 w-full rounded-md border border-input bg-background px-3 py-1.5 font-data text-xs text-foreground"
-          >
-            <option value="above">{t("condition.above")}</option>
-            <option value="below">{t("condition.below")}</option>
-            <option value="percent_change_up">{t("condition.percentUp")}</option>
-            <option value="percent_change_down">{t("condition.percentDown")}</option>
-          </select>
+        <div className="flex flex-col gap-1.5">
+          <label className="text-[10px] text-muted-foreground">{t("fields.condition")}</label>
+          <SegmentedControl
+            value={conditionValue}
+            onChange={(v) => setValue("condition", v as AlertFormData['condition'], { shouldValidate: true })}
+            options={[
+              { value: "above", label: t("condition.above"), hint: t("condition.above") },
+              { value: "below", label: t("condition.below"), hint: t("condition.below") },
+              { value: "percent_change_up", label: t("condition.percentUp"), hint: t("condition.percentUp") },
+              { value: "percent_change_down", label: t("condition.percentDown"), hint: t("condition.percentDown") },
+            ]}
+          />
         </div>
 
         <div>
