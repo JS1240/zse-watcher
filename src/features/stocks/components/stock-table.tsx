@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { Search, ArrowUpDown, ArrowUp, ArrowDown, Download, TrendingUp, X, ArrowUp as ScrollToTopIcon } from "lucide-react";
+import { Search, ArrowUpDown, ArrowUp, ArrowDown, Download, TrendingUp, X, ArrowUp as ScrollToTopIcon, Keyboard } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { StockRow } from "@/features/stocks/components/stock-row";
@@ -10,6 +10,7 @@ import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
 import { usePriceFlash } from "@/hooks/use-price-flash";
 import { useDebounce } from "@/hooks/use-debounce";
+import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { useSubscription } from "@/features/premium/hooks/use-subscription";
 import { exportToCsv } from "@/lib/export";
 import { EmptyState } from "@/components/shared/empty-state";
@@ -32,6 +33,11 @@ export function StockTable() {
 
   const flashMap = usePriceFlash(stocks);
   const debouncedSearch = useDebounce(search, 200);
+
+  // Keyboard shortcut to focus search
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const focusSearch = useCallback(() => searchInputRef.current?.focus(), []);
+  useKeyboardShortcut({ key: "/", handler: focusSearch, enabled: true });
 
   const filtered = useMemo(() => {
     if (!stocks) return [];
@@ -114,8 +120,15 @@ export function StockTable() {
             placeholder={t("table.ticker") + ", " + t("table.name") + "..."}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+            ref={searchInputRef}
             className={cn("pl-8 pr-8", search && "pr-8")}
           />
+          {!search && (
+            <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-0.5 rounded bg-muted px-1.5 py-0.5 text-[9px] text-muted-foreground">
+              <Keyboard className="h-2.5 w-2.5" />
+              /
+            </span>
+          )}
           {search && (
             <button
               onClick={() => setSearch("")}
