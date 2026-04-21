@@ -170,7 +170,16 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
       }
       return sortDir === "asc" ? aVal - (bVal as number) : (bVal as number) - aVal;
     });
-  }, [filteredHoldings, sortField, sortDir]);
+  }, [filteredByGain, sortField, sortDir]);
+
+  // Memoize gain counts to avoid inline filtering on every render
+  const gainCounts = useMemo(() => {
+    return {
+      gainers: enrichedHoldings.filter((h) => h.gainPct > 0).length,
+      losers: enrichedHoldings.filter((h) => h.gainPct < 0).length,
+      unchanged: enrichedHoldings.filter((h) => h.gainPct === 0).length,
+    };
+  }, [enrichedHoldings]);
 
   const handleSort = (field: string) => {
     if (sortField === field) {
@@ -401,21 +410,21 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
             onClick={() => setGainFilter("gainers")}
             label={t("filters.gainers") || "Dobitnici"}
             icon={<TrendingUp className="h-3 w-3" />}
-            count={enrichedHoldings.filter((h) => h.gainPct > 0).length}
+            count={gainCounts.gainers}
           />
           <FilterChip
             active={gainFilter === "losers"}
             onClick={() => setGainFilter("losers")}
             label={t("filters.losers") || "Gubitnici"}
             icon={<TrendingDown className="h-3 w-3" />}
-            count={enrichedHoldings.filter((h) => h.gainPct < 0).length}
+            count={gainCounts.losers}
           />
           <FilterChip
             active={gainFilter === "unchanged"}
             onClick={() => setGainFilter("unchanged")}
             label={t("filters.unchanged") || "Nepromijenjeno"}
             icon={<Minus className="h-3 w-3" />}
-            count={enrichedHoldings.filter((h) => h.gainPct === 0).length}
+            count={gainCounts.unchanged}
           />
           {/* Sector filter dropdown */}
           {availableSectors.length > 0 && (

@@ -206,8 +206,8 @@ export function LocalPortfolioDashboard() {
 
   // Apply sorting to holdings
   const sortedHoldings = useMemo(() => {
-    if (!sort) return filteredHoldings;
-    return [...filteredHoldings].sort((a, b) => {
+    if (!sort) return filteredBySector;
+    return [...filteredBySector].sort((a, b) => {
       const aVal = a[sort.column];
       const bVal = b[sort.column];
       // Handle string columns
@@ -299,7 +299,7 @@ export function LocalPortfolioDashboard() {
     if (!transactions.length) return;
 
     const headers = ["Date", "Ticker", "Type", "Shares", "Price (EUR)", "Total (EUR)", "Notes"];
-    const rows = transactions
+    const rows = [...transactions]
       .sort((a, b) => new Date(b.transactionDate).getTime() - new Date(a.transactionDate).getTime())
       .map((tx) => [
         new Date(tx.transactionDate).toISOString().split("T")[0],
