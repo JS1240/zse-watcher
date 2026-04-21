@@ -502,7 +502,6 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
   // Real-time validation state
   const [editFocused, setEditFocused] = useState({ ticker: false, target: false });
 
-  // Real-time validation logic (matching AlertForm pattern)
   // Current price for the ticker being edited
   const editTickerCurrentPrice = useMemo(() => {
     if (!editTicker || !stocks) return null;
@@ -510,6 +509,7 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
     return stock?.price ?? null;
   }, [editTicker, stocks]);
 
+  // Real-time validation logic (matching AlertForm pattern)
   const isEditTickerValid = useMemo(() => {
     if (!editTicker) return false;
     if (!/^[A-Z0-9_-]{3,10}$/i.test(editTicker)) return false;
@@ -737,6 +737,7 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
                 {t("pressEnter")} · {t("cancelHint")}
               </p>
             )}
+          </div>
         </div>
           </div>
         </div>
