@@ -158,6 +158,43 @@ export function SearchEmptyIllustration({ className }: { className?: string }): 
   );
 }
 
+/** Bell notification illustration for alerts empty state */
+export function AlertEmptyIllustration({ className }: { className?: string }): ReactNode {
+  return (
+    <svg
+      viewBox="0 0 80 80"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      aria-hidden="true"
+    >
+      {/* Background circle */}
+      <circle cx="40" cy="40" r="36" className="fill-muted/40" />
+      {/* Bell body */}
+      <path
+        d="M40 20 C32 20 26 26 26 34 L26 48 C26 52 30 56 40 56 C50 56 54 52 54 48 L54 34 C54 26 48 20 40 20Z"
+        fill="none"
+        className="stroke-muted-foreground"
+        strokeWidth="2.5"
+        strokeLinejoin="round"
+      />
+      {/* Bell top clapper */}
+      <path
+        d="M34 20 C34 16 36 14 40 14 C44 14 46 16 46 20"
+        fill="none"
+        className="stroke-muted-foreground"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+      />
+      {/* Bell ring indicators — dashed lines suggesting notification */}
+      <line x1="24" y1="30" x2="28" y2="26" className="stroke-muted-foreground/40" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="56" y1="30" x2="52" y2="26" className="stroke-muted-foreground/40" strokeWidth="1.5" strokeLinecap="round" />
+      {/* Small dot — the "notification" indicator */}
+      <circle cx="52" cy="22" r="4" className="fill-amber" />
+    </svg>
+  );
+}
+
 /** Pie chart illustration for portfolio analytics empty state */
 export function AnalyticsEmptyIllustration({ className }: { className?: string }): ReactNode {
   return (

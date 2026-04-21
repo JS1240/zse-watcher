@@ -18,7 +18,7 @@ import { normalizeNumberInput, formatInputNumber, parseLocalizedNumber } from "@
 import { cn } from "@/lib/utils";
 import type { AlertCondition } from "@/types/alert";
 import { EmptyState } from "@/components/shared/empty-state";
-import { SearchEmptyIllustration } from "@/components/shared/empty-illustrations";
+import { SearchEmptyIllustration, AlertEmptyIllustration } from "@/components/shared/empty-illustrations";
 import { ErrorState } from "@/components/shared/error-state";
 import { Highlight } from "@/components/shared/highlight";
 import { exportToCsv } from "@/lib/export";
@@ -401,7 +401,7 @@ export function AlertsDashboard() {
         />
       ) : (
         <EmptyState
-          icon={<Bell className="h-8 w-8" />}
+          icon={<AlertEmptyIllustration className="h-8 w-8" />}
           title={t("empty")}
           description={t("emptyDescription")}
           action={{ label: t("create"), onClick: () => setShowForm(true) }}
