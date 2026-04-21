@@ -1,6 +1,7 @@
 import { useState, useMemo, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, Trash2, ChevronDown, ChevronUp, Download, Search, X, ArrowUp, ArrowDown, ArrowUpDown, TrendingUp, TrendingDown, Keyboard, CheckCircle2, ArrowUp as ScrollToTopIcon } from "lucide-react";
+import { Plus, Trash2, ChevronDown, ChevronUp, Download, Search, X, ArrowUp, ArrowDown, ArrowUpDown, TrendingUp, TrendingDown, Keyboard, CheckCircle2, ArrowUp as ScrollToTopIcon, HelpCircle } from "lucide-react";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
 /** Keyboard navigation attributes for portfolio holdings table rows — mirrors stock-row pattern */
 const ROW_FOCUS_ATTR = "data-row-index" as const;
@@ -673,11 +674,30 @@ export function LocalPortfolioDashboard() {
             onClick={() => setShowHistory((v) => !v)}
             className="flex w-full items-center justify-between px-3 py-2 text-[10px] uppercase tracking-wider text-muted-foreground hover:bg-muted/50"
           >
-            <span>
-              {t("history")} ({transactions.length}) —{" "}
-              <span className="text-[10px] text-muted-foreground/70">
-                tap a row to delete
-              </span>
+            <span className="group flex items-center gap-2">
+              {t("history")} ({transactions.length})
+              {/* Keyboard shortcuts hint with tooltip - matches alert pattern */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    className="flex items-center gap-1.5 text-[9px] text-muted-foreground transition-colors hover:text-foreground"
+                    aria-label="Keyboard shortcuts"
+                  >
+                    <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
+                    <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Del</kbd>
+                    <HelpCircle className="h-3 w-3" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" align="start" className="space-y-1 p-2.5">
+                  <p className="text-[10px] font-semibold text-foreground">{t("shortcuts") || "Tipkovnički prečaci"}</p>
+                  <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-[9px]">
+                    <kbd className="rounded bg-muted px-1.5 py-0.5 text-[8px] font-sans">Enter</kbd>
+                    <span className="text-muted-foreground">{t("shortcut.view") || "detalji dionice"}</span>
+                    <kbd className="rounded bg-muted px-1.5 py-0.5 text-[8px] font-sans">Del</kbd>
+                    <span className="text-muted-foreground">{t("shortcut.delete") || "obriši"}</span>
+                  </div>
+                </TooltipContent>
+              </Tooltip>
             </span>
             {showHistory ? (
               <ChevronUp className="h-3 w-3" />
@@ -758,7 +778,19 @@ export function LocalPortfolioDashboard() {
                     return (
                       <tr
                         key={tx.id}
-                        className="group border-b border-border/50 last:border-b-0 active:bg-muted/50 hover:bg-muted/30"
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            select(tx.ticker);
+                          } else if (e.key === "Delete" || e.key === "Backspace") {
+                            e.preventDefault();
+                            removeTransaction(tx.id);
+                            toast.success(t("toast.deleted") || "Transaction deleted", { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
+                          }
+                        }}
+                        className="group cursor-pointer border-b border-border/50 last:border-b-0 active:bg-muted/50 hover:bg-muted/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       >
                         <td className="px-3 py-2 md:py-1.5 text-muted-foreground">
                           {new Date(tx.transactionDate).toLocaleDateString("hr-HR", {

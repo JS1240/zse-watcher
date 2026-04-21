@@ -54,7 +54,8 @@
     "positionAdded": "Pozicija dodana",
     "copied": "Kopirano: {{ticker}}",
     "priceCopied": "Kopirana cijena: {{price}}",
-    "valueCopied": "Kopirana vrijednost: {{value}}"
+    "valueCopied": "Kopirana vrijednost: {{value}}",
+    "deleted": "Transakcija obrisana"
   },
   "exportCsv": "CSV",
   "exportTransactions": "Transakcije",
@@ -84,5 +85,10 @@
   "errors": {
     "stocksLoadFailed": "Ne mogu ucitati podatke o dionicama",
     "stocksLoadFailedDesc": "Portfelj zahtijeva live cijene dionica za izracun vrijednosti."
+  },
+  "shortcuts": "Tipkovnicki precaci",
+  "shortcut": {
+    "view": "detalji dionice",
+    "delete": "obrisi"
   }
 }

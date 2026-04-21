@@ -54,7 +54,8 @@
     "positionAdded": "Position added",
     "copied": "Copied: {{ticker}}",
     "priceCopied": "Price copied: {{price}}",
-    "valueCopied": "Value copied: {{value}}"
+    "valueCopied": "Value copied: {{value}}",
+    "deleted": "Transaction deleted"
   },
   "exportCsv": "CSV",
   "exportTransactions": "Transactions",
@@ -83,5 +84,10 @@
   "errors": {
     "stocksLoadFailed": "Cannot load stock data",
     "stocksLoadFailedDesc": "Portfolio requires live stock prices to calculate values."
+  },
+  "shortcuts": "Keyboard shortcuts",
+  "shortcut": {
+    "view": "stock details",
+    "delete": "delete"
   }
 }
