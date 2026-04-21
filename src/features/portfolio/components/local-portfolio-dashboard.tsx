@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Plus, Trash2, ChevronDown, ChevronUp, Download, Search, X, ArrowUp, ArrowDown, ArrowUpDown, TrendingUp, TrendingDown, Keyboard, CheckCircle2, ArrowUp as ScrollToTopIcon } from "lucide-react";
 import { Highlight } from "@/components/shared/highlight";
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
+import { usePriceFlash } from "@/hooks/use-price-flash";
 import { toast } from "sonner";
 import { useLocalTransactions } from "@/features/portfolio/hooks/use-local-transactions";
 import { useDebounce } from "@/hooks/use-debounce";
@@ -71,6 +72,9 @@ export function LocalPortfolioDashboard() {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const focusSearch = useCallback(() => searchInputRef.current?.focus(), []);
   useKeyboardShortcut({ key: "/", handler: focusSearch, enabled: true });
+
+  // Price flash map for visual feedback on price changes
+  const flashMap = usePriceFlash(stocks);
 
   const [changeFilter, setChangeFilter] = useState<"all" | "gainers" | "losers" | "unchanged">("all");
   const [sectorFilter, setSectorFilter] = useState<string | null>(null);
@@ -550,12 +554,18 @@ export function LocalPortfolioDashboard() {
               </tr>
             </thead>
             <tbody>
-              {sortedHoldings.map((h) => (
+              {sortedHoldings.map((h) => {
+                const flash = flashMap.get(h.ticker) ?? null;
+                return (
                 <tr
                   key={h.ticker}
                   tabIndex={0}
                   role="row"
-                  className="border-b border-border/50 cursor-pointer transition-all duration-150 hover:bg-accent/40 hover:border-primary/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background"
+                  className={cn(
+                    "border-b border-border/50 cursor-pointer transition-all duration-150 hover:bg-accent/40 hover:border-primary/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
+                    flash === "up" && "price-flash-up",
+                    flash === "down" && "price-flash-down",
+                  )}
                   onClick={() => select(h.ticker)}
                   onKeyDown={(e) => handleRowKeyDown(e, h.ticker)}
                 >
@@ -613,7 +623,8 @@ export function LocalPortfolioDashboard() {
                     <ChangeBadge value={h.gainPct} showIcon={false} />
                   </td>
                 </tr>
-              ))}
+              );
+            })}
             </tbody>
           </table>
         </div>

@@ -90,5 +90,10 @@
   "empty": {
     "noNews": "Nema vijesti",
     "noNewsDescription": "Za ovu dionicu trenutno nema dostupnih vijesti."
+  },
+  "range": {
+    "buyZone": "zona kupnje",
+    "sellZone": "zona prodaje",
+    "midZone": "sredina raspona"
   }
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Newspaper, HelpCircle } from "lucide-react";
 import { useNews } from "@/features/news/api/news-queries";
@@ -80,53 +80,15 @@ export function StockFundamentals({ stock }: StockFundamentalsProps) {
           />
         </div>
 
-        {/* 52-week range bar */}
-        <div>
-          <h4 className="mb-2 text-[10px] uppercase tracking-wider text-muted-foreground">
-            52-Week Range
-          </h4>
-          <div className="space-y-1.5">
-            <div className="flex justify-between font-data text-[10px] tabular-nums text-muted-foreground">
-              <span>{formatPrice(stock.low52w)}</span>
-              <span className="text-[9px] text-primary/70">52W</span>
-              <span>{formatPrice(stock.high52w)}</span>
-            </div>
-            <div className="relative h-3 rounded-full bg-muted/60 overflow-hidden">
-              {/* Gradient background showing full range (red to green) */}
-              <div 
-                className="absolute inset-0 opacity-30"
-                style={{
-                  background: 'linear-gradient(90deg, hsl(var(--color-price-down)) 0%, hsl(var(--color-muted-foreground) / 0.2) 50%, hsl(var(--color-price-up)) 100%)'
-                }}
-              />
-              {/* Position indicator */}
-              <div
-                className="absolute top-0 h-3 rounded-full"
-                style={{ 
-                  width: `${Math.min(Math.max(pricePosition, 2), 98)}%`,
-                  backgroundColor: 'hsl(var(--color-primary))',
-                  boxShadow: '0 0 8px hsl(var(--color-primary) / 0.4)'
-                }}
-              />
-              {/* Current price marker */}
-              <div
-                className="absolute top-0 h-3 w-1 rounded-full bg-foreground shadow-lg"
-                style={{ left: `${Math.min(Math.max(pricePosition, 0.5), 99.5)}%` }}
-              />
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="font-data text-[10px] text-foreground">
-                {stock.changePct > 0 ? '↑' : stock.changePct < 0 ? '↓' : '→'} {formatPrice(stock.price)} EUR
-              </div>
-              <div className={cn(
-                "font-data text-[10px] font-medium",
-                stock.changePct > 0 ? "text-price-up" : stock.changePct < 0 ? "text-price-down" : "text-muted-foreground"
-              )}>
-                {stock.changePct > 0 ? '+' : ''}{stock.changePct.toFixed(2)}%
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* Interactive 52-week range bar */}
+        <RangeBar
+          low={stock.low52w}
+          high={stock.high52w}
+          price={stock.price}
+          changePct={stock.changePct}
+          pricePosition={pricePosition}
+          ticker={stock.ticker}
+        />
 
         {/* Related news */}
         <div>
@@ -235,6 +197,137 @@ function MetricItem({
         )}
       >
         {value}
+      </div>
+    </div>
+  );
+}
+
+interface RangeBarProps {
+  low: number;
+  high: number;
+  price: number;
+  changePct: number;
+  pricePosition: number;
+  ticker: string;
+}
+
+function RangeBar({ low, high, price, changePct, pricePosition, ticker }: RangeBarProps) {
+  const { t } = useTranslation("stocks");
+  const barRef = useRef<HTMLDivElement>(null);
+  const [hoverPct, setHoverPct] = useState<number | null>(null);
+  const [hoverLabel, setHoverLabel] = useState<string>("");
+
+  const rangeWidth = high - low;
+
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if (!barRef.current || rangeWidth <= 0) return;
+    const rect = barRef.current.getBoundingClientRect();
+    const pct = Math.min(Math.max((e.clientX - rect.left) / rect.width, 0), 1) * 100;
+    const targetPrice = low + (pct / 100) * rangeWidth;
+    const fromCurrent = targetPrice - price;
+    const fromCurrentPct = (fromCurrent / price) * 100;
+
+    setHoverPct(pct);
+    setHoverLabel(`${formatPrice(targetPrice)} (${fromCurrentPct >= 0 ? '+' : ''}${fromCurrentPct.toFixed(1)}%)`);
+  }, [low, rangeWidth, price]);
+
+  const handleMouseLeave = useCallback(() => {
+    setHoverPct(null);
+    setHoverLabel("");
+  }, []);
+
+  const priceZone = pricePosition < 20 ? 'buy' : pricePosition > 80 ? 'sell' : 'mid';
+  const zoneLabel = priceZone === 'buy' ? t('range.buyZone') : priceZone === 'sell' ? t('range.sellZone') : t('range.midZone');
+
+  return (
+    <div>
+      <h4 className="mb-2 text-[10px] uppercase tracking-wider text-muted-foreground">
+        52-Week Range
+      </h4>
+      <div className="space-y-1.5">
+        {/* Price labels */}
+        <div className="flex justify-between font-data text-[10px] tabular-nums text-muted-foreground">
+          <span>{formatPrice(low)}</span>
+          <span className="text-[9px] text-primary/70">52W</span>
+          <span>{formatPrice(high)}</span>
+        </div>
+
+        {/* Interactive bar */}
+        <div
+          ref={barRef}
+          className="relative h-3 cursor-crosshair rounded-full bg-muted/60 overflow-hidden select-none"
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
+          aria-label={`52-week range for ${ticker}: ${formatPrice(low)} to ${formatPrice(high)}, current price ${formatPrice(price)}`}
+        >
+          {/* Gradient background */}
+          <div
+            className="absolute inset-0 opacity-30"
+            style={{
+              background: 'linear-gradient(90deg, hsl(var(--color-price-down)) 0%, hsl(var(--color-muted-foreground) / 0.2) 50%, hsl(var(--color-price-up)) 100%)'
+            }}
+          />
+
+          {/* Hover indicator */}
+          {hoverPct !== null && (
+            <div
+              className="absolute top-0 h-3 w-0.5 rounded-full bg-foreground/60"
+              style={{ left: `${hoverPct}%` }}
+            />
+          )}
+
+          {/* Position indicator */}
+          <div
+            className="absolute top-0 h-3 rounded-full bg-primary/40"
+            style={{
+              width: `${Math.min(Math.max(pricePosition, 2), 98)}%`,
+              boxShadow: '0 0 6px hsl(var(--color-primary) / 0.3)'
+            }}
+          />
+
+          {/* Current price marker */}
+          <div
+            className="absolute top-0 h-3 w-1 rounded-full bg-foreground shadow-lg"
+            style={{ left: `${Math.min(Math.max(pricePosition, 0.5), 99.5)}%` }}
+          />
+
+          {/* Hover tooltip */}
+          {hoverPct !== null && hoverLabel && (
+            <div
+              className="absolute -top-6 z-10 rounded border border-border bg-popover px-1.5 py-0.5 font-data text-[9px] text-popover-foreground shadow-md"
+              style={{ left: `${Math.min(hoverPct, 85)}%`, transform: 'translateX(-50%)' }}
+            >
+              {hoverLabel}
+            </div>
+          )}
+        </div>
+
+
+        {/* Current price row */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5 font-data text-[10px] text-foreground">
+            <span>
+              {changePct > 0 ? '↑' : changePct < 0 ? '↓' : '→'} {formatPrice(price)} EUR
+            </span>
+            <span
+              className={cn(
+                "rounded px-1 py-0.5 text-[9px] font-semibold",
+                priceZone === 'buy' && "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400",
+                priceZone === 'sell' && "bg-red-500/20 text-red-600 dark:text-red-400",
+                priceZone === 'mid' && "bg-muted text-muted-foreground"
+              )}
+            >
+              {zoneLabel}
+            </span>
+          </div>
+          <div className={cn(
+            "font-data text-[10px] font-medium",
+            changePct > 0 ? "text-price-up" : changePct < 0 ? "text-price-down" : "text-muted-foreground"
+          )}>
+            {changePct > 0 ? '+' : ''}{changePct.toFixed(2)}%
+          </div>
+        </div>
       </div>
     </div>
   );

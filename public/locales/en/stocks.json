@@ -91,5 +91,10 @@
   "empty": {
     "noNews": "No news",
     "noNewsDescription": "There are no news articles available for this stock at the moment."
+  },
+  "range": {
+    "buyZone": "buy zone",
+    "sellZone": "sell zone",
+    "midZone": "mid range"
   }
 }
