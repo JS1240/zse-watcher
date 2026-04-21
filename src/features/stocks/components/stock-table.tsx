@@ -234,8 +234,21 @@ export function StockTable() {
         )}
       </div>
 
-      <div className="text-[10px] text-muted-foreground">
-        {filtered.length} / {stocks?.length ?? 0} stocks
+      <div className="group flex items-center justify-between">
+        <span className="text-[10px] text-muted-foreground">
+          {filtered.length} / {stocks?.length ?? 0} stocks
+        </span>
+        {/* Keyboard shortcuts hint - appears on hover for cleaner UI */}
+        <div className="invisible group-hover:visible flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150 text-[9px] text-muted-foreground">
+          <span className="flex items-center gap-0.5">
+            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
+            <span>{t("shortcut.details")}</span>
+          </span>
+          <span className="flex items-center gap-0.5">
+            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">W</kbd>
+            <span>{t("shortcut.watch")}</span>
+          </span>
+        </div>
       </div>
 
       {/* Scroll to top button */}
