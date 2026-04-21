@@ -481,6 +481,12 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
         e.preventDefault();
         onDelete();
         break;
+      case "Escape":
+        if (editing) {
+          e.preventDefault();
+          handleCancel();
+        }
+        break;
     }
   };
 
@@ -609,7 +615,7 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
 
   if (editing) {
     return (
-      <div className="rounded-md border-2 border-primary/80 bg-card ring-2 ring-primary/50 animate-pulse shadow-lg shadow-primary/20">
+      <div className="rounded-md border-2 border-primary/80 bg-card ring-2 ring-primary/50 shadow-lg shadow-primary/20 transition-all duration-200">
         <div className="alert-edit-container open">
           <div className="alert-edit-inner px-3 py-2.5">
         <div className="mb-2 flex items-center justify-between">
