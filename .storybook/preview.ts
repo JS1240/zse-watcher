@@ -10,11 +10,8 @@ const preview: Preview = {
        date: /Date$/i,
       },
     },
-    a11y: {
-      test: 'todo'
-    },
     backgrounds: {
-      default: 'light',
+      default: 'dark',
       values: [
         { name: 'light', value: '#f8f9fa' },
         { name: 'dark', value: '#1a1a2e' },

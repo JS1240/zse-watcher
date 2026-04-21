@@ -4,6 +4,13 @@
 
 ### Added
 
+- **Storybook Dark Mode Default** — set dark as default background for Croatian retail investor app dev
+  - Default background changed from 'light' to 'dark' to match app default
+  - Created .storybook/vitest.config.ts for @storybook/addon-vitest testing
+  - Removes unused a11y.test='todo' placeholder (addon handles testing)
+
+### Added
+
 - **Interactive Hover States for Macro Cards** — improve tactile feel for Croatian retail investors
   - IndexCard: hover lift with shadow and border color change
   - Forex card: subtle lift effect on hover
