@@ -28,10 +28,20 @@ export function PortfolioSkeleton({ className }: PortfolioSkeletonProps) {
         </div>
       </div>
 
-      {/* Action buttons skeleton */}
-      <div className="flex justify-end gap-2">
+      {/* Search + Action buttons skeleton */}
+      <div className="flex gap-2">
+        <Skeleton className="h-9 flex-1 rounded-md animate-shimmer" />
         <Skeleton className="h-8 w-16 rounded-md animate-shimmer" />
-        <Skeleton className="h-8 w-24 rounded-md animate-shimmer" />
+        <Skeleton className="h-8 w-28 rounded-md animate-shimmer" />
+        <Skeleton className="h-8 w-28 rounded-md animate-shimmer" />
+      </div>
+
+      {/* Filter chips skeleton */}
+      <div className="flex gap-1.5">
+        <Skeleton className="h-7 w-14 rounded-full animate-shimmer" />
+        <Skeleton className="h-7 w-20 rounded-full animate-shimmer" />
+        <Skeleton className="h-7 w-20 rounded-full animate-shimmer" />
+        <Skeleton className="h-7 w-28 rounded-full animate-shimmer" />
       </div>
 
       {/* Holdings table skeleton */}

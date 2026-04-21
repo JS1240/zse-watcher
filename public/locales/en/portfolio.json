@@ -63,7 +63,7 @@
   "quickStart": {
     "step1": "Click 'Add Position' to enter a buy",
     "step2": "Select a stock and enter number of shares",
-    "step3": " track your portfolio value and gains"
+    "step3": "Track your portfolio value and gains"
   },
   "searchPlaceholder": "Search ticker or name...",  "searchNoResults": "No results found",
   "clearSearch": "Clear search",
