@@ -1,6 +1,10 @@
 import { useState, useMemo, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Plus, Trash2, ChevronDown, ChevronUp, Download, Search, X, ArrowUp, ArrowDown, ArrowUpDown, TrendingUp, TrendingDown, Keyboard, CheckCircle2, ArrowUp as ScrollToTopIcon } from "lucide-react";
+
+/** Keyboard navigation attributes for portfolio holdings table rows — mirrors stock-row pattern */
+const ROW_FOCUS_ATTR = "data-row-index" as const;
+const ROW_TICKER_ATTR = "data-row-ticker" as const;
 import { Highlight } from "@/components/shared/highlight";
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { usePriceFlash } from "@/hooks/use-price-flash";
@@ -35,13 +39,31 @@ export function LocalPortfolioDashboard() {
   const [scrollTop, setScrollTop] = useState(false);
   const portfolioRef = useRef<HTMLDivElement>(null);
 
-  // Keyboard navigation for portfolio table rows
-  const handleRowKeyDown = useCallback((e: React.KeyboardEvent, ticker: string) => {
+  // Keyboard navigation for portfolio table rows (mirrors stock-row pattern)
+  const handleRowKeyDown = useCallback((e: React.KeyboardEvent, ticker: string, rowIndex: number) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       select(ticker);
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      const table = (e.currentTarget as HTMLElement).closest("table");
+      const rows = Array.from(table?.querySelectorAll<HTMLTableRowElement>(`[${ROW_FOCUS_ATTR}]`) ?? []);
+      const nextIdx = rowIndex + 1;
+      if (rows[nextIdx]) {
+        rows[nextIdx].focus();
+        rows[nextIdx].scrollIntoView({ block: "nearest" });
+      }
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      const table = (e.currentTarget as HTMLElement).closest("table");
+      const rows = Array.from(table?.querySelectorAll<HTMLTableRowElement>(`[${ROW_FOCUS_ATTR}]`) ?? []);
+      const prevIdx = rowIndex - 1;
+      if (rows[prevIdx]) {
+        rows[prevIdx].focus();
+        rows[prevIdx].scrollIntoView({ block: "nearest" });
+      }
     }
-  }, [select]);
+  }, []);
 
   // Click-to-copy handlers
   const handleCopyTicker = useCallback(async (e: React.MouseEvent, ticker: string) => {
@@ -554,7 +576,7 @@ export function LocalPortfolioDashboard() {
               </tr>
             </thead>
             <tbody>
-              {sortedHoldings.map((h) => {
+              {sortedHoldings.map((h, idx) => {
                 const flash = flashMap.get(h.ticker) ?? null;
                 return (
                 <tr
@@ -567,7 +589,10 @@ export function LocalPortfolioDashboard() {
                     flash === "down" && "price-flash-down",
                   )}
                   onClick={() => select(h.ticker)}
-                  onKeyDown={(e) => handleRowKeyDown(e, h.ticker)}
+                  onKeyDown={(e) => handleRowKeyDown(e, h.ticker, idx)}
+                  aria-label={`${h.ticker} — ${h.name}: ${h.totalShares} shares, current price ${formatPrice(h.currentPrice)}, total value ${formatCurrency(h.totalValue)}. ${h.gainPct > 0 ? "+" : ""}${h.gainPct.toFixed(2)}% gain. Enter selects, Arrow keys navigate.`}
+                  {...{ [ROW_FOCUS_ATTR]: idx }}
+                  {...{ [ROW_TICKER_ATTR]: h.ticker }}
                 >
                   <td className="px-3 py-3 md:py-2">
                     <div className="flex items-center gap-1">
