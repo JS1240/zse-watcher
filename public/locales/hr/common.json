@@ -83,6 +83,13 @@
     "hint": "Upišite ticker ili naziv dionice",
     "recent": "Nedavno gledano"
   },
+  "localData": {
+    "title": "Lokalni podaci",
+    "clearAll": "Ocisti sve lokalne podatke",
+    "clearWarning": "Ovo ce obrisati vasu listu praćenja, portfelj i alarme spremljene u pregledniku.",
+    "confirm": "Da, ocisti",
+    "cleared": "Lokalni podaci su ocisceni"
+  },
   "shortcuts": {
     "title": "Tipkovnicke kratice",
     "closeDrawer": "Zatvori plocu",

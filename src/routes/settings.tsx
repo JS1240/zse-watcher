@@ -1,12 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Moon, Sun, Globe, Monitor, Keyboard } from "lucide-react";
+import { Moon, Sun, Globe, Monitor, Keyboard, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
 import { useThemeStore } from "@/hooks/use-theme";
 import { useSubscription } from "@/features/premium/hooks/use-subscription";
 import { LoginPrompt } from "@/features/auth/components/login-prompt";
 import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { ThemeMode } from "@/types/user";
 import { SettingsSkeleton } from "@/features/settings/components/settings-skeleton";
@@ -114,6 +116,34 @@ function SettingsPage() {
               <span className="hidden sm:inline">{opt.label}</span>
             </button>
           ))}
+        </div>
+      </section>
+
+      {/* Clear local data - for unauthenticated users */}
+      <section className="rounded-md border border-border bg-card p-4">
+        <h2 className="mb-3 text-[10px] uppercase tracking-wider text-muted-foreground">
+          {t("localData.title")}
+        </h2>
+        <div className="space-y-3">
+          <p className="text-xs text-muted-foreground">
+            {t("localData.clearWarning")}
+          </p>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              localStorage.removeItem("zse-local-watchlist");
+              localStorage.removeItem("zse-portfolio-transactions");
+              localStorage.removeItem("zse-local-alerts");
+              localStorage.removeItem("zse-received-dividends");
+              localStorage.removeItem("zse-screener-presets");
+              toast.success(t("localData.cleared"));
+            }}
+            className="w-full text-xs"
+          >
+            <Trash2 className="mr-2 h-3.5 w-3.5" />
+            {t("localData.clearAll")}
+          </Button>
         </div>
       </section>
 

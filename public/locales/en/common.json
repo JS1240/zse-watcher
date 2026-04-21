@@ -82,6 +82,13 @@
     "hint": "Enter ticker or stock name",
     "recent": "Recently Viewed"
   },
+  "localData": {
+    "title": "Local Data",
+    "clearAll": "Clear All Local Data",
+    "clearWarning": "This will delete your watchlist, portfolio, and alerts saved in this browser.",
+    "confirm": "Yes, clear",
+    "cleared": "Local data cleared"
+  },
   "shortcuts": {
     "title": "Keyboard Shortcuts",
     "closeDrawer": "Close drawer",
