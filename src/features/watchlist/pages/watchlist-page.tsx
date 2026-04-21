@@ -455,7 +455,7 @@ function SortableRow({
         }
       }}
       className={cn(
-        "group cursor-pointer border-b border-border/50 transition-colors hover:bg-accent/50",
+        "group cursor-pointer border-b border-border/50 transition-all duration-200 hover:-translate-y-0.5 hover:bg-accent/50 hover:shadow-md",
         "last:border-b-0",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         isSelected && "border-l-2 border-l-primary bg-accent/30",
@@ -1026,7 +1026,7 @@ function WatchlistRow({ stock, showRemove, onRemove, flash, searchQuery }: Watch
         }
       }}
       className={cn(
-        "group cursor-pointer border-b border-border/50 transition-colors hover:bg-accent/50",
+        "group cursor-pointer border-b border-border/50 transition-all duration-200 hover:-translate-y-0.5 hover:bg-accent/50 hover:shadow-md",
         "last:border-b-0",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         isSelected && "border-l-2 border-l-primary bg-accent/30",
