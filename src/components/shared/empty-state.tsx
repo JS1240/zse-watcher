@@ -57,26 +57,34 @@ export function EmptyState({
   iconClassName,
 }: EmptyStateProps) {
   return (
-    <div className={cn("flex flex-col items-center justify-center py-8 px-4 text-center animate-empty-state", className)}>
+    <div
+      className={cn(
+        "flex flex-col items-center justify-center py-12 px-6 text-center",
+        "animate-empty-state",
+        className
+      )}
+    >
       {/* Icon container */}
       <div
         className={cn(
-          "mb-4 flex h-14 w-14 items-center justify-center rounded-2xl ring-1 transition-colors",
+          "mb-5 flex h-20 w-20 items-center justify-center rounded-2xl ring-1 transition-colors",
           "animate-empty-icon",
-          variantClasses[variant].container,
+          variantClasses[variant].container
         )}
       >
-        <div className={cn("transition-transform", variantClasses[variant].icon, iconClassName)}>{icon}</div>
+        <div className={cn("flex transition-transform", variantClasses[variant].icon, iconClassName)}>
+          {icon}
+        </div>
       </div>
 
       {/* Title */}
-      <h3 className="text-[11px] font-semibold uppercase tracking-wider text-foreground">
+      <h3 className="text-lg font-semibold text-foreground">
         {title}
       </h3>
 
       {/* Description */}
       {description && (
-        <p className="mt-1.5 max-w-[280px] text-xs leading-relaxed text-muted-foreground">
+        <p className="mt-2 max-w-xs text-sm leading-relaxed text-muted-foreground">
           {description}
         </p>
       )}
