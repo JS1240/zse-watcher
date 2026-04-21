@@ -1,42 +1,10 @@
-import { useState, memo } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Activity, LogIn, UserPlus, ArrowRight } from "lucide-react";
+import { Activity, LogIn, UserPlus } from "lucide-react";
 import { LoginForm } from "@/features/auth/components/login-form";
 import { RegisterForm } from "@/features/auth/components/register-form";
 
 type AuthMode = "login" | "register";
-
-interface ModeToggleProps {
-  mode: AuthMode;
-  onSwitch: () => void;
-}
-
-const ModeToggle = memo(function ModeToggle({ mode, onSwitch }: ModeToggleProps) {
-  const { t } = useTranslation("common");
-  const isLogin = mode === "login";
-  
-  return (
-    <div className="flex items-center justify-center gap-3">
-      <span className="text-xs text-muted-foreground">
-        {isLogin ? t("haveAccount") || "Već imaš račun?" : t("noAccount") || "Nemaš račun?"}
-      </span>
-      <button
-        onClick={onSwitch}
-        className="flex items-center gap-1 text-xs font-medium text-primary transition-colors hover:text-primary/80"
-      >
-        {isLogin ? (
-          <>
-            {t("actions.login") || "Prijavi se"} <ArrowRight className="h-3 w-3" />
-          </>
-        ) : (
-          <>
-            {t("actions.register") || "Registriraj se"} <ArrowRight className="h-3 w-3" />
-          </>
-        )}
-      </button>
-    </div>
-  );
-});
 
 export function LoginPrompt() {
   const [mode, setMode] = useState<AuthMode>("login");

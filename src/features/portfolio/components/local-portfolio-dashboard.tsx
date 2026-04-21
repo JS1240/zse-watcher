@@ -555,7 +555,7 @@ export function LocalPortfolioDashboard() {
                   key={h.ticker}
                   tabIndex={0}
                   role="row"
-                  className="border-b border-border/50 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:bg-accent/70 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background"
+                  className="border-b border-border/50 cursor-pointer transition-all duration-150 hover:bg-accent/40 hover:border-primary/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background"
                   onClick={() => select(h.ticker)}
                   onKeyDown={(e) => handleRowKeyDown(e, h.ticker)}
                 >

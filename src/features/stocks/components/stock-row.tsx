@@ -134,7 +134,7 @@ const StockRowBase = ({ stock, flash, searchQuery, rowIndex, onFocus }: StockRow
       onFocus={handleRowFocus}
       aria-label={`${stock.ticker} — ${stock.name}: ${stock.price} EUR, ${stock.changePct > 0 ? "+" : ""}${stock.changePct}%. Enter selects, S toggles watchlist, C copies ticker, Arrow keys navigate`}
       className={cn(
-        "group cursor-pointer border-b border-border/50 transition-all duration-200 hover:-translate-y-0.5 hover:bg-accent/70 hover:shadow-md hover:relative",
+        "group cursor-pointer border-b border-border/50 transition-all duration-150 hover:bg-accent/40 hover:border-primary/30",
         "last:border-b-0",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
         "focus-visible:border-primary focus-visible:border-l-2 focus-visible:bg-primary/5",
