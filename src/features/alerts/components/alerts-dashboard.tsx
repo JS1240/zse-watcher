@@ -503,6 +503,13 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
   const [editFocused, setEditFocused] = useState({ ticker: false, target: false });
 
   // Real-time validation logic (matching AlertForm pattern)
+  // Current price for the ticker being edited
+  const editTickerCurrentPrice = useMemo(() => {
+    if (!editTicker || !stocks) return null;
+    const stock = stocks.find((s) => s.ticker.toUpperCase() === editTicker.toUpperCase());
+    return stock?.price ?? null;
+  }, [editTicker, stocks]);
+
   const isEditTickerValid = useMemo(() => {
     if (!editTicker) return false;
     if (!/^[A-Z0-9_-]{3,10}$/i.test(editTicker)) return false;
@@ -602,7 +609,7 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
 
   if (editing) {
     return (
-      <div className="rounded-md border border-primary/50 bg-card">
+      <div className="rounded-md border-2 border-primary/80 bg-card ring-2 ring-primary/50 animate-pulse shadow-lg shadow-primary/20">
         <div className="alert-edit-container open">
           <div className="alert-edit-inner px-3 py-2.5">
         <div className="mb-2 flex items-center justify-between">
@@ -719,13 +726,17 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
                 <CheckCircle2 className="h-3.5 w-3.5 flex-shrink-0" />
                 {t("validation.targetValid")}
               </p>
+            ) : editTickerCurrentPrice != null ? (
+              <p className="mt-1.5 flex items-center gap-1.5 text-[9px] font-medium text-muted-foreground">
+                <TrendingUp className="h-3 w-3 flex-shrink-0" />
+                {t("fields.currentPriceHint", { price: formatPrice(editTickerCurrentPrice) }) || `Trenutna cijena: ${formatPrice(editTickerCurrentPrice)}`}
+              </p>
             ) : (
               <p className="mt-1.5 flex items-center gap-1.5 text-[9px] text-muted-foreground">
                 <Keyboard className="h-3 w-3 flex-shrink-0" />
                 {t("pressEnter")} · {t("cancelHint")}
               </p>
             )}
-          </div>
         </div>
           </div>
         </div>

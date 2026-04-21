@@ -172,6 +172,16 @@ tr[data-clickable]:focus-visible {
   animation: edit-expand 0.2s ease-out forwards;
 }
 
+@keyframes edit-glow {
+  0%, 100% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0.25); }
+  50% { box-shadow: 0 0 0 4px hsl(var(--primary) / 0); }
+}
+
+.animate-edit-glow {
+  animation: edit-glow 2.5s ease-in-out infinite;
+  border-color: hsl(var(--primary) / 0.6) !important;
+}
+
 /* Alert row edit container — uses CSS grid collapse for smooth height animation */
 .alert-edit-container {
   display: grid;
