@@ -3,6 +3,13 @@
     "name": "ZSE Watcher",
     "tagline": "Croatian Stock Market Terminal"
   },
+  "haveAccount": "Already have an account?",
+  "noAccount": "Don't have an account?",
+  "features": {
+    "stocks": "Stocks",
+    "portfolio": "Portfolio",
+    "alerts": "Alerts"
+  },
   "offline": {
     "message": "You're offline. Data may not be up to date."
   },

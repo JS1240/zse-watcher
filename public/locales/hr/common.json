@@ -3,6 +3,13 @@
     "name": "ZSE Watcher",
     "tagline": "Hrvatski burzovni terminal"
   },
+  "haveAccount": "Već imaš račun?",
+  "noAccount": "Nemaš račun?",
+  "features": {
+    "stocks": "Dionice",
+    "portfolio": "Portfelj",
+    "alerts": "Alarmi"
+  },
   "offline": {
     "message": "Niste povezani s internetom. Podaci možda nisu ažurirani."
   },
