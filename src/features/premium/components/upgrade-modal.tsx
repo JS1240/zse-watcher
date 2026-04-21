@@ -40,7 +40,8 @@ export function UpgradeModal({ open, onClose, featureContext }: UpgradeModalProp
       <div className="relative w-full max-w-md rounded-lg border border-primary/30 bg-card p-6 shadow-2xl">
         <button
           onClick={onClose}
-          className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
+          className="absolute right-3 top-3 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
+          aria-label="Close upgrade modal"
         >
           <X className="h-4 w-4" />
         </button>

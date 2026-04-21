@@ -52,7 +52,7 @@ export function PricingPage() {
         <button
           onClick={() => setCycle("monthly")}
           className={cn(
-            "rounded-sm px-3 py-1.5 text-xs font-medium transition-colors",
+            "rounded-sm px-3 py-1.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
             cycle === "monthly"
               ? "bg-primary text-primary-foreground"
               : "text-muted-foreground hover:bg-accent",
@@ -63,7 +63,7 @@ export function PricingPage() {
         <button
           onClick={() => setCycle("annual")}
           className={cn(
-            "rounded-sm px-3 py-1.5 text-xs font-medium transition-colors",
+            "rounded-sm px-3 py-1.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
             cycle === "annual"
               ? "bg-primary text-primary-foreground"
               : "text-muted-foreground hover:bg-accent",

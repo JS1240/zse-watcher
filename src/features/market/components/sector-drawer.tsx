@@ -55,7 +55,8 @@ export function SectorDrawer({ sector, onClose }: SectorDrawerProps) {
           </div>
           <button
             onClick={onClose}
-            className="rounded-sm p-1 text-muted-foreground hover:bg-accent hover:text-foreground"
+            className="rounded-sm p-1 text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            aria-label="Close sector drawer"
           >
             <X className="h-4 w-4" />
           </button>

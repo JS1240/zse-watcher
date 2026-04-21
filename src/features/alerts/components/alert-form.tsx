@@ -160,7 +160,7 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
     <div className="rounded-md border border-border bg-card p-4">
       <div className="mb-3 flex items-center justify-between">
         <h3 className="text-xs font-semibold text-foreground">{t("create")}</h3>
-        <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
+        <button onClick={onClose} className="text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm" aria-label="Close alert form">
           <X className="h-4 w-4" />
         </button>
       </div>

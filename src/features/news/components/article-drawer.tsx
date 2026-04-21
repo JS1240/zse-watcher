@@ -48,14 +48,15 @@ export function ArticleDrawer({ article, onClose }: ArticleDrawerProps) {
               href={article.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1 rounded-sm px-2 py-1 text-[10px] text-muted-foreground hover:bg-accent hover:text-foreground"
+              className="flex items-center gap-1 rounded-sm px-2 py-1 text-[10px] text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               <ExternalLink className="h-3 w-3" />
               ZSE.hr
             </a>
             <button
               onClick={onClose}
-              className="rounded-sm p-1 text-muted-foreground hover:bg-accent hover:text-foreground"
+              className="rounded-sm p-1 text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              aria-label="Close article"
             >
               <X className="h-4 w-4" />
             </button>
