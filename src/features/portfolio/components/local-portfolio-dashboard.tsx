@@ -34,6 +34,14 @@ export function LocalPortfolioDashboard() {
   const [scrollTop, setScrollTop] = useState(false);
   const portfolioRef = useRef<HTMLDivElement>(null);
 
+  // Keyboard navigation for portfolio table rows
+  const handleRowKeyDown = useCallback((e: React.KeyboardEvent, ticker: string) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      select(ticker);
+    }
+  }, [select]);
+
   // Click-to-copy handlers
   const handleCopyTicker = useCallback(async (e: React.MouseEvent, ticker: string) => {
     e.stopPropagation();
@@ -545,8 +553,11 @@ export function LocalPortfolioDashboard() {
               {sortedHoldings.map((h) => (
                 <tr
                   key={h.ticker}
-                  className="border-b border-border/50 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:bg-accent/70 hover:shadow-md"
+                  tabIndex={0}
+                  role="row"
+                  className="border-b border-border/50 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:bg-accent/70 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background"
                   onClick={() => select(h.ticker)}
+                  onKeyDown={(e) => handleRowKeyDown(e, h.ticker)}
                 >
                   <td className="px-3 py-3 md:py-2">
                     <div className="flex items-center gap-1">
