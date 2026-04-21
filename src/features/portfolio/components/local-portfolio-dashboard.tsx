@@ -545,7 +545,7 @@ export function LocalPortfolioDashboard() {
               {sortedHoldings.map((h) => (
                 <tr
                   key={h.ticker}
-                  className="border-b border-border/50 cursor-pointer transition-all duration-150 active:bg-accent/50 hover:bg-accent/70"
+                  className="border-b border-border/50 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:bg-accent/70 hover:shadow-md"
                   onClick={() => select(h.ticker)}
                 >
                   <td className="px-3 py-3 md:py-2">
