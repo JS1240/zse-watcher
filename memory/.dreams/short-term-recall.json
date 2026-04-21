@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "updatedAt": "2026-04-21T11:51:58.104Z",
+  "entries": {
+    "memory:memory/2026-04-03.md:1:4": {
+      "key": "memory:memory/2026-04-03.md:1:4",
+      "path": "memory/2026-04-03.md",
+      "startLine": 1,
+      "endLine": 4,
+      "source": "memory",
+      "snippet": "## ZSE Watcher project path Project lives at: `~/Local_Personal_Projects/ZSE Watcher` (not `~/Projects/ZSE Watcher`)",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.4131183087825775,
+      "maxScore": 0.4131183087825775,
+      "firstRecalledAt": "2026-04-21T11:51:58.104Z",
+      "lastRecalledAt": "2026-04-21T11:51:58.104Z",
+      "queryHashes": [
+        "bec3c2ae7426"
+      ],
+      "recallDays": [
+        "2026-04-21"
+      ],
+      "conceptTags": [
+        "local-personal-projects/zse",
+        "projects/zse",
+        "zse",
+        "watcher",
+        "project",
+        "path",
+        "lives",
+        "local-personal-projects"
+      ]
+    },
+    "memory:memory/2026-04-17.md:1:29": {
+      "key": "memory:memory/2026-04-17.md:1:29",
+      "path": "memory/2026-04-17.md",
+      "startLine": 1,
+      "endLine": 29,
+      "source": "memory",
+      "snippet": "# 2026-04-17 ## ZSE Watcher - Continuous Improvement ### Task: Review for visual polish and UX improvements **PHASE 1 - VALIDATE:** - Checked recent commits: financial tooltips, alert sorting, collapsible filters, price flash, empty state polish - Reviewed codebase structure - Checked what's already done: empty states, loading skeletons, watchlist search/filter/sort, alerts sorting, CSV export **PHASE 2 - PLAN:** - Picked: Search UX improvement for watchlist **PHASE 3 - IMPLEMENT:** - Enhanced search input with visual focus ring (ring-2 ring-ring) when focused - Made clear search button larger and more tappable (h-6 w-6, rounded-full) - Added aria-labels for accessibility - Increased ac",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.4131092756986618,
+      "maxScore": 0.4131092756986618,
+      "firstRecalledAt": "2026-04-21T11:51:58.104Z",
+      "lastRecalledAt": "2026-04-21T11:51:58.104Z",
+      "queryHashes": [
+        "bec3c2ae7426"
+      ],
+      "recallDays": [
+        "2026-04-21"
+      ],
+      "conceptTags": [
+        "search/filter/sort",
+        "ring-2",
+        "ring-ring",
+        "h-6",
+        "w-6",
+        "rounded-full",
+        "aria-labels",
+        "zse"
+      ]
+    }
+  }
+}

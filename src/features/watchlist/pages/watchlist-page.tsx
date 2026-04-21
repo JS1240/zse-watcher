@@ -790,12 +790,12 @@ function LocalWatchlist() {
 
       {/* Results count + keyboard shortcuts hint */}
       {items.length > 0 && (
-        <div className="flex items-center justify-between">
+        <div className="group flex items-center justify-between">
           <span className="text-[10px] text-muted-foreground">
             {filtered.length} {filtered.length === 1 ? "stock" : "stockova"}
           </span>
-          {/* Keyboard shortcuts hint - only show when stocks exist */}
-          <div className="flex items-center gap-2 text-[9px] text-muted-foreground">
+          {/* Keyboard shortcuts hint - appears on hover for cleaner UI */}
+          <div className="invisible group-hover:visible flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150 text-[9px] text-muted-foreground">
             <span className="flex items-center gap-0.5">
               <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
               <span>{t("shortcut.details")}</span>
