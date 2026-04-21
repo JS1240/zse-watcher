@@ -153,7 +153,7 @@ export function TickerSelect({
           className={cn(
             "flex h-8 w-full rounded-md border border-input bg-background px-3 py-1.5 pr-7 font-data text-xs text-foreground transition-colors",
             "placeholder:text-muted-foreground",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
             error && "border-destructive focus-visible:ring-destructive",
           )}
         />
