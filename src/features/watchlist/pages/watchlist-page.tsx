@@ -32,7 +32,9 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  DragOverlay,
   type DragEndEvent,
+  type DragStartEvent,
 } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -420,6 +422,7 @@ function SortableRow({
     transform,
     transition,
     isDragging,
+    isOver,
   } = useSortable({ id: stock.ticker });
 
   const style = {
@@ -459,7 +462,8 @@ function SortableRow({
         "last:border-b-0",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         isSelected && "border-l-2 border-l-primary bg-accent/30",
-        isDragging && "bg-muted",
+        isDragging && "bg-muted opacity-75",
+        isOver && !isDragging && "border-l-2 border-l-primary/50 bg-primary/5",
         flash === "up" && "price-flash-up",
         flash === "down" && "price-flash-down",
       )}
@@ -551,6 +555,7 @@ function LocalWatchlist() {
   const [sectorFilter, setSectorFilter] = useState<SectorFilter>(null);
   const [sort, setSort] = useState<{ column: SortColumn; direction: SortDirection } | null>(null);
   const [confirmRemove, setConfirmRemove] = useState<string | null>(null);
+  const [activeDragItem, setActiveDragItem] = useState<Stock | null>(null);
   const debouncedSearch = useDebounce(search, 200);
 
   const sensors = useSensors(
@@ -566,12 +571,21 @@ function LocalWatchlist() {
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
+    setActiveDragItem(null);
     if (!over || active.id === over.id) return;
 
     const oldIndex = items.findIndex((i) => i.ticker === active.id);
     const newIndex = items.findIndex((i) => i.ticker === over.id);
     if (oldIndex !== -1 && newIndex !== -1) {
       reorderItems(arrayMove(items, oldIndex, newIndex));
+    }
+  };
+
+  const handleDragStart = (event: DragStartEvent) => {
+    const { active } = event;
+    const draggedStock = stocks.find((s) => s.ticker === active.id);
+    if (draggedStock) {
+      setActiveDragItem(draggedStock);
     }
   };
 
@@ -818,6 +832,7 @@ function LocalWatchlist() {
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
+            onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
           >
             <SortableContext
@@ -834,6 +849,17 @@ function LocalWatchlist() {
                 searchQuery={debouncedSearch}
               />
             </SortableContext>
+            <DragOverlay>
+              {activeDragItem ? (
+                <div className="rounded-md border border-border bg-card px-3 py-2 shadow-xl ring-2 ring-primary/20">
+                  <div className="flex items-center gap-2">
+                    <GripVertical className="h-3.5 w-3.5 text-muted-foreground" />
+                    <span className="font-data text-xs font-semibold">{activeDragItem.ticker}</span>
+                    <span className="text-xs text-muted-foreground">{formatPrice(activeDragItem.price)}</span>
+                  </div>
+                </div>
+              ) : null}
+            </DragOverlay>
           </DndContext>
         ) : (
           <WatchlistTable
