@@ -25,6 +25,7 @@ import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 
 import { cn } from "@/lib/utils";
 import { useDebounce } from "@/hooks/use-debounce";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import {
   DndContext,
   closestCenter,
@@ -68,11 +69,13 @@ function SortHeader({
   label,
   sort,
   onSort,
+  tooltip,
 }: {
   column: SortColumn;
   label: string;
   sort: { column: SortColumn; direction: SortDirection } | null;
   onSort: (col: SortColumn) => void;
+  tooltip?: string;
 }) {
   const isActive = sort?.column === column;
   const direction = isActive ? sort.direction : null;
@@ -89,7 +92,7 @@ function SortHeader({
     }
   };
 
-  return (
+  const headerContent = (
     <button
       onClick={() => onSort(column)}
       onKeyDown={handleKeyDown}
@@ -108,6 +111,22 @@ function SortHeader({
         <ArrowUpDown className="h-3 w-3 shrink-0 text-muted-foreground/40" />
       )}
     </button>
+  );
+
+  // Only wrap with tooltip if tooltip text is provided
+  if (!tooltip) {
+    return <>{headerContent}</>;
+  }
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span className="cursor-help">{headerContent}</span>
+      </TooltipTrigger>
+      <TooltipContent side="top" className="max-w-xs text-xs">
+        <p>{tooltip}</p>
+      </TooltipContent>
+    </Tooltip>
   );
 }
 
@@ -957,22 +976,22 @@ function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort, dragEnable
               <SortHeader column="name" label={t("table.name")} sort={sort} onSort={onSort} />
             </th>
             <th className="hidden px-3 py-2 text-left font-medium lg:table-cell">
-              <SortHeader column="sector" label={t("table.sector")} sort={sort} onSort={onSort} />
+              <SortHeader column="sector" label={t("table.sector")} sort={sort} onSort={onSort} tooltip={t("tooltips.sector")} />
             </th>
             <th className="px-3 py-2 text-right font-medium">
-              <SortHeader column="price" label={t("table.price")} sort={sort} onSort={onSort} />
+              <SortHeader column="price" label={t("table.price")} sort={sort} onSort={onSort} tooltip={t("tooltips.price")} />
             </th>
             <th className="px-3 py-2 text-right font-medium">
-              <SortHeader column="changePct" label={t("table.change")} sort={sort} onSort={onSort} />
+              <SortHeader column="changePct" label={t("table.change")} sort={sort} onSort={onSort} tooltip={t("tooltips.change")} />
             </th>
             <th className="hidden px-3 py-2 text-right font-medium lg:table-cell">
-              <SortHeader column="volume" label={t("table.volume")} sort={sort} onSort={onSort} />
+              <SortHeader column="volume" label={t("table.volume")} sort={sort} onSort={onSort} tooltip={t("tooltips.volume")} />
             </th>
             <th className="hidden px-3 py-2 text-right font-medium lg:table-cell">
-              <SortHeader column="turnover" label={t("table.turnover")} sort={sort} onSort={onSort} />
+              <SortHeader column="turnover" label={t("table.turnover")} sort={sort} onSort={onSort} tooltip={t("tooltips.turnover")} />
             </th>
             <th className="hidden px-3 py-2 text-right font-medium xl:table-cell">
-              <SortHeader column="dividendYield" label={t("table.dividendYield")} sort={sort} onSort={onSort} />
+              <SortHeader column="dividendYield" label={t("table.dividendYield")} sort={sort} onSort={onSort} tooltip={t("tooltips.dividendYield")} />
             </th>
             {showRemove && <th className="w-10" />}
           </tr>

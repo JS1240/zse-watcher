@@ -31,6 +31,16 @@
     "turnover": "Promet",
     "dividendYield": "Div. %"
   },
+  "tooltips": {
+    "sector": "Sektor industrije kojem dionica pripada. Grupira dionice sličnih kompanija.",
+    "price": "Trenutna cijena dionice u EUR.",
+    "dividendYield": "Dividend yield - godišnja dividenda kao postotak cijene dionice. Viši yield = više godišnjih prihoda od dividende.",
+    "turnover": "Ukupna vrijednost dionica prodanih/kupjenih u EUR. Pokazuje koliko je dionica aktivno trgovana.",
+    "volume": "Broj dionicâ prodanih/kupjenih. Pokazuje koliko je dionica aktivno trgovana.",
+    "marketCap": "Tržišna kapitalizacija - ukupna vrijednost svih dionicâ. Pokazuje veličinu kompanije.",
+    "peRatio": "Omjer cijene i zarade - koliko godišnjih zarada treba za povrat ulaganja. Niži = potencijalno podcijenjeno.",
+    "change": "Postotak promjene cijene danas. Pozitivno = rast, negativno = pad."
+  },
   "confirmRemove": "Ukloni iz liste praćenja?",
   "confirmRemoveDescription": "Uklonite {ticker} iz liste praćenja.",
   "toast": {

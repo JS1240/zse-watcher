@@ -31,6 +31,16 @@
     "turnover": "Turnover",
     "dividendYield": "Div. %"
   },
+  "tooltips": {
+    "sector": "Industry sector the stock belongs to. Groups similar companies.",
+    "price": "Current stock price in EUR.",
+    "dividendYield": "Dividend yield - annual dividend as % of stock price. Higher yield = more annual dividend income.",
+    "turnover": "Total value of shares traded in EUR. Shows how actively the stock is traded.",
+    "volume": "Number of shares traded. Shows how actively the stock is traded.",
+    "marketCap": "Market cap - total value of all shares. Shows company size.",
+    "peRatio": "P/E ratio - years of earnings needed for ROI. Lower = potentially undervalued.",
+    "change": "Percent price change today. Positive = gain, negative = loss."
+  },
   "confirmRemove": "Remove from watchlist?",
   "confirmRemoveDescription": "Remove {ticker} from your watchlist.",
   "toast": {
