@@ -85,23 +85,45 @@ export function StockFundamentals({ stock }: StockFundamentalsProps) {
           <h4 className="mb-2 text-[10px] uppercase tracking-wider text-muted-foreground">
             52-Week Range
           </h4>
-          <div className="space-y-1">
+          <div className="space-y-1.5">
             <div className="flex justify-between font-data text-[10px] tabular-nums text-muted-foreground">
               <span>{formatPrice(stock.low52w)}</span>
+              <span className="text-[9px] text-primary/70">52W</span>
               <span>{formatPrice(stock.high52w)}</span>
             </div>
-            <div className="relative h-2 rounded-full bg-muted">
-              <div
-                className="absolute top-0 h-2 rounded-full bg-primary"
-                style={{ width: `${Math.min(Math.max(pricePosition, 2), 98)}%` }}
+            <div className="relative h-3 rounded-full bg-muted/60 overflow-hidden">
+              {/* Gradient background showing full range (red to green) */}
+              <div 
+                className="absolute inset-0 opacity-30"
+                style={{
+                  background: 'linear-gradient(90deg, hsl(var(--color-price-down)) 0%, hsl(var(--color-muted-foreground) / 0.2) 50%, hsl(var(--color-price-up)) 100%)'
+                }}
               />
+              {/* Position indicator */}
               <div
-                className="absolute -top-0.5 h-3 w-0.5 rounded-full bg-foreground"
-                style={{ left: `${Math.min(Math.max(pricePosition, 1), 99)}%` }}
+                className="absolute top-0 h-3 rounded-full"
+                style={{ 
+                  width: `${Math.min(Math.max(pricePosition, 2), 98)}%`,
+                  backgroundColor: 'hsl(var(--color-primary))',
+                  boxShadow: '0 0 8px hsl(var(--color-primary) / 0.4)'
+                }}
+              />
+              {/* Current price marker */}
+              <div
+                className="absolute top-0 h-3 w-1 rounded-full bg-foreground shadow-lg"
+                style={{ left: `${Math.min(Math.max(pricePosition, 0.5), 99.5)}%` }}
               />
             </div>
-            <div className="text-center font-data text-[10px] text-foreground">
-              {formatPrice(stock.price)} EUR
+            <div className="flex items-center justify-between">
+              <div className="font-data text-[10px] text-foreground">
+                {stock.changePct > 0 ? '↑' : stock.changePct < 0 ? '↓' : '→'} {formatPrice(stock.price)} EUR
+              </div>
+              <div className={cn(
+                "font-data text-[10px] font-medium",
+                stock.changePct > 0 ? "text-price-up" : stock.changePct < 0 ? "text-price-down" : "text-muted-foreground"
+              )}>
+                {stock.changePct > 0 ? '+' : ''}{stock.changePct.toFixed(2)}%
+              </div>
             </div>
           </div>
         </div>
