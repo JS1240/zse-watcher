@@ -211,13 +211,15 @@ const StockRowBase = ({ stock, flash, searchQuery, rowIndex, onFocus }: StockRow
 };
 
 export const StockRow = memo(StockRowBase, (prev, next) => {
-  // Re-render only if stock data, flash state, selection, or navigation index changed
+  // Re-render only if stock data, flash state, search query, or navigation index changed
+  // Using loose equality for searchQuery since it's debounced (can be same object reference or string)
   return (
     prev.stock.ticker === next.stock.ticker &&
     prev.stock.price === next.stock.price &&
     prev.stock.changePct === next.stock.changePct &&
     prev.stock.name === next.stock.name &&
     prev.flash === next.flash &&
+    prev.searchQuery === next.searchQuery &&
     prev.rowIndex === next.rowIndex
   );
 });

@@ -69,6 +69,8 @@ export function StockTable() {
     return result;
   }, [stocks, debouncedSearch, sortField, sortDir]);
 
+  const handleRowFocus = useCallback((ticker: string) => select(ticker), [select]);
+
   const toggleSort = useCallback((field: SortField) => {
     if (sortField === field) {
       setSortDir((d) => (d === "asc" ? "desc" : "asc"));
@@ -222,7 +224,7 @@ export function StockTable() {
                 flash={flashMap.get(stock.ticker) ?? null}
                 searchQuery={debouncedSearch}
                 rowIndex={index}
-                onFocus={(ticker) => select(ticker)}
+                onFocus={handleRowFocus}
               />
             ))}
           </tbody>
