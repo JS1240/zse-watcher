@@ -602,7 +602,9 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
 
   if (editing) {
     return (
-      <div className="animate-edit-expand rounded-md border border-primary/50 bg-card px-3 py-2.5">
+      <div className="rounded-md border border-primary/50 bg-card">
+        <div className="alert-edit-container open">
+          <div className="alert-edit-inner px-3 py-2.5">
         <div className="mb-2 flex items-center justify-between">
           <span className="text-[10px] font-semibold uppercase tracking-wider text-primary">
             {t("edit")}
@@ -725,7 +727,9 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
             )}
           </div>
         </div>
-      </div>
+          </div>
+        </div>
+          </div>
     );
   }
 

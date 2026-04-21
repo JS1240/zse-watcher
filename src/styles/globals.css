@@ -172,6 +172,21 @@ tr[data-clickable]:focus-visible {
   animation: edit-expand 0.2s ease-out forwards;
 }
 
+/* Alert row edit container — uses CSS grid collapse for smooth height animation */
+.alert-edit-container {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.22s ease-out;
+}
+
+.alert-edit-container.open {
+  grid-template-rows: 1fr;
+}
+
+.alert-edit-inner {
+  overflow: hidden;
+}
+
 /** Smooth focus transition for interactive elements */
 .transition-focus {
   transition: outline-color 0.15s ease, box-shadow 0.15s ease;
