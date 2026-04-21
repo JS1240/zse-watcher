@@ -7,6 +7,7 @@ import { StockRow } from "@/features/stocks/components/stock-row";
 import { StockTableSkeleton } from "./stock-table-skeleton";
 import { LiveDataIndicator } from "@/components/shared/live-data-indicator";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
+import { useSelectedStock } from "@/hooks/use-selected-stock";
 import { usePriceFlash } from "@/hooks/use-price-flash";
 import { useDebounce } from "@/hooks/use-debounce";
 import { useSubscription } from "@/features/premium/hooks/use-subscription";
@@ -22,6 +23,7 @@ export function StockTable() {
   const { t: tc } = useTranslation("common");
   const { data: result, isLoading, dataUpdatedAt, isFetching } = useStocksLive();
   const stocks = result?.stocks ?? null;
+  const { select } = useSelectedStock();
   const [search, setSearch] = useState("");
   const [sortField, setSortField] = useState<SortField>("changePct");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
@@ -200,12 +202,14 @@ export function StockTable() {
             </tr>
           </thead>
           <tbody>
-            {filtered.map((stock) => (
+            {filtered.map((stock, index) => (
               <StockRow
                 key={stock.ticker}
                 stock={stock}
                 flash={flashMap.get(stock.ticker) ?? null}
                 searchQuery={debouncedSearch}
+                rowIndex={index}
+                onFocus={(ticker) => select(ticker)}
               />
             ))}
           </tbody>
