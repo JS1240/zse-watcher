@@ -222,3 +222,57 @@ export function AnalyticsEmptyIllustration({ className }: { className?: string }
     </svg>
   );
 }
+
+/** Heatmap grid illustration for market overview empty state */
+export function HeatmapEmptyIllustration({ className }: { className?: string }): ReactNode {
+  return (
+    <svg
+      viewBox="0 0 80 80"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      aria-hidden="true"
+    >
+      {/* Background circle */}
+      <circle cx="40" cy="40" r="36" className="fill-muted/40" />
+      {/* Grid cells — representing sector heatmap */}
+      <rect x="16" y="20" width="14" height="12" rx="2" className="fill-primary/30" />
+      <rect x="33" y="20" width="14" height="12" rx="2" className="fill-primary/20" />
+      <rect x="50" y="20" width="14" height="12" rx="2" className="fill-primary/40" />
+      <rect x="16" y="35" width="14" height="12" rx="2" className="fill-primary/20" />
+      <rect x="33" y="35" width="14" height="12" rx="2" className="fill-primary/50" />
+      <rect x="50" y="35" width="14" height="12" rx="2" className="fill-primary/20" />
+      <rect x="16" y="50" width="14" height="12" rx="2" className="fill-primary/40" />
+      <rect x="33" y="50" width="14" height="12" rx="2" className="fill-primary/30" />
+      <rect x="50" y="50" width="14" height="12" rx="2" className="fill-primary/20" />
+      {/* Empty state indicator */}
+      <line x1="28" y1="56" x2="52" y2="32" className="stroke-destructive" strokeWidth="2.5" strokeLinecap="round" />
+      <line x1="52" y1="56" x2="28" y2="32" className="stroke-destructive" strokeWidth="2.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+/** Newspaper illustration for news feed empty state */
+export function NewsEmptyIllustration({ className }: { className?: string }): ReactNode {
+  return (
+    <svg
+      viewBox="0 0 80 80"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      aria-hidden="true"
+    >
+      {/* Background circle */}
+      <circle cx="40" cy="40" r="36" className="fill-muted/40" />
+      {/* Newspaper outline */}
+      <rect x="18" y="22" width="44" height="36" rx="3" className="fill-card" stroke="currentColor" strokeWidth="2" style={{ stroke: 'hsl(var(--border))' }} />
+      {/* Newspaper header bar */}
+      <rect x="22" y="26" width="36" height="6" rx="1" className="fill-primary/30" />
+      {/* Article lines */}
+      <rect x="22" y="36" width="36" height="3" rx="1" className="fill-border" />
+      <rect x="22" y="42" width="28" height="3" rx="1" className="fill-border" />
+      <rect x="22" y="48" width="32" height="3" rx="1" className="fill-border" />
+      <rect x="22" y="54" width="20" height="3" rx="1" className="fill-border" />
+    </svg>
+  );
+}

@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { formatDate, formatTime } from "@/lib/formatters";
 import { EmptyState } from "@/components/shared/empty-state";
+import { NewsEmptyIllustration, SearchEmptyIllustration } from "@/components/shared/empty-illustrations";
 import { ErrorState } from "@/components/shared/error-state";
 import { exportToCsv } from "@/lib/export";
 import { cn } from "@/lib/utils";
@@ -322,14 +323,14 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
         )}
         {totalCount > 0 ? (
           <EmptyState
-            icon={<Search className="h-8 w-8" />}
+            icon={<SearchEmptyIllustration className="h-8 w-8" />}
             title={t("empty.noResults")}
             description={t("empty.noResultsDescription")}
             action={{ label: t("empty.clearFilters"), onClick: handleClearSearch }}
           />
         ) : (
           <EmptyState
-            icon={<Newspaper className="h-8 w-8" />}
+            icon={<NewsEmptyIllustration className="h-10 w-10" />}
             title={tn("empty") || t("empty.noData")}
             description={tn("emptyDescription") || t("empty.noDataDescription")}
           />

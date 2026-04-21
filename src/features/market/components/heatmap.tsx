@@ -7,6 +7,8 @@ import { ErrorState } from "@/components/shared/error-state";
 import { cn } from "@/lib/utils";
 import { formatPercent } from "@/lib/formatters";
 import { SectorDrawer } from "@/features/market/components/sector-drawer";
+import { HeatmapEmptyIllustration } from "@/components/shared/empty-illustrations";
+import { EmptyState } from "@/components/shared/empty-state";
 
 export interface SectorGroup {
   sector: string;
@@ -73,9 +75,11 @@ export function Heatmap() {
 
   if (!sectors.length) {
     return (
-      <p className="py-8 text-center text-xs text-muted-foreground">
-        {t("empty.noData")}
-      </p>
+      <EmptyState
+        icon={<HeatmapEmptyIllustration className="h-10 w-10" />}
+        title={t("empty.noData")}
+        description={tc("errors.noDataDescription") || t("empty.noDataDescription") || "No market data available"}
+      />
     );
   }
 
