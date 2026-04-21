@@ -4,5 +4,17 @@
     "all": "Sve",
     "general": "Generalne",
     "trading": "Trgovanje"
+  },
+  "sort": {
+    "date": "Datum",
+    "ticker": "Dionica"
+  },
+  "exportCsv": "Izvezi u CSV",
+  "empty": {
+    "noData": "Nema novosti",
+    "noDataDescription": "Trenutno nema dostupnih vijesti.",
+    "noResults": "Nema rezultata",
+    "noResultsDescription": "Pokušajte s drugim ključnim riječima.",
+    "clearFilters": "Očisti filtere"
   }
 }

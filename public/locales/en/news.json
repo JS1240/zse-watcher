@@ -4,5 +4,17 @@
     "all": "All",
     "general": "General",
     "trading": "Trading"
+  },
+  "sort": {
+    "date": "Date",
+    "ticker": "Ticker"
+  },
+  "exportCsv": "Export to CSV",
+  "empty": {
+    "noData": "No news",
+    "noDataDescription": "There are no news articles available.",
+    "noResults": "No results",
+    "noResultsDescription": "Try a different search term.",
+    "clearFilters": "Clear filters"
   }
 }

@@ -1,7 +1,7 @@
 import { useState, useCallback, memo, useRef } from "react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { ExternalLink, Newspaper, Search, ArrowUp, ArrowDown, ArrowUpDown, Download, Keyboard, X, ArrowUp as ScrollTop } from "lucide-react";
+import { ExternalLink, Newspaper, Search, ArrowUp, ArrowDown, ArrowUpDown, Download, Keyboard, X, ArrowUp as ScrollTop, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
 import { useNews } from "@/features/news/api/news-queries";
 import { ArticleDrawer } from "@/features/news/components/article-drawer";
@@ -23,6 +23,33 @@ interface NewsFeedProps {
   limit?: number;
 }
 
+// Compact category filter chip component — similar to watchlist change filters
+function CategoryChip({
+  active,
+  onClick,
+  label,
+  icon: Icon,
+}: {
+  active: boolean;
+  onClick: () => void;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`flex h-8 items-center gap-1 rounded-full px-2.5 text-[10px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+        active
+          ? "bg-primary text-primary-foreground"
+          : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
+      }`}
+    >
+      <Icon className="h-3 w-3" />
+      {label}
+    </button>
+  );
+}
+
 export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
   const { data: articles, isLoading, isError, refetch } = useNews();
   const { t } = useTranslation("common");
@@ -32,6 +59,9 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
   const [searchFocused, setSearchFocused] = useState(false);
   const [sortField, setSortField] = useState<"date" | "ticker">("date");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+  // Internal category filter state (when not set by prop)
+  const [categoryFilter, setCategoryFilter] = useState<"all" | "general" | "trading">("all");
+  const effectiveCategory = category ?? categoryFilter;
   const debouncedSearch = useDebounce(search, 200);
 
   // Keyboard shortcut to focus search
@@ -90,8 +120,8 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
     if (ticker) {
       result = result.filter((a) => a.ticker === ticker);
     }
-    if (category) {
-      result = result.filter((a) => a.category === category);
+    if (effectiveCategory && effectiveCategory !== "all") {
+      result = result.filter((a) => a.category === effectiveCategory);
     }
     if (debouncedSearch) {
       const q = debouncedSearch.toLowerCase();
@@ -121,7 +151,7 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
     });
 
     return result;
-  }, [articles, ticker, category, limit, debouncedSearch, sortField, sortDir]);
+  }, [articles, ticker, effectiveCategory, limit, debouncedSearch, sortField, sortDir]);
 
   // Only show search/export when not limited (inline usage)
   const showSearch = !limit && articles && articles.length > 0;
@@ -224,8 +254,8 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
     return (
       <div className="space-y-3">
         {showSearch && (
-          <div className="flex items-center gap-4">
-            <div className="relative flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="relative flex-1 min-w-[160px]">
               <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-muted-foreground" />
               <Input
                 ref={searchInputRef}
@@ -252,6 +282,28 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
                 </button>
               )}
             </div>
+            {!limit && (
+              <div className="flex items-center gap-1">
+                <CategoryChip
+                  active={categoryFilter === "all"}
+                  onClick={() => setCategoryFilter("all")}
+                  label={tn("filter.all") || "Sve"}
+                  icon={Newspaper}
+                />
+                <CategoryChip
+                  active={categoryFilter === "general"}
+                  onClick={() => setCategoryFilter("general")}
+                  label={tn("filter.general") || "Generalne"}
+                  icon={Newspaper}
+                />
+                <CategoryChip
+                  active={categoryFilter === "trading"}
+                  onClick={() => setCategoryFilter("trading")}
+                  label={tn("filter.trading") || "Trgovanje"}
+                  icon={TrendingUp}
+                />
+              </div>
+            )}
             <div className="flex items-center gap-2">
               <SortHeader field="date" label={t("sort.date") || "Datum"} />
               <SortHeader field="ticker" label={t("sort.ticker") || "Dionica"} />
