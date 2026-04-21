@@ -1,4 +1,5 @@
 import { memo, useState, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 import { formatPrice, formatVolume } from "@/lib/formatters";
 import { ChangeBadge } from "@/components/shared/change-badge";
@@ -23,6 +24,7 @@ interface StockRowProps {
 
 // Click-to-copy state for tickers and prices
 const StockRowBase = ({ stock, flash, searchQuery }: StockRowProps) => {
+  const { t } = useTranslation("stocks");
   const { selectedTicker, select } = useSelectedStock();
   const { isAuthenticated } = useAuth();
   const watchlistTickers = useWatchlistTickers();
@@ -38,18 +40,18 @@ const StockRowBase = ({ stock, flash, searchQuery }: StockRowProps) => {
   const handleCopyTicker = useCallback(async (e: React.MouseEvent) => {
     e.stopPropagation();
     await navigator.clipboard.writeText(stock.ticker);
-    toast.success("Kopirano: " + stock.ticker);
+    toast.success(t("toast.copied", { ticker: stock.ticker }));
     setCopiedField("ticker");
     setTimeout(() => setCopiedField(null), 1200);
-  }, [stock.ticker]);
+  }, [stock.ticker, t]);
 
   const handleCopyPrice = useCallback(async (e: React.MouseEvent) => {
     e.stopPropagation();
     await navigator.clipboard.writeText(stock.price.toFixed(2));
-    toast.success(formatPrice(stock.price));
+    toast.success(t("toast.priceCopied", { price: formatPrice(stock.price) }));
     setCopiedField("price");
     setTimeout(() => setCopiedField(null), 1200);
-  }, [stock.price]);
+  }, [stock.price, t]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTableRowElement>) => {
     if (e.key === "Enter" || e.key === " ") {
@@ -61,24 +63,24 @@ const StockRowBase = ({ stock, flash, searchQuery }: StockRowProps) => {
       if (isAuthenticated) {
         if (isWatched) {
           removeMutation.mutate(stock.ticker);
-          toast.success("Uklonjeno s popisa praćenja");
+          toast.success(t("toast.removedFromWatchlist"));
         } else {
           addMutation.mutate(stock.ticker);
-          toast.success("Dodano na popis praćenja");
+          toast.success(t("toast.addedToWatchlist"));
         }
       } else {
         if (isWatched) {
           removeItem(stock.ticker);
-          toast.success("Uklonjeno s popisa praćenja");
+          toast.success(t("toast.removedFromWatchlist"));
         } else {
           addItem(stock.ticker);
-          toast.success("Dodano na popis praćenja");
+          toast.success(t("toast.addedToWatchlist"));
         }
       }
     } else if (e.key === "c" || e.key === "C") {
       e.preventDefault();
       navigator.clipboard.writeText(stock.ticker);
-      toast.success("Kopirano: " + stock.ticker);
+      toast.success(t("toast.copied", { ticker: stock.ticker }));
     }
   };
 

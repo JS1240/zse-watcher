@@ -76,7 +76,7 @@ export function ReceivedDividends() {
         d.notes ?? "",
       ]);
     exportToCsv(`zse-dividends-${new Date().toISOString().split("T")[0]}`, headers, rows);
-    toast.success("Dividends exported to CSV");
+    toast.success(t("toast.exported"));
   };
 
   return (

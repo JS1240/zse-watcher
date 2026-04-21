@@ -412,6 +412,7 @@ function SortableRow({
   flash?: "up" | "down" | null;
   searchQuery?: string;
 }) {
+  const { t } = useTranslation("watchlist");
   const {
     attributes,
     listeners,
@@ -435,10 +436,10 @@ function SortableRow({
   const handleCopyTicker = useCallback(async (e: React.MouseEvent) => {
     e.stopPropagation();
     await navigator.clipboard.writeText(stock.ticker);
-    toast.success("Kopirano: " + stock.ticker);
+    toast.success(t("toast.copied", { ticker: stock.ticker }));
     setCopiedField("ticker");
     setTimeout(() => setCopiedField(null), 1200);
-  }, [stock.ticker]);
+  }, [stock.ticker, t]);
 
   return (
     <tr
@@ -1000,6 +1001,7 @@ interface WatchlistRowProps {
 }
 
 function WatchlistRow({ stock, showRemove, onRemove, flash, searchQuery }: WatchlistRowProps) {
+  const { t } = useTranslation("watchlist");
   const { select, selectedTicker } = useSelectedStock();
   const isSelected = selectedTicker === stock.ticker;
   const [copiedField, setCopiedField] = useState<string | null>(null);
@@ -1007,10 +1009,10 @@ function WatchlistRow({ stock, showRemove, onRemove, flash, searchQuery }: Watch
   const handleCopyTicker = useCallback(async (e: React.MouseEvent) => {
     e.stopPropagation();
     await navigator.clipboard.writeText(stock.ticker);
-    toast.success("Kopirano: " + stock.ticker);
+    toast.success(t("toast.copied", { ticker: stock.ticker }));
     setCopiedField("ticker");
     setTimeout(() => setCopiedField(null), 1200);
-  }, [stock.ticker]);
+  }, [stock.ticker, t]);
 
   return (
     <tr

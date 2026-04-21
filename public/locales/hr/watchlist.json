@@ -38,7 +38,8 @@
     "removed": "Dionica uklonjena iz liste praćenja",
     "addFailed": "Neuspjelo dodavanje u listu praćenja",
     "removeFailed": "Neuspjelo uklanjanje iz liste praćenja",
-    "exported": "Izvezeno u CSV"
+    "exported": "Izvezeno u CSV",
+    "copied": "Kopirano: {{ticker}}"
   },
   "shortcut": {
     "search": "pretraži",

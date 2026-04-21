@@ -58,7 +58,11 @@
     "1Y": "1Y"
   },
   "toast": {
-    "exported": "Stock data exported to CSV"
+    "exported": "Stock data exported to CSV",
+    "copied": "Copied: {{ticker}}",
+    "priceCopied": "Price copied: {{price}}",
+    "addedToWatchlist": "Added to watchlist",
+    "removedFromWatchlist": "Removed from watchlist"
   },
   "exportCsv": "Export",
   "movers": {

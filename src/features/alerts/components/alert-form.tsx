@@ -183,17 +183,17 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
             )}
           />
           {showTickerError ? (
-            <p className="mt-1.5 flex items-center gap-1.5 rounded-md bg-destructive/10 px-2.5 py-1.5 text-xs font-medium text-destructive">
+            <p className="mt-1.5 flex items-center gap-1.5 rounded-md border border-destructive/30 bg-destructive/15 px-2.5 py-1.5 text-xs font-semibold text-red-600 dark:text-red-400">
               <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
               {tickerErrorMessage}
             </p>
           ) : showTickerNotFound ? (
-            <p className="mt-1.5 flex items-center gap-1.5 rounded-md bg-amber-500/10 px-2.5 py-1.5 text-xs font-medium text-amber-600 dark:text-amber-400">
+            <p className="mt-1.5 flex items-center gap-1.5 rounded-md border border-amber-400/30 bg-amber-50 px-2.5 py-1.5 text-xs font-semibold text-amber-700 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-700/30">
               <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
               {tickerErrorMessage}
             </p>
           ) : isTickerValid && currentPrice ? (
-            <p className="mt-1.5 flex items-center gap-1.5 rounded-md bg-emerald-500/10 px-2.5 py-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-400">
+            <p className="mt-1.5 flex items-center gap-1.5 rounded-md border border-emerald-400/30 bg-emerald-50 px-2.5 py-1.5 text-xs font-semibold text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-700/30">
               <TrendingUp className="h-3.5 w-3.5 flex-shrink-0" />
               <span>{formatPrice(currentPrice)}</span>
               {suggestedTarget && (
@@ -266,12 +266,12 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
             )}
           />
           {showTargetError ? (
-            <p className="mt-1.5 flex items-center gap-1.5 rounded-md bg-destructive/10 px-2.5 py-1.5 text-xs font-medium text-destructive">
+            <p className="mt-1.5 flex items-center gap-1.5 rounded-md border border-destructive/30 bg-destructive/15 px-2.5 py-1.5 text-xs font-semibold text-red-600 dark:text-red-400">
               <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
               {translateError(errors.targetValue?.message, t) || t("validation.positiveNumber")}
             </p>
           ) : isTargetValid && !focused.target ? (
-            <p className="mt-1.5 flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400">
+            <p className="mt-1.5 flex items-center gap-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
               <CheckCircle2 className="h-3.5 w-3.5 flex-shrink-0" />
               {t("validation.targetValid")}
             </p>

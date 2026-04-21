@@ -56,26 +56,26 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
   const handleCopyTicker = useCallback(async (e: React.MouseEvent, ticker: string) => {
     e.stopPropagation();
     await navigator.clipboard.writeText(ticker);
-    toast.success("Kopirano: " + ticker);
+    toast.success(t("toast.copied", { ticker }));
     setCopiedField(`ticker-${ticker}`);
     setTimeout(() => setCopiedField(null), 1200);
-  }, []);
+  }, [t]);
 
   const handleCopyPrice = useCallback(async (e: React.MouseEvent, price: number) => {
     e.stopPropagation();
     await navigator.clipboard.writeText(price.toFixed(2));
-    toast.success(formatPrice(price));
+    toast.success(t("toast.priceCopied", { price: formatPrice(price) }));
     setCopiedField(`price-${price}`);
     setTimeout(() => setCopiedField(null), 1200);
-  }, []);
+  }, [t]);
 
   const handleCopyValue = useCallback(async (e: React.MouseEvent, value: number) => {
     e.stopPropagation();
     await navigator.clipboard.writeText(value.toFixed(2));
-    toast.success(formatCurrency(value));
+    toast.success(t("toast.valueCopied", { value: formatCurrency(value) }));
     setCopiedField(`value-${value}`);
     setTimeout(() => setCopiedField(null), 1200);
-  }, []);
+  }, [t]);
 
   // Keyboard shortcut to focus search
   const searchInputRef = useRef<HTMLInputElement>(null);

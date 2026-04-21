@@ -57,7 +57,11 @@
     "1Y": "1G"
   },
   "toast": {
-    "exported": "Podaci o dionici izvezeni u CSV"
+    "exported": "Podaci o dionici izvezeni u CSV",
+    "copied": "Kopirano: {{ticker}}",
+    "priceCopied": "Kopirana cijena: {{price}}",
+    "addedToWatchlist": "Dodano na popis praćenja",
+    "removedFromWatchlist": "Uklonjeno s popisa praćenja"
   },
   "exportCsv": "Izvoz",
   "movers": {

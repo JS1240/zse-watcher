@@ -51,7 +51,10 @@
     "transactionAdded": "Transaction added",
     "transactionAddFailed": "Failed to add transaction",
     "exported": "Portfolio exported to CSV",
-    "positionAdded": "Position added"
+    "positionAdded": "Position added",
+    "copied": "Copied: {{ticker}}",
+    "priceCopied": "Price copied: {{price}}",
+    "valueCopied": "Value copied: {{value}}"
   },
   "exportCsv": "CSV",
   "exportTransactions": "Transactions",
