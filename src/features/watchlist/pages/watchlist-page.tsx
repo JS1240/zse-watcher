@@ -1,4 +1,4 @@
-import { useMemo, useState, useRef, useCallback } from "react";
+import { useMemo, useState, useRef, useCallback, memo } from "react";
 import { useTranslation } from "react-i18next";
 import { Star, Search, Keyboard, ArrowUp, ArrowDown, ArrowUpDown, GripVertical, Download, X, TrendingUp, TrendingDown, Minus, CheckCircle2, ChevronUp, HelpCircle } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
@@ -425,7 +425,7 @@ function AuthenticatedWatchlist() {
       )}
 
       {filtered.length > 0 ? (
-        <WatchlistTable stocks={filtered} sort={sort} onSort={handleSort} searchQuery={debouncedSearch} />
+        <WatchlistTableMemo stocks={filtered} sort={sort} onSort={handleSort} searchQuery={debouncedSearch} />
       ) : debouncedSearch ? (
         <EmptyState
           icon={<Search className="h-8 w-8" />}
@@ -911,7 +911,7 @@ function LocalWatchlist() {
               items={filtered.map((s) => s.ticker)}
               strategy={verticalListSortingStrategy}
             >
-              <WatchlistTable
+              <WatchlistTableMemo
                 stocks={filtered}
                 sort={sort}
                 onSort={handleSort}
@@ -934,7 +934,7 @@ function LocalWatchlist() {
             </DragOverlay>
           </DndContext>
         ) : (
-          <WatchlistTable
+          <WatchlistTableMemo
             stocks={filtered}
             sort={sort}
             onSort={handleSort}
@@ -1062,7 +1062,7 @@ function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort, dragEnable
                 searchQuery={searchQuery}
               />
             ) : (
-              <WatchlistRow
+              <WatchlistRowMemo
                 key={stock.ticker}
                 stock={stock}
                 showRemove={showRemove}
@@ -1090,6 +1090,18 @@ function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort, dragEnable
     </div>
   );
 }
+
+const WatchlistTableMemo = memo(WatchlistTable, (prev, next) => {
+  return (
+    prev.stocks === next.stocks &&
+    prev.showRemove === next.showRemove &&
+    prev.onRemove === next.onRemove &&
+    prev.sort === next.sort &&
+    prev.onSort === next.onSort &&
+    prev.dragEnabled === next.dragEnabled &&
+    prev.searchQuery === next.searchQuery
+  );
+});
 
 interface WatchlistRowProps {
   stock: Stock;
@@ -1200,3 +1212,14 @@ function WatchlistRow({ stock, showRemove, onRemove, flash, searchQuery }: Watch
     </tr>
   );
 }
+
+const WatchlistRowMemo = memo(WatchlistRow, (prev, next) => {
+  return (
+    prev.stock.ticker === next.stock.ticker &&
+    prev.stock.price === next.stock.price &&
+    prev.showRemove === next.showRemove &&
+    prev.onRemove === next.onRemove &&
+    prev.flash === next.flash &&
+    prev.searchQuery === next.searchQuery
+  );
+});
