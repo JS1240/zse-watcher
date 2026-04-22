@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, memo } from "react";
-import { X, Info, Keyboard, RefreshCw, Download, Bell } from "lucide-react";
+import { X, Info, RefreshCw, Download, Bell, HelpCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useStockDetail } from "@/features/stocks/api/stock-detail-queries";
@@ -12,6 +12,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { exportToCsv } from "@/lib/export";
 import { AlertForm } from "@/features/alerts/components/alert-form";
@@ -103,6 +104,34 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
     }
   }, [ticker, stock?.name, addRecentStock, drawerOpen]);
 
+  // Keyboard shortcuts for drawer actions (A=alert, D=download, W=watchlist)
+  useEffect(() => {
+    if (!drawerOpen || !stock) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't fire when typing in inputs
+      const target = e.target as HTMLElement;
+      if (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable) return;
+
+
+      switch (e.key) {
+        case "a":
+        case "A":
+          e.preventDefault();
+          setShowAlertForm(true);
+          break;
+        case "d":
+        case "D":
+          e.preventDefault();
+          handleExportCsv();
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [drawerOpen, stock, handleExportCsv]);
+
   // Don't render anything until first open
   if (!ticker && !drawerOpen) return null;
 
@@ -164,10 +193,28 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
                 </button>
               </>
             )}
-            <span className="hidden items-center gap-1 text-[10px] text-muted-foreground md:flex">
-              <Keyboard className="h-3 w-3" />
-              Esc
-            </span>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  className="flex items-center gap-1 rounded-md px-2 py-1 text-[10px] text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                  aria-label="Keyboard shortcuts"
+                >
+                  <HelpCircle className="h-3.5 w-3.5" />
+                  <span className="hidden md:inline">Pomoć</span>
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" align="end" className="z-[60] space-y-1.5 p-2.5">
+                <p className="text-[10px] font-semibold text-foreground">{t("shortcuts") || "Tipkovnički prečaci"}</p>
+                <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-[9px]">
+                  <kbd className="rounded bg-muted px-1.5 py-0.5 text-[8px] font-sans">Esc</kbd>
+                  <span className="text-muted-foreground">{t("shortcut.close") || "zatvori"}</span>
+                  <kbd className="rounded bg-muted px-1.5 py-0.5 text-[8px] font-sans">A</kbd>
+                  <span className="text-muted-foreground">{ta("create") || "kreiraj alarm"}</span>
+                  <kbd className="rounded bg-muted px-1.5 py-0.5 text-[8px] font-sans">D</kbd>
+                  <span className="text-muted-foreground">{t("exportCsv") || "izvoz CSV"}</span>
+                </div>
+              </TooltipContent>
+            </Tooltip>
             <button
               onClick={onClose}
               className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"

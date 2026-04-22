@@ -3,8 +3,12 @@
     "search": "search",
     "details": "details",
     "watch": "watch",
-    "copy": "copy"
+    "copy": "copy",
+    "close": "close",
+    "createAlert": "create alert",
+    "exportCsv": "export CSV"
   },
+  "shortcuts": "Keyboard shortcuts",
   "header": {
     "tickerLabel": "Stock ticker",
     "priceLabel": "Current price",

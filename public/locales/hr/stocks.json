@@ -3,8 +3,12 @@
     "search": "pretraži",
     "details": "detalji",
     "watch": "prati",
-    "copy": "kopiraj"
+    "copy": "kopiraj",
+    "close": "zatvori",
+    "createAlert": "kreiraj alarm",
+    "exportCsv": "izvoz CSV"
   },
+  "shortcuts": "Tipkovnički prečaci",
   "header": {
     "tickerLabel": "Oznaka dionice",
     "priceLabel": "Trenutačna cijena",
