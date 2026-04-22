@@ -1,6 +1,7 @@
 import { useMemo, useState, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Star, Search, Keyboard, ArrowUp, ArrowDown, ArrowUpDown, GripVertical, Download, X, TrendingUp, TrendingDown, Minus, CheckCircle2, ChevronUp } from "lucide-react";
+import { Star, Search, Keyboard, ArrowUp, ArrowDown, ArrowUpDown, GripVertical, Download, X, TrendingUp, TrendingDown, Minus, CheckCircle2, ChevronUp, HelpCircle } from "lucide-react";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocalWatchlist } from "@/features/watchlist/hooks/use-local-watchlist";
@@ -25,7 +26,6 @@ import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 
 import { cn } from "@/lib/utils";
 import { useDebounce } from "@/hooks/use-debounce";
-import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import {
   DndContext,
   closestCenter,
@@ -387,7 +387,7 @@ function AuthenticatedWatchlist() {
 
       {/* Results count + keyboard shortcuts hint */}
       {watchedStocks.length > 0 && (
-        <div className="group flex items-center justify-between">
+        <div className="flex items-center justify-between">
           <span className="text-[10px] text-muted-foreground">
             {filtered.length} {filtered.length === 1 ? "stock" : "stockova"}
             {debouncedSearch && (
@@ -396,17 +396,31 @@ function AuthenticatedWatchlist() {
               </span>
             )}
           </span>
-          {/* Keyboard shortcuts hint - appears on hover for cleaner UI */}
-          <div className="invisible group-hover:visible flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150 text-[9px] text-muted-foreground">
-            <span className="flex items-center gap-0.5">
-              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
-              <span>{t("shortcut.details")}</span>
-            </span>
-            <span className="flex items-center gap-0.5">
-              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">W</kbd>
-              <span>{t("shortcut.toggle")}</span>
-            </span>
-          </div>
+          {/* Keyboard shortcuts hint - always visible with tooltip for discoverability */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                className="flex items-center gap-1.5 text-[9px] text-muted-foreground transition-colors hover:text-foreground"
+                aria-label="Keyboard shortcuts"
+              >
+                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
+                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">W</kbd>
+                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Del</kbd>
+                <HelpCircle className="h-3 w-3" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" align="end" className="space-y-1 p-2.5">
+              <p className="text-[10px] font-semibold text-foreground">{t("shortcuts") || "Tipkovnički prečaci"}</p>
+              <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-[9px]">
+                <kbd className="rounded bg-muted px-1.5 py-0.5 text-[8px] font-sans">Enter</kbd>
+                <span className="text-muted-foreground">{t("shortcut.details") || "detalji dionice"}</span>
+                <kbd className="rounded bg-muted px-1.5 py-0.5 text-[8px] font-sans">W</kbd>
+                <span className="text-muted-foreground">{t("shortcut.toggle") || "dodaj/ukloni iz pratnje"}</span>
+                <kbd className="rounded bg-muted px-1.5 py-0.5 text-[8px] font-sans">Del</kbd>
+                <span className="text-muted-foreground">{t("shortcut.delete") || "ukloni iz pratnje"}</span>
+              </div>
+            </TooltipContent>
+          </Tooltip>
         </div>
       )}
 
@@ -841,7 +855,7 @@ function LocalWatchlist() {
 
       {/* Results count + keyboard shortcuts hint */}
       {watchedStocks.length > 0 && (
-        <div className="group flex items-center justify-between">
+        <div className="flex items-center justify-between">
           <span className="text-[10px] text-muted-foreground">
             {filtered.length} {filtered.length === 1 ? "stock" : "stockova"}
             {debouncedSearch && (
@@ -850,21 +864,31 @@ function LocalWatchlist() {
               </span>
             )}
           </span>
-          {/* Keyboard shortcuts hint - appears on hover for cleaner UI */}
-          <div className="invisible group-hover:visible flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150 text-[9px] text-muted-foreground">
-            <span className="flex items-center gap-0.5">
-              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
-              <span>{t("shortcut.details")}</span>
-            </span>
-            <span className="flex items-center gap-0.5">
-              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">S</kbd>
-              <span>{t("shortcut.toggle")}</span>
-            </span>
-            <span className="flex items-center gap-0.5">
-              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Del</kbd>
-              <span>{t("shortcut.delete")}</span>
-            </span>
-          </div>
+          {/* Keyboard shortcuts hint - always visible with tooltip for discoverability */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                className="flex items-center gap-1.5 text-[9px] text-muted-foreground transition-colors hover:text-foreground"
+                aria-label="Keyboard shortcuts"
+              >
+                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
+                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">S</kbd>
+                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Del</kbd>
+                <HelpCircle className="h-3 w-3" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" align="end" className="space-y-1 p-2.5">
+              <p className="text-[10px] font-semibold text-foreground">{t("shortcuts") || "Tipkovnički prečaci"}</p>
+              <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-[9px]">
+                <kbd className="rounded bg-muted px-1.5 py-0.5 text-[8px] font-sans">Enter</kbd>
+                <span className="text-muted-foreground">{t("shortcut.details") || "detalji dionice"}</span>
+                <kbd className="rounded bg-muted px-1.5 py-0.5 text-[8px] font-sans">S</kbd>
+                <span className="text-muted-foreground">{t("shortcut.toggle") || "dodaj/ukloni iz pratnje"}</span>
+                <kbd className="rounded bg-muted px-1.5 py-0.5 text-[8px] font-sans">Del</kbd>
+                <span className="text-muted-foreground">{t("shortcut.delete") || "ukloni iz pratnje"}</span>
+              </div>
+            </TooltipContent>
+          </Tooltip>
         </div>
       )}
 

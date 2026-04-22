@@ -53,8 +53,9 @@
   },
   "shortcut": {
     "search": "search",
-    "details": "details",
-    "toggle": "watch/unwatch",
-    "delete": "delete"
-  }
+    "details": "stock details",
+    "toggle": "add/remove",
+    "delete": "remove from watchlist"
+  },
+  "shortcuts": "Keyboard shortcuts"
 }

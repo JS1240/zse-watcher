@@ -53,8 +53,9 @@
   },
   "shortcut": {
     "search": "pretraži",
-    "details": "detalji",
+    "details": "detalji dionice",
     "toggle": "prati/odustani",
-    "delete": "obrisi"
-  }
+    "delete": "ukloni iz pratnje"
+  },
+  "shortcuts": "Tipkovnički prečaci"
 }
