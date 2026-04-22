@@ -238,35 +238,44 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
 
         <div>
           <label className="mb-1 block text-[10px] text-muted-foreground">{t("fields.target")}</label>
-          <Input
-            id="alert-target-input"
-            type="text"
-            inputMode="decimal"
-            placeholder={isPercentCondition ? "10,50" : "150,00"}
-            defaultValue={targetValueDisplay}
-            onFocus={handleTargetFocus}
-            {...register("targetValue", {
-              onBlur: (e) => {
-                setFocused((prev) => ({ ...prev, target: false }));
-                setTouched((prev) => ({ ...prev, target: true }));
-                // Format on blur
-                const normalized = normalizeNumberInput(e.target.value);
-                const parsed = parseLocalizedNumber(normalized);
-                if (!isNaN(parsed)) {
-                  e.target.value = formatInputNumber(parsed, 2);
-                }
-              },
-              onChange: (e) => {
-                const normalized = normalizeNumberInput(e.target.value);
-                e.target.value = normalized;
-              },
-            })}
-            error={!!showTargetError}
-            className={cn(
-              showTargetError && "ring-1 ring-destructive border-destructive",
-              isTargetValid && !focused.target && !showTargetError && "ring-1 ring-emerald-500 border-emerald-500"
+          <div className="relative">
+            <Input
+              id="alert-target-input"
+              type="text"
+              inputMode="decimal"
+              placeholder={isPercentCondition ? "10,50" : "150,00"}
+              defaultValue={targetValueDisplay}
+              onFocus={handleTargetFocus}
+              {...register("targetValue", {
+                onBlur: (e) => {
+                  setFocused((prev) => ({ ...prev, target: false }));
+                  setTouched((prev) => ({ ...prev, target: true }));
+                  // Format on blur
+                  const normalized = normalizeNumberInput(e.target.value);
+                  const parsed = parseLocalizedNumber(normalized);
+                  if (!isNaN(parsed)) {
+                    e.target.value = formatInputNumber(parsed, 2);
+                  }
+                },
+                onChange: (e) => {
+                  const normalized = normalizeNumberInput(e.target.value);
+                  e.target.value = normalized;
+                },
+              })}
+              error={!!showTargetError}
+              className={cn(
+                "pr-16",
+                showTargetError && "ring-1 ring-destructive border-destructive",
+                isTargetValid && !focused.target && !showTargetError && "ring-1 ring-emerald-500 border-emerald-500"
+              )}
+            />
+            {/* Context badge: show current price when ticker is selected */}
+            {currentPrice && !focused.target && (
+              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 rounded bg-muted px-1.5 py-0.5 text-[9px] font-medium text-muted-foreground">
+                {formatPrice(currentPrice)}
+              </span>
             )}
-          />
+          </div>
           {showTargetError ? (
             <p className="mt-1.5 flex items-center gap-1.5 rounded-md border border-destructive/30 bg-destructive/15 px-2.5 py-1.5 text-xs font-semibold text-red-600 dark:text-red-400">
               <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
