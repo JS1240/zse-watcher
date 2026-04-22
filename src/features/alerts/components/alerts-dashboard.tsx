@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef, useCallback, memo } from "react";
 import { useTranslation } from "react-i18next";
-import { Bell, BellOff, Pencil, Trash2, X, Check, CheckCircle2, Keyboard, Download, AlertCircle, Search, CircleDot, Pause, TrendingUp, TrendingDown, ArrowUpDown, ArrowUp, HelpCircle, Copy } from "lucide-react";
+import { Bell, BellOff, Pencil, Trash2, X, Check, CheckCircle2, Keyboard, Download, AlertCircle, Search, CircleDot, Pause, TrendingUp, TrendingDown, ArrowUpDown, ArrowUp, HelpCircle, Copy, Play, PauseIcon } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { toast } from "sonner";
@@ -71,7 +71,7 @@ interface AlertsDashboardProps {
 export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
   const { t } = useTranslation("alerts");
   const { t: tc } = useTranslation("common");
-  const { alerts, isLoading, deleteAlert, toggleAlert, updateAlert } = useAlertsData();
+  const { alerts, isLoading, deleteAlert, toggleAlert, updateAlert, toggleAllAlerts, deleteAllAlerts, deleteTriggeredAlerts } = useAlertsData();
   const { isError, refetch } = useAlerts();
   const { data: stocksResult } = useStocksLive();
   const stocks = useMemo(() => stocksResult?.stocks ?? [], [stocksResult]);
@@ -101,6 +101,43 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const debouncedSearch = useDebounce(search, 200);
+
+  // Bulk action state
+  const [bulkAction, setBulkAction] = useState<"none" | "activateAll" | "pauseAll" | "deleteTriggered" | "deleteAll">("none");
+
+  // Calculate alert counts for bulk action buttons
+  const alertCounts = useMemo(() => {
+    if (!alerts) return { active: 0, paused: 0, triggered: 0, total: 0 };
+    return {
+      active: alerts.filter((a) => a.isActive && !a.isTriggered).length,
+      paused: alerts.filter((a) => !a.isActive).length,
+      triggered: alerts.filter((a) => a.isTriggered).length,
+      total: alerts.length,
+    };
+  }, [alerts]);
+
+  // Bulk action handlers
+  const handleBulkActivate = async () => {
+    await toggleAllAlerts(true);
+    toast.success(t("bulk.toastActivatedAll"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
+  };
+
+  const handleBulkPause = async () => {
+    await toggleAllAlerts(false);
+    toast.success(t("bulk.toastPausedAll"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
+  };
+
+  const handleBulkDeleteTriggered = async () => {
+    await deleteTriggeredAlerts();
+    toast.success(t("bulk.toastDeletedTriggered"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
+    setBulkAction("none");
+  };
+
+  const handleBulkDeleteAll = async () => {
+    await deleteAllAlerts();
+    toast.success(t("bulk.toastDeletedAll"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
+    setBulkAction("none");
+  };
 
   // Click-to-copy handlers for alert values (matching portfolio UX)
   const handleCopyTicker = useCallback(async (e: React.MouseEvent, ticker: string) => {
@@ -309,6 +346,69 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
               icon={<Pause className="h-3 w-3" />}
               count={alerts.filter((a) => !a.isActive).length}
             />
+            {/* Bulk action buttons - show when there are alerts */}
+            {alertCounts.total > 1 && (
+              <>
+                <span className="mx-1 h-4 w-px bg-border" />
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={handleBulkActivate}
+                      disabled={alertCounts.active === alertCounts.total}
+                      className="flex h-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium bg-emerald-500/20 text-emerald-700 hover:bg-emerald-500/30 disabled:opacity-50 dark:bg-emerald-900/50 dark:text-emerald-300"
+                    >
+                      <Play className="h-3 w-3" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top">
+                    {t("bulk.activateAll")}
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={handleBulkPause}
+                      disabled={alertCounts.paused === alertCounts.total}
+                      className="flex h-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium bg-amber-500/20 text-amber-700 hover:bg-amber-500/30 disabled:opacity-50 dark:bg-amber-900/50 dark:text-amber-300"
+                    >
+                      <PauseIcon className="h-3 w-3" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top">
+                    {t("bulk.pauseAll")}
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={() => setBulkAction("deleteTriggered")}
+                      disabled={alertCounts.triggered === 0}
+                      className="flex h-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium bg-destructive/20 text-destructive hover:bg-destructive/30 disabled:opacity-50"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top">
+                    {t("bulk.deleteTriggered")} ({alertCounts.triggered})
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={() => setBulkAction("deleteAll")}
+                      disabled={alertCounts.total === 0}
+                      className="flex h-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium bg-destructive/20 text-destructive hover:bg-destructive/30 disabled:opacity-50"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                      <Trash2 className="h-3 w-3 -ml-3" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top">
+                    {t("bulk.deleteAll")}
+                  </TooltipContent>
+                </Tooltip>
+              </>
+            )}
             <span className="mx-1 h-4 w-px bg-border" />
             <FilterChip
               active={conditionFilter === "all"}
@@ -483,6 +583,32 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
             toast.success(t("toast.deleted"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
           }
         }}
+      />
+
+      {/* Bulk delete all confirmation dialog */}
+      <ConfirmationDialog
+        open={bulkAction === "deleteAll"}
+        onOpenChange={(open) => !open && setBulkAction("none")}
+        title={t("bulk.confirmDeleteAll") || "Delete all alerts?"}
+        description={t("bulk.confirmDeleteAllDescription") || "This will permanently delete all your alerts."}
+        confirmLabel={t("bulk.deleteAll") || "Delete all"}
+        cancelLabel={tc("actions.cancel") || "Cancel"}
+        variant="danger"
+        icon={<Trash2 className="h-5 w-5 text-destructive" />}
+        onConfirm={handleBulkDeleteAll}
+      />
+
+      {/* Bulk delete triggered confirmation dialog */}
+      <ConfirmationDialog
+        open={bulkAction === "deleteTriggered"}
+        onOpenChange={(open) => !open && setBulkAction("none")}
+        title={t("bulk.confirmDeleteTriggered") || "Delete triggered alerts?"}
+        description={t("bulk.confirmDeleteTriggeredDescription") || "This will delete triggered alerts."}
+        confirmLabel={t("bulk.deleteTriggered") || "Delete triggered"}
+        cancelLabel={tc("actions.cancel") || "Cancel"}
+        variant="danger"
+        icon={<AlertCircle className="h-5 w-5 text-amber" />}
+        onConfirm={handleBulkDeleteTriggered}
       />
     </div>
   );

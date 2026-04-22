@@ -66,6 +66,20 @@
     "updateFailed": "Failed to update alert",
     "exported": "Alerts exported to CSV"
   },
+  "bulk": {
+    "activateAll": "Activate all",
+    "pauseAll": "Pause all",
+    "deleteTriggered": "Delete triggered",
+    "deleteAll": "Delete all",
+    "confirmDeleteAll": "Delete all alerts?",
+    "confirmDeleteAllDescription": "This will permanently delete all your alerts. This action cannot be undone.",
+    "confirmDeleteTriggered": "Delete triggered alerts?",
+    "confirmDeleteTriggeredDescription": "This will delete all alerts that have already triggered. This action cannot be undone.",
+    "toastActivatedAll": "All alerts activated",
+    "toastPausedAll": "All alerts paused",
+    "toastDeletedTriggered": "Triggered alerts deleted",
+    "toastDeletedAll": "All alerts deleted"
+  },
   "shortcuts": "Keyboard shortcuts",
   "shortcut": {
     "toggle": "toggle",

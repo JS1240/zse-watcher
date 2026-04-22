@@ -66,6 +66,20 @@
     "updateFailed": "Neuspjelo azuriranje alarma",
     "exported": "Alarmi izvezeni u CSV"
   },
+  "bulk": {
+    "activateAll": "Aktiviraj sve",
+    "pauseAll": "Pauziraj sve",
+    "deleteTriggered": "Obri\u0161i aktivirane",
+    "deleteAll": "Obri\u0161i sve",
+    "confirmDeleteAll": "Obri\u0161i sve alarme?",
+    "confirmDeleteAllDescription": "Ovo \u010ce trajno obrisati sve va\u0161e alarme. Ova radnja se ne mo\u017ee poni\u0161titi.",
+    "confirmDeleteTriggered": "Obri\u0161i aktivirane alarme?",
+    "confirmDeleteTriggeredDescription": "Ovo \u010ce obrisati sve alarme koji su ve\u0107 aktivirali. Ova radnja se ne mo\u017ee poni\u0161titi.",
+    "toastActivatedAll": "Svi alarmi aktivirani",
+    "toastPausedAll": "Svi alarmi pauzirani",
+    "toastDeletedTriggered": "Aktivirani alarmi obrisani",
+    "toastDeletedAll": "Svi alarmi obrisani"
+  },
   "shortcuts": "Tipkovni\u010dki pre\u010daci",
   "shortcut": {
     "toggle": "aktiviraj",

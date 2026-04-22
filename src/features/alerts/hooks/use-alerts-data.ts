@@ -102,6 +102,39 @@ export function useAlertsData() {
     }
   };
 
+  // Bulk operations for managing multiple alerts at once
+  const toggleAllAlerts = async (activate: boolean) => {
+    const alertsToToggle = alerts.filter((a) => a.isActive !== activate);
+    for (const alert of alertsToToggle) {
+      if (isAuthenticated) {
+        await toggleAlertMutation.mutateAsync({ alertId: alert.id, isActive: activate });
+      } else {
+        toggleLocalAlert(alert.id);
+      }
+    }
+  };
+
+  const deleteAllAlerts = async () => {
+    for (const alert of alerts) {
+      if (isAuthenticated) {
+        await deleteAlertMutation.mutateAsync(alert.id);
+      } else {
+        removeAlert(alert.id);
+      }
+    }
+  };
+
+  const deleteTriggeredAlerts = async () => {
+    const triggeredIds = alerts.filter((a) => a.isTriggered).map((a) => a.id);
+    for (const id of triggeredIds) {
+      if (isAuthenticated) {
+        await deleteAlertMutation.mutateAsync(id);
+      } else {
+        removeAlert(id);
+      }
+    }
+  };
+
   return {
     alerts,
     isLoading,
@@ -110,5 +143,8 @@ export function useAlertsData() {
     deleteAlert,
     toggleAlert: toggleAlertActive,
     updateAlert,
+    toggleAllAlerts,
+    deleteAllAlerts,
+    deleteTriggeredAlerts,
   };
 }
