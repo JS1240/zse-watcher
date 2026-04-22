@@ -5,7 +5,7 @@ import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { toast } from "sonner";
 import { useAlertsData } from "@/features/alerts/hooks/use-alerts-data";
-import { useAlerts, useUpdateAlert } from "@/features/alerts/api/alerts-queries";
+import { useAlerts } from "@/features/alerts/api/alerts-queries";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { AlertForm } from "@/features/alerts/components/alert-form";
 import { Button } from "@/components/ui/button";
@@ -67,9 +67,8 @@ function FilterChip({ active, onClick, label, icon, count }: FilterChipProps) {
 export function AlertsDashboard() {
   const { t } = useTranslation("alerts");
   const { t: tc } = useTranslation("common");
-  const { alerts, isLoading, deleteAlert, toggleAlert } = useAlertsData();
+  const { alerts, isLoading, deleteAlert, toggleAlert, updateAlert } = useAlertsData();
   const { isError, refetch } = useAlerts();
-  const updateAlert = useUpdateAlert();
   const { data: stocksResult } = useStocksLive();
   const stocks = useMemo(() => stocksResult?.stocks ?? [], [stocksResult]);
   const [showForm, setShowForm] = useState(false);
@@ -367,13 +366,8 @@ export function AlertsDashboard() {
                   toast.success(wasActive ? t("toast.paused") : t("toast.activated"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
                 }}
                 onUpdate={async (id, data) => {
-                  // Proper update mutation — preserves alert ID and createdAt
-                  await updateAlert.mutateAsync({
-                    alertId: id,
-                    ticker: data.ticker,
-                    condition: data.condition,
-                    targetValue: data.targetValue,
-                  });
+                  // Unified update for both authenticated and local alerts
+                  await updateAlert(id, data);
                   toast.success(t("toast.updated") || "Alert updated", { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
                 }}
               />

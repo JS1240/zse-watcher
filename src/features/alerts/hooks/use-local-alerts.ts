@@ -20,6 +20,7 @@ interface UseLocalAlertsReturn {
   addAlert: (alert: Omit<LocalAlert, "id" | "isTriggered" | "triggeredAt" | "createdAt">) => LocalAlert;
   removeAlert: (id: string) => void;
   toggleAlert: (id: string) => void;
+  updateAlert: (id: string, data: { ticker?: string; condition?: AlertCondition; targetValue?: number }) => void;
   clearAll: () => void;
   hasAlerts: boolean;
 }
@@ -62,6 +63,26 @@ export function useLocalAlerts(): UseLocalAlertsReturn {
     [setAlerts],
   );
 
+  const updateAlert = useCallback(
+    (id: string, data: { ticker?: string; condition?: AlertCondition; targetValue?: number }) => {
+      setAlerts((prev) =>
+        prev.map((a) =>
+          a.id === id
+            ? {
+                ...a,
+                ticker: data.ticker ?? a.ticker,
+                condition: data.condition ?? a.condition,
+                targetValue: data.targetValue ?? a.targetValue,
+                isTriggered: false,
+                triggeredAt: null,
+              }
+            : a,
+        ),
+      );
+    },
+    [setAlerts],
+  );
+
   const clearAll = useCallback(() => {
     setAlerts([]);
   }, [setAlerts]);
@@ -71,6 +92,7 @@ export function useLocalAlerts(): UseLocalAlertsReturn {
     addAlert,
     removeAlert,
     toggleAlert,
+    updateAlert,
     clearAll,
     hasAlerts: alerts.length > 0,
   };

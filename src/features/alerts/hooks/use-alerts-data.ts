@@ -1,6 +1,6 @@
-import { useMemo } from "react";
+import { useMemo, useCallback } from "react";
 import { useAuth } from "@/hooks/use-auth";
-import { useAlerts, useDeleteAlert, useToggleAlert, useCreateAlert } from "@/features/alerts/api/alerts-queries";
+import { useAlerts, useDeleteAlert, useToggleAlert, useCreateAlert, useUpdateAlert } from "@/features/alerts/api/alerts-queries";
 import { useLocalAlerts } from "@/features/alerts/hooks/use-local-alerts";
 import type { AlertCondition } from "@/types/alert";
 
@@ -20,10 +20,11 @@ export function useAlertsData() {
   const { isAuthenticated } = useAuth();
 
   const { data: remoteAlerts, isLoading: remoteLoading } = useAlerts();
-  const { alerts: localAlerts, addAlert, removeAlert, toggleAlert } = useLocalAlerts();
+  const { alerts: localAlerts, addAlert, removeAlert, toggleAlert: toggleLocalAlert, updateAlert: updateLocalAlert } = useLocalAlerts();
   const createAlert = useCreateAlert();
   const deleteAlertMutation = useDeleteAlert();
   const toggleAlertMutation = useToggleAlert();
+  const updateAlertMutation = useUpdateAlert();
 
   const alerts: AlertItem[] = useMemo(() => {
     if (isAuthenticated && remoteAlerts) {
@@ -69,7 +70,7 @@ export function useAlertsData() {
         await toggleAlertMutation.mutateAsync({ alertId: id, isActive: !alert.isActive });
       }
     } else {
-      toggleAlert(id);
+      toggleLocalAlert(id);
     }
   };
 
@@ -85,6 +86,22 @@ export function useAlertsData() {
     }
   };
 
+  // Handle local alert update - memoized to prevent recreation
+  const handleUpdateLocalAlert = useCallback(
+    (id: string, data: { ticker: string; condition: AlertCondition; targetValue: number }) => {
+      updateLocalAlert(id, data);
+    },
+    [updateLocalAlert],
+  );
+
+  const updateAlert = async (id: string, data: { ticker: string; condition: AlertCondition; targetValue: number }) => {
+    if (isAuthenticated) {
+      await updateAlertMutation.mutateAsync({ alertId: id, ...data });
+    } else {
+      handleUpdateLocalAlert(id, data);
+    }
+  };
+
   return {
     alerts,
     isLoading,
@@ -92,5 +109,6 @@ export function useAlertsData() {
     addAlert: addNewAlert,
     deleteAlert,
     toggleAlert: toggleAlertActive,
+    updateAlert,
   };
 }
