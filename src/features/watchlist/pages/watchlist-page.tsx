@@ -1,6 +1,6 @@
 import { useMemo, useState, useRef, useCallback, memo } from "react";
 import { useTranslation } from "react-i18next";
-import { Star, Search, Keyboard, ArrowUp, ArrowDown, ArrowUpDown, GripVertical, Download, X, TrendingUp, TrendingDown, Minus, CheckCircle2, ChevronUp, HelpCircle } from "lucide-react";
+import { Star, Search, Keyboard, ArrowUp, ArrowDown, ArrowUpDown, GripVertical, Download, X, TrendingUp, TrendingDown, Minus, CheckCircle2, ChevronUp } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
@@ -396,31 +396,25 @@ function AuthenticatedWatchlist() {
               </span>
             )}
           </span>
-          {/* Keyboard shortcuts hint - always visible with tooltip for discoverability */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                className="flex items-center gap-1.5 text-[9px] text-muted-foreground transition-colors hover:text-foreground"
-                aria-label="Keyboard shortcuts"
-              >
-                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
-                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">W</kbd>
-                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Del</kbd>
-                <HelpCircle className="h-3 w-3" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom" align="end" className="space-y-1 p-2.5">
-              <p className="text-[10px] font-semibold text-foreground">{t("shortcuts") || "Tipkovnički prečaci"}</p>
-              <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-[9px]">
-                <kbd className="rounded bg-muted px-1.5 py-0.5 text-[8px] font-sans">Enter</kbd>
-                <span className="text-muted-foreground">{t("shortcut.details") || "detalji dionice"}</span>
-                <kbd className="rounded bg-muted px-1.5 py-0.5 text-[8px] font-sans">W</kbd>
-                <span className="text-muted-foreground">{t("shortcut.toggle") || "dodaj/ukloni iz pratnje"}</span>
-                <kbd className="rounded bg-muted px-1.5 py-0.5 text-[8px] font-sans">Del</kbd>
-                <span className="text-muted-foreground">{t("shortcut.delete") || "ukloni iz pratnje"}</span>
-              </div>
-            </TooltipContent>
-          </Tooltip>
+          {/* Always-visible keyboard shortcuts hint for discoverability */}
+          <div className="flex items-center gap-2 text-[9px] text-muted-foreground">
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
+              <span className="text-muted-foreground">detalji</span>
+            </span>
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">W</kbd>
+              <span className="text-muted-foreground">prati</span>
+            </span>
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Del</kbd>
+              <span className="text-muted-foreground">obriši</span>
+            </span>
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">/</kbd>
+              <span className="text-muted-foreground">traži</span>
+            </span>
+          </div>
         </div>
       )}
 
@@ -870,31 +864,25 @@ function LocalWatchlist() {
               </span>
             )}
           </span>
-          {/* Keyboard shortcuts hint - always visible with tooltip for discoverability */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                className="flex items-center gap-1.5 text-[9px] text-muted-foreground transition-colors hover:text-foreground"
-                aria-label="Keyboard shortcuts"
-              >
-                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
-                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">S</kbd>
-                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Del</kbd>
-                <HelpCircle className="h-3 w-3" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom" align="end" className="space-y-1 p-2.5">
-              <p className="text-[10px] font-semibold text-foreground">{t("shortcuts") || "Tipkovnički prečaci"}</p>
-              <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-[9px]">
-                <kbd className="rounded bg-muted px-1.5 py-0.5 text-[8px] font-sans">Enter</kbd>
-                <span className="text-muted-foreground">{t("shortcut.details") || "detalji dionice"}</span>
-                <kbd className="rounded bg-muted px-1.5 py-0.5 text-[8px] font-sans">S</kbd>
-                <span className="text-muted-foreground">{t("shortcut.toggle") || "dodaj/ukloni iz pratnje"}</span>
-                <kbd className="rounded bg-muted px-1.5 py-0.5 text-[8px] font-sans">Del</kbd>
-                <span className="text-muted-foreground">{t("shortcut.delete") || "ukloni iz pratnje"}</span>
-              </div>
-            </TooltipContent>
-          </Tooltip>
+          {/* Always-visible keyboard shortcuts hint for discoverability */}
+          <div className="flex items-center gap-2 text-[9px] text-muted-foreground">
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
+              <span className="text-muted-foreground">detalji</span>
+            </span>
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">S</kbd>
+              <span className="text-muted-foreground">prati</span>
+            </span>
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Del</kbd>
+              <span className="text-muted-foreground">obriši</span>
+            </span>
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">/</kbd>
+              <span className="text-muted-foreground">traži</span>
+            </span>
+          </div>
         </div>
       )}
 

@@ -332,3 +332,32 @@ export function NewsEmptyIllustration({ className }: { className?: string }): Re
     </svg>
   );
 }
+
+/** Dividends/calendar illustration for dividends calendar empty state */
+export function DividendsCalendarEmptyIllustration({ className }: { className?: string }): ReactNode {
+  return (
+    <svg
+      viewBox="0 0 80 80"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      aria-hidden="true"
+    >
+      {/* Background circle */}
+      <circle cx="40" cy="40" r="36" className="fill-muted/40" />
+      {/* Calendar outline */}
+      <rect x="16" y="16" width="48" height="48" rx="4" className="fill-card" stroke="currentColor" strokeWidth="2" style={{ stroke: 'hsl(var(--border))' }} />
+      {/* Calendar header */}
+      <rect x="16" y="16" width="48" height="10" rx="4 4 0 0" className="fill-primary/30" stroke="currentColor" strokeWidth="1" style={{ stroke: 'hsl(var(--border))' }} />
+      {/* Calendar dots (no dividends) */}
+      <circle cx="28" cy="40" r="4" className="fill-muted" />
+      <circle cx="40" cy="40" r="4" className="fill-muted" />
+      <circle cx="52" cy="40" r="4" className="fill-muted" />
+      <circle cx="28" cy="52" r="4" className="fill-muted" />
+      <circle cx="40" cy="52" r="4" className="fill-muted" />
+      <circle cx="52" cy="52" r="4" className="fill-muted" />
+      {/* Euro symbol overlay */}
+      <text x="40" y="45" textAnchor="middle" dominantBaseline="middle" className="fill-primary font-data text-[12px] font-bold">€</text>
+    </svg>
+  );
+}
