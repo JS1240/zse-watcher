@@ -111,6 +111,62 @@ export function PortfolioSoldIllustration({ className }: { className?: string })
   );
 }
 
+/** Stock list + chart illustration for stock table "no data" empty state */
+export function StockListEmptyIllustration({ className }: { className?: string }): ReactNode {
+  return (
+    <svg
+      viewBox="0 0 80 80"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      aria-hidden="true"
+    >
+      {/* Background circle */}
+      <circle cx="40" cy="40" r="36" className="fill-muted/40" />
+      {/* Left panel — stock ticker rows */}
+      <rect x="16" y="20" width="22" height="40" rx="3" className="fill-card" stroke="currentColor" strokeWidth="1.5" style={{ stroke: 'hsl(var(--border))' }} />
+      {/* Ticker row 1 — active */}
+      <rect x="19" y="23" width="10" height="4" rx="1" className="fill-primary/40" />
+      <rect x="31" y="23" width="5" height="4" rx="1" className="fill-price-up/60" />
+      {/* Ticker row 2 */}
+      <rect x="19" y="30" width="10" height="4" rx="1" className="fill-primary/20" />
+      <rect x="31" y="30" width="5" height="4" rx="1" className="fill-muted-foreground/30" />
+      {/* Ticker row 3 */}
+      <rect x="19" y="37" width="10" height="4" rx="1" className="fill-primary/20" />
+      <rect x="31" y="37" width="5" height="4" rx="1" className="fill-price-down/50" />
+      {/* Ticker row 4 */}
+      <rect x="19" y="44" width="10" height="4" rx="1" className="fill-primary/20" />
+      <rect x="31" y="44" width="5" height="4" rx="1" className="fill-primary/40" />
+      {/* Ticker row 5 */}
+      <rect x="19" y="51" width="10" height="4" rx="1" className="fill-primary/20" />
+      <rect x="31" y="51" width="5" height="4" rx="1" className="fill-muted-foreground/30" />
+      {/* Right panel — mini sparkline chart */}
+      <rect x="42" y="20" width="22" height="40" rx="3" className="fill-card" stroke="currentColor" strokeWidth="1.5" style={{ stroke: 'hsl(var(--border))' }} />
+      {/* Grid lines */}
+      <line x1="45" y1="30" x2="62" y2="30" className="stroke-border" strokeWidth="0.75" strokeDasharray="2 2" />
+      <line x1="45" y1="40" x2="62" y2="40" className="stroke-border" strokeWidth="0.75" strokeDasharray="2 2" />
+      <line x1="45" y1="50" x2="62" y2="50" className="stroke-border" strokeWidth="0.75" strokeDasharray="2 2" />
+      {/* Stock price line */}
+      <polyline
+        points="45,54 49,50 53,52 57,44 60,47 63,40"
+        fill="none"
+        className="stroke-primary"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      {/* Peak dot */}
+      <circle cx="63" cy="40" r="2.5" className="fill-primary" />
+      {/* Star accent — watchlist indicator */}
+      <path
+        d="M50 22 L51 24.5 L53.8 24.5 L51.7 26.2 L52.4 29 L50 27.5 L47.6 29 L48.3 26.2 L46.2 24.5 L49 24.5 Z"
+        className="fill-amber"
+        transform="scale(0.6) translate(40, 8)"
+      />
+    </svg>
+  );
+}
+
 /** Magnifying glass illustration for no search results */
 export function SearchEmptyIllustration({ className }: { className?: string }): ReactNode {
   return (

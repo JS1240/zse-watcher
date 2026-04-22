@@ -14,6 +14,7 @@ import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { useSubscription } from "@/features/premium/hooks/use-subscription";
 import { exportToCsv } from "@/lib/export";
 import { EmptyState } from "@/components/shared/empty-state";
+import { StockListEmptyIllustration, SearchEmptyIllustration } from "@/components/shared/empty-illustrations";
 import { cn } from "@/lib/utils";
 
 type SortField = "ticker" | "price" | "changePct" | "turnover" | "volume";
@@ -335,7 +336,7 @@ export function StockTable() {
         {filtered.length === 0 && (
           debouncedSearch ? (
             <EmptyState
-              icon={<Search className="h-8 w-8" />}
+              icon={<SearchEmptyIllustration className="h-16 w-16" />}
               title={t("noResults")}
               description={tc("empty.noResultsDescription")}
               variant="no-results"
@@ -343,7 +344,7 @@ export function StockTable() {
             />
           ) : (
             <EmptyState
-              icon={<TrendingUp className="h-8 w-8" />}
+              icon={<StockListEmptyIllustration className="h-16 w-16" />}
               title={t("noStocks")}
               description={tc("empty.noDataDescription")}
             />
