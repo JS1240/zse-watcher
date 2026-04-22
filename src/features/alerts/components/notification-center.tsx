@@ -70,13 +70,14 @@ export function NotificationCenter() {
                 <button
                   key={alert.id}
                   onClick={handleViewAllTriggered}
-                  className="flex w-full items-center justify-between border-b border-border/50 px-3 py-2 text-left last:border-b-0 transition-colors hover:bg-accent/50"
+                  className="flex w-full items-center gap-2 border-b border-border/50 px-3 py-2.5 text-left last:border-b-0 transition-colors hover:bg-accent/50"
                 >
-                  <div className="flex items-center gap-2">
+                  {/* Left: ticker + status + local badge }
+                  <div className="flex min-w-0 flex-shrink-0 items-center gap-2">
                     <span className="font-data text-[11px] font-semibold text-foreground">
                       {alert.ticker}
                     </span>
-                    <span className="text-[10px] text-amber">
+                    <span className="rounded bg-amber/20 px-1.5 py-0.5 text-[9px] font-semibold text-amber">
                       {t("status.triggered")}
                     </span>
                     {"id" in alert && alert.id.startsWith("local-") && (
@@ -85,15 +86,19 @@ export function NotificationCenter() {
                       </span>
                     )}
                   </div>
-                  <p className="text-[10px] text-muted-foreground">
-                    {formatConditionText(alert.condition, alert.targetValue, t)}
-                  </p>
-                  {alert.triggeredAt && (
-                    <p className="text-[9px] text-muted-foreground/70">
-                      {formatDate(alert.triggeredAt)}
-                    </p>
-                  )}
-                  <ArrowRight className="h-3 w-3 text-muted-foreground/30" />
+                  {/* Center: condition + triggeredAt }
+                  <div className="flex min-w-0 flex-1 items-center gap-2">
+                    <span className="truncate text-[10px] text-muted-foreground">
+                      {formatConditionText(alert.condition, alert.targetValue, t)}
+                    </span>
+                    {alert.triggeredAt && (
+                      <span className="flex-shrink-0 text-[9px] text-muted-foreground/60">
+                        {formatDate(alert.triggeredAt)}
+                      </span>
+                    )}
+                  </div>
+                  {/* Right: arrow }
+                  <ArrowRight className="h-3 w-3 flex-shrink-0 text-muted-foreground/30" />
                 </button>
               ))
             ) : (
