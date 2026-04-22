@@ -4,6 +4,13 @@
 
 ### Added
 
+- **Quick Filter Chips and Sector Dropdown for Stock Table** — improve discoverability for Croatian retail investors
+  - Added gainers/losers/unchanged filter chips with TrendingUp/Down/Minus icons
+  - Added dynamic sector filter dropdown (populated from unique sectors in data)
+  - Added results count badge next to live data indicator
+  - Filter pipeline updated in useMemo alongside search and sort
+  - Consistent UX with watchlist page filters
+
 - **Stock Table Always-Visible Keyboard Shortcuts** — make shortcuts discoverable for Croatian retail investors
   - Changed keyboard shortcuts hint from hover-only to always visible (no more `invisible group-hover:visible` pattern)
   - Added `/` search shortcut hint to the stock table footer

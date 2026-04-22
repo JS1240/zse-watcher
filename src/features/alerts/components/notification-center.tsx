@@ -1,5 +1,6 @@
-import { Bell } from "lucide-react";
+import { Bell, ArrowRight } from "lucide-react";
 import * as Popover from "@radix-ui/react-popover";
+import { useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
 
@@ -15,6 +16,7 @@ export function NotificationCenter() {
   const { alerts: localAlerts } = useLocalAlerts();
   const remoteTriggeredAlerts = useTriggeredAlerts();
   const remoteActiveCount = useActiveAlertCount();
+  const navigate = useNavigate();
 
   // Combine local and remote triggered alerts
   const localTriggeredAlerts = localAlerts.filter((a) => a.isTriggered);
@@ -22,6 +24,11 @@ export function NotificationCenter() {
   const hasLocalAlerts = localAlerts.length > 0;
   const hasNotifications = allTriggeredAlerts.length > 0;
   const totalActiveCount = (hasLocalAlerts ? localAlerts.filter((a) => a.isActive).length : 0) + (isAuthenticated ? remoteActiveCount : 0);
+
+  // Navigate to alerts page filtered by triggered
+  const handleViewAllTriggered = () => {
+    navigate({ to: "/alerts", search: { status: "triggered" } });
+  };
 
   return (
     <Popover.Root>
@@ -42,18 +49,28 @@ export function NotificationCenter() {
           sideOffset={8}
           className="z-50 w-72 rounded-md border border-border bg-popover p-0 shadow-lg"
         >
-          <div className="border-b border-border px-3 py-2">
+          <div className="flex items-center justify-between border-b border-border px-3 py-2">
             <h3 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
               {t("notification.title")}
             </h3>
+            {allTriggeredAlerts.length > 0 && (
+              <button
+                onClick={handleViewAllTriggered}
+                className="flex items-center gap-0.5 text-[9px] text-primary transition-colors hover:text-primary/80"
+              >
+                {t("notification.viewAll") || "View all"}
+                <ArrowRight className="h-3 w-3" />
+              </button>
+            )}
           </div>
 
           <div className="max-h-64 overflow-y-auto">
             {allTriggeredAlerts.length > 0 ? (
               allTriggeredAlerts.map((alert) => (
-                <div
+                <button
                   key={alert.id}
-                  className="border-b border-border/50 px-3 py-2 last:border-b-0"
+                  onClick={handleViewAllTriggered}
+                  className="flex w-full items-center justify-between border-b border-border/50 px-3 py-2 text-left last:border-b-0 transition-colors hover:bg-accent/50"
                 >
                   <div className="flex items-center gap-2">
                     <span className="font-data text-[11px] font-semibold text-foreground">
@@ -76,7 +93,8 @@ export function NotificationCenter() {
                       {formatDate(alert.triggeredAt)}
                     </p>
                   )}
-                </div>
+                  <ArrowRight className="h-3 w-3 text-muted-foreground/30" />
+                </button>
               ))
             ) : (
               <div className="px-3 py-6 text-center text-[10px] text-muted-foreground">

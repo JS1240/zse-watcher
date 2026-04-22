@@ -76,6 +76,7 @@
   },
   "notification": {
     "title": "Obavijesti",
+    "viewAll": "Pogledaj sve",
     "priceAbove": "Cijena iznad {{value}}",
     "priceBelow": "Cijena ispod {{value}}",
     "upBy": "Porast {{value}}%",

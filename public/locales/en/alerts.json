@@ -76,6 +76,7 @@
   },
   "notification": {
     "title": "Notifications",
+    "viewAll": "View all",
     "priceAbove": "Price above {{value}}",
     "priceBelow": "Price below {{value}}",
     "upBy": "Up {{value}}%",

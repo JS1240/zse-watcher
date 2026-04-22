@@ -64,7 +64,11 @@ function FilterChip({ active, onClick, label, icon, count }: FilterChipProps) {
   );
 }
 
-export function AlertsDashboard() {
+interface AlertsDashboardProps {
+  initialStatusFilter?: "all" | "active" | "triggered" | "paused";
+}
+
+export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
   const { t } = useTranslation("alerts");
   const { t: tc } = useTranslation("common");
   const { alerts, isLoading, deleteAlert, toggleAlert, updateAlert } = useAlertsData();
@@ -79,7 +83,10 @@ export function AlertsDashboard() {
   const focusSearch = useCallback(() => searchInputRef.current?.focus(), []);
   useKeyboardShortcut({ key: "/", handler: focusSearch, enabled: true });
 
-  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "triggered" | "paused">("all");
+  // Initialize status filter from URL parameter (navigated from notification center)
+  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "triggered" | "paused">(
+    initialStatusFilter ?? "all"
+  );
   const [scrollTop, setScrollTop] = useState(false);
   const alertsListRef = useRef<HTMLDivElement>(null);
   const [conditionFilter, setConditionFilter] = useState<"all" | "price" | "percent">("all");
