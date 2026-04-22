@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Crown, Check, X } from "lucide-react";
+import { useState, useRef } from "react";
+import { Crown, Check, X, ArrowUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSubscription } from "@/features/premium/hooks/use-subscription";
 import { useAuth } from "@/hooks/use-auth";
@@ -13,6 +13,8 @@ type BillingCycle = "monthly" | "annual";
 export function PricingPage() {
   const [cycle, setCycle] = useState<BillingCycle>("annual");
   const [upgradeLoading, setUpgradeLoading] = useState(false);
+  const [scrollTop, setScrollTop] = useState(false);
+  const pricingRef = useRef<HTMLDivElement>(null);
   const { isPremium, loading: subLoading } = useSubscription();
   const { isAuthenticated, loading: authLoading } = useAuth();
 
@@ -35,7 +37,11 @@ export function PricingPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div 
+      ref={pricingRef}
+      onScroll={(e) => setScrollTop((e.target as HTMLDivElement).scrollTop > 300)}
+      className="space-y-6 overflow-auto max-h-[85vh] p-1"
+    >
       {/* Header */}
       <div className="text-center animate-pricing-card">
         <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-amber/10">
@@ -172,6 +178,19 @@ export function PricingPage() {
           );
         })}
       </div>
+
+      {/* Scroll to top button */}
+      <button
+        onClick={() => pricingRef.current?.scrollTo({ top: 0, behavior: "smooth" })}
+        className={cn(
+          "fixed bottom-6 right-6 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-all duration-200 hover:bg-primary/90",
+          scrollTop ? "opacity-100 translate-y-0" : "pointer-events-none opacity-0 translate-y-2"
+        )}
+        aria-label="Povratak na vrh"
+        title="Povratak na vrh"
+      >
+        <ArrowUp className="h-4 w-4" />
+      </button>
     </div>
   );
 }
