@@ -80,6 +80,18 @@ export function AddPositionForm({ onClose, onSuccess }: AddPositionFormProps) {
   // Common investment amounts for quick-fill buttons
   const quickAmounts = [500, 1000, 2500, 5000, 10000];
 
+  // Quick share amount buttons for fills
+  const quickShares = [10, 25, 50, 100, 250];
+
+  // Quick percentage buttons for price
+  const quickPricePcts = [
+    { pct: -10, label: "-10%" },
+    { pct: -5, label: "-5%" },
+    { pct: 0, label: "0%" },
+    { pct: 5, label: "+5%" },
+    { pct: 10, label: "+10%" },
+  ];
+
   // Calculate total investment value from shares × price
   const totalInvestment = useMemo(() => {
     if (!sharesValue || !priceValue) return null;
@@ -105,6 +117,21 @@ export function AddPositionForm({ onClose, onSuccess }: AddPositionFormProps) {
       }
     }
   }, [priceValue, currentPrice, setValue]);
+
+  // Handle quick share amount buttons
+  const handleQuickShares = useCallback((shares: number) => {
+    setValue("shares", shares.toString(), { shouldValidate: true });
+    setTouched((prev) => ({ ...prev, shares: true }));
+  }, [setValue]);
+
+  // Handle quick price percentage buttons
+  const handleQuickPrice = useCallback((pct: number) => {
+    if (!currentPrice) return;
+    const newPrice = currentPrice * (1 + pct / 100);
+    const formatted = formatPrice(newPrice).replace("EUR", "").trim();
+    setValue("pricePerShare", formatted, { shouldValidate: true });
+    setTouched((prev) => ({ ...prev, price: true }));
+  }, [currentPrice, setValue]);
 
   // Suggested price based on current price (5% bump for buy, 5% drop for sell)
   const suggestedPrice = useMemo(() => {
@@ -306,6 +333,21 @@ export function AddPositionForm({ onClose, onSuccess }: AddPositionFormProps) {
               ))}
             </div>
           )}
+          {/* Quick share amount buttons */}
+          {currentPrice && (
+            <div className="flex flex-wrap gap-1">
+              {quickShares.map((shares) => (
+                <button
+                  key={shares}
+                  type="button"
+                  onClick={() => handleQuickShares(shares)}
+                  className="rounded-sm bg-muted/60 px-2 py-0.5 text-[9px] font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                >
+                  {shares}
+                </button>
+              ))}
+            </div>
+          )}
           {showSharesError ? (
             <p className="flex items-center gap-1.5 text-xs font-medium text-destructive">
               <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
@@ -349,6 +391,25 @@ export function AddPositionForm({ onClose, onSuccess }: AddPositionFormProps) {
               isPriceValid && !focused.price && !showPriceError && "ring-1 ring-emerald-500 border-emerald-500"
             )}
           />
+          {currentPrice && (
+            <div className="mt-1 flex flex-wrap gap-1">
+              {quickPricePcts.map(({ pct, label }) => (
+                <button
+                  key={pct}
+                  type="button"
+                  onClick={() => handleQuickPrice(pct)}
+                  className={cn(
+                    "rounded-sm px-2 py-0.5 text-[9px] font-medium transition-colors",
+                    pct >= 0
+                      ? "bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground"
+                      : "bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground"
+                  )}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          )}
           {showPriceError ? (
             <p className="mt-1.5 flex items-center gap-1.5 rounded-md bg-destructive/10 px-2.5 py-1.5 text-xs font-medium text-destructive">
               <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
