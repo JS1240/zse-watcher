@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef, useCallback, memo } from "react";
 import { useTranslation } from "react-i18next";
-import { Bell, BellOff, Pencil, Trash2, X, Check, CheckCircle2, Keyboard, Download, AlertCircle, Search, CircleDot, Pause, TrendingUp, TrendingDown, ArrowUpDown, ArrowUp, HelpCircle } from "lucide-react";
+import { Bell, BellOff, Pencil, Trash2, X, Check, CheckCircle2, Keyboard, Download, AlertCircle, Search, CircleDot, Pause, TrendingUp, TrendingDown, ArrowUpDown, ArrowUp, HelpCircle, Copy } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { toast } from "sonner";
@@ -88,7 +88,26 @@ export function AlertsDashboard() {
     direction: "desc",
   });
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
   const debouncedSearch = useDebounce(search, 200);
+
+  // Click-to-copy handlers for alert values (matching portfolio UX)
+  const handleCopyTicker = useCallback(async (e: React.MouseEvent, ticker: string) => {
+    e.stopPropagation();
+    await navigator.clipboard.writeText(ticker);
+    toast.success(tc("toast.copied", { ticker }) || `${ticker} kopiran`);
+    setCopiedField(`ticker-${ticker}`);
+    setTimeout(() => setCopiedField(null), 1200);
+  }, [tc]);
+
+  const handleCopyTarget = useCallback(async (e: React.MouseEvent, targetValue: number, isPercent: boolean) => {
+    e.stopPropagation();
+    const text = isPercent ? `${targetValue}%` : targetValue.toFixed(2);
+    await navigator.clipboard.writeText(text);
+    toast.success(tc("toast.copiedTarget") || `Kopirano: ${text}`);
+    setCopiedField(`target-${targetValue}`);
+    setTimeout(() => setCopiedField(null), 1200);
+  }, [tc]);
 
   const filteredAlerts = useMemo(() => {
     if (!alerts) return [];
@@ -370,6 +389,9 @@ export function AlertsDashboard() {
                   await updateAlert(id, data);
                   toast.success(t("toast.updated") || "Alert updated", { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
                 }}
+                onCopyTicker={(e) => handleCopyTicker(e, alert.ticker)}
+                onCopyTarget={(e) => handleCopyTarget(e, alert.targetValue, alert.condition.includes("percent"))}
+                copiedField={copiedField}
               />
             ))}
           </div>
@@ -445,11 +467,14 @@ interface AlertRowProps {
     id: string,
     data: { ticker: string; condition: AlertCondition; targetValue: number },
   ) => Promise<void>;
+  onCopyTicker?: (e: React.MouseEvent) => void;
+  onCopyTarget?: (e: React.MouseEvent) => void;
+  copiedField?: string | null;
   stocks?: { ticker: string; name: string; price: number | null }[];
   searchHighlight?: string;
 }
 
-export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUpdate, stocks, searchHighlight }: AlertRowProps) {
+export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUpdate, onCopyTicker, onCopyTarget, stocks, searchHighlight }: AlertRowProps) {
   const { t } = useTranslation("alerts");
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -776,21 +801,49 @@ tabIndex={0}
         {/* Alert info */}
         <div>
           <div className="flex items-center gap-2">
-            <span className="font-data text-xs font-semibold text-foreground">
-              {searchHighlight ? (
-                <Highlight text={alert.ticker} highlight={searchHighlight} />
-              ) : (
-                alert.ticker
-              )}
-            </span>
+            {onCopyTicker ? (
+              <button
+                type="button"
+                onClick={onCopyTicker}
+                className="font-data text-xs font-semibold text-foreground transition-colors hover:text-primary"
+                title="Click to copy ticker"
+              >
+                {searchHighlight ? (
+                  <Highlight text={alert.ticker} highlight={searchHighlight} />
+                ) : (
+                  alert.ticker
+                )}
+              </button>
+            ) : (
+              <span className="font-data text-xs font-semibold text-foreground">
+                {searchHighlight ? (
+                  <Highlight text={alert.ticker} highlight={searchHighlight} />
+                ) : (
+                  alert.ticker
+                )}
+              </span>
+            )}
             <span className="text-[10px] text-muted-foreground">
               {conditionOptions.find((o) => o.value === alert.condition)?.label}
             </span>
-            <span className="font-data text-xs font-medium text-foreground">
-              {isPercent
-                ? `${alert.targetValue}%`
-                : formatPrice(alert.targetValue)}
-            </span>
+            {onCopyTarget ? (
+              <button
+                type="button"
+                onClick={onCopyTarget}
+                className="font-data text-xs font-medium text-foreground transition-colors hover:text-primary"
+                title="Click to copy target"
+              >
+                {isPercent
+                  ? `${alert.targetValue}%`
+                  : formatPrice(alert.targetValue)}
+              </button>
+            ) : (
+              <span className="font-data text-xs font-medium text-foreground">
+                {isPercent
+                  ? `${alert.targetValue}%`
+                  : formatPrice(alert.targetValue)}
+              </span>
+            )}
             {alert.isLocal && (
               <span className="rounded-sm bg-muted px-1 py-0.5 text-[9px] text-muted-foreground">
                 {t("status.local")}
@@ -810,6 +863,16 @@ tabIndex={0}
 
       {/* Actions — visible on hover/focus */}
       <div className="alert-actions flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
+        {onCopyTicker && (
+          <button
+            onClick={onCopyTicker}
+            className="flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            title="Copy ticker"
+            aria-label={`Copy ${alert.ticker}`}
+          >
+            <Copy className="h-3.5 w-3.5" />
+          </button>
+        )}
         <button
           onClick={() => setEditing(true)}
           className="flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -838,6 +901,8 @@ tabIndex={0}
     prev.alert.targetValue === next.alert.targetValue &&
     prev.alert.isActive === next.alert.isActive &&
     prev.alert.isTriggered === next.alert.isTriggered &&
-    prev.searchHighlight === next.searchHighlight
+    prev.searchHighlight === next.searchHighlight &&
+    prev.onCopyTicker === next.onCopyTicker &&
+    prev.onCopyTarget === next.onCopyTarget
   );
 });
