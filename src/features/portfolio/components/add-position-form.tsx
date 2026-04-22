@@ -1,9 +1,9 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod/v4";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
-import { X, Keyboard, AlertCircle, CheckCircle2, TrendingUp } from "lucide-react";
+import { X, Keyboard, AlertCircle, CheckCircle2, TrendingUp, Euro } from "lucide-react";
 import { toast } from "sonner";
 import { useAddTransaction } from "@/features/portfolio/api/portfolio-queries";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
@@ -70,12 +70,41 @@ export function AddPositionForm({ onClose, onSuccess }: AddPositionFormProps) {
   const debouncedShares = useDebounce(sharesValue, 300);
   const debouncedPrice = useDebounce(priceValue, 300);
 
-  // Get current price for selected ticker
+  // Get current price for selected ticker - moved before callback to fix hoisting issue
   const currentPrice = useMemo(() => {
     if (!tickerValue) return null;
     const stock = stocks.find((s) => s.ticker.toUpperCase() === tickerValue.toUpperCase());
     return stock?.price ?? null;
   }, [tickerValue, stocks]);
+
+  // Common investment amounts for quick-fill buttons
+  const quickAmounts = [500, 1000, 2500, 5000, 10000];
+
+  // Calculate total investment value from shares × price
+  const totalInvestment = useMemo(() => {
+    if (!sharesValue || !priceValue) return null;
+    const shares = parseLocalizedNumber(sharesValue);
+    const price = parseLocalizedNumber(priceValue);
+    if (isNaN(shares) || isNaN(price) || shares <= 0 || price <= 0) return null;
+    return shares * price;
+  }, [sharesValue, priceValue]);
+
+  // Handle investment amount input → calculate shares
+  const handleInvestmentAmount = useCallback((amount: number | string) => {
+    const amountStr = typeof amount === "number" ? amount.toString() : amount;
+    const amountParsed = parseLocalizedNumber(amountStr);
+    if (isNaN(amountParsed) || amountParsed <= 0) return;
+    
+    // Use price from form if entered, otherwise fall back to current price
+    const price = priceValue ? parseLocalizedNumber(priceValue) : currentPrice;
+    if (price && price > 0) {
+      const shares = Math.floor(amountParsed / price);
+      if (shares > 0) {
+        setValue("shares", shares.toString(), { shouldValidate: true });
+        setTouched((prev) => ({ ...prev, shares: true }));
+      }
+    }
+  }, [priceValue, currentPrice, setValue]);
 
   // Suggested price based on current price (5% bump for buy, 5% drop for sell)
   const suggestedPrice = useMemo(() => {
@@ -122,6 +151,9 @@ export function AddPositionForm({ onClose, onSuccess }: AddPositionFormProps) {
   const showTickerError = touched.ticker && (errors.ticker || (tickerValue && !isTickerFormatValid));
   const showSharesError = touched.shares && (errors.shares || (debouncedShares && !isSharesValid));
   const showPriceError = touched.price && (errors.pricePerShare || (debouncedPrice && !isPriceValid));
+
+  // Show calculated total investment value
+  const showTotalInvestment = totalInvestment !== null && totalInvestment > 0;
 
   // Focus input on mount
   useEffect(() => {
@@ -239,7 +271,7 @@ export function AddPositionForm({ onClose, onSuccess }: AddPositionFormProps) {
           </select>
         </div>
 
-        <div>
+        <div className="space-y-1.5">
           <label className="mb-1 block text-[10px] text-muted-foreground">{t("fields.shares")}</label>
           <Input
             type="number"
@@ -259,18 +291,38 @@ export function AddPositionForm({ onClose, onSuccess }: AddPositionFormProps) {
               isSharesValid && !focused.shares && !showSharesError && "ring-1 ring-emerald-500 border-emerald-500"
             )}
           />
+          {/* Quick-fill investment amount buttons */}
+          {currentPrice && (
+            <div className="flex flex-wrap gap-1">
+              {quickAmounts.map((amount) => (
+                <button
+                  key={amount}
+                  type="button"
+                  onClick={() => handleInvestmentAmount(amount)}
+                  className="rounded-sm bg-muted/60 px-2 py-0.5 text-[9px] font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                >
+                  €{amount.toLocaleString("de-DE")}
+                </button>
+              ))}
+            </div>
+          )}
           {showSharesError ? (
-            <p className="mt-1.5 flex items-center gap-1.5 rounded-md bg-destructive/10 px-2.5 py-1.5 text-xs font-medium text-destructive">
+            <p className="flex items-center gap-1.5 text-xs font-medium text-destructive">
               <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
               {translateError(errors.shares?.message, t) || t("validation.positiveNumber")}
             </p>
+          ) : isSharesValid && showTotalInvestment ? (
+            <p className="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
+              <Euro className="h-3 w-3 flex-shrink-0" />
+              {t("totalInvestment") || `Ukupno: ${formatPrice(totalInvestment)}`}
+            </p>
           ) : isSharesValid && !focused.shares ? (
-            <p className="mt-1.5 flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400">
+            <p className="flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400">
               <CheckCircle2 className="h-3.5 w-3.5 flex-shrink-0" />
               {t("fields.valid") || "Ispravno"}
             </p>
           ) : (
-            <p className="mt-1.5 flex items-center gap-1.5 text-[9px] text-muted-foreground">
+            <p className="flex items-center gap-1.5 text-[9px] text-muted-foreground">
               <Keyboard className="h-3 w-3 flex-shrink-0" />
               {t("fields.sharesHint") || "unesite broj dionica"}
             </p>

@@ -34,10 +34,11 @@
   },
   "tickerNotFound": "Ticker nije pronađen na ZSE",
   "useSuggested": "Koristi {{value}}",
+  "totalInvestment": "Ukupna vrijednost: {{value}}",
   "fields": {
     "ticker": "Oznaka",
     "name": "Ime",
-    "shares": "Broj dionica",
+    "shares": "Broj dionica (ili euro iznos)",
     "avgPrice": "Prosjecna cijena",
     "currentPrice": "Trenutna cijena",
     "value": "Vrijednost",

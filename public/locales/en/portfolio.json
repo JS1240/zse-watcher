@@ -34,10 +34,11 @@
   },
   "tickerNotFound": "Ticker not found on ZSE",
   "useSuggested": "Use {{value}}",
+  "totalInvestment": "Total: {{value}}",
   "fields": {
     "ticker": "Ticker",
     "name": "Name",
-    "shares": "Shares",
+    "shares": "Shares (or euro amount)",
     "avgPrice": "Avg Price",
     "currentPrice": "Current Price",
     "value": "Value",
