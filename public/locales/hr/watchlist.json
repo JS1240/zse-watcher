@@ -5,7 +5,11 @@
     "gainers": "Dobitnici",
     "losers": "Gubitnici",
     "unchanged": "Nepromijenjeno",
-    "allSectors": "Svi sektori"
+    "allSectors": "Svi sektori",
+    "allTooltip": "Prikaži sve dionice",
+    "gainersTooltip": "Prikaži samo dionice s porastom cijene",
+    "losersTooltip": "Prikaži samo dionice s padom cijene",
+    "unchangedTooltip": "Prikaži dionice s nepromijenjeno cijenom"
   },
   "title": "Praćenje",
   "empty": "Nema dionica u listi praćenja",

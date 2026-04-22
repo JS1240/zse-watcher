@@ -817,19 +817,25 @@ function LocalWatchlist() {
       {/* Quick filters: gainers / losers / unchanged */}
       <div className="flex gap-1.5 flex-wrap">
         {changeFilters.map(({ value, labelKey, icon: Icon }) => (
-          <button
-            key={value}
-            onClick={() => setChangeFilter(value)}
-            className={cn(
-              "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
-              changeFilter === value
-                ? "bg-primary text-primary-foreground shadow-sm"
-                : "bg-muted/60 text-muted-foreground hover:bg-muted",
-            )}
-          >
-            <Icon className="h-3 w-3" />
-            <span className="hidden sm:inline">{t(labelKey)}</span>
-          </button>
+          <Tooltip key={value}>
+            <TooltipTrigger asChild>
+              <button
+                onClick={() => setChangeFilter(value)}
+                className={cn(
+                  "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
+                  changeFilter === value
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "bg-muted/60 text-muted-foreground hover:bg-muted",
+                )}
+              >
+                <Icon className="h-3 w-3" />
+                <span className="hidden sm:inline">{t(labelKey)}</span>
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="top" className="text-xs">
+              <p>{t(`filters.${value}Tooltip`) || (value === "all" ? "Svi" : value === "gainers" ? "Prikaži samo dobitnike" : value === "losers" ? "Prikaži samo gubitnike" : "Prikaži nepromijenjene")}</p>
+            </TooltipContent>
+          </Tooltip>
         ))}
         {/* Sector filter dropdown */}
         {availableSectors.length > 0 && (

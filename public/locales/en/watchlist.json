@@ -5,7 +5,11 @@
     "gainers": "Gainers",
     "losers": "Losers",
     "unchanged": "Unchanged",
-    "allSectors": "All sectors"
+    "allSectors": "All sectors",
+    "allTooltip": "Show all stocks",
+    "gainersTooltip": "Show only stocks with price increase",
+    "losersTooltip": "Show only stocks with price decrease",
+    "unchangedTooltip": "Show stocks with unchanged price"
   },
   "title": "Watchlist",
   "empty": "No stocks in watchlist",
