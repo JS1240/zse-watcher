@@ -36,7 +36,7 @@ export function NotificationCenter() {
         <button className="relative rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground">
           <Bell className="h-3.5 w-3.5" />
           {hasNotifications && (
-            <span className="absolute -right-0.5 -top-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-destructive text-[8px] font-bold text-white">
+            <span className="absolute -right-0.5 -top-0.5 flex h-3.5 w-3.5 animate-notification-pulse items-center justify-center rounded-full bg-destructive text-[8px] font-bold text-white">
               {allTriggeredAlerts.length}
             </span>
           )}

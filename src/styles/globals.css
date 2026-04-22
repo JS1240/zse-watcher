@@ -121,6 +121,16 @@ body {
   animation: cta-pulse 2s ease-in-out infinite;
 }
 
+/* Notification badge pulse for triggered alerts */
+@keyframes notification-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+.animate-notification-pulse {
+  animation: notification-pulse 1.5s ease-in-out infinite;
+}
+
 /* Focus-visible for keyboard navigation accessibility */
 *:focus-visible {
   outline: 2px solid currentColor;
