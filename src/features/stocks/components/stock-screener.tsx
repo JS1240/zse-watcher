@@ -7,6 +7,7 @@ import { useLocalStorage } from "@/hooks/use-local-storage";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ChangeBadge } from "@/components/shared/change-badge";
+import { LiveDataIndicator } from "@/components/shared/live-data-indicator";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Highlight } from "@/components/shared/highlight";
 import { SearchEmptyIllustration } from "@/components/shared/empty-illustrations";
@@ -209,7 +210,7 @@ function SortHeader({
 export function StockScreener() {
   const { t } = useTranslation("stocks");
   const { t: tc } = useTranslation("common");
-  const { data: result, isLoading, isError, refetch } = useStocksLive();
+  const { data: result, isLoading, isError, refetch, dataUpdatedAt, isFetching } = useStocksLive();
   const stocks = result?.stocks ?? null;
   const isMockData = result?.isMockData ?? false;
   const { select } = useSelectedStock();
@@ -629,7 +630,11 @@ export function StockScreener() {
         <span className="text-[10px] text-muted-foreground">
           {t("screener.results", { count: results.length, total: stocks?.length ?? 0 })}
         </span>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          <LiveDataIndicator
+            updatedAt={dataUpdatedAt ?? 0}
+            isFetching={isFetching}
+          />
           {/* Always-visible keyboard shortcuts hint for discoverability */}
           <div className="flex items-center gap-2 text-[9px] text-muted-foreground">
             <span className="flex items-center gap-0.5">
