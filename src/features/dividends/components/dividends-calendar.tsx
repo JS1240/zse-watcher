@@ -1,6 +1,7 @@
-import { useMemo, useState, useEffect, useRef } from "react";
+import { useMemo, useState, useEffect, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { CalendarDays, Search, Calendar, Download, ChevronDown, ChevronUp, ArrowUp } from "lucide-react";
+import { CalendarDays, Search, Calendar, Download, ChevronDown, ChevronUp, ArrowUp, Keyboard } from "lucide-react";
+import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { toast } from "sonner";
 import { useDividends } from "@/features/dividends/api/dividends-queries";
 import { DividendsSkeleton } from "./dividends-skeleton";
@@ -27,6 +28,11 @@ export function DividendsCalendar() {
   const [scrollTop, setScrollTop] = useState(false);
   const dividendsListRef = useRef<HTMLDivElement>(null);
   const { select, selectedTicker } = useSelectedStock();
+
+  // Keyboard shortcut to focus search
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const focusSearch = useCallback(() => searchInputRef.current?.focus(), []);
+  useKeyboardShortcut({ key: "/", handler: focusSearch, enabled: true });
 
   // Extract unique years from dividends
   const availableYears = useMemo(() => {
@@ -189,11 +195,18 @@ export function DividendsCalendar() {
         <div className="relative flex-1 min-w-[180px]">
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
           <Input
+            ref={searchInputRef}
             placeholder={t("searchPlaceholder")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-8 h-8 text-xs"
           />
+          {!searchQuery && (
+            <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-0.5 rounded bg-muted px-1.5 py-0.5 text-[9px] text-muted-foreground">
+              <Keyboard className="h-2.5 w-2.5" />
+              /
+            </span>
+          )}
         </div>
 
         {/* Year filter dropdown */}
