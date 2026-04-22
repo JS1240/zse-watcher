@@ -37,6 +37,31 @@ const SHORTCUTS = [
       { keys: ["↑", "↓"], description: "Navigate rows" },
     ],
   },
+  {
+    group: "Alerts",
+    items: [
+      { keys: ["Enter"], description: "Toggle alert on/off" },
+      { keys: ["E"], description: "Edit alert" },
+      { keys: ["Del"], description: "Delete alert" },
+      { keys: ["Esc"], description: "Cancel edit" },
+    ],
+  },
+  {
+    group: "Watchlist",
+    items: [
+      { keys: ["Enter"], description: "Open stock detail" },
+      { keys: ["W"], description: "Toggle watchlist" },
+      { keys: ["Del"], description: "Remove from list" },
+    ],
+  },
+  {
+    group: "Portfolio",
+    items: [
+      { keys: ["Enter"], description: "Open stock detail" },
+      { keys: ["E"], description: "Edit position" },
+      { keys: ["Del"], description: "Delete position" },
+    ],
+  },
 ];
 
 export function ShortcutsOverlay({ onClose }: ShortcutsOverlayProps) {

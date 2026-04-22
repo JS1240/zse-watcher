@@ -70,6 +70,10 @@
     "edit": "edit",
     "delete": "delete"
   },
+  "inlineEdit": {
+    "save": "Save",
+    "cancel": "Cancel"
+  },
   "notification": {
     "title": "Notifications",
     "priceAbove": "Price above {{value}}",

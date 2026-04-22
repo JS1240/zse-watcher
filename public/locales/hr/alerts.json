@@ -70,6 +70,10 @@
     "edit": "uredi",
     "delete": "obrisi"
   },
+  "inlineEdit": {
+    "save": "Spremi",
+    "cancel": "Odustani"
+  },
   "notification": {
     "title": "Obavijesti",
     "priceAbove": "Cijena iznad {{value}}",
