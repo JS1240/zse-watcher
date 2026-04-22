@@ -1,9 +1,9 @@
 import { type ReactNode, useState } from "react";
 import { Crown, Lock } from "lucide-react";
-import { useSubscription } from "@/features/premium/hooks/use-subscription";
 import { UpgradeModal } from "@/features/premium/components/upgrade-modal";
 import { Button } from "@/components/ui/button";
 import type { PremiumFeature } from "@/features/premium/config/tiers";
+import { useSubscription } from "@/features/premium/hooks/use-subscription";
 
 interface PremiumGateProps {
   feature: PremiumFeature;
@@ -12,12 +12,7 @@ interface PremiumGateProps {
   fallbackDescription?: string;
 }
 
-export function PremiumGate({
-  feature,
-  children,
-  fallbackTitle = "Premium Feature",
-  fallbackDescription = "Upgrade to Premium to unlock this feature.",
-}: PremiumGateProps) {
+export function PremiumGate({ feature, children, fallbackTitle = "Premium Feature", fallbackDescription = "Upgrade to unlock this feature." }: PremiumGateProps) {
   const { canAccess } = useSubscription();
   const [showUpgrade, setShowUpgrade] = useState(false);
 
@@ -26,28 +21,40 @@ export function PremiumGate({
   }
 
   return (
-    <div className="relative">
+    <div className="relative overflow-hidden rounded-lg">
       {/* Blurred preview */}
       <div className="pointer-events-none select-none blur-sm brightness-50">
         {children}
       </div>
 
-      {/* Overlay */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 rounded-md bg-background/60 backdrop-blur-[2px]">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-amber/10">
-          <Lock className="h-5 w-5 text-amber" />
+      {/* Gradient fade at edges */}
+      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent" />
+
+      {/* Lock overlay */}
+      <div className="relative flex flex-col items-center justify-center gap-4 bg-background/60 backdrop-blur-xl">
+        {/* Animated lock badge */}
+        <div className="relative">
+          <div className="absolute inset-0 animate-pulse rounded-full bg-amber-500/30" />
+          <div className="relative flex h-14 w-14 items-center justify-center rounded-full border-2 border-amber-500/50 bg-amber-500/10 shadow-lg shadow-amber-500/20">
+            <Lock className="h-6 w-6 text-amber-500" />
+          </div>
         </div>
-        <h3 className="text-sm font-semibold text-foreground">{fallbackTitle}</h3>
-        <p className="max-w-xs text-center text-xs text-muted-foreground">
+        
+        <h3 className="text-lg font-semibold text-foreground">{fallbackTitle}</h3>
+        <p className="max-w-xs text-center text-sm text-muted-foreground">
           {fallbackDescription}
         </p>
-        <Button size="sm" className="gap-1.5" onClick={() => setShowUpgrade(true)}>
-          <Crown className="h-3.5 w-3.5" />
+
+        <Button 
+          onClick={() => setShowUpgrade(true)}
+          className="gap-2 bg-amber hover:bg-amber/90"
+        >
+          <Crown className="h-4 w-4" />
           Upgrade to Premium
         </Button>
       </div>
 
-      <UpgradeModal
+      <UpgradeModal 
         open={showUpgrade}
         onClose={() => setShowUpgrade(false)}
         featureContext={fallbackTitle}
