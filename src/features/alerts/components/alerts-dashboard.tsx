@@ -9,6 +9,7 @@ import { useAlerts } from "@/features/alerts/api/alerts-queries";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { AlertForm } from "@/features/alerts/components/alert-form";
 import { Button } from "@/components/ui/button";
+import { LiveDataIndicator } from "@/components/shared/live-data-indicator";
 
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -72,7 +73,7 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
   const { t } = useTranslation("alerts");
   const { t: tc } = useTranslation("common");
   const { alerts, isLoading, deleteAlert, toggleAlert, updateAlert, toggleAllAlerts, deleteAllAlerts, deleteTriggeredAlerts } = useAlertsData();
-  const { isError, refetch } = useAlerts();
+  const { isError, refetch, dataUpdatedAt: alertsDataUpdatedAt, isFetching: alertsIsFetching } = useAlerts();
   const { data: stocksResult } = useStocksLive();
   const stocks = useMemo(() => stocksResult?.stocks ?? [], [stocksResult]);
   const [showForm, setShowForm] = useState(false);
@@ -283,6 +284,10 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
           <div className="flex gap-2">
             {filteredAlerts.length > 0 && (
               <>
+                <LiveDataIndicator
+                  updatedAt={alertsDataUpdatedAt ?? 0}
+                  isFetching={alertsIsFetching}
+                />
                 {/* Sort dropdown */}
                 <select
                   value={`${sort.column}-${sort.direction}`}
