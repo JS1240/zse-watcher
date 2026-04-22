@@ -83,6 +83,10 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
   const focusSearch = useCallback(() => searchInputRef.current?.focus(), []);
   useKeyboardShortcut({ key: "/", handler: focusSearch, enabled: true });
 
+  // Keyboard shortcut to create new alert
+  const openCreateForm = useCallback(() => setShowForm(true), []);
+  useKeyboardShortcut({ key: "a", handler: openCreateForm, enabled: true });
+
   // Initialize status filter from URL parameter (navigated from notification center)
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "triggered" | "paused">(
     initialStatusFilter ?? "all"
@@ -416,20 +420,46 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
           </button>
         </>
       ) : debouncedSearch ? (
-        <EmptyState
-          icon={<SearchEmptyIllustration className="h-8 w-8" />}
-          title={tc("empty.noResults")}
-          description={tc("empty.noResultsDescription")}
-          action={{ label: tc("empty.clearFilters"), onClick: () => setSearch("") }}
-        />
+        <div className="flex flex-col gap-6">
+          <EmptyState
+            icon={<SearchEmptyIllustration className="h-8 w-8" />}
+            title={tc("empty.noResults")}
+            description={tc("empty.noResultsDescription")}
+            action={{ label: tc("empty.clearFilters"), onClick: () => setSearch("") }}
+          />
+          {/* Keyboard shortcuts hint for empty state discoverability */}
+          <div className="flex items-center justify-center gap-4 text-[9px] text-muted-foreground">
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1.5 py-0.5 font-sans text-[8px]">A</kbd>
+              <span>{t("shortcut.create") || "stvori alarm"}</span>
+            </span>
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1.5 py-0.5 font-sans text-[8px]">/</kbd>
+              <span>{t("shortcut.search") || "pretrazi"}</span>
+            </span>
+          </div>
+        </div>
       ) : (
-        <EmptyState
-          icon={<AlertEmptyIllustration className="h-8 w-8" />}
-          title={t("empty")}
-          description={t("emptyDescription")}
-          action={{ label: t("create"), onClick: () => setShowForm(true) }}
-          variant="action"
-        />
+        <div className="flex flex-col gap-6">
+          <EmptyState
+            icon={<AlertEmptyIllustration className="h-8 w-8" />}
+            title={t("empty")}
+            description={t("emptyDescription")}
+            action={{ label: t("create"), onClick: () => setShowForm(true) }}
+            variant="action"
+          />
+          {/* Keyboard shortcuts hint for empty state discoverability */}
+          <div className="flex items-center justify-center gap-4 text-[9px] text-muted-foreground">
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1.5 py-0.5 font-sans text-[8px]">A</kbd>
+              <span>{t("shortcut.create") || "stvori alarm"}</span>
+            </span>
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1.5 py-0.5 font-sans text-[8px]">/</kbd>
+              <span>{t("shortcut.search") || "pretrazi"}</span>
+            </span>
+          </div>
+        </div>
       )}
 
       {/* Delete confirmation dialog */}

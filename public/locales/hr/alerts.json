@@ -66,10 +66,12 @@
     "updateFailed": "Neuspjelo azuriranje alarma",
     "exported": "Alarmi izvezeni u CSV"
   },
+  "shortcuts": "Tipkovni\u010dki pre\u010daci",
   "shortcut": {
     "toggle": "aktiviraj",
     "edit": "uredi",
-    "delete": "obrisi"
+    "delete": "obrisi",
+    "create": "stvori alarm"
   },
   "inlineEdit": {
     "save": "Spremi",

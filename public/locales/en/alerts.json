@@ -66,10 +66,12 @@
     "updateFailed": "Failed to update alert",
     "exported": "Alerts exported to CSV"
   },
+  "shortcuts": "Keyboard shortcuts",
   "shortcut": {
     "toggle": "toggle",
     "edit": "edit",
-    "delete": "delete"
+    "delete": "delete",
+    "create": "create alert"
   },
   "inlineEdit": {
     "save": "Save",
