@@ -68,6 +68,13 @@
     "removedFromWatchlist": "Uklonjeno s popisa praćenja"
   },
   "exportCsv": "Izvoz",
+  "filters": {
+    "all": "Sve",
+    "gainers": "Rastu",
+    "losers": "Padaju",
+    "unchanged": "Bez promjene",
+    "allSectors": "Svi sektori"
+  },
   "movers": {
     "title": "Pokretaci trzista",
     "gainers": "Dobitnici",

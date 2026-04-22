@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback, useRef, memo } from "react";
 import { useTranslation } from "react-i18next";
-import { Search, ArrowUpDown, ArrowUp, ArrowDown, Download, TrendingUp, X, ArrowUp as ScrollToTopIcon, Keyboard } from "lucide-react";
+import { Search, ArrowUpDown, ArrowUp, ArrowDown, Download, TrendingUp, TrendingDown, Minus, X, ArrowUp as ScrollToTopIcon, Keyboard } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { StockRow } from "@/features/stocks/components/stock-row";
@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 
 type SortField = "ticker" | "price" | "changePct" | "turnover" | "volume";
 type SortDir = "asc" | "desc";
+type ChangeFilter = "all" | "gainers" | "losers" | "unchanged";
 
 export function StockTable() {
   const { t } = useTranslation("stocks");
@@ -26,10 +27,19 @@ export function StockTable() {
   const stocks = result?.stocks ?? null;
   const { select } = useSelectedStock();
   const [search, setSearch] = useState("");
+  const [changeFilter, setChangeFilter] = useState<ChangeFilter>("all");
+  const [sectorFilter, setSectorFilter] = useState<string | null>(null);
   const [sortField, setSortField] = useState<SortField>("changePct");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [scrollTop, setScrollTop] = useState(false);
   const tableRef = useRef<HTMLDivElement>(null);
+
+  // Compute unique sectors
+  const availableSectors = useMemo(() => {
+    if (!stocks) return [];
+    const sectors = new Set(stocks.map((s) => s.sector).filter(Boolean));
+    return Array.from(sectors).sort();
+  }, [stocks]);
 
   const flashMap = usePriceFlash(stocks);
   const debouncedSearch = useDebounce(search, 200);
@@ -44,7 +54,7 @@ export function StockTable() {
 
     let result = stocks;
 
-    // Filter
+    // Search filter
     if (debouncedSearch) {
       const q = debouncedSearch.toLowerCase();
       result = result.filter(
@@ -53,6 +63,20 @@ export function StockTable() {
           s.name.toLowerCase().includes(q) ||
           s.isin.toLowerCase().includes(q),
       );
+    }
+
+    // Change direction filter
+    if (changeFilter !== "all") {
+      result = result.filter((s) => {
+        if (changeFilter === "gainers") return s.changePct > 0;
+        if (changeFilter === "losers") return s.changePct < 0;
+        return s.changePct === 0;
+      });
+    }
+
+    // Sector filter
+    if (sectorFilter) {
+      result = result.filter((s) => s.sector === sectorFilter);
     }
 
     // Sort
@@ -67,7 +91,7 @@ export function StockTable() {
     });
 
     return result;
-  }, [stocks, debouncedSearch, sortField, sortDir]);
+  }, [stocks, debouncedSearch, changeFilter, sectorFilter, sortField, sortDir]);
 
   const handleRowFocus = useCallback((ticker: string) => select(ticker), [select]);
 
@@ -145,6 +169,12 @@ export function StockTable() {
           updatedAt={dataUpdatedAt}
           isFetching={isFetching}
         />
+        {/* Results count badge */}
+        {filtered.length > 0 && (
+          <span className="flex items-center gap-1 rounded-full bg-muted/60 px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+            {filtered.length}
+          </span>
+        )}
         {canAccess("dataExport") && (
           <Button
             variant="outline"
@@ -154,6 +184,78 @@ export function StockTable() {
           >
             <Download className="h-3.5 w-3.5" />
           </Button>
+        )}
+      </div>
+
+      {/* Quick filters: gainers / losers / unchanged */}
+      <div className="flex gap-1.5 flex-wrap">
+        <button
+          onClick={() => setChangeFilter("all")}
+          className={cn(
+            "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
+            changeFilter === "all"
+              ? "bg-primary text-primary-foreground shadow-sm"
+              : "bg-muted/60 text-muted-foreground hover:bg-muted",
+          )}
+        >
+          <TrendingUp className="h-3 w-3" />
+          <span className="hidden sm:inline">{t("filters.all") || "Sve"}</span>
+        </button>
+        <button
+          onClick={() => setChangeFilter("gainers")}
+          className={cn(
+            "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
+            changeFilter === "gainers"
+              ? "bg-primary text-primary-foreground shadow-sm"
+              : "bg-muted/60 text-muted-foreground hover:bg-muted",
+          )}
+        >
+          <TrendingUp className="h-3 w-3" />
+          <span className="hidden sm:inline">{t("filters.gainers") || "Rastu"}</span>
+        </button>
+        <button
+          onClick={() => setChangeFilter("losers")}
+          className={cn(
+            "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
+            changeFilter === "losers"
+              ? "bg-primary text-primary-foreground shadow-sm"
+              : "bg-muted/60 text-muted-foreground hover:bg-muted",
+          )}
+        >
+          <TrendingDown className="h-3 w-3" />
+          <span className="hidden sm:inline">{t("filters.losers") || "Padaju"}</span>
+        </button>
+        <button
+          onClick={() => setChangeFilter("unchanged")}
+          className={cn(
+            "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
+            changeFilter === "unchanged"
+              ? "bg-primary text-primary-foreground shadow-sm"
+              : "bg-muted/60 text-muted-foreground hover:bg-muted",
+          )}
+        >
+          <Minus className="h-3 w-3" />
+          <span className="hidden sm:inline">{t("filters.unchanged") || "Bez promjene"}</span>
+        </button>
+        {/* Sector filter dropdown */}
+        {availableSectors.length > 0 && (
+          <select
+            value={sectorFilter ?? ""}
+            onChange={(e) => setSectorFilter(e.target.value || null)}
+            className={cn(
+              "rounded-full px-2.5 py-1 text-[10px] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
+              sectorFilter
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "bg-muted/60 text-muted-foreground hover:bg-muted",
+            )}
+          >
+            <option value="">{t("filters.allSectors") || "Svi sektori"}</option>
+            {availableSectors.map((sector) => (
+              <option key={sector} value={sector}>
+                {sector}
+              </option>
+            ))}
+          </select>
         )}
       </div>
 

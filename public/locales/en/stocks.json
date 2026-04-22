@@ -69,6 +69,13 @@
     "removedFromWatchlist": "Removed from watchlist"
   },
   "exportCsv": "Export",
+  "filters": {
+    "all": "All",
+    "gainers": "Gainers",
+    "losers": "Losers",
+    "unchanged": "Unchanged",
+    "allSectors": "All Sectors"
+  },
   "movers": {
     "title": "Market Movers",
     "gainers": "Gainers",
