@@ -63,6 +63,10 @@
     "notFound": "Page not found",
     "tryAgain": "Try again"
   },
+  "toast": {
+    "copied": "Copied: {{value}}",
+    "copiedTarget": "Copied: {{value}}"
+  },
   "empty": {
     "noData": "No data available",
     "noResults": "No results found",

@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { Newspaper, HelpCircle } from "lucide-react";
+import { Newspaper, HelpCircle, Check } from "lucide-react";
+import { toast } from "sonner";
 import { useNews } from "@/features/news/api/news-queries";
 import { ArticleDrawer } from "@/features/news/components/article-drawer";
 import { EmptyState } from "@/components/shared/empty-state";
@@ -18,8 +19,20 @@ interface StockFundamentalsProps {
 
 export function StockFundamentals({ stock }: StockFundamentalsProps) {
   const { t } = useTranslation("stocks");
+  const { t: tc } = useTranslation("common");
   const { data: allNews, isLoading: isNewsLoading } = useNews();
   const [selectedArticle, setSelectedArticle] = useState<NewsArticle | null>(null);
+
+  // Click-to-copy state for metric values
+  const [copiedField, setCopiedField] = useState<string | null>(null);
+
+  // Copy value to clipboard with toast feedback
+  const handleCopy = useCallback(async (field: string, value: string, label: string) => {
+    await navigator.clipboard.writeText(value);
+    setCopiedField(field);
+    toast.success(tc("toast.copied", { value: label }) || `${label} kopiran`);
+    setTimeout(() => setCopiedField(null), 1500);
+  }, [tc]);
   const relatedNews = allNews
     ? allNews.filter((a) => a.ticker === stock.ticker).slice(0, 5)
     : [];
@@ -51,32 +64,56 @@ export function StockFundamentals({ stock }: StockFundamentalsProps) {
             label={t("detail.marketCap")}
             value={stock.marketCapM > 0 ? formatMarketCap(stock.marketCapM) : "N/A"}
             tooltip={t("detail.marketCapTooltip")}
+            copyValue={stock.marketCapM > 0 ? stock.marketCapM.toFixed(2) : undefined}
+            copyField="marketCap"
+            onCopy={handleCopy}
+            copiedField={copiedField}
           />
           <MetricItem
             label={t("detail.pe")}
             value={stock.peRatio !== null ? stock.peRatio.toFixed(1) : "N/A"}
             tooltip={t("detail.peTooltip")}
+            copyValue={stock.peRatio !== null ? stock.peRatio.toFixed(1) : undefined}
+            copyField="peRatio"
+            onCopy={handleCopy}
+            copiedField={copiedField}
           />
           <MetricItem
             label={t("detail.dividendYield")}
             value={stock.dividendYield !== null ? `${stock.dividendYield.toFixed(2)}%` : "N/A"}
             tooltip={t("detail.dividendYieldTooltip")}
+            copyValue={stock.dividendYield !== null ? stock.dividendYield.toFixed(2) : undefined}
+            copyField="dividendYield"
+            onCopy={handleCopy}
+            copiedField={copiedField}
           />
           <MetricItem
             label={t("detail.shares")}
             value={stock.sharesM > 0 ? `${stock.sharesM.toFixed(1)}M` : "N/A"}
             tooltip={t("detail.sharesTooltip")}
+            copyValue={stock.sharesM > 0 ? stock.sharesM.toFixed(1) : undefined}
+            copyField="sharesM"
+            onCopy={handleCopy}
+            copiedField={copiedField}
           />
           <MetricItem
             label={t("detail.founded")}
             value={stock.founded || "N/A"}
             tooltip={t("detail.foundedTooltip")}
+            copyValue={stock.founded || undefined}
+            copyField="founded"
+            onCopy={handleCopy}
+            copiedField={copiedField}
           />
           <MetricItem
             label={t("detail.isin")}
             value={stock.isin}
             mono
             tooltip={t("detail.isinTooltip")}
+            copyValue={stock.isin}
+            copyField="isin"
+            onCopy={handleCopy}
+            copiedField={copiedField}
           />
         </div>
 
@@ -155,28 +192,62 @@ function MetricItem({
   value,
   mono,
   tooltip,
+  copyValue,
+  copyField,
+  onCopy,
+  copiedField,
 }: {
   label: string;
   value: string;
   mono?: boolean;
   tooltip?: string;
+  copyValue?: string;
+  copyField?: string;
+  onCopy?: (field: string, value: string, label: string) => void;
+  copiedField?: string | null;
 }) {
-  if (tooltip) {
+  const isCopied = copyField && copiedField === copyField;
+
+  const handleClick = useCallback(() => {
+    if (copyValue && copyField && onCopy) {
+      onCopy(copyField, copyValue, label);
+    }
+  }, [copyValue, copyField, onCopy, label]);
+
+  if (tooltip || copyValue) {
+    const canCopy = !!copyValue && !!onCopy;
     return (
       <Tooltip>
         <TooltipTrigger asChild>
-          <div className="cursor-help">
+          <div
+            className={cn(
+              canCopy && "cursor-pointer transition-colors hover:bg-muted/50 rounded px-1 -mx-1",
+              isCopied && "bg-emerald-500/10 -mx-1 rounded px-1"
+            )}
+            onClick={handleClick}
+          >
             <span className="text-[10px] text-muted-foreground flex items-center gap-1">
               {label}
-              <HelpCircle className="h-3 w-3 text-muted-foreground/50" />
+              {tooltip && <HelpCircle className="h-3 w-3 text-muted-foreground/50" />}
+              {canCopy && !tooltip && (
+                <span className="text-[8px] text-muted-foreground/50">Klikni za kopiranje</span>
+              )}
             </span>
             <div
               className={cn(
                 "text-xs font-medium text-foreground",
                 mono && "font-data",
+                isCopied && "text-emerald-600 dark:text-emerald-400"
               )}
             >
-              {value}
+              {isCopied ? (
+                <span className="flex items-center gap-1">
+                  <Check className="h-3 w-3" />
+                  Kopirano
+                </span>
+              ) : (
+                value
+              )}
             </div>
           </div>
         </TooltipTrigger>

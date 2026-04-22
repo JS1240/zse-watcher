@@ -64,6 +64,10 @@
     "tryAgain": "Pokusaj ponovo",
     "macro": "Nije moguce ucitati makro podatke. Provjerite vezu."
   },
+  "toast": {
+    "copied": "Kopirano: {{value}}",
+    "copiedTarget": "Kopirano: {{value}}"
+  },
   "empty": {
     "noData": "Nema podataka",
     "noResults": "Nema rezultata",
