@@ -4,6 +4,15 @@
 
 ### Added
 
+- **Sparklines in Portfolio Holdings Table** — add price trend visualization for Croatian retail investors
+  - Added Sparkline component column to both local and authenticated portfolio dashboards
+  - Generates 1W mock price history for each holding (works offline without extra API calls)
+  - Shows mini sparkline trend chart next to each ticker in holdings table
+  - Helps Croatian retail investors quickly see price direction at a glance
+  - Consistent with existing Sparkline component usage in premium analytics
+
+### Added
+
 - **Custom SVG Illustrations for Stock Table Empty States** — replace generic icons with purpose-built SVGs for Croatian retail investors
   - Added `StockListEmptyIllustration` (stock ticker rows + sparkline chart metaphor)
   - Reused existing `SearchEmptyIllustration` for no-results empty state
