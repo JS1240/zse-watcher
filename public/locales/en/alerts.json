@@ -37,6 +37,7 @@
     "condition": "Condition",
     "target": "Target Value",
     "targetHint": "Example: 150.00 or 10.5%",
+    "quickSet": "Quick",
     "status": "Status",
     "created": "Created"
   },

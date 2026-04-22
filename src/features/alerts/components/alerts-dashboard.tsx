@@ -565,6 +565,17 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
     return !isNaN(parsed) && parsed > 0;
   }, [editTarget]);
 
+  // Suggested targets for quick selection (matching AlertForm pattern)
+  const editSuggestedTargets = useMemo(() => {
+    if (!editTickerCurrentPrice || editCondition.includes("percent")) return null;
+    return {
+      up5: editTickerCurrentPrice * 1.05,
+      up10: editTickerCurrentPrice * 1.10,
+      down5: editTickerCurrentPrice * 0.95,
+      down10: editTickerCurrentPrice * 0.90,
+    };
+  }, [editTickerCurrentPrice, editCondition]);
+
   const conditionOptions: { value: AlertCondition; label: string }[] = [
     { value: "above", label: t("condition.above") },
     { value: "below", label: t("condition.below") },
@@ -758,6 +769,50 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
                 <CheckCircle2 className="h-3.5 w-3.5 flex-shrink-0" />
                 {t("validation.targetValid")}
               </p>
+            ) : editSuggestedTargets ? (
+              <div className="mt-1.5 flex flex-wrap items-center gap-1">
+                <span className="text-[9px] text-muted-foreground">{t("quickSet") || "Brzo"}: </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditTarget(editSuggestedTargets.up5.toFixed(2));
+                    setEditCondition("above");
+                  }}
+                  className="flex items-center gap-0.5 rounded bg-emerald-500/20 px-1.5 py-0.5 text-[9px] font-medium text-emerald-700 hover:bg-emerald-500/30 dark:text-emerald-300"
+                >
+                  <TrendingUp className="h-2.5 w-2.5" />+5%
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditTarget(editSuggestedTargets.up10.toFixed(2));
+                    setEditCondition("above");
+                  }}
+                  className="flex items-center gap-0.5 rounded bg-emerald-500/20 px-1.5 py-0.5 text-[9px] font-medium text-emerald-700 hover:bg-emerald-500/30 dark:text-emerald-300"
+                >
+                  <TrendingUp className="h-2.5 w-2.5" />+10%
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditTarget(editSuggestedTargets.down5.toFixed(2));
+                    setEditCondition("below");
+                  }}
+                  className="flex items-center gap-0.5 rounded bg-red-500/20 px-1.5 py-0.5 text-[9px] font-medium text-red-700 hover:bg-red-500/30 dark:text-red-300"
+                >
+                  <TrendingDown className="h-2.5 w-2.5" />-5%
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditTarget(editSuggestedTargets.down10.toFixed(2));
+                    setEditCondition("below");
+                  }}
+                  className="flex items-center gap-0.5 rounded bg-red-500/20 px-1.5 py-0.5 text-[9px] font-medium text-red-700 hover:bg-red-500/30 dark:text-red-300"
+                >
+                  <TrendingDown className="h-2.5 w-2.5" />-10%
+                </button>
+              </div>
             ) : editTickerCurrentPrice != null ? (
               <p className="mt-1.5 flex items-center gap-1.5 text-[9px] font-medium text-muted-foreground">
                 <TrendingUp className="h-3 w-3 flex-shrink-0" />

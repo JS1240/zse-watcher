@@ -37,6 +37,7 @@
     "condition": "Uvjet",
     "target": "Ciljna vrijednost",
     "targetHint": "Primjer: 150,00 ili 10.5%",
+    "quickSet": "Brzo",
     "status": "Status",
     "created": "Stvoreno"
   },
