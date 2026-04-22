@@ -49,31 +49,41 @@ export function PricingPage() {
 
       {/* Billing toggle */}
       <div className="flex items-center justify-center gap-2">
-        <button
-          onClick={() => setCycle("monthly")}
-          className={cn(
-            "rounded-sm px-3 py-1.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-            cycle === "monthly"
-              ? "bg-primary text-primary-foreground"
-              : "text-muted-foreground hover:bg-accent",
-          )}
-        >
-          Monthly
-        </button>
-        <button
-          onClick={() => setCycle("annual")}
-          className={cn(
-            "rounded-sm px-3 py-1.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-            cycle === "annual"
-              ? "bg-primary text-primary-foreground"
-              : "text-muted-foreground hover:bg-accent",
-          )}
-        >
-          Annual
-          <span className="ml-1 rounded-sm bg-price-up/20 px-1 py-0.5 text-[9px] text-price-up">
-            -17%
-          </span>
-        </button>
+        <div className="relative rounded-full bg-muted p-1">
+          <div
+            className={cn(
+              "absolute top-1 h-[calc(100%-8px)] rounded-full bg-primary transition-all duration-300 ease-out",
+              cycle === "monthly" ? "left-1 w-[46%]" : "left-[48%] w-[46%]"
+            )}
+          />
+          <div className="relative flex justify-center">
+            <button
+              onClick={() => setCycle("monthly")}
+              className={cn(
+                "z-10 flex-1 rounded-full px-4 py-1.5 text-xs font-medium transition-colors hover:bg-primary/50",
+                cycle === "monthly"
+                  ? "text-primary-foreground"
+                  : "text-muted-foreground",
+              )}
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setCycle("annual")}
+              className={cn(
+                "z-10 flex-1 rounded-full px-4 py-1.5 text-xs font-medium transition-colors hover:bg-primary/50",
+                cycle === "annual"
+                  ? "text-primary-foreground"
+                  : "text-muted-foreground",
+              )}
+            >
+              Annual
+              <span className="ml-1 inline-flex animate-pulse rounded-full bg-price-up/20 px-1.5 py-0.5 text-[9px] font-bold text-price-up">
+                -17%
+              </span>
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Plan cards */}
@@ -87,14 +97,14 @@ export function PricingPage() {
             <div
               key={plan.id}
               className={cn(
-                "relative rounded-lg border p-5",
+                "relative rounded-lg border p-5 transition-all duration-200",
                 plan.popular
-                  ? "border-primary bg-primary/5"
-                  : "border-border bg-card",
+                  ? "border-primary bg-primary/5 hover:-translate-y-0.5 hover:border-primary hover:shadow-lg hover:shadow-primary/10"
+                  : "border-border bg-card hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5",
               )}
             >
               {plan.popular && (
-                <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-0.5 text-[10px] font-semibold text-primary-foreground">
+                <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 animate-pulse rounded-full bg-primary px-3 py-0.5 text-[10px] font-semibold text-primary-foreground shadow-[0_0_12px_hsl(var(--primary)/0.4)]">
                   Most Popular
                 </div>
               )}
