@@ -4,6 +4,14 @@
 
 ### Added
 
+- **Custom SVG Illustrations for Stock Table Empty States** — replace generic icons with purpose-built SVGs for Croatian retail investors
+  - Added `StockListEmptyIllustration` (stock ticker rows + sparkline chart metaphor)
+  - Reused existing `SearchEmptyIllustration` for no-results empty state
+  - Replaced generic lucide `Search`/`TrendingUp` icons with custom SVGs
+  - Consistent with portfolio/watchlist custom illustration patterns
+
+### Added
+
 - **Quick Filter Chips and Sector Dropdown for Stock Table** — improve discoverability for Croatian retail investors
   - Added gainers/losers/unchanged filter chips with TrendingUp/Down/Minus icons
   - Added dynamic sector filter dropdown (populated from unique sectors in data)
