@@ -3,13 +3,15 @@ import { useForm } from "react-hook-form";
 import { z } from "zod/v4";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
-import { X, Keyboard, AlertCircle, CheckCircle2 } from "lucide-react";
+import { X, Keyboard, AlertCircle, CheckCircle2, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
 import { useAddTransaction } from "@/features/portfolio/api/portfolio-queries";
+import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TickerSelect } from "@/components/shared/ticker-select";
 import { normalizeNumberInput, formatInputNumber, parseLocalizedNumber } from "@/lib/format-input";
+import { formatPrice } from "@/lib/formatters";
 import { useDebounce } from "@/hooks/use-debounce";
 import { cn } from "@/lib/utils";
 
@@ -56,19 +58,48 @@ export function AddPositionForm({ onClose, onSuccess }: AddPositionFormProps) {
     },
   });
 
+  const { data: stocksResult } = useStocksLive();
+  const stocks = useMemo(() => stocksResult?.stocks ?? [], [stocksResult]);
+
   const tickerValue = watch("ticker");
   const sharesValue = watch("shares");
   const priceValue = watch("pricePerShare");
+  const transactionTypeValue = watch("transactionType");
 
   // Debounce for real-time validation
   const debouncedShares = useDebounce(sharesValue, 300);
   const debouncedPrice = useDebounce(priceValue, 300);
 
+  // Get current price for selected ticker
+  const currentPrice = useMemo(() => {
+    if (!tickerValue) return null;
+    const stock = stocks.find((s) => s.ticker.toUpperCase() === tickerValue.toUpperCase());
+    return stock?.price ?? null;
+  }, [tickerValue, stocks]);
+
+  // Suggested price based on current price (5% bump for buy, 5% drop for sell)
+  const suggestedPrice = useMemo(() => {
+    if (!currentPrice || !transactionTypeValue) return null;
+    const bump = transactionTypeValue === "buy" ? currentPrice * 1.05 : currentPrice * 0.95;
+    return formatPrice(bump).replace("EUR", "").trim();
+  }, [currentPrice, transactionTypeValue]);
+
   // Real-time validation checks
-  const isTickerValid = useMemo(() => {
+  const isTickerFormatValid = useMemo(() => {
     if (!tickerValue) return false;
     return /^[A-Z0-9_-]{3,10}$/i.test(tickerValue);
   }, [tickerValue]);
+
+  const isTickerValid = useMemo(() => {
+    if (!tickerValue) return false;
+    if (!isTickerFormatValid) return false;
+    return stocks.some((s) => s.ticker.toUpperCase() === tickerValue.toUpperCase());
+  }, [tickerValue, stocks, isTickerFormatValid]);
+
+  // Track if ticker format is valid but not in stocks list
+  const showTickerNotFound = useMemo(() => {
+    return isTickerFormatValid && !isTickerValid && tickerValue.length >= 3;
+  }, [isTickerFormatValid, isTickerValid, tickerValue]);
 
   const isSharesValid = useMemo(() => {
     if (!debouncedShares) return false;
@@ -83,7 +114,12 @@ export function AddPositionForm({ onClose, onSuccess }: AddPositionFormProps) {
   }, [debouncedPrice]);
 
   // Show errors: field was touched AND (has error OR valid check failed when not focused)
-  const showTickerError = touched.ticker && (errors.ticker || (tickerValue && !isTickerValid));
+  // Combined ticker error message
+  const tickerErrorMessage = showTickerNotFound
+    ? t("tickerNotFound") || "Ticker nije pronađen na ZSE"
+    : translateError(errors.ticker?.message, t) || t("validation.selectTicker");
+
+  const showTickerError = touched.ticker && (errors.ticker || (tickerValue && !isTickerFormatValid));
   const showSharesError = touched.shares && (errors.shares || (debouncedShares && !isSharesValid));
   const showPriceError = touched.price && (errors.pricePerShare || (debouncedPrice && !isPriceValid));
 
@@ -150,13 +186,38 @@ export function AddPositionForm({ onClose, onSuccess }: AddPositionFormProps) {
             error={!!showTickerError}
             className={cn(
               showTickerError && "ring-1 ring-destructive border-destructive",
-              isTickerValid && !showTickerError && "ring-1 ring-emerald-500 border-emerald-500"
+              isTickerValid && !showTickerError && "ring-1 ring-emerald-500 border-emerald-500",
+              showTickerNotFound && "ring-1 ring-amber-400 border-amber-400"
             )}
           />
           {showTickerError ? (
-            <p className="mt-1.5 flex items-center gap-1.5 rounded-md bg-destructive/10 px-2.5 py-1.5 text-xs font-medium text-destructive">
+            <p className="mt-1.5 flex items-center gap-1.5 rounded-md border border-destructive/30 bg-destructive/15 px-2.5 py-1.5 text-xs font-semibold text-red-600 dark:text-red-400">
               <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
-              {translateError(errors.ticker?.message, t) || t("validation.selectTicker")}
+              {tickerErrorMessage}
+            </p>
+          ) : showTickerNotFound ? (
+            <p className="mt-1.5 flex items-center gap-1.5 rounded-md border border-amber-400/30 bg-amber-50 px-2.5 py-1.5 text-xs font-semibold text-amber-700 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-700/30">
+              <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
+              {tickerErrorMessage}
+            </p>
+          ) : isTickerValid && currentPrice ? (
+            <p className="mt-1.5 flex items-center gap-1.5 rounded-md border border-emerald-400/30 bg-emerald-50 px-2.5 py-1.5 text-xs font-semibold text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-700/30">
+              <TrendingUp className="h-3.5 w-3.5 flex-shrink-0" />
+              <span>{formatPrice(currentPrice)}</span>
+              {suggestedPrice && <span className="text-muted-foreground">·</span>}
+              {suggestedPrice && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const clean = suggestedPrice.replace("%", "").replace("+", "");
+                    setValue("pricePerShare", clean, { shouldValidate: true });
+                    setTouched((prev) => ({ ...prev, price: true }));
+                  }}
+                  className="ml-auto underline hover:no-underline"
+                >
+                  {t("useSuggested", { value: suggestedPrice }) || `Koristi ${suggestedPrice}`}
+                </button>
+              )}
             </p>
           ) : isTickerValid ? (
             <p className="mt-1.5 flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400">

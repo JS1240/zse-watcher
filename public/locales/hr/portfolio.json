@@ -24,8 +24,19 @@
     "unchanged": "Nepromijenjeno",
     "allSectors": "Svi sektori"
   },
+  
+  "validation": {
+    "required": "Obavezno polje",
+    "positiveNumber": "Unesite pozitivan broj",
+    "tickerValid": "Odabrano",
+    "targetValid": "Ispravno",
+    "selectTicker": "Odaberite dionicu"
+  },
+  "tickerNotFound": "Ticker nije pronađen na ZSE",
+  "useSuggested": "Koristi {{value}}",
   "fields": {
     "ticker": "Oznaka",
+    "name": "Ime",
     "shares": "Broj dionica",
     "avgPrice": "Prosjecna cijena",
     "currentPrice": "Trenutna cijena",
@@ -33,14 +44,9 @@
     "gain": "Dobitak/Gubitak",
     "gainPercent": "Dobitak %",
     "date": "Datum",
+    "valid": "Ispravno",
     "sharesHint": "unesite broj dionica",
     "priceHint": "cijena po dionici (npr. 142,50)"
-  },
-  "validation": {
-    "required": "Obavezno polje",
-    "positiveNumber": "Unesite pozitivan broj",
-    "tickerValid": "Odabrano",
-    "targetValid": "Ispravno"
   },
   "type": {
     "buy": "Kupnja",

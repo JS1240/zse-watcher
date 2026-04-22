@@ -24,8 +24,19 @@
     "unchanged": "Unchanged",
     "allSectors": "All sectors"
   },
+  
+  "validation": {
+    "required": "Required field",
+    "positiveNumber": "Enter a positive number",
+    "tickerValid": "Selected",
+    "targetValid": "Valid",
+    "selectTicker": "Select a stock"
+  },
+  "tickerNotFound": "Ticker not found on ZSE",
+  "useSuggested": "Use {{value}}",
   "fields": {
     "ticker": "Ticker",
+    "name": "Name",
     "shares": "Shares",
     "avgPrice": "Avg Price",
     "currentPrice": "Current Price",
@@ -33,14 +44,9 @@
     "gain": "Gain/Loss",
     "gainPercent": "Gain %",
     "date": "Date",
+    "valid": "Valid",
     "sharesHint": "enter number of shares",
     "priceHint": "price per share (e.g. 142.50)"
-  },
-  "validation": {
-    "required": "Required field",
-    "positiveNumber": "Enter a positive number",
-    "tickerValid": "Selected",
-    "targetValid": "Valid"
   },
   "type": {
     "buy": "Buy",
