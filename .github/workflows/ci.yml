@@ -25,9 +25,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Install Playwright browsers
-        run: pnpm exec playwright install --with-deps chromium
-
       - name: Lint
         run: pnpm lint
 
@@ -39,3 +36,14 @@ jobs:
 
       - name: Test
         run: pnpm test
+
+      - name: Test Coverage
+        run: pnpm vitest run --coverage --exclude="**/stock-table.test.tsx"
+
+      - name: Upload Coverage
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 7

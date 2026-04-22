@@ -29,3 +29,4 @@ src/route-tree.gen.ts
 
 *storybook.log
 storybook-static
+coverage/
