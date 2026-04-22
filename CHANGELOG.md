@@ -4,6 +4,16 @@
 
 ### Added
 
+- **News Feed Polish** — visual and UX improvements for Croatian retail investors
+  - Category filter chips now show article counts (e.g., "Sve 42", "Trgovanje 8")
+  - Relative timestamps: "prije 5m", "prije 2h", "prije 3d" for recency at a glance
+  - Click-to-copy ticker button on article cards (matches dividends calendar pattern)
+  - Always-visible keyboard shortcut hint in results bar (matches dividends calendar)
+  - Live data indicator dot in results bar
+  - Results count shows total articles when not filtering (e.g., "10 / 42")
+  - SortHeader wrapped with role=columnheader for keyboard accessibility
+  - New formatRelativeTime() formatter added to lib/formatters.ts
+
 - **Sparklines in Portfolio Holdings Table** — add price trend visualization for Croatian retail investors
   - Added Sparkline component column to both local and authenticated portfolio dashboards
   - Generates 1W mock price history for each holding (works offline without extra API calls)
