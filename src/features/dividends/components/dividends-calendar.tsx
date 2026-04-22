@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { CalendarDays, Search, Calendar, Download, ChevronDown, ChevronUp, ArrowUp, Keyboard } from "lucide-react";
+import { CalendarDays, Search, Calendar, Download, ChevronDown, ChevronUp, ArrowUp, Keyboard, HelpCircle } from "lucide-react";
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { toast } from "sonner";
 import { useDividends } from "@/features/dividends/api/dividends-queries";
@@ -313,11 +313,19 @@ export function DividendsCalendar() {
       </div>
 
       {/* Results count */}
-      <div className="text-[10px] text-muted-foreground">
-        {sortedDividends.length} {sortedDividends.length === 1 ? "dividend" : "dividendi"}
-        {selectedYear && (
-          <span className="ml-1 text-primary">({selectedYear})</span>
-        )}
+      <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+        <span>
+          {sortedDividends.length} {sortedDividends.length === 1 ? "dividend" : "dividendi"}
+          {selectedYear && (
+            <span className="ml-1 text-primary">({selectedYear})</span>
+          )}
+        </span>
+        {/* Always-visible keyboard shortcuts hint for discoverability */}
+        <span className="flex items-center gap-1.5 text-[9px]">
+          <kbd className="rounded bg-muted px-1.5 py-0.5 font-sans text-[8px]">/</kbd>
+          <span className="text-muted-foreground">{t("shortcut.search")}</span>
+          <HelpCircle className="ml-1 h-3 w-3" />
+        </span>
       </div>
 
       {grouped.length > 0 && (
