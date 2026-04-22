@@ -1,6 +1,6 @@
 import { useState, useMemo, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, Trash2, ChevronDown, ChevronUp, Download, Search, X, ArrowUp, ArrowDown, ArrowUpDown, TrendingUp, TrendingDown, Keyboard, CheckCircle2, ArrowUp as ScrollToTopIcon, HelpCircle } from "lucide-react";
+import { Plus, Trash2, ChevronDown, ChevronUp, Download, Search, X, ArrowUp, ArrowDown, ArrowUpDown, TrendingUp, TrendingDown, Keyboard, CheckCircle2, ArrowUp as ScrollToTopIcon, HelpCircle, Wallet } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
 /** Keyboard navigation attributes for portfolio holdings table rows — mirrors stock-row pattern */
@@ -862,6 +862,7 @@ export function LocalPortfolioDashboard() {
         confirmLabel={t("actions.clear") || "Clear"}
         cancelLabel={t("actions.cancel") || "Cancel"}
         variant="danger"
+        icon={<Wallet className="h-5 w-5 text-primary" />}
         onConfirm={() => {
           clearTransactions();
           toast.success(t("toast.cleared") || "All transactions cleared", { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });

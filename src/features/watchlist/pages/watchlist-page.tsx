@@ -983,6 +983,7 @@ function LocalWatchlist() {
         confirmLabel={tc("actions.delete") || "Remove"}
         cancelLabel={tc("actions.cancel") || "Cancel"}
         variant="danger"
+        icon={<Star className="h-5 w-5 fill-amber text-amber" />}
         onConfirm={() => {
           if (confirmRemove) {
             removeItem(confirmRemove);

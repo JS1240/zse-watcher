@@ -446,6 +446,7 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
         confirmLabel={t("actions.delete") || "Delete"}
         cancelLabel={tc("actions.cancel") || "Cancel"}
         variant="danger"
+        icon={<Bell className="h-5 w-5 text-amber" />}
         onConfirm={() => {
           if (confirmDelete) {
             deleteAlert(confirmDelete);
