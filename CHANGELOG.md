@@ -4,6 +4,15 @@
 
 ### Added
 
+- **Stock Table Always-Visible Keyboard Shortcuts** — make shortcuts discoverable for Croatian retail investors
+  - Changed keyboard shortcuts hint from hover-only to always visible (no more `invisible group-hover:visible` pattern)
+  - Added `/` search shortcut hint to the stock table footer
+  - Wrapped SortIcon component with memo() to prevent unnecessary re-renders
+  - Removed unused group-hover visibility pattern since shortcuts are now always visible
+  - Aligns with previous commit about always-visible keyboard shortcuts discoverability
+
+### Added
+
 - **Storybook Dark Mode Default** — set dark as default background for Croatian retail investor app dev
   - Default background changed from 'light' to 'dark' to match app default
   - Created .storybook/vitest.config.ts for @storybook/addon-vitest testing
