@@ -26,7 +26,10 @@ export function ArticleDrawer({ article, onClose }: ArticleDrawerProps) {
       />
 
       {/* Drawer */}
-      <div ref={setContainerRef} className="fixed right-0 top-0 z-50 flex h-full w-full flex-col bg-card shadow-xl sm:max-w-xl">
+      <div
+        ref={setContainerRef}
+        className="fixed right-0 top-0 z-50 flex h-full w-full flex-col bg-card shadow-xl sm:max-w-xl animate-slide-in"
+      >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <div className="flex items-center gap-2">
