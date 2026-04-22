@@ -98,8 +98,19 @@
     "title": "Lokalni podaci",
     "clearAll": "Ocisti sve lokalne podatke",
     "clearWarning": "Ovo ce obrisati vasu listu praćenja, portfelj i alarme spremljene u pregledniku.",
+    "exportAll": "Izvezi sve podatke",
+    "importData": "Uvezi podatke",
+    "selectData": "Odaberi podatke za brisanje",
+    "watchlist": "Lista praćenja",
+    "portfolio": "Portfelj",
+    "alerts": "Alarmi",
+    "dividends": "Dividende",
+    "presets": "Postavke pretraživača",
     "confirm": "Da, ocisti",
-    "cleared": "Lokalni podaci su ocisceni"
+    "cleared": "Lokalni podaci su ocisceni",
+    "exported": "Podaci izvezeni",
+    "imported": "Podaci uvezeni",
+    "importError": "Greška pri uvozu. Provjerite format datoteke."
   },
   "shortcuts": {
     "title": "Tipkovnicke kratice",

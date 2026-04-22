@@ -97,8 +97,19 @@
     "title": "Local Data",
     "clearAll": "Clear All Local Data",
     "clearWarning": "This will delete your watchlist, portfolio, and alerts saved in this browser.",
+    "exportAll": "Export All Data",
+    "importData": "Import Data",
+    "selectData": "Select data to clear",
+    "watchlist": "Watchlist",
+    "portfolio": "Portfolio",
+    "alerts": "Alerts",
+    "dividends": "Dividends",
+    "presets": "Screener Presets",
     "confirm": "Yes, clear",
-    "cleared": "Local data cleared"
+    "cleared": "Local data cleared",
+    "exported": "Data exported",
+    "imported": "Data imported",
+    "importError": "Import error. Check file format."
   },
   "shortcuts": {
     "title": "Keyboard Shortcuts",
