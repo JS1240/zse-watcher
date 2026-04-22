@@ -17,17 +17,35 @@ import { exportToCsv } from "@/lib/export";
 import { cn } from "@/lib/utils";
 
 export function DividendsCalendar() {
-  const { data: dividends, isLoading, isError, refetch } = useDividends();
   const { t } = useTranslation("common");
   const { t: td } = useTranslation("dividends");
+  const { data: dividends, isLoading, isError, refetch } = useDividends();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortField, setSortField] = useState<"yield" | "amount" | "exDivDate">("exDivDate");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [showYearFilter, setShowYearFilter] = useState(false);
   const [scrollTop, setScrollTop] = useState(false);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
   const dividendsListRef = useRef<HTMLDivElement>(null);
   const { select, selectedTicker } = useSelectedStock();
+
+  // Click-to-copy handlers for dividend tickers
+  const handleCopyTicker = useCallback(async (e: React.MouseEvent, ticker: string) => {
+    e.stopPropagation();
+    await navigator.clipboard.writeText(ticker);
+    toast.success(t("toast.copied", { ticker }) || `${ticker} kopiran`);
+    setCopiedField(`ticker-${ticker}`);
+    setTimeout(() => setCopiedField(null), 1200);
+  }, [t]);
+
+  const handleCopyAmount = useCallback(async (e: React.MouseEvent, amount: number) => {
+    e.stopPropagation();
+    await navigator.clipboard.writeText(amount.toFixed(2));
+    toast.success(t("toast.amountCopied", { amount: formatCurrency(amount) }) || `Kopirano: ${formatCurrency(amount)}`);
+    setCopiedField(`amount-${amount}`);
+    setTimeout(() => setCopiedField(null), 1200);
+  }, [t]);
 
   // Keyboard shortcut to focus search
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -332,9 +350,17 @@ export function DividendsCalendar() {
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
-                              <span className="font-data text-xs font-semibold text-foreground">
+                              <button
+                                type="button"
+                                onClick={(e) => handleCopyTicker(e, d.ticker)}
+                                className={cn(
+                                  "font-data text-xs font-semibold text-foreground transition-colors hover:text-primary",
+                                  copiedField === `ticker-${d.ticker}` && "text-primary"
+                                )}
+                                title="Click to copy ticker"
+                              >
                                 {d.ticker}
-                              </span>
+                              </button>
                               <span className="text-[10px] text-muted-foreground">{d.name}</span>
                             </div>
                             <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
@@ -346,9 +372,17 @@ export function DividendsCalendar() {
 
                         <div className="flex items-center gap-3 text-right">
                           <div>
-                            <div className="font-data text-xs font-medium tabular-nums text-foreground">
+                            <button
+                              type="button"
+                              onClick={(e) => handleCopyAmount(e, d.amountEur)}
+                              className={cn(
+                                "font-data text-xs font-medium tabular-nums text-foreground transition-colors hover:text-primary",
+                                copiedField === `amount-${d.amountEur}` && "text-primary"
+                              )}
+                              title="Click to copy amount"
+                            >
                               {formatCurrency(d.amountEur)}
-                            </div>
+                            </button>
                             <Badge variant="success" className="text-[9px]">
                               {d.yield.toFixed(1)}%
                             </Badge>
