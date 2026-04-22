@@ -1,14 +1,14 @@
 import { useState, useCallback, memo, useRef } from "react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { ExternalLink, Newspaper, Search, ArrowUp, ArrowDown, ArrowUpDown, Download, Keyboard, X, ArrowUp as ScrollTop, TrendingUp } from "lucide-react";
+import { ExternalLink, Newspaper, Search, ArrowUp, ArrowDown, ArrowUpDown, Download, Keyboard, X, ArrowUp as ScrollTop, TrendingUp, Copy } from "lucide-react";
 import { toast } from "sonner";
 import { useNews } from "@/features/news/api/news-queries";
 import { ArticleDrawer } from "@/features/news/components/article-drawer";
 import { NewsSkeleton } from "@/features/news/components/news-skeleton";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { formatDate, formatTime } from "@/lib/formatters";
+import { formatDate, formatTime, formatRelativeTime } from "@/lib/formatters";
 import { EmptyState } from "@/components/shared/empty-state";
 import { NewsEmptyIllustration, SearchEmptyIllustration } from "@/components/shared/empty-illustrations";
 import { ErrorState } from "@/components/shared/error-state";
@@ -24,29 +24,45 @@ interface NewsFeedProps {
   limit?: number;
 }
 
-// Compact category filter chip component — similar to watchlist change filters
+// Compact category filter chip with count badge — similar to stock table filter chips
 function CategoryChip({
   active,
   onClick,
   label,
+  count,
   icon: Icon,
 }: {
   active: boolean;
   onClick: () => void;
   label: string;
+  count?: number;
   icon: React.ComponentType<{ className?: string }>;
 }) {
   return (
     <button
       onClick={onClick}
-      className={`flex h-8 items-center gap-1 rounded-full px-2.5 text-[10px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+      className={cn(
+        "flex h-8 min-w-11 items-center gap-1 rounded-full px-2.5 text-[10px] font-medium transition-colors",
         active
           ? "bg-primary text-primary-foreground"
-          : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
-      }`}
+          : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background"
+      )}
     >
       <Icon className="h-3 w-3" />
       {label}
+      {typeof count === "number" && (
+        <span
+          className={cn(
+            "ml-0.5 rounded-full px-1.5 py-0.5 text-[9px] font-semibold",
+            active
+              ? "bg-primary-foreground/20 text-primary-foreground"
+              : "bg-muted-foreground/20 text-muted-foreground"
+          )}
+        >
+          {count}
+        </span>
+      )}
     </button>
   );
 }
@@ -98,6 +114,7 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
         onClick={() => handleSort(field)}
         onKeyDown={handleKeyDown}
         tabIndex={0}
+        role="columnheader"
         className="flex items-center gap-1 text-[10px] font-medium transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         aria-sort={sortDirection}
         aria-label={`${label}: ${sortDirection === "none" ? "unsorted" : sortDirection}, click to sort`}
@@ -113,6 +130,14 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
       </button>
     );
   });
+
+  // Count articles per category for filter chips
+  const categoryCounts = useMemo(() => {
+    if (!articles) return { all: 0, general: 0, trading: 0 };
+    const general = articles.filter((a) => a.category === "general").length;
+    const trading = articles.filter((a) => a.category === "trading").length;
+    return { all: articles.length, general, trading };
+  }, [articles]);
 
   const filtered = useMemo(() => {
     if (!articles) return [];
@@ -186,7 +211,14 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
   const [scrollTop, setScrollTop] = useState(false);
   const newsFeedRef = useRef<HTMLDivElement>(null);
 
-  // Memoized article item to prevent re-renders on sort/search state changes
+  // Click-to-copy ticker
+  const handleCopyTicker = useCallback(async (e: React.MouseEvent, ticker: string) => {
+    e.stopPropagation();
+    await navigator.clipboard.writeText(ticker);
+    toast.success(`${ticker} ${t("toast.copied") || "kopirano"}`);
+  }, [t]);
+
+  // Memoized article item with relative time and click-to-copy ticker
   const ArticleItem = memo(function ArticleItem({
     article,
     onClick,
@@ -210,12 +242,16 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
           )}
           <div className="mt-1 flex flex-wrap items-center gap-2 text-[10px] text-muted-foreground">
             {article.ticker && (
-              <span className="rounded-sm bg-accent px-1 py-0.5 font-data font-medium text-foreground">
+              <button
+                onClick={(e) => handleCopyTicker(e, article.ticker!)}
+                className="flex items-center gap-1 rounded-sm bg-accent px-1.5 py-0.5 font-data font-medium text-foreground transition-colors hover:bg-accent/80"
+                title={t("toast.copied") || "Kopiraj"}
+              >
                 {article.ticker}
-              </span>
+                <Copy className="h-2.5 w-2.5 opacity-50" />
+              </button>
             )}
-            <span>{formatDate(article.publishedAt)}</span>
-            <span>{formatTime(article.publishedAt)}</span>
+            <span>{formatRelativeTime(article.publishedAt)}</span>
             <span
               className={cn(
                 "rounded-sm px-1.5 py-0.5 text-[9px] uppercase font-semibold tracking-wide",
@@ -289,18 +325,21 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
                   active={categoryFilter === "all"}
                   onClick={() => setCategoryFilter("all")}
                   label={tn("filter.all") || "Sve"}
+                  count={categoryCounts.all}
                   icon={Newspaper}
                 />
                 <CategoryChip
                   active={categoryFilter === "general"}
                   onClick={() => setCategoryFilter("general")}
                   label={tn("filter.general") || "Generalne"}
+                  count={categoryCounts.general}
                   icon={Newspaper}
                 />
                 <CategoryChip
                   active={categoryFilter === "trading"}
                   onClick={() => setCategoryFilter("trading")}
                   label={tn("filter.trading") || "Trgovanje"}
+                  count={categoryCounts.trading}
                   icon={TrendingUp}
                 />
               </div>
@@ -326,7 +365,7 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
             icon={<SearchEmptyIllustration className="h-8 w-8" />}
             title={t("empty.noResults")}
             description={t("empty.noResultsDescription")}
-            action={{ label: t("empty.clearFilters"), onClick: handleClearSearch }}
+            action={{ label: tn("empty.clearFilters") || t("empty.clearFilters"), onClick: handleClearSearch }}
           />
         ) : (
           <EmptyState
@@ -344,8 +383,8 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
       <div className="space-y-1">
         {/* Search + Sort controls */}
         {showSearch && (
-          <div className="flex items-center gap-4">
-            <div className="relative flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="relative flex-1 min-w-[160px]">
               <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-muted-foreground" />
               <Input
                 ref={searchInputRef}
@@ -372,6 +411,31 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
                 </button>
               )}
             </div>
+            {!limit && (
+              <div className="flex items-center gap-1">
+                <CategoryChip
+                  active={categoryFilter === "all"}
+                  onClick={() => setCategoryFilter("all")}
+                  label={tn("filter.all") || "Sve"}
+                  count={categoryCounts.all}
+                  icon={Newspaper}
+                />
+                <CategoryChip
+                  active={categoryFilter === "general"}
+                  onClick={() => setCategoryFilter("general")}
+                  label={tn("filter.general") || "Generalne"}
+                  count={categoryCounts.general}
+                  icon={Newspaper}
+                />
+                <CategoryChip
+                  active={categoryFilter === "trading"}
+                  onClick={() => setCategoryFilter("trading")}
+                  label={tn("filter.trading") || "Trgovanje"}
+                  count={categoryCounts.trading}
+                  icon={TrendingUp}
+                />
+              </div>
+            )}
             <div className="flex items-center gap-2">
               <SortHeader field="date" label={t("sort.date") || "Datum"} />
               <SortHeader field="ticker" label={t("sort.ticker") || "Dionica"} />
@@ -389,11 +453,22 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
           </div>
         )}
 
-        {/* Results count */}
+        {/* Results count + live data indicator */}
         {totalCount > 0 && (
-          <div className="text-[10px] text-muted-foreground">
-            {filteredCount} {filteredCount === 1 ? " vijest" : " vijesti"}
-            {debouncedSearch && totalCount !== filteredCount && ` / ${totalCount}`}
+          <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+            <span>
+              {filteredCount} {filteredCount === 1 ? "vijest" : "vijesti"}
+              {debouncedSearch && totalCount !== filteredCount && ` / ${totalCount}`}
+              {!debouncedSearch && ` / ${totalCount}`}
+            </span>
+            <div className="flex items-center gap-1">
+              <span className="flex h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
+              <span>Live</span>
+              <span className="flex items-center gap-0.5 ml-1">
+                <Keyboard className="h-2.5 w-2.5" />
+                <span>/</span>
+              </span>
+            </div>
           </div>
         )}
 
@@ -419,7 +494,6 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
             scrollTop ? "opacity-100 translate-y-0" : "pointer-events-none opacity-0 translate-y-2"
           )}
           aria-label="Povratak na vrh"
-          title="Povratak na vrh"
         >
           <ScrollTop className="h-4 w-4" />
         </button>

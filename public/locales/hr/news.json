@@ -1,5 +1,7 @@
 {
   "title": "Novosti",
+  "live": "Live",
+  "copied": "kopirano",
   "filter": {
     "all": "Sve",
     "general": "Generalne",

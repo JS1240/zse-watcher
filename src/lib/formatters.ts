@@ -53,6 +53,22 @@ export function formatDate(date: Date | string): string {
   return DATE_FORMAT.format(new Date(date));
 }
 
+export function formatRelativeTime(date: Date | string, locale: string = "hr"): string {
+  const now = Date.now();
+  const then = new Date(date).getTime();
+  const diffMs = now - then;
+  const diffMin = Math.floor(diffMs / 60000);
+  const diffHr = Math.floor(diffMin / 60);
+  const diffDay = Math.floor(diffHr / 24);
+
+
+  if (diffMin < 1) return locale === "hr" ? "upravo sad" : "just now";
+  if (diffMin < 60) return locale === "hr" ? `prije ${diffMin}m` : `${diffMin}m ago`;
+  if (diffHr < 24) return locale === "hr" ? `prije ${diffHr}h` : `${diffHr}h ago`;
+  if (diffDay < 7) return locale === "hr" ? `prije ${diffDay}d` : `${diffDay}d ago`;
+  return formatDate(date);
+}
+
 export function formatTime(date: Date | string): string {
   return TIME_FORMAT.format(new Date(date));
 }
