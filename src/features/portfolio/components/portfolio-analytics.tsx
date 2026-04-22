@@ -79,7 +79,11 @@ export function PortfolioAnalytics() {
         icon={<BarChart3 className="h-8 w-8" />}
         title={t("analytics.empty")}
         description={t("analytics.emptyDescription")}
-        hint="Build your first position to unlock sector insights, performance tracking and portfolio analytics."
+        steps={[
+          { label: t("quickStart.step1"), description: t("quickStart.step1Desc") ?? "" },
+          { label: t("quickStart.step2"), description: t("quickStart.step2Desc") ?? "" },
+          { label: t("quickStart.step3"), description: t("quickStart.step3Desc") ?? "" },
+        ]}
         variant="action"
         action={{ label: t("analytics.addAction"), onClick: () => document.getElementById("add-position-btn")?.click() }}
         className="rounded-md border border-border"

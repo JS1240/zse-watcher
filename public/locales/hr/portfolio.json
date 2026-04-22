@@ -69,9 +69,12 @@
   "empty": "Nemate pozicija u portfelju",
   "emptyDescription": "Dodajte svoju prvu poziciju kako biste pratili vrijednost i dobit.",
   "quickStart": {
-    "step1": "Kliknite 'Dodaj poziciju' za unos kupnje",
-    "step2": "Odaberite dionicu i broj komada",
-    "step3": "Pratite vrijednost i dobitak portfelja"
+    "step1": "Dodajte svoju prvu dionicu",
+    "step1Desc": "Kliknite gumb 'Dodaj poziciju' za unos kupnje",
+    "step2": "Unesite oznaku i broj komada",
+    "step2Desc": "Odaberite dionicu s burze i unesite koliko komada ste kupili",
+    "step3": "Pratite dobitak i alokaciju",
+    "step3Desc": "Gledajte sektore, izvedbu i ukupnu vrijednost portfelja"
   },
   "searchPlaceholder": "Pretraži oznaku ili ime...",
   "searchNoResults": "Nema rezultata",

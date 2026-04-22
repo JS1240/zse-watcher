@@ -69,9 +69,12 @@
   "empty": "No positions in portfolio",
   "emptyDescription": "Add your first position to start tracking your holdings and gains.",
   "quickStart": {
-    "step1": "Click 'Add Position' to enter a buy",
-    "step2": "Select a stock and enter number of shares",
-    "step3": "Track your portfolio value and gains"
+    "step1": "Add your first stock",
+    "step1Desc": "Click the 'Add Position' button to record a purchase",
+    "step2": "Enter ticker and share count",
+    "step2Desc": "Select the stock from the exchange and type how many shares you bought",
+    "step3": "Track gains and allocation",
+    "step3Desc": "Monitor sectors, performance and total portfolio value"
   },
   "searchPlaceholder": "Search ticker or name...",  "searchNoResults": "No results found",
   "clearSearch": "Clear search",

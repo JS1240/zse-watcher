@@ -660,6 +660,11 @@ export function LocalPortfolioDashboard() {
             icon={hasLocalTransactions ? <PortfolioSoldIllustration className="h-10 w-10" /> : <PortfolioEmptyIllustration className="h-10 w-10" />}
             title={hasLocalTransactions ? t("emptySold") : t("empty")}
             description={hasLocalTransactions ? t("emptySoldDescription") : t("emptyDescription")}
+            steps={hasLocalTransactions ? [
+              { label: t("quickStart.step1"), description: t("quickStart.step1Desc") ?? "" },
+              { label: t("quickStart.step2"), description: t("quickStart.step2Desc") ?? "" },
+              { label: t("quickStart.step3"), description: t("quickStart.step3Desc") ?? "" },
+            ] : undefined}
             action={{ label: t("addPosition"), onClick: () => setShowAddForm(true) }}
             variant="action"
           />
