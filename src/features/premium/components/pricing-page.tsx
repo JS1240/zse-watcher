@@ -37,7 +37,7 @@ export function PricingPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="text-center">
+      <div className="text-center animate-pricing-card">
         <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-amber/10">
           <Crown className="h-6 w-6 text-amber" />
         </div>
@@ -48,7 +48,7 @@ export function PricingPage() {
       </div>
 
       {/* Billing toggle */}
-      <div className="flex items-center justify-center gap-2">
+      <div className="flex items-center justify-center gap-2 animate-pricing-card animate-pricing-card-delay-1">
         <div className="relative rounded-full bg-muted p-1">
           <div
             className={cn(
@@ -88,7 +88,7 @@ export function PricingPage() {
 
       {/* Plan cards */}
       <div className="grid gap-4 md:grid-cols-2">
-        {PRICING_PLANS.map((plan) => {
+        {PRICING_PLANS.map((plan, index) => {
           const price = cycle === "monthly" ? plan.monthlyPrice : plan.annualPrice;
           const isCurrentPlan =
             (plan.id === "free" && !isPremium) || (plan.id === "premium" && isPremium);
@@ -97,7 +97,8 @@ export function PricingPage() {
             <div
               key={plan.id}
               className={cn(
-                "relative rounded-lg border p-5 transition-all duration-200",
+                "relative rounded-lg border p-5 transition-all duration-200 animate-pricing-card",
+                index === 0 ? "animate-pricing-card-delay-1" : "animate-pricing-card-delay-2",
                 plan.popular
                   ? "border-primary bg-primary/5 hover:-translate-y-0.5 hover:border-primary hover:shadow-lg hover:shadow-primary/10"
                   : "border-border bg-card hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5",

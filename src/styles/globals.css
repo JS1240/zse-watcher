@@ -218,6 +218,31 @@ tr[data-clickable]:focus-visible {
   border-color: hsl(var(--primary) / 0.6) !important;
 }
 
+/* Pricing page card entrance animation */
+@keyframes pricing-card-in {
+  0% {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-pricing-card {
+  animation: pricing-card-in 0.4s ease-out forwards;
+  opacity: 0;
+}
+
+.animate-pricing-card-delay-1 {
+  animation-delay: 0.1s;
+}
+
+.animate-pricing-card-delay-2 {
+  animation-delay: 0.2s;
+}
+
 /* Alert row edit container — uses CSS grid collapse for smooth height animation */
 .alert-edit-container {
   display: grid;
