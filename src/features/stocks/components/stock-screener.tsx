@@ -1,7 +1,6 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Filter, RotateCcw, ArrowUpDown, ArrowUp, ArrowDown, Info, Download, Save, Trash2, Bookmark, Search, ChevronDown, AlertTriangle, X, Keyboard, ChevronUp, HelpCircle } from "lucide-react";
-import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import { Filter, RotateCcw, ArrowUpDown, ArrowUp, ArrowDown, Info, Download, Save, Trash2, Bookmark, Search, ChevronDown, AlertTriangle, X, Keyboard, ChevronUp } from "lucide-react";
 import { toast } from "sonner";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { useLocalStorage } from "@/hooks/use-local-storage";
@@ -626,38 +625,30 @@ export function StockScreener() {
       </div>
 
       {/* Results count + keyboard shortcuts hint + export */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <span className="text-[10px] text-muted-foreground">
           {t("screener.results", { count: results.length, total: stocks?.length ?? 0 })}
         </span>
         <div className="flex items-center gap-3">
-          {results.length > 0 && (
-            /* Keyboard shortcuts hint - always visible with tooltip for discoverability */
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  className="flex items-center gap-1.5 text-[9px] text-muted-foreground transition-colors hover:text-foreground"
-                  aria-label="Keyboard shortcuts"
-                >
-                  <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
-                  <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">S</kbd>
-                  <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">C</kbd>
-                  <HelpCircle className="h-3 w-3" />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom" align="end" className="space-y-1 p-2.5">
-                <p className="text-[10px] font-semibold text-foreground">{t("shortcuts") || "Tipkovnički prečaci"}</p>
-                <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-[9px]">
-                  <kbd className="rounded bg-muted px-1.5 py-0.5 text-[8px] font-sans">Enter</kbd>
-                  <span className="text-muted-foreground">{t("shortcut.details") || "detalji dionice"}</span>
-                  <kbd className="rounded bg-muted px-1.5 py-0.5 text-[8px] font-sans">S</kbd>
-                  <span className="text-muted-foreground">{t("shortcut.watch") || "dodaj u pratnju"}</span>
-                  <kbd className="rounded bg-muted px-1.5 py-0.5 text-[8px] font-sans">C</kbd>
-                  <span className="text-muted-foreground">{t("shortcut.copy") || "kopiraj cijenu"}</span>
-                </div>
-              </TooltipContent>
-            </Tooltip>
-          )}
+          {/* Always-visible keyboard shortcuts hint for discoverability */}
+          <div className="flex items-center gap-2 text-[9px] text-muted-foreground">
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
+              <span>{t("shortcut.details")}</span>
+            </span>
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">S</kbd>
+              <span>{t("shortcut.watch")}</span>
+            </span>
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">C</kbd>
+              <span>{t("shortcut.copy")}</span>
+            </span>
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">/</kbd>
+              <span>{t("shortcut.search")}</span>
+            </span>
+          </div>
           <Button
             variant="ghost"
             size="sm"
