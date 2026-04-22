@@ -1,6 +1,8 @@
 import { useState, useMemo, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Plus, Trash2, ChevronDown, ChevronUp, Download, Search, X, ArrowUp, ArrowDown, ArrowUpDown, TrendingUp, TrendingDown, Keyboard, CheckCircle2, ArrowUp as ScrollToTopIcon, HelpCircle, Wallet } from "lucide-react";
+import { Sparkline } from "@/components/shared/sparkline";
+import { getMockPriceHistory } from "@/lib/mock-data";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
 /** Keyboard navigation attributes for portfolio holdings table rows — mirrors stock-row pattern */
@@ -177,6 +179,8 @@ export function LocalPortfolioDashboard() {
         const totalValue = h.totalShares * currentPrice;
         const totalGain = totalValue - h.totalCost;
         const gainPct = h.totalCost > 0 ? (totalGain / h.totalCost) * 100 : 0;
+        // Generate 1W mock price history for sparkline (works offline without API calls)
+        const priceHistory = getMockPriceHistory(ticker, "1W").map((p) => p.close);
 
         return {
           ticker,
@@ -188,6 +192,7 @@ export function LocalPortfolioDashboard() {
           gainPct,
           name: h.name,
           sector: stock?.sector ?? "N/A",
+          priceHistory,
         };
       });
   }, [holdingsMap, stocks]);
@@ -556,6 +561,9 @@ export function LocalPortfolioDashboard() {
             <thead>
               <tr className="border-b border-border bg-muted/50 text-[10px] uppercase tracking-wider text-muted-foreground">
                 <th className="px-3 py-2 text-left font-medium">{t("fields.ticker")}</th>
+                <th className="px-3 py-2 text-center font-medium" title="1W trend">
+                  <span className="text-[9px]">📈</span>
+                </th>
                 <th className="hidden px-3 py-2 text-left font-medium md:table-cell">
                   <SortHeader column="name" label={t("fields.name") || "Name"} />
                 </th>
@@ -612,6 +620,15 @@ export function LocalPortfolioDashboard() {
                         <Highlight text={h.name} highlight={debouncedSearch} />
                       </span>
                     </div>
+                  </td>
+                  <td className="px-3 py-3 md:py-2">
+                    {h.priceHistory && h.priceHistory.length > 1 ? (
+                      <div className="flex justify-center">
+                        <Sparkline data={h.priceHistory} width={50} height={18} />
+                      </div>
+                    ) : (
+                      <span className="text-[9px] text-muted-foreground/40">—</span>
+                    )}
                   </td>
                   <td className="px-3 py-3 md:py-2 text-right font-data tabular-nums text-foreground">
                     {h.totalShares.toFixed(0)}

@@ -1,6 +1,8 @@
 import { useMemo, useState, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Plus, Download, Wallet, ChevronUp, ChevronDown, Search, X, Keyboard, TrendingUp, TrendingDown, Minus, CheckCircle2, ArrowUp as ScrollToTopIcon } from "lucide-react";
+import { Sparkline } from "@/components/shared/sparkline";
+import { getMockPriceHistory } from "@/lib/mock-data";
 import { Highlight } from "@/components/shared/highlight";
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { Input } from "@/components/ui/input";
@@ -29,6 +31,7 @@ interface EnrichedHolding extends Holding {
   gainPct: number;
   name: string;
   sector: string;
+  priceHistory: number[];
 }
 
 type SectorFilter = string | null;
@@ -475,6 +478,9 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
             <thead>
               <tr className="border-b border-border bg-muted/50 text-[10px] uppercase tracking-wider text-muted-foreground">
                 <SortableTh field="ticker" label={t("fields.ticker")} sortField={sortField} sortDir={sortDir} onSort={handleSort} align="left" />
+                <th className="px-2 py-2 text-center text-[10px] font-medium text-muted-foreground" title="1W trend">
+                  <span className="text-[9px]">📈</span>
+                </th>
                 <SortableTh field="shares" label={t("fields.shares")} sortField={sortField} sortDir={sortDir} onSort={handleSort} align="right" />
                 <SortableTh field="avgPrice" label={t("fields.avgPrice")} sortField={sortField} sortDir={sortDir} onSort={handleSort} align="right" />
                 <SortableTh field="currentPrice" label={t("fields.currentPrice")} sortField={sortField} sortDir={sortDir} onSort={handleSort} align="right" />
@@ -512,6 +518,15 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
                           <Highlight text={h.name} highlight={debouncedSearch} />
                         </span>
                       </div>
+                    </td>
+                    <td className="px-2 py-3 md:py-2">
+                      {h.priceHistory && h.priceHistory.length > 1 ? (
+                        <div className="flex justify-center">
+                          <Sparkline data={h.priceHistory} width={50} height={18} />
+                        </div>
+                      ) : (
+                        <span className="text-[9px] text-muted-foreground/40">—</span>
+                      )}
                     </td>
                     <td className="px-3 py-3 md:py-2 text-right font-data tabular-nums text-foreground">
                       {h.totalShares.toFixed(0)}
@@ -682,8 +697,9 @@ function computeEnrichedHoldings(
     const totalValue = h.totalShares * currentPrice;
     const totalGain = totalValue - h.totalCost;
     const gainPct = h.totalCost > 0 ? (totalGain / h.totalCost) * 100 : 0;
+    const priceHistory = getMockPriceHistory(h.ticker, "1W").map((p) => p.close);
 
-    return { ...h, currentPrice, totalValue, totalGain, gainPct, name: stock?.name ?? h.ticker, sector: stock?.sector ?? "N/A" };
+    return { ...h, currentPrice, totalValue, totalGain, gainPct, name: stock?.name ?? h.ticker, sector: stock?.sector ?? "N/A", priceHistory };
   });
 }
 
