@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useRef } from "react";
+import { useState, useMemo, useCallback, useRef, memo } from "react";
 import { useTranslation } from "react-i18next";
 import { Search, ArrowUpDown, ArrowUp, ArrowDown, Download, TrendingUp, X, ArrowUp as ScrollToTopIcon, Keyboard } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -80,7 +80,7 @@ export function StockTable() {
     }
   }, [sortField]);
 
-  const SortIcon = ({ field }: { field: SortField }) => {
+  const SortIcon = memo(({ field }: { field: SortField }) => {
     if (sortField !== field)
       return <ArrowUpDown className="h-3 w-3 text-muted-foreground/50" />;
     return sortDir === "asc" ? (
@@ -88,7 +88,7 @@ export function StockTable() {
     ) : (
       <ArrowDown className="h-3 w-3 text-foreground" />
     );
-  };
+  });
 
   const { canAccess } = useSubscription();
 
@@ -249,12 +249,12 @@ export function StockTable() {
         )}
       </div>
 
-      <div className="group flex items-center justify-between">
+      <div className="flex items-center justify-between">
         <span className="text-[10px] text-muted-foreground">
           {filtered.length} / {stocks?.length ?? 0} stocks
         </span>
-        {/* Keyboard shortcuts hint - appears on hover for cleaner UI */}
-        <div className="invisible group-hover:visible flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150 text-[9px] text-muted-foreground">
+        {/* Always-visible keyboard shortcuts hint for discoverability */}
+        <div className="flex items-center gap-2 text-[9px] text-muted-foreground">
           <span className="flex items-center gap-0.5">
             <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
             <span>{t("shortcut.details")}</span>
@@ -262,6 +262,10 @@ export function StockTable() {
           <span className="flex items-center gap-0.5">
             <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">W</kbd>
             <span>{t("shortcut.watch")}</span>
+          </span>
+          <span className="flex items-center gap-0.5">
+            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">/</kbd>
+            <span>{t("shortcut.search")}</span>
           </span>
         </div>
       </div>
