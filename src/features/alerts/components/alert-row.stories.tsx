@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AlertRow } from './alerts-dashboard';
 import type { AlertCondition } from '@/types/alert';
 
@@ -10,11 +11,25 @@ const meta: Meta<typeof AlertRow> = {
   },
   tags: ['autodocs'],
   decorators: [
-    (Story) => (
-      <div className="w-full max-w-2xl rounded-lg border border-border">
-        <Story />
-      </div>
-    ),
+    (Story) => {
+      const mockClient = new QueryClient({
+        defaultOptions: {
+          queries: {
+            staleTime: Infinity,
+            gcTime: Infinity,
+          },
+        },
+      });
+      // Seed empty watchlist to satisfy useWatchlistTickers in AlertRow
+      mockClient.setQueryData(['watchlist', null], []);
+      return (
+        <QueryClientProvider client={mockClient}>
+          <div className="w-full max-w-2xl rounded-lg border border-border">
+            <Story />
+          </div>
+        </QueryClientProvider>
+      );
+    },
   ],
 };
 
@@ -25,6 +40,7 @@ const mockStocks = [
   { ticker: 'RIVP', name: 'Riviera Adris', price: 42.5 },
   { ticker: 'HT', name: 'Hrvatski Telekom', price: 28.9 },
   { ticker: 'AD', name: 'Adris grupa', price: 55.0 },
+  { ticker: 'KOEI', name: 'Koncar', price: 156.0 },
 ];
 
 const createAlert = (
@@ -89,7 +105,7 @@ export const Paused: Story = {
   name: 'Paused Alert',
 };
 
-export const PercentCondition: Story = {
+export const PercentConditionUp: Story = {
   args: {
     alert: createAlert({
       condition: 'percent_change_up',
@@ -100,7 +116,21 @@ export const PercentCondition: Story = {
     onToggle: () => {},
     onUpdate: async () => {},
   },
-  name: 'Percent Change Condition',
+  name: 'Percent Change (+5%)',
+};
+
+export const PercentConditionDown: Story = {
+  args: {
+    alert: createAlert({
+      condition: 'percent_change_down',
+      targetValue: -10.0,
+    }),
+    stocks: mockStocks,
+    onDelete: () => {},
+    onToggle: () => {},
+    onUpdate: async () => {},
+  },
+  name: 'Percent Change (-10%)',
 };
 
 export const LocalAlert: Story = {
@@ -119,7 +149,7 @@ export const LocalAlert: Story = {
 export const LongTicker: Story = {
   args: {
     alert: createAlert({
-      ticker: 'RIVP-RA-2026',
+      ticker: 'KOEI-R-A-2026',
       targetValue: 100.0,
     }),
     stocks: mockStocks,
@@ -127,5 +157,53 @@ export const LongTicker: Story = {
     onToggle: () => {},
     onUpdate: async () => {},
   },
-  name: 'Long Ticker',
+  name: 'Long Ticker Symbol',
+};
+
+export const WithSearchHighlight: Story = {
+  args: {
+    alert: createAlert(),
+    stocks: mockStocks,
+    searchHighlight: 'RIV',
+    onDelete: () => {},
+    onToggle: () => {},
+    onUpdate: async () => {},
+  },
+  name: 'With Search Highlight',
+};
+
+export const FlashUp: Story = {
+  args: {
+    alert: createAlert(),
+    stocks: mockStocks,
+    flash: 'up',
+    onDelete: () => {},
+    onToggle: () => {},
+    onUpdate: async () => {},
+  },
+  name: 'Flash Up Animation',
+  parameters: {
+    backgrounds: {
+      default: 'dark',
+    },
+  },
+};
+
+export const FlashDown: Story = {
+  args: {
+    alert: createAlert({
+      ticker: 'HT',
+    }),
+    stocks: mockStocks,
+    flash: 'down',
+    onDelete: () => {},
+    onToggle: () => {},
+    onUpdate: async () => {},
+  },
+  name: 'Flash Down Animation',
+  parameters: {
+    backgrounds: {
+      default: 'dark',
+    },
+  },
 };
