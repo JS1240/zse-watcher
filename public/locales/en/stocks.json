@@ -72,6 +72,8 @@
     "exported": "Stock data exported to CSV",
     "copied": "Copied: {{ticker}}",
     "priceCopied": "Price copied: {{price}}",
+    "volumeCopied": "Volume copied",
+    "turnoverCopied": "Turnover copied",
     "addedToWatchlist": "Added to watchlist",
     "removedFromWatchlist": "Removed from watchlist"
   },

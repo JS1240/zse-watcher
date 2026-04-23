@@ -74,6 +74,22 @@ const StockRowBase = ({ stock, flash, searchQuery, rowIndex, onFocus }: StockRow
     setTimeout(() => setCopiedField(null), 1200);
   }, [stock.price, t]);
 
+  const handleCopyVolume = useCallback(async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    await navigator.clipboard.writeText(stock.volume.toString());
+    toast.success(t("toast.volumeCopied") || "Copied volume");
+    setCopiedField("volume");
+    setTimeout(() => setCopiedField(null), 1200);
+  }, [stock.volume, t]);
+
+  const handleCopyTurnover = useCallback(async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    await navigator.clipboard.writeText(stock.turnover.toFixed(2));
+    toast.success(t("toast.turnoverCopied") || "Copied turnover");
+    setCopiedField("turnover");
+    setTimeout(() => setCopiedField(null), 1200);
+  }, [stock.turnover, t]);
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTableRowElement>) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
@@ -195,16 +211,34 @@ const StockRowBase = ({ stock, flash, searchQuery, rowIndex, onFocus }: StockRow
 
       {/* Volume */}
       <td className="hidden px-3 py-2 text-right lg:table-cell">
-        <span className="font-data text-xs tabular-nums text-muted-foreground">
+        <button
+          type="button"
+          onClick={handleCopyVolume}
+          className={cn(
+            "font-data cursor-pointer text-xs tabular-nums text-muted-foreground",
+            "transition-colors hover:text-primary",
+            copiedField === "volume" && "text-primary",
+          )}
+          title="Click to copy volume"
+        >
           {formatVolume(stock.volume)}
-        </span>
+        </button>
       </td>
 
       {/* Turnover */}
       <td className="hidden px-3 py-2 text-right lg:table-cell">
-        <span className="font-data text-xs tabular-nums text-muted-foreground">
+        <button
+          type="button"
+          onClick={handleCopyTurnover}
+          className={cn(
+            "font-data cursor-pointer text-xs tabular-nums text-muted-foreground",
+            "transition-colors hover:text-primary",
+            copiedField === "turnover" && "text-primary",
+          )}
+          title="Click to copy turnover"
+        >
           {formatVolume(stock.turnover)} EUR
-        </span>
+        </button>
       </td>
 
       {/* Dividend Yield */}

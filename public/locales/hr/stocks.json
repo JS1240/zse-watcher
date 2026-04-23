@@ -71,6 +71,8 @@
     "exported": "Podaci o dionici izvezeni u CSV",
     "copied": "Kopirano: {{ticker}}",
     "priceCopied": "Kopirana cijena: {{price}}",
+    "volumeCopied": "Kopiran volumen",
+    "turnoverCopied": "Kopiran promet",
     "addedToWatchlist": "Dodano na popis praćenja",
     "removedFromWatchlist": "Uklonjeno s popisa praćenja"
   },
