@@ -196,3 +196,12 @@ export function useAddTransaction() {
     },
   });
 }
+
+/**
+ * Get holdings for a specific ticker. Returns undefined if not found or not yet loaded.
+ */
+export function useHoldings(ticker?: string): Holding | undefined {
+  const holdings = usePortfolioHoldings();
+  if (!ticker) return undefined;
+  return holdings.find((h) => h.ticker === ticker);
+}

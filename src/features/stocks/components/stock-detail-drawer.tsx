@@ -20,6 +20,7 @@ import { CheckCircle2 } from "lucide-react";
 import { Star } from "lucide-react";
 import { InlineTransactionForm } from "@/features/portfolio/components/inline-transaction-form";
 import { WatchlistToggle } from "@/features/watchlist/components/watchlist-toggle";
+import { useHoldings } from "@/features/portfolio/api/portfolio-queries";
 
 interface StockDetailDrawerProps {
   ticker: string | null;
@@ -36,6 +37,10 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
   const { addRecentStock } = useRecentStocks();
   const [showAlertForm, setShowAlertForm] = useState(false);
   const [showTransactionForm, setShowTransactionForm] = useState(false);
+
+  // Get holdings to validate sell transactions
+  const holding = useHoldings(ticker ?? undefined);
+  const ownedShares = holding?.totalShares;
 
   // Export stock fundamentals as CSV for Croatian investors
   const handleExportCsv = useCallback(() => {
@@ -301,6 +306,7 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
                     currentPrice={stock.price}
                     onClose={() => setShowTransactionForm(false)}
                     onSuccess={() => setShowTransactionForm(false)}
+                    ownedShares={ownedShares}
                   />
                 )}
 

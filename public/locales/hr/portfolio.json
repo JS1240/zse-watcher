@@ -29,7 +29,10 @@
     "positiveNumber": "Unesite pozitivan broj",
     "tickerValid": "Odabrano",
     "targetValid": "Ispravno",
-    "selectTicker": "Odaberite dionicu"
+    "selectTicker": "Odaberite dionicu",
+    "insufficientShares": "Nemate dovoljno dionica",
+    "exceedsShares": "Prodajete više nego što imate",
+    "maxSell": "Maksimum: {{max}} kom"
   },
   "tickerNotFound": "Ticker nije prona\u0111en na ZSE",
   "useSuggested": "Koristi {{value}}",

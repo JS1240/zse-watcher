@@ -29,7 +29,10 @@
     "positiveNumber": "Enter a positive number",
     "tickerValid": "Selected",
     "targetValid": "Valid",
-    "selectTicker": "Select a stock"
+    "selectTicker": "Select a stock",
+    "insufficientShares": "You don't have enough shares",
+    "exceedsShares": "Selling more than you own",
+    "maxSell": "Max: {{max}}"
   },
   "tickerNotFound": "Ticker not found on ZSE",
   "useSuggested": "Use {{value}}",

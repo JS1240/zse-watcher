@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod/v4";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
-import { X, CheckCircle2, AlertCircle } from "lucide-react";
+import { X, CheckCircle2, AlertCircle, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,6 +29,7 @@ interface InlineTransactionFormProps {
   currentPrice: number;
   onClose: () => void;
   onSuccess?: () => void;
+  ownedShares?: number;
 }
 
 export function InlineTransactionForm({
@@ -36,6 +37,7 @@ export function InlineTransactionForm({
   currentPrice,
   onClose,
   onSuccess,
+  ownedShares,
 }: InlineTransactionFormProps) {
   const { t } = useTranslation("portfolio");
   const { isAuthenticated } = useAuth();
@@ -58,6 +60,20 @@ export function InlineTransactionForm({
 
   const sharesValue = watch("shares");
   const priceValue = watch("pricePerShare");
+  const transactionType = watch("transactionType");
+
+  // Validate sell quantity against owned shares
+  const parsedShares = useMemo(() => {
+    if (!sharesValue) return null;
+    const parsed = parseLocalizedNumber(sharesValue);
+    return isNaN(parsed) ? null : parsed;
+  }, [sharesValue]);
+
+  const hasInsufficientShares = useMemo(() => {
+    if (!ownedShares || !parsedShares) return false;
+    if (transactionType !== "sell") return false;
+    return parsedShares > ownedShares;
+  }, [ownedShares, parsedShares, transactionType]);
 
   const total = useMemo(() => {
     if (!sharesValue || !priceValue) return null;
@@ -162,14 +178,23 @@ export function InlineTransactionForm({
               inputMode="decimal"
               placeholder="100"
               {...register("shares")}
-              className="h-7 text-[11px]"
+              error={!!errors.shares || hasInsufficientShares}
+              className={cn(
+                "h-7 text-[11px]",
+                hasInsufficientShares && "ring-1 ring-amber-500 border-amber-500"
+              )}
             />
-            {errors.shares && (
+            {errors.shares ? (
               <p className="mt-0.5 flex items-center gap-1 text-[9px] text-destructive">
                 <AlertCircle className="h-3 w-3" />
                 {t("validation.positiveNumber")}
               </p>
-            )}
+            ) : hasInsufficientShares ? (
+              <p className="mt-0.5 flex items-center gap-1 text-[9px] text-amber-600 dark:text-amber-400">
+                <AlertTriangle className="h-3 w-3" />
+                {t("validation.exceedsShares")} — {t("validation.maxSell", { max: ownedShares })}
+              </p>
+            ) : null}
           </div>
 
           {/* Price */}
@@ -224,7 +249,13 @@ export function InlineTransactionForm({
           ) : (
             <span />
           )}
-          <Button type="submit" size="sm" className="h-7 text-[11px]" loading={isSubmitting}>
+          <Button
+            type="submit"
+            size="sm"
+            className="h-7 text-[11px]"
+            loading={isSubmitting}
+            disabled={hasInsufficientShares}
+          >
             {t("addPosition")}
           </Button>
         </div>
