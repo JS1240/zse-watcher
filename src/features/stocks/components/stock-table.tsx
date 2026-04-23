@@ -17,7 +17,7 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { StockListEmptyIllustration, SearchEmptyIllustration } from "@/components/shared/empty-illustrations";
 import { cn } from "@/lib/utils";
 
-type SortField = "ticker" | "price" | "changePct" | "turnover" | "volume";
+type SortField = "ticker" | "price" | "changePct" | "turnover" | "volume" | "dividendYield";
 type SortDir = "asc" | "desc";
 type ChangeFilter = "all" | "gainers" | "losers" | "unchanged";
 
@@ -122,7 +122,7 @@ export function StockTable() {
     if (!filtered.length) return;
     exportToCsv(
       `zse-stocks-${new Date().toISOString().slice(0, 10)}`,
-      ["Ticker", "Name", "Sector", "Price", "Change %", "Volume", "Turnover"],
+      ["Ticker", "Name", "Sector", "Price", "Change %", "Volume", "Turnover", "Dividend Yield %"],
       filtered.map((s) => [
         s.ticker,
         s.name,
@@ -131,6 +131,7 @@ export function StockTable() {
         s.changePct.toString(),
         s.volume.toString(),
         s.turnover.toString(),
+        s.dividendYield ? s.dividendYield.toString() : "",
       ]),
     );
   }, [filtered]);
@@ -317,6 +318,15 @@ export function StockTable() {
                 onClick={toggleSort}
                 sortIcon={<SortIcon field="turnover" />}
                 className="hidden w-28 text-right lg:table-cell"
+                currentField={sortField}
+                currentDir={sortDir}
+              />
+              <ColumnHeader
+                field="dividendYield"
+                label={t("table.dividendYield")}
+                onClick={toggleSort}
+                sortIcon={<SortIcon field="dividendYield" />}
+                className="hidden w-20 text-right xl:table-cell"
                 currentField={sortField}
                 currentDir={sortDir}
               />

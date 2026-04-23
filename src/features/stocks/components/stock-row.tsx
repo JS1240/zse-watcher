@@ -206,6 +206,13 @@ const StockRowBase = ({ stock, flash, searchQuery, rowIndex, onFocus }: StockRow
           {formatVolume(stock.turnover)} EUR
         </span>
       </td>
+
+      {/* Dividend Yield */}
+      <td className="hidden px-3 py-2 text-right xl:table-cell">
+        <span className="font-data text-xs tabular-nums text-muted-foreground">
+          {stock.dividendYield != null ? `${stock.dividendYield.toFixed(1)}%` : "—"}
+        </span>
+      </td>
     </tr>
   );
 };
@@ -218,6 +225,7 @@ export const StockRow = memo(StockRowBase, (prev, next) => {
     prev.stock.price === next.stock.price &&
     prev.stock.changePct === next.stock.changePct &&
     prev.stock.name === next.stock.name &&
+    prev.stock.dividendYield === next.stock.dividendYield &&
     prev.flash === next.flash &&
     prev.searchQuery === next.searchQuery &&
     prev.rowIndex === next.rowIndex
