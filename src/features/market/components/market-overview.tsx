@@ -6,6 +6,7 @@ import { ErrorState } from "@/components/shared/error-state";
 import { formatPrice } from "@/lib/formatters";
 import { MarketOverviewSkeleton } from "./market-overview-skeleton";
 import { LiveDataIndicator } from "@/components/shared/live-data-indicator";
+import { memo } from "react";
 
 export function MarketOverview() {
   const { data: macro, isLoading, isError, refetch, dataUpdatedAt, isFetching } = useMacro();
@@ -70,7 +71,7 @@ interface OverviewCardProps {
   accent?: boolean;
 }
 
-function OverviewCard({ icon: Icon, label, value, changePct, accent }: OverviewCardProps) {
+function OverviewCardBase({ icon: Icon, label, value, changePct, accent }: OverviewCardProps) {
   const { i18n } = useTranslation("common");
   const isCroatian = i18n.language === "hr";
 
@@ -102,3 +103,14 @@ function OverviewCard({ icon: Icon, label, value, changePct, accent }: OverviewC
     </div>
   );
 }
+
+// Memoize to prevent re-renders when values haven't changed
+// Helps when macro data refreshes every 60s
+const OverviewCard = memo(OverviewCardBase, (prev, next) => {
+  return (
+    prev.label === next.label &&
+    prev.value === next.value &&
+    prev.changePct === next.changePct &&
+    prev.accent === next.accent
+  );
+});
