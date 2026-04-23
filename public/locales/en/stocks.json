@@ -36,7 +36,19 @@
     "chart": "Chart",
     "dividendYield": "Div. %",
     "peRatio": "P/E",
-    "marketCap": "Mkt Cap"
+    "marketCap": "Mkt Cap",
+    "tooltips": {
+      "ticker": "Unique stock ticker symbol on the exchange",
+      "name": "Full issuer company name",
+      "price": "Current share price in EUR",
+      "change": "Percentage price change from yesterday's close",
+      "volume": "Number of shares traded in this session",
+      "turnover": "Total transaction value in EUR",
+      "sector": "Industry sector of the issuer",
+      "dividendYield": "Annual dividend yield as percentage of share price",
+      "peRatio": "Price to earnings ratio - lower means cheaper relative to earnings",
+      "marketCap": "Total market value of all issuer shares"
+    }
   },
   "detail": {
     "demoData": "ZSE feed unavailable — showing demo data.",

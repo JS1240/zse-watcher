@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Search, ArrowUpDown, ArrowUp, ArrowDown, Download, TrendingUp, TrendingDown, Minus, X, ArrowUp as ScrollToTopIcon, Keyboard, RotateCcw } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { StockRow } from "@/features/stocks/components/stock-row";
 import { StockTableSkeleton } from "./stock-table-skeleton";
 import { LiveDataIndicator } from "@/components/shared/live-data-indicator";
@@ -356,6 +357,7 @@ export function StockTable() {
                 className="w-28 text-left"
                 currentField={sortField}
                 currentDir={sortDir}
+                tooltip={t("table.tooltips.ticker")}
               />
               <th className="hidden px-3 py-2 text-left font-medium md:table-cell">
                 {t("table.name")}
@@ -368,6 +370,7 @@ export function StockTable() {
                 className="w-24 text-right"
                 currentField={sortField}
                 currentDir={sortDir}
+                tooltip={t("table.tooltips.price")}
               />
               <ColumnHeader
                 field="changePct"
@@ -377,6 +380,7 @@ export function StockTable() {
                 className="w-24 text-right"
                 currentField={sortField}
                 currentDir={sortDir}
+                tooltip={t("table.tooltips.change")}
               />
               <ColumnHeader
                 field="volume"
@@ -386,6 +390,7 @@ export function StockTable() {
                 className="hidden w-24 text-right lg:table-cell"
                 currentField={sortField}
                 currentDir={sortDir}
+                tooltip={t("table.tooltips.volume")}
               />
               <ColumnHeader
                 field="turnover"
@@ -395,6 +400,7 @@ export function StockTable() {
                 className="hidden w-28 text-right lg:table-cell"
                 currentField={sortField}
                 currentDir={sortDir}
+                tooltip={t("table.tooltips.turnover")}
               />
               <ColumnHeader
                 field="dividendYield"
@@ -404,6 +410,7 @@ export function StockTable() {
                 className="hidden w-20 text-right xl:table-cell"
                 currentField={sortField}
                 currentDir={sortDir}
+                tooltip={t("table.tooltips.dividendYield")}
               />
               <ColumnHeader
                 field="peRatio"
@@ -413,6 +420,7 @@ export function StockTable() {
                 className="hidden w-16 text-right 2xl:table-cell"
                 currentField={sortField}
                 currentDir={sortDir}
+                tooltip={t("table.tooltips.peRatio")}
               />
               <ColumnHeader
                 field="marketCapM"
@@ -422,6 +430,7 @@ export function StockTable() {
                 className="hidden w-24 text-right 2xl:table-cell"
                 currentField={sortField}
                 currentDir={sortDir}
+                tooltip={t("table.tooltips.marketCap")}
               />
             </tr>
           </thead>
@@ -504,6 +513,7 @@ interface ColumnHeaderProps {
   className?: string;
   currentField: SortField;
   currentDir: SortDir;
+  tooltip?: string;
 }
 
 function ColumnHeader({
@@ -514,6 +524,7 @@ function ColumnHeader({
   className,
   currentField,
   currentDir,
+  tooltip,
 }: ColumnHeaderProps) {
   const sortDirection: "ascending" | "descending" | "none" =
     currentField === field
@@ -529,22 +540,40 @@ function ColumnHeader({
     }
   };
 
+  const headerButton = (
+    <button
+      className="inline-flex items-center gap-1"
+      onClick={() => onClick(field)}
+      onKeyDown={handleKeyDown}
+      tabIndex={0}
+      role="columnheader"
+      aria-label={`${label}: ${sortDirection === "none" ? "unsorted" : sortDirection + ","} click to sort`}
+    >
+      {label}
+      {sortIcon}
+    </button>
+  );
+
+  // Wrap with tooltip if tooltip text is provided
+  const headerContent = tooltip ? (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span className="cursor-help">{headerButton}</span>
+      </TooltipTrigger>
+      <TooltipContent side="top" className="max-w-xs text-xs">
+        {tooltip}
+      </TooltipContent>
+    </Tooltip>
+  ) : (
+    headerButton
+  );
+
   return (
     <th
       aria-sort={sortDirection}
       className={`cursor-pointer px-3 py-2 font-medium sticky left-0 z-10 bg-card shadow-[2px_0_4px_hsl(var(--border))] ${className ?? ""}`}
     >
-      <button
-        className="inline-flex items-center gap-1"
-        onClick={() => onClick(field)}
-        onKeyDown={handleKeyDown}
-        tabIndex={0}
-        role="columnheader"
-        aria-label={`${label}: ${sortDirection === "none" ? "unsorted" : sortDirection + ","} click to sort`}
-      >
-        {label}
-        {sortIcon}
-      </button>
+      {headerContent}
     </th>
   );
 }

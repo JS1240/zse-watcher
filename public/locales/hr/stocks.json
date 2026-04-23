@@ -36,7 +36,19 @@
     "chart": "Graf",
     "dividendYield": "Div. %",
     "peRatio": "P/E",
-    "marketCap": "Trz. kap."
+    "marketCap": "Trz. kap.",
+    "tooltips": {
+      "ticker": "Jedinstvena oznaka dionice na burzi",
+      "name": "Puno ime izdavatelja",
+      "price": "Trenutna cijena dionice u EUR",
+      "change": "Postotak promjene cijene u odnosu na jučerašnje zatvaranje",
+      "volume": "Broj prodanih dionica u ovoj trgovinskoj sesiji",
+      "turnover": "Ukupna vrijednost transakcija u EUR",
+      "sector": "Industrijski sektor izdavatelja",
+      "dividendYield": "Godišnji dividendni prinos u postocima cijene",
+      "peRatio": "Omjer cijene i zarade po dionici - nizi znaci jeftinija dionica",
+      "marketCap": "Ukupna tržišna vrijednost svih dionica izdavatelja"
+    }
   },
   "detail": {
     "demoData": "Priključak na ZSE nije dostupan — prikazujem ogledne podatke.",
