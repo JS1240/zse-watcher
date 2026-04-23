@@ -1,6 +1,6 @@
 import { useState, useMemo, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, Trash2, ChevronDown, ChevronUp, Download, Search, X, ArrowUp, ArrowDown, ArrowUpDown, TrendingUp, TrendingDown, Keyboard, CheckCircle2, ArrowUp as ScrollToTopIcon, HelpCircle, Wallet } from "lucide-react";
+import { Plus, Trash2, ChevronDown, ChevronUp, Download, Search, X, ArrowUp, ArrowDown, ArrowUpDown, TrendingUp, TrendingDown, Keyboard, CheckCircle2, ArrowUp as ScrollToTopIcon, HelpCircle, Wallet, Banknote } from "lucide-react";
 import { Sparkline } from "@/components/shared/sparkline";
 import { getMockPriceHistory } from "@/lib/mock-data";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
@@ -155,9 +155,19 @@ export function LocalPortfolioDashboard() {
     direction: "desc",
   });
 
+  // Transaction type filter - consistent with stock table and watchlist filters for Croatian investors
+  const [txTypeFilter, setTxTypeFilter] = useState<"all" | "buy" | "sell" | "dividend">("all");
+
   // Sort transactions
   const sortedTransactions = useMemo(() => {
-    return [...transactions].sort((a, b) => {
+    let result = [...transactions];
+    
+    // Apply transaction type filter - consistent with holdings changeFilter pattern
+    if (txTypeFilter !== "all") {
+      result = result.filter((tx) => tx.transactionType === txTypeFilter);
+    }
+    
+    return result.sort((a, b) => {
       if (txSort.column === "transactionDate") {
         const aTime = new Date(a.transactionDate).getTime();
         const bTime = new Date(b.transactionDate).getTime();
@@ -177,7 +187,7 @@ export function LocalPortfolioDashboard() {
       const bVal = b[txSort.column] as number;
       return txSort.direction === "asc" ? aVal - bVal : bVal - aVal;
     });
-  }, [transactions, txSort]);
+  }, [transactions, txSort, txTypeFilter]);
 
   // Show skeleton while stocks load (conditional render instead of early return for React hooks compliance)
   const showSkeleton = isStocksLoading || (!stocksResult && transactions.length > 0);
@@ -816,23 +826,74 @@ export function LocalPortfolioDashboard() {
           {showHistory && (
             <div className="border-t border-border">
               <div className="flex items-center justify-between gap-2 px-3 py-1.5">
-                {/* Sort dropdown */}
-                <select
-                  value={`${txSort.column}-${txSort.direction}`}
-                  onChange={(e) => {
-                    const [column, direction] = e.target.value.split("-") as [TxSortColumn, "asc" | "desc"];
-                    setTxSort({ column, direction });
-                  }}
-                  className="rounded border border-border bg-background px-2 py-1 text-[10px] text-foreground"
-                >
-                  <option value="transactionDate-desc">{t("sort.newest") || "Najnovije"}</option>
-                  <option value="transactionDate-asc">{t("sort.oldest") || "Najstarije"}</option>
-                  <option value="ticker-asc">{t("sort.tickerAsc") || "A-Z"}</option>
-                  <option value="ticker-desc">{t("sort.tickerDesc") || "Z-A"}</option>
-                  <option value="totalAmount-desc">{t("sort.valueDesc") || "Vrijednost ↓"}</option>
-                  <option value="totalAmount-asc">{t("sort.valueAsc") || "Vrijednost ↑"}</option>
-                </select>
+                {/* Transaction type filter chips - consistent UX with stocks table filters */}
+                <div className="flex gap-1">
+                  <button
+                    onClick={() => setTxTypeFilter("all")}
+                    className={cn(
+                      "flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-medium transition-all",
+                      txTypeFilter === "all"
+                        ? "bg-primary text-primary-foreground shadow-sm"
+                        : "bg-muted/60 text-muted-foreground hover:bg-muted"
+                    )}
+                  >
+                    <span className="hidden sm:inline">Svi</span>
+                  </button>
+                  <button
+                    onClick={() => setTxTypeFilter("buy")}
+                    className={cn(
+                      "flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-medium transition-all",
+                      txTypeFilter === "buy"
+                        ? "bg-primary text-primary-foreground shadow-sm"
+                        : "bg-muted/60 text-muted-foreground hover:bg-muted"
+                    )}
+                  >
+                    <TrendingUp className="h-3 w-3" />
+                    <span className="hidden sm:inline">Kupnja</span>
+                  </button>
+                  <button
+                    onClick={() => setTxTypeFilter("sell")}
+                    className={cn(
+                      "flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-medium transition-all",
+                      txTypeFilter === "sell"
+                        ? "bg-primary text-primary-foreground shadow-sm"
+                        : "bg-muted/60 text-muted-foreground hover:bg-muted"
+                    )}
+                  >
+                    <TrendingDown className="h-3 w-3" />
+                    <span className="hidden sm:inline">Prodaja</span>
+                  </button>
+                  <button
+                    onClick={() => setTxTypeFilter("dividend")}
+                    className={cn(
+                      "flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-medium transition-all",
+                      txTypeFilter === "dividend"
+                        ? "bg-primary text-primary-foreground shadow-sm"
+                        : "bg-muted/60 text-muted-foreground hover:bg-muted"
+                    )}
+                  >
+                    <Banknote className="h-3 w-3" />
+                    <span className="hidden sm:inline">Div.</span>
+                  </button>
+                </div>
                 <div className="flex gap-2">
+                  {/* Sort dropdown for additional sorting options */}
+                  <select
+                    value={`${txSort.column}-${txSort.direction}`}
+                    onChange={(e) => {
+                      const [column, direction] = e.target.value.split("-") as [TxSortColumn, "asc" | "desc"];
+                      setTxSort({ column, direction });
+                    }}
+                    className="rounded border border-border bg-background px-2 py-1 text-[10px] text-foreground"
+ aria-label={t("sort.label") || "Sortiraj"}
+                  >
+                    <option value="transactionDate-desc">{t("sort.newest") || "Najnovije"}</option>
+                    <option value="transactionDate-asc">{t("sort.oldest") || "Najstarije"}</option>
+                    <option value="ticker-asc">{t("sort.tickerAsc") || "A-Z"}</option>
+                    <option value="ticker-desc">{t("sort.tickerDesc") || "Z-A"}</option>
+                    <option value="totalAmount-desc">{t("sort.valueDesc") || "Vrijednost ↓"}</option>
+                    <option value="totalAmount-asc">{t("sort.valueAsc") || "Vrijednost ↑"}</option>
+                  </select>
                   <button
                     type="button"
                     onClick={() => {
