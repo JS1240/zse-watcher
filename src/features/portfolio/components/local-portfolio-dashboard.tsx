@@ -157,6 +157,8 @@ export function LocalPortfolioDashboard() {
 
   // Transaction type filter - consistent with stock table and watchlist filters for Croatian investors
   const [txTypeFilter, setTxTypeFilter] = useState<"all" | "buy" | "sell" | "dividend">("all");
+  const [txSearch, setTxSearch] = useState("");
+  const debouncedTxSearch = useDebounce(txSearch, 200);
 
   // Sort transactions
   const sortedTransactions = useMemo(() => {
@@ -165,6 +167,12 @@ export function LocalPortfolioDashboard() {
     // Apply transaction type filter - consistent with holdings changeFilter pattern
     if (txTypeFilter !== "all") {
       result = result.filter((tx) => tx.transactionType === txTypeFilter);
+    }
+    
+    // Apply search filter
+    if (debouncedTxSearch) {
+      const q = debouncedTxSearch.toLowerCase();
+      result = result.filter((tx) => tx.ticker.toLowerCase().includes(q));
     }
     
     return result.sort((a, b) => {
@@ -187,7 +195,7 @@ export function LocalPortfolioDashboard() {
       const bVal = b[txSort.column] as number;
       return txSort.direction === "asc" ? aVal - bVal : bVal - aVal;
     });
-  }, [transactions, txSort, txTypeFilter]);
+  }, [transactions, txSort, txTypeFilter, debouncedTxSearch]);
 
   // Show skeleton while stocks load (conditional render instead of early return for React hooks compliance)
   const showSkeleton = isStocksLoading || (!stocksResult && transactions.length > 0);
@@ -892,6 +900,26 @@ export function LocalPortfolioDashboard() {
                     <span className="hidden sm:inline">Div.</span>
                   </button>
                 </div>
+                {/* Transaction search */}
+                {transactions.length > 0 && (
+                  <div className="relative">
+                    <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
+                    <Input
+                      placeholder={t("searchPlaceholder")}
+                      value={txSearch}
+                      onChange={(e) => setTxSearch(e.target.value)}
+                      className="w-24 pl-7 pr-7 py-1 text-[10px]"
+                    />
+                    {txSearch && (
+                      <button
+                        onClick={() => setTxSearch("")}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    )}
+                  </div>
+                )}
                 <div className="flex gap-2">
                   {/* Sort dropdown for additional sorting options */}
                   <select
