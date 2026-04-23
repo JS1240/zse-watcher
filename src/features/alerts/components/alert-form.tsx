@@ -67,7 +67,35 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
     return stock?.price ?? null;
   }, [tickerValue, stocks]);
 
-  // Suggested target based on current price (5% bump for quick setting)
+  // Suggested targets for quick selection (multiple preset percentages for easier alert setting)
+  const suggestedTargets = useMemo((): { label: string; value: number; display: string; isAbsolute: boolean }[] | null => {
+    if (!currentPrice || !conditionValue) return null;
+    const isPercent = conditionValue.includes("percent");
+    
+    if (isPercent) {
+      return [
+        { label: "+3%", value: 3, display: "3", isAbsolute: false },
+        { label: "+5%", value: 5, display: "5", isAbsolute: false },
+        { label: "+10%", value: 10, display: "10", isAbsolute: false },
+        { label: "-3%", value: -3, display: "3", isAbsolute: false },
+        { label: "-5%", value: -5, display: "5", isAbsolute: false },
+        { label: "-10%", value: -10, display: "10", isAbsolute: false },
+      ];
+    }
+    
+    // For absolute price conditions, show percentage bumps
+    const upConditions = conditionValue === "above" || conditionValue === "percent_change_up";
+    return [
+      { label: "+3%", value: upConditions ? currentPrice * 1.03 : currentPrice * 0.97, display: formatPrice(upConditions ? currentPrice * 1.03 : currentPrice * 0.97).replace("EUR", "").trim(), isAbsolute: true },
+      { label: "+5%", value: upConditions ? currentPrice * 1.05 : currentPrice * 0.95, display: formatPrice(upConditions ? currentPrice * 1.05 : currentPrice * 0.95).replace("EUR", "").trim(), isAbsolute: true },
+      { label: "+10%", value: upConditions ? currentPrice * 1.10 : currentPrice * 0.90, display: formatPrice(upConditions ? currentPrice * 1.10 : currentPrice * 0.90).replace("EUR", "").trim(), isAbsolute: true },
+      { label: "-3%", value: upConditions ? currentPrice * 0.97 : currentPrice * 1.03, display: formatPrice(upConditions ? currentPrice * 0.97 : currentPrice * 1.03).replace("EUR", "").trim(), isAbsolute: true },
+      { label: "-5%", value: upConditions ? currentPrice * 0.95 : currentPrice * 1.05, display: formatPrice(upConditions ? currentPrice * 0.95 : currentPrice * 1.05).replace("EUR", "").trim(), isAbsolute: true },
+      { label: "-10%", value: upConditions ? currentPrice * 0.90 : currentPrice * 1.10, display: formatPrice(upConditions ? currentPrice * 0.90 : currentPrice * 1.10).replace("EUR", "").trim(), isAbsolute: true },
+    ];
+  }, [currentPrice, conditionValue]);
+
+  // Legacy single suggestedTarget for backward compatibility
   const suggestedTarget = useMemo(() => {
     if (!currentPrice || !conditionValue) return null;
     const isPercent = conditionValue.includes("percent");
@@ -194,26 +222,48 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
               {tickerErrorMessage}
             </p>
           ) : isTickerValid && currentPrice ? (
-            <p className="mt-1.5 flex items-center gap-1.5 rounded-md border border-emerald-400/30 bg-emerald-50 px-2.5 py-1.5 text-xs font-semibold text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-700/30">
-              <TrendingUp className="h-3.5 w-3.5 flex-shrink-0" />
-              <span>{formatPrice(currentPrice)}</span>
-              {suggestedTarget && (
-                <span className="text-muted-foreground">·</span>
+            <>
+              <p className="mt-1.5 flex items-center gap-1.5 rounded-md border border-emerald-400/30 bg-emerald-50 px-2.5 py-1.5 text-xs font-semibold text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-700/30">
+                <TrendingUp className="h-3.5 w-3.5 flex-shrink-0" />
+                <span>{formatPrice(currentPrice)}</span>
+                {suggestedTarget && (
+                  <span className="text-muted-foreground">·</span>
+                )}
+                {suggestedTarget && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const clean = suggestedTarget.replace("%", "").replace("+", "");
+                      setValue("targetValue", clean, { shouldValidate: true });
+                      setTouched((prev) => ({ ...prev, target: true }));
+                    }}
+                    className="ml-auto underline hover:no-underline"
+                  >
+                    {t("useSuggested", { value: suggestedTarget }) || `Koristi ${suggestedTarget}`}
+                  </button>
+                )}
+              </p>
+              {/* Quick select chips for common percentage targets */}
+              {suggestedTargets && suggestedTargets.length > 0 && (
+                <div className="mt-1 flex flex-wrap gap-1">
+                  <span className="text-[9px] text-muted-foreground">Brzo:</span>
+                  {suggestedTargets.slice(0, 6).map((preset) => (
+                    <button
+                      key={preset.label}
+                      type="button"
+                      onClick={() => {
+                        const value = preset.isAbsolute ? preset.display : preset.label.replace("%", "").replace("+", "");
+                        setValue("targetValue", value, { shouldValidate: true });
+                        setTouched((prev) => ({ ...prev, target: true }));
+                      }}
+                      className="rounded-full bg-muted px-2 py-0.5 text-[9px] font-medium text-muted-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
+                    >
+                      {preset.label}
+                    </button>
+                  ))}
+                </div>
               )}
-              {suggestedTarget && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    const clean = suggestedTarget.replace("%", "").replace("+", "");
-                    setValue("targetValue", clean, { shouldValidate: true });
-                    setTouched((prev) => ({ ...prev, target: true }));
-                  }}
-                  className="ml-auto underline hover:no-underline"
-                >
-                  {t("useSuggested", { value: suggestedTarget }) || `Koristi ${suggestedTarget}`}
-                </button>
-              )}
-            </p>
+            </>
           ) : isTickerValid ? (
             <p className="mt-1.5 flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400">
               <CheckCircle2 className="h-3.5 w-3.5 flex-shrink-0" />
