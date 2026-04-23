@@ -1,4 +1,4 @@
-import { useState, useCallback, memo, useRef } from "react";
+import { useState, useCallback, memo, useRef, useEffect } from "react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { ExternalLink, Newspaper, Search, ArrowUp, ArrowDown, ArrowUpDown, Download, Keyboard, X, ArrowUp as ScrollTop, TrendingUp, Copy } from "lucide-react";
@@ -78,6 +78,9 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   // Internal category filter state (when not set by prop)
   const [categoryFilter, setCategoryFilter] = useState<"all" | "general" | "trading">("all");
+  // Keyboard navigation state for article list
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+  const articleRefs = useRef<Map<number, HTMLButtonElement>>(new Map());
   const effectiveCategory = category ?? categoryFilter;
   const debouncedSearch = useDebounce(search, 200);
 
@@ -96,42 +99,7 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
     }
   }, [sortField]);
 
-  // Sort header component - memoized to prevent re-renders of sort controls
-  const SortHeader = memo(function SortHeader({ field, label }: { field: "date" | "ticker"; label: string }) {
-    const isActive = sortField === field;
-    const direction = isActive ? sortDir : null;
-    const sortDirection = isActive ? (direction === "asc" ? "ascending" : "descending") : "none";
-
-    const handleKeyDown = (e: React.KeyboardEvent) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        handleSort(field);
-      }
-    };
-
-    return (
-      <button
-        onClick={() => handleSort(field)}
-        onKeyDown={handleKeyDown}
-        tabIndex={0}
-        role="columnheader"
-        className="flex items-center gap-1 text-[10px] font-medium transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        aria-sort={sortDirection}
-        aria-label={`${label}: ${sortDirection === "none" ? "unsorted" : sortDirection}, click to sort`}
-      >
-        <span>{label}</span>
-        {direction === "asc" ? (
-          <ArrowUp className="h-3 w-3 shrink-0" />
-        ) : direction === "desc" ? (
-          <ArrowDown className="h-3 w-3 shrink-0" />
-        ) : (
-          <ArrowUpDown className="h-3 w-3 shrink-0 text-muted-foreground/40" />
-        )}
-      </button>
-    );
-  });
-
-  // Count articles per category for filter chips
+  // Count articles per category for filter chips (needs articles only)
   const categoryCounts = useMemo(() => {
     if (!articles) return { all: 0, general: 0, trading: 0 };
     const general = articles.filter((a) => a.category === "general").length;
@@ -139,6 +107,7 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
     return { all: articles.length, general, trading };
   }, [articles]);
 
+  // Filtered articles (depends on articles, state, debounced values)
   const filtered = useMemo(() => {
     if (!articles) return [];
     let result = articles;
@@ -179,6 +148,71 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
     return result;
   }, [articles, ticker, effectiveCategory, limit, debouncedSearch, sortField, sortDir]);
 
+  // Keyboard navigation handler (needs filtered)
+  const handleNewsKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (filtered.length === 0) return;
+    
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setSelectedIndex((i) => Math.min(i + 1, filtered.length - 1));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setSelectedIndex((i) => Math.max(i - 1, 0));
+    } else if (e.key === "Enter" && selectedIndex >= 0) {
+      e.preventDefault();
+      setSelectedArticle(filtered[selectedIndex]);
+    } else if (e.key === "Escape") {
+      setSelectedIndex(-1);
+    }
+  }, [filtered, selectedIndex]);
+
+  // Scroll selected article into view
+  useEffect(() => {
+    if (selectedIndex >= 0 && articleRefs.current.has(selectedIndex)) {
+      articleRefs.current.get(selectedIndex)?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+  }, [selectedIndex]);
+
+  // Clear selection when search/filter changes
+  useEffect(() => {
+    setSelectedIndex(-1);
+  }, [debouncedSearch, categoryFilter, sortField, sortDir]);
+
+  // Sort header component - memoized to prevent re-renders of sort controls
+  const SortHeader = memo(function SortHeader({ field, label }: { field: "date" | "ticker"; label: string }) {
+    const isActive = sortField === field;
+    const direction = isActive ? sortDir : null;
+    const sortDirection = isActive ? (direction === "asc" ? "ascending" : "descending") : "none";
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        handleSort(field);
+      }
+    };
+
+    return (
+      <button
+        onClick={() => handleSort(field)}
+        onKeyDown={handleKeyDown}
+        tabIndex={0}
+        role="columnheader"
+        className="flex items-center gap-1 text-[10px] font-medium transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        aria-sort={sortDirection}
+        aria-label={`${label}: ${sortDirection === "none" ? "unsorted" : sortDirection}, click to sort`}
+      >
+        <span>{label}</span>
+        {direction === "asc" ? (
+          <ArrowUp className="h-3 w-3 shrink-0" />
+        ) : direction === "desc" ? (
+          <ArrowDown className="h-3 w-3 shrink-0" />
+        ) : (
+          <ArrowUpDown className="h-3 w-3 shrink-0 text-muted-foreground/40" />
+        )}
+      </button>
+    );
+  });
+
   // Only show search/export when not limited (inline usage)
   const showSearch = !limit && articles && articles.length > 0;
 
@@ -218,18 +252,31 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
     toast.success(`${ticker} ${t("toast.copied") || "kopirano"}`);
   }, [t]);
 
-  // Memoized article item with relative time and click-to-copy ticker
+  // Memoized article item with ref registration for keyboard navigation
   const ArticleItem = memo(function ArticleItem({
     article,
+    index,
     onClick,
+    isSelected,
   }: {
     article: NewsArticle;
+    index: number;
     onClick: (article: NewsArticle) => void;
+    isSelected: boolean;
   }) {
+    const ref = useCallback((el: HTMLButtonElement | null) => {
+      if (el) articleRefs.current.set(index, el);
+      else articleRefs.current.delete(index);
+    }, [index]);
+
     return (
       <button
+        ref={ref}
         onClick={() => onClick(article)}
-        className="group flex w-full items-start justify-between gap-2 rounded-md px-2 py-2 text-left transition-colors hover:bg-accent/50"
+        className={cn(
+          "group flex w-full items-start justify-between gap-2 rounded-md px-2 py-2 text-left transition-colors hover:bg-accent/50",
+          isSelected && "ring-2 ring-primary bg-primary/10"
+        )}
       >
         <div className="min-w-0 flex-1">
           <h4 className="line-clamp-2 text-xs font-medium text-foreground group-hover:text-primary">
@@ -466,7 +513,8 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
               <span>Live</span>
               <span className="flex items-center gap-0.5 ml-1">
                 <Keyboard className="h-2.5 w-2.5" />
-                <span>/</span>
+                <span className="text-muted-foreground/60">↑↓</span>
+                <span className="text-muted-foreground/60">/</span>
               </span>
             </div>
           </div>
@@ -474,14 +522,20 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
 
         <div
           ref={newsFeedRef}
+          onKeyDown={handleNewsKeyDown}
           onScroll={(e) => setScrollTop((e.target as HTMLDivElement).scrollTop > 200)}
           className="space-y-1 max-h-[calc(100vh-280px)] overflow-y-auto pr-1"
+          tabIndex={0}
+          role="listbox"
+          aria-label="News articles. Use arrow keys to navigate, Enter to open."
         >
-          {filtered.map((article) => (
+          {filtered.map((article, index) => (
             <ArticleItem
               key={article.id}
               article={article}
+              index={index}
               onClick={handleArticleClick}
+              isSelected={index === selectedIndex}
             />
           ))}
         </div>
