@@ -460,6 +460,7 @@ function SortableRow({
   searchQuery?: string;
 }) {
   const { t } = useTranslation("watchlist");
+  const { t: tc } = useTranslation("common");
   const {
     attributes,
     listeners,
@@ -488,6 +489,14 @@ function SortableRow({
     setCopiedField("ticker");
     setTimeout(() => setCopiedField(null), 1200);
   }, [stock.ticker, t]);
+
+  const handleCopyPrice = useCallback(async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    await navigator.clipboard.writeText(stock.price.toFixed(2));
+    toast.success(tc("toast.copied", { value: formatPrice(stock.price) }));
+    setCopiedField("price");
+    setTimeout(() => setCopiedField(null), 1200);
+  }, [stock.price, tc]);
 
   return (
     <tr
@@ -560,9 +569,18 @@ function SortableRow({
         <span className="text-xs text-muted-foreground">{stock.sector || "-"}</span>
       </td>
       <td className="px-3 py-2 text-right">
-        <span className="font-data text-xs tabular-nums font-medium text-foreground">
+        <button
+          type="button"
+          onClick={handleCopyPrice}
+          className={cn(
+            "font-data text-xs tabular-nums font-medium text-foreground",
+            "cursor-pointer transition-colors hover:text-primary",
+            copiedField === "price" && "text-primary",
+          )}
+          title="Click to copy price"
+        >
           {formatPrice(stock.price)}
-        </span>
+        </button>
       </td>
       <td className="px-3 py-2 text-right">
         <ChangeBadge value={stock.changePct} showIcon={false} />
@@ -1101,6 +1119,7 @@ interface WatchlistRowProps {
 
 function WatchlistRow({ stock, showRemove, onRemove, flash, searchQuery }: WatchlistRowProps) {
   const { t } = useTranslation("watchlist");
+  const { t: tc } = useTranslation("common");
   const { select, selectedTicker } = useSelectedStock();
   const isSelected = selectedTicker === stock.ticker;
   const [copiedField, setCopiedField] = useState<string | null>(null);
@@ -1112,6 +1131,14 @@ function WatchlistRow({ stock, showRemove, onRemove, flash, searchQuery }: Watch
     setCopiedField("ticker");
     setTimeout(() => setCopiedField(null), 1200);
   }, [stock.ticker, t]);
+
+  const handleCopyPrice = useCallback(async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    await navigator.clipboard.writeText(stock.price.toFixed(2));
+    toast.success(tc("toast.copied", { value: formatPrice(stock.price) }));
+    setCopiedField("price");
+    setTimeout(() => setCopiedField(null), 1200);
+  }, [stock.price, tc]);
 
   return (
     <tr
@@ -1172,9 +1199,18 @@ function WatchlistRow({ stock, showRemove, onRemove, flash, searchQuery }: Watch
         <span className="text-xs text-muted-foreground">{stock.sector || "-"}</span>
       </td>
       <td className="px-3 py-2 text-right">
-        <span className="font-data text-xs tabular-nums font-medium text-foreground">
+        <button
+          type="button"
+          onClick={handleCopyPrice}
+          className={cn(
+            "font-data text-xs tabular-nums font-medium text-foreground",
+            "cursor-pointer transition-colors hover:text-primary",
+            copiedField === "price" && "text-primary",
+          )}
+          title="Click to copy price"
+        >
           {formatPrice(stock.price)}
-        </span>
+        </button>
       </td>
       <td className="px-3 py-2 text-right">
         <ChangeBadge value={stock.changePct} showIcon={false} />
