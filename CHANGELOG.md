@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+- **P/E Ratio and Market Cap in Stock Table** — fundamental data for Croatian retail investors
+  - Added sortable P/E and Market Cap columns to stock table (visible at 2xl+ screen width)
+  - Added peRatio and marketCapM fields to Stock type, populated in mock data
+  - Updated CSV export to include P/E ratio and market cap columns
+  - Fixed watchlist CSV export type casting for proper Stock type fields
+
 ### Added
 
 - **Performance: Memoized Watchlist Components** — prevent unnecessary re-renders for Croatian retail investors
