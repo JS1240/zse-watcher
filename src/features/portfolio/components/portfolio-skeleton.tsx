@@ -55,6 +55,7 @@ export function PortfolioSkeleton({ className }: PortfolioSkeletonProps) {
               <th className="px-3 py-2 text-right font-medium">{t("fields.currentPrice")}</th>
               <th className="hidden px-3 py-2 text-right font-medium md:table-cell">{t("fields.value")}</th>
               <th className="px-3 py-2 text-right font-medium">{t("fields.gain")}</th>
+              <th className="hidden px-3 py-2 text-right font-medium xl:table-cell">{t("fields.trend")}</th>
             </tr>
           </thead>
           <tbody>
@@ -89,6 +90,9 @@ export function PortfolioSkeleton({ className }: PortfolioSkeletonProps) {
                 {/* Gain */}
                 <td className="px-3 py-2 text-right">
                   <Skeleton className="ml-auto h-4 w-16 rounded-sm animate-shimmer" />
+                </td>
+                <td className="hidden px-3 py-2 text-right xl:table-cell">
+                  <Skeleton className="ml-auto h-[18px] w-[50px] rounded animate-shimmer" />
                 </td>
               </tr>
             ))}
