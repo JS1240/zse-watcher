@@ -1,6 +1,6 @@
 import { useMemo, useState, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, Download, Wallet, ChevronUp, ChevronDown, Search, X, Keyboard, TrendingUp, TrendingDown, Minus, CheckCircle2, ArrowUp as ScrollToTopIcon } from "lucide-react";
+import { Plus, Download, ChevronUp, ChevronDown, Search, X, Keyboard, TrendingUp, TrendingDown, Minus, CheckCircle2, ArrowUp as ScrollToTopIcon } from "lucide-react";
 import { Sparkline } from "@/components/shared/sparkline";
 import { getMockPriceHistory } from "@/lib/mock-data";
 import { Highlight } from "@/components/shared/highlight";
@@ -22,6 +22,7 @@ import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
+import { PortfolioEmptyIllustration, SearchEmptyIllustration } from "@/components/shared/empty-illustrations";
 import type { Holding } from "@/features/portfolio/api/portfolio-queries";
 
 interface EnrichedHolding extends Holding {
@@ -571,7 +572,7 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
         </div>
       ) : filteredHoldings.length === 0 && search ? (
         <EmptyState
-          icon={<Search className="h-8 w-8" />}
+          icon={<SearchEmptyIllustration className="h-8 w-8" />}
           title={t("searchNoResults") || "No results found"}
           description={t("searchNoResultsDescription") || "No positions match your search."}
           action={{ label: t("clearSearch") || "Clear search", onClick: () => setSearch("") }}
@@ -579,14 +580,16 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
       ) : (
         <div className="rounded-md border border-border bg-card">
           <EmptyState
-            icon={<Wallet className="h-8 w-8" />}
+            icon={<PortfolioEmptyIllustration className="h-10 w-10" />}
             title={t("empty")}
             description={t("emptyDescription")}
             steps={[
-              { label: t("quickStart.step1"), description: t("quickStart.step2") },
-              { label: t("quickStart.step3"), description: "" },
+              { label: t("quickStart.step1"), description: t("quickStart.step1Desc") ?? "" },
+              { label: t("quickStart.step2"), description: t("quickStart.step2Desc") ?? "" },
+              { label: t("quickStart.step3"), description: t("quickStart.step3Desc") ?? "" },
             ]}
             action={{ label: t("addPosition"), onClick: () => setShowAddForm(true) }}
+            variant="action"
           />
         </div>
       )}
