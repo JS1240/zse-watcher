@@ -34,7 +34,9 @@
     "turnover": "Turnover",
     "sector": "Sector",
     "chart": "Chart",
-    "dividendYield": "Div. %"
+    "dividendYield": "Div. %",
+    "peRatio": "P/E",
+    "marketCap": "Mkt Cap"
   },
   "detail": {
     "demoData": "ZSE feed unavailable — showing demo data.",

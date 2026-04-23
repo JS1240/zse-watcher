@@ -47,6 +47,8 @@ const stock1: Stock = {
   sector: 'Hoteli i turizam',
   isin: 'HRRIVP0001',
   dividendYield: 4.2,
+  peRatio: 21.4,
+  marketCapM: 408,
 };
 
 const stock2: Stock = {
@@ -59,6 +61,8 @@ const stock2: Stock = {
   sector: 'Telekomunikacije',
   isin: 'HRHT0001',
   dividendYield: 5.1,
+  peRatio: 9.3,
+  marketCapM: 2640,
 };
 
 const stock3: Stock = {
@@ -71,6 +75,8 @@ const stock3: Stock = {
   sector: 'Hoteli i turizam',
   isin: 'HRAD0001',
   dividendYield: 6.3,
+  peRatio: 12.4,
+  marketCapM: 892,
 };
 
 export const Default: Story = {

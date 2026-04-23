@@ -17,7 +17,7 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { StockListEmptyIllustration, SearchEmptyIllustration } from "@/components/shared/empty-illustrations";
 import { cn } from "@/lib/utils";
 
-type SortField = "ticker" | "price" | "changePct" | "turnover" | "volume" | "dividendYield";
+type SortField = "ticker" | "price" | "changePct" | "turnover" | "volume" | "dividendYield" | "peRatio" | "marketCapM";
 type SortDir = "asc" | "desc";
 type ChangeFilter = "all" | "gainers" | "losers" | "unchanged";
 type YieldFilter = "all" | "gt3" | "gt5" | "gt8";
@@ -130,7 +130,7 @@ export function StockTable() {
     if (!filtered.length) return;
     exportToCsv(
       `zse-stocks-${new Date().toISOString().slice(0, 10)}`,
-      ["Ticker", "Name", "Sector", "Price", "Change %", "Volume", "Turnover", "Dividend Yield %"],
+      ["Ticker", "Name", "Sector", "Price", "Change %", "Volume", "Turnover", "Dividend Yield %", "P/E", "Market Cap (M EUR)"],
       filtered.map((s) => [
         s.ticker,
         s.name,
@@ -139,7 +139,9 @@ export function StockTable() {
         s.changePct.toString(),
         s.volume.toString(),
         s.turnover.toString(),
-        s.dividendYield ? s.dividendYield.toString() : "",
+        s.dividendYield ? s.dividendYield.toString() : "—",
+        s.peRatio ? s.peRatio.toFixed(1) : "—",
+        s.marketCapM ? s.marketCapM.toFixed(0) : "—",
       ]),
     );
   }, [filtered]);
@@ -400,6 +402,24 @@ export function StockTable() {
                 onClick={toggleSort}
                 sortIcon={<SortIcon field="dividendYield" />}
                 className="hidden w-20 text-right xl:table-cell"
+                currentField={sortField}
+                currentDir={sortDir}
+              />
+              <ColumnHeader
+                field="peRatio"
+                label={t("table.peRatio") || "P/E"}
+                onClick={toggleSort}
+                sortIcon={<SortIcon field="peRatio" />}
+                className="hidden w-16 text-right 2xl:table-cell"
+                currentField={sortField}
+                currentDir={sortDir}
+              />
+              <ColumnHeader
+                field="marketCapM"
+                label={t("table.marketCap") || "Tržišna kap."}
+                onClick={toggleSort}
+                sortIcon={<SortIcon field="marketCapM" />}
+                className="hidden w-24 text-right 2xl:table-cell"
                 currentField={sortField}
                 currentDir={sortDir}
               />

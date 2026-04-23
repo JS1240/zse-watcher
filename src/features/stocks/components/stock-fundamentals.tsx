@@ -62,9 +62,9 @@ export function StockFundamentals({ stock }: StockFundamentalsProps) {
         <div className="grid grid-cols-2 gap-3">
           <MetricItem
             label={t("detail.marketCap")}
-            value={stock.marketCapM > 0 ? formatMarketCap(stock.marketCapM) : "N/A"}
+            value={stock.marketCapM != null && stock.marketCapM > 0 ? formatMarketCap(stock.marketCapM) : "N/A"}
             tooltip={t("detail.marketCapTooltip")}
-            copyValue={stock.marketCapM > 0 ? stock.marketCapM.toFixed(2) : undefined}
+            copyValue={stock.marketCapM != null && stock.marketCapM > 0 ? stock.marketCapM.toFixed(2) : undefined}
             copyField="marketCap"
             onCopy={handleCopy}
             copiedField={copiedField}

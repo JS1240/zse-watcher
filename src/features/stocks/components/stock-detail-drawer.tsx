@@ -61,7 +61,7 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
         stock.name,
         stock.price.toFixed(2),
         stock.changePct.toFixed(2),
-        stock.marketCapM > 0 ? stock.marketCapM.toFixed(2) : "N/A",
+        stock.marketCapM != null && stock.marketCapM > 0 ? stock.marketCapM.toFixed(2) : "N/A",
         stock.peRatio !== null ? stock.peRatio.toFixed(1) : "N/A",
         stock.dividendYield !== null ? stock.dividendYield.toFixed(2) : "N/A",
         stock.high52w.toFixed(2),

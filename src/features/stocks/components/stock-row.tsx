@@ -247,6 +247,20 @@ const StockRowBase = ({ stock, flash, searchQuery, rowIndex, onFocus }: StockRow
           {stock.dividendYield != null ? `${stock.dividendYield.toFixed(1)}%` : "—"}
         </span>
       </td>
+
+      {/* P/E Ratio */}
+      <td className="hidden px-3 py-2 text-right 2xl:table-cell">
+        <span className="font-data text-xs tabular-nums text-muted-foreground">
+          {stock.peRatio != null ? stock.peRatio.toFixed(1) : "—"}
+        </span>
+      </td>
+
+      {/* Market Cap */}
+      <td className="hidden px-3 py-2 text-right 2xl:table-cell">
+        <span className="font-data text-xs tabular-nums text-muted-foreground">
+          {stock.marketCapM != null ? `${stock.marketCapM.toFixed(0)} M` : "—"}
+        </span>
+      </td>
     </tr>
   );
 };
@@ -260,6 +274,8 @@ export const StockRow = memo(StockRowBase, (prev, next) => {
     prev.stock.changePct === next.stock.changePct &&
     prev.stock.name === next.stock.name &&
     prev.stock.dividendYield === next.stock.dividendYield &&
+    prev.stock.peRatio === next.stock.peRatio &&
+    prev.stock.marketCapM === next.stock.marketCapM &&
     prev.flash === next.flash &&
     prev.searchQuery === next.searchQuery &&
     prev.rowIndex === next.rowIndex

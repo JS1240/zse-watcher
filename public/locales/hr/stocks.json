@@ -34,7 +34,9 @@
     "turnover": "Promet",
     "sector": "Sektor",
     "chart": "Graf",
-    "dividendYield": "Div. %"
+    "dividendYield": "Div. %",
+    "peRatio": "P/E",
+    "marketCap": "Trz. kap."
   },
   "detail": {
     "demoData": "Priključak na ZSE nije dostupan — prikazujem ogledne podatke.",

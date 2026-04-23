@@ -235,8 +235,8 @@ function AuthenticatedWatchlist() {
       s.volume.toString(),
       s.turnover.toFixed(2),
       s.dividendYield ? s.dividendYield.toFixed(2) : "",
-      (s as any).peRatio ? (s as any).peRatio.toFixed(2) : "",
-      (s as any).marketCapM ? (s as any).marketCapM.toFixed(1) : "",
+      s.peRatio ? s.peRatio.toFixed(2) : "",
+      s.marketCapM ? s.marketCapM.toFixed(1) : "",
     ]);
     exportToCsv(`zse-watchlist-${new Date().toISOString().split("T")[0]}`, headers, rows);
     toast.success(t("toast.exported"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
@@ -718,8 +718,8 @@ function LocalWatchlist() {
       s.volume.toString(),
       s.turnover.toFixed(2),
       s.dividendYield ? s.dividendYield.toFixed(2) : "",
-      (s as any).peRatio ? (s as any).peRatio.toFixed(2) : "",
-      (s as any).marketCapM ? (s as any).marketCapM.toFixed(1) : "",
+      s.peRatio ? s.peRatio.toFixed(2) : "",
+      s.marketCapM ? s.marketCapM.toFixed(1) : "",
     ]);
     exportToCsv(`zse-watchlist-${new Date().toISOString().split("T")[0]}`, headers, rows);
     toast.success(t("toast.exported"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });

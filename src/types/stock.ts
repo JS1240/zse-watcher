@@ -8,12 +8,14 @@ export interface Stock {
   turnover: number;
   volume: number;
   dividendYield: number | null;
+  peRatio: number | null;
+  marketCapM: number | null;
 }
 
 export interface StockDetail extends Stock {
   description: string;
   founded: string;
-  marketCapM: number;
+  marketCapM: number | null;
   sharesM: number;
   peRatio: number | null;
   dividendYield: number | null;

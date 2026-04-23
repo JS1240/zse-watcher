@@ -98,6 +98,8 @@ async function fetchOneEodhdStock(
     turnover: current.volume * current.adjusted_close,
     volume: current.volume,
     dividendYield: MOCK_STOCKS.find((s) => s.ticker === zseTicker)?.dividendYield ?? null,
+    peRatio: MOCK_STOCKS.find((s) => s.ticker === zseTicker)?.peRatio ?? null,
+    marketCapM: MOCK_STOCKS.find((s) => s.ticker === zseTicker)?.marketCapM ?? null,
   };
 }
 
