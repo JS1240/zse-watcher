@@ -1,9 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Keyboard } from "lucide-react";
 import { MarketOverview } from "@/features/market/components/market-overview";
 import { MarketStatus } from "@/features/market/components/market-status";
 import { useMacro } from "@/features/market/api/market-queries";
 import { useForexRates } from "@/features/market/api/forex-queries";
+import { ShortcutsOverlay } from "@/components/layout/shortcuts-overlay";
 import { formatPrice } from "@/lib/formatters";
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { MacroSkeleton } from "@/features/market/components/macro-skeleton";
@@ -20,6 +23,7 @@ function MacroPage() {
   const { t: tc } = useTranslation("common");
   const { data: macro, isLoading, isError, refetch: refetchMacro } = useMacro();
   const { data: forex, isError: forexError, refetch: refetchForex } = useForexRates();
+  const [showShortcuts, setShowShortcuts] = useState(false);
 
   // Combined error state - show error if either macro or forex fails
   const hasError = isError || forexError;
@@ -42,6 +46,7 @@ function MacroPage() {
             label: tc("errors.tryAgain"),
           }}
         />
+        {showShortcuts && <ShortcutsOverlay onClose={() => setShowShortcuts(false)} />}
       </div>
     );
   }
@@ -130,6 +135,18 @@ function MacroPage() {
           <FactorItem label={t("factors.unemployment")} value="6.3%" trend="down" />
           <FactorItem label={t("factors.interestRate")} value="3.75%" trend="neutral" />
         </div>
+      </div>
+
+      {/* Always-visible keyboard shortcuts hint for discoverability */}
+      <div className="mt-4 flex items-center justify-center gap-4 rounded-md border border-border bg-card/50 px-3 py-2 text-[10px] text-muted-foreground">
+        <button
+          onClick={() => setShowShortcuts(true)}
+          className="flex items-center gap-1 rounded px-1.5 py-1 text-[10px] text-muted-foreground hover:bg-muted hover:text-foreground"
+        >
+          <Keyboard className="h-2.5 w-2.5" />
+          <span>?</span>
+        </button>
+        <span>{tc("shortcuts.showAll") || "Svi prečaci"}</span>
       </div>
     </div>
   );
