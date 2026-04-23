@@ -130,6 +130,13 @@
     "noNews": "No news",
     "noNewsDescription": "There are no news articles available for this stock at the moment."
   },
+  "fundamentals": {
+    "range52w": "52-Week Range",
+    "week52": "52W",
+    "relatedNews": "Related News",
+    "clickToCopy": "Click to copy",
+    "copied": "Copied"
+  },
   "range": {
     "buyZone": "buy zone",
     "sellZone": "sell zone",

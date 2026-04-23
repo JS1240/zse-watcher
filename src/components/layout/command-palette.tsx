@@ -124,6 +124,10 @@ export function CommandPalette() {
               <span>select</span>
             </span>
             <span className="flex items-center gap-1">
+              <kbd className="rounded bg-muted px-1.5 py-0.5 font-data">/</kbd>
+              <span>search</span>
+            </span>
+            <span className="flex items-center gap-1">
               <kbd className="rounded bg-muted px-1.5 py-0.5 font-data">esc</kbd>
               <span>close</span>
             </span>

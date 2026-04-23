@@ -68,6 +68,7 @@ export function StockFundamentals({ stock }: StockFundamentalsProps) {
             copyField="marketCap"
             onCopy={handleCopy}
             copiedField={copiedField}
+            t={t}
           />
           <MetricItem
             label={t("detail.pe")}
@@ -77,6 +78,7 @@ export function StockFundamentals({ stock }: StockFundamentalsProps) {
             copyField="peRatio"
             onCopy={handleCopy}
             copiedField={copiedField}
+            t={t}
           />
           <MetricItem
             label={t("detail.dividendYield")}
@@ -86,6 +88,7 @@ export function StockFundamentals({ stock }: StockFundamentalsProps) {
             copyField="dividendYield"
             onCopy={handleCopy}
             copiedField={copiedField}
+            t={t}
           />
           <MetricItem
             label={t("detail.shares")}
@@ -95,6 +98,7 @@ export function StockFundamentals({ stock }: StockFundamentalsProps) {
             copyField="sharesM"
             onCopy={handleCopy}
             copiedField={copiedField}
+            t={t}
           />
           <MetricItem
             label={t("detail.founded")}
@@ -104,6 +108,7 @@ export function StockFundamentals({ stock }: StockFundamentalsProps) {
             copyField="founded"
             onCopy={handleCopy}
             copiedField={copiedField}
+            t={t}
           />
           <MetricItem
             label={t("detail.isin")}
@@ -114,6 +119,7 @@ export function StockFundamentals({ stock }: StockFundamentalsProps) {
             copyField="isin"
             onCopy={handleCopy}
             copiedField={copiedField}
+            t={t}
           />
         </div>
 
@@ -130,7 +136,7 @@ export function StockFundamentals({ stock }: StockFundamentalsProps) {
         {/* Related news */}
         <div>
           <h4 className="mb-2 text-[10px] uppercase tracking-wider text-muted-foreground">
-            Latest News
+            {t("fundamentals.relatedNews")}
           </h4>
           {isNewsLoading ? (
             <div className="space-y-1.5">
@@ -196,6 +202,7 @@ function MetricItem({
   copyField,
   onCopy,
   copiedField,
+  t: translate,
 }: {
   label: string;
   value: string;
@@ -205,8 +212,10 @@ function MetricItem({
   copyField?: string;
   onCopy?: (field: string, value: string, label: string) => void;
   copiedField?: string | null;
+  t?: (key: string) => string;
 }) {
   const isCopied = copyField && copiedField === copyField;
+  const t = translate ?? ((k: string) => k);
 
   const handleClick = useCallback(() => {
     if (copyValue && copyField && onCopy) {
@@ -230,7 +239,7 @@ function MetricItem({
               {label}
               {tooltip && <HelpCircle className="h-3 w-3 text-muted-foreground/50" />}
               {canCopy && !tooltip && (
-                <span className="text-[8px] text-muted-foreground/50">Klikni za kopiranje</span>
+                <span className="text-[8px] text-muted-foreground/50">{t("fundamentals.clickToCopy")}</span>
               )}
             </span>
             <div
@@ -243,7 +252,7 @@ function MetricItem({
               {isCopied ? (
                 <span className="flex items-center gap-1">
                   <Check className="h-3 w-3" />
-                  Kopirano
+                  {t("fundamentals.copied")}
                 </span>
               ) : (
                 value
@@ -314,13 +323,13 @@ function RangeBar({ low, high, price, changePct, pricePosition, ticker }: RangeB
   return (
     <div>
       <h4 className="mb-2 text-[10px] uppercase tracking-wider text-muted-foreground">
-        52-Week Range
+        {t("fundamentals.range52w")}
       </h4>
       <div className="space-y-1.5">
         {/* Price labels */}
         <div className="flex justify-between font-data text-[10px] tabular-nums text-muted-foreground">
           <span>{formatPrice(low)}</span>
-          <span className="text-[9px] text-primary/70">52W</span>
+          <span className="text-[9px] text-primary/70">{t("fundamentals.week52")}</span>
           <span>{formatPrice(high)}</span>
         </div>
 

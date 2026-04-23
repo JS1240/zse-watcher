@@ -129,6 +129,13 @@
     "noNews": "Nema vijesti",
     "noNewsDescription": "Za ovu dionicu trenutno nema dostupnih vijesti."
   },
+  "fundamentals": {
+    "range52w": "52-tjedni raspon",
+    "week52": "52T",
+    "relatedNews": "Povezane vijesti",
+    "clickToCopy": "Klikni za kopiranje",
+    "copied": "Kopirano"
+  },
   "range": {
     "buyZone": "zona kupnje",
     "sellZone": "zona prodaje",
