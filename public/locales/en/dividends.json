@@ -15,6 +15,20 @@
     "date": "Date"
   },
   "sortBy": "Sort",
+  "filter": {
+    "all": "Sve",
+    "upcoming": "Buduce",
+    "past": "Prosle"
+  },
+  "stats": {
+    "upcomingDividends": "Upcoming dividends",
+    "avgYield": "Avg yield",
+    "totalAmount": "Total amount"
+  },
+  "shortcut": {
+    "view": "stock details",
+    "search": "search"
+  },
   "tickers": {
     "HT-R-A": "HT d.d.",
     "ADRS-P-A": "Adris grupa d.d.",

@@ -15,6 +15,20 @@
     "date": "Datum"
   },
   "sortBy": "Sortiraj",
+  "filter": {
+    "all": "Sve",
+    "upcoming": "Buduce",
+    "past": "Prosle"
+  },
+  "stats": {
+    "upcomingDividends": "Buduce dividende",
+    "avgYield": "Prosjek prinosa",
+    "totalAmount": "Ukupni iznos"
+  },
+  "shortcut": {
+    "view": "detalji dionice",
+    "search": "pretrazi"
+  },
   "tickers": {
     "HT-R-A": "HT d.d.",
     "ADRS-P-A": "Adris grupa d.d.",
