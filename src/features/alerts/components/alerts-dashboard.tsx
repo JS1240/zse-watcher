@@ -76,6 +76,47 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
   const { isError, refetch, dataUpdatedAt: alertsDataUpdatedAt, isFetching: alertsIsFetching } = useAlerts();
   const { data: stocksResult } = useStocksLive();
   const stocks = useMemo(() => stocksResult?.stocks ?? [], [stocksResult]);
+
+  // Get stock prices for flash detection (only include tickers that have alerts)
+  // Track previous prices to detect changes for flash animation
+  const prevPricesRef = useRef<Map<string, number>>(new Map());
+  const [priceFlashMap, setPriceFlashMap] = useState<Map<string, "up" | "down" | null>>(new Map());
+
+  useEffect(() => {
+    if (!alerts || !stocks) return;
+
+    const newFlashes = new Map<string, "up" | "down" | null>();
+
+    for (const alert of alerts) {
+      const stock = stocks.find((s) => s.ticker === alert.ticker);
+      if (!stock) continue;
+
+      const currentPrice = stock.price ?? 0;
+      const prevPrice = prevPricesRef.current.get(alert.ticker);
+
+      if (prevPrice !== undefined && prevPrice !== currentPrice) {
+        newFlashes.set(alert.ticker, currentPrice > prevPrice ? "up" : "down");
+      }
+      prevPricesRef.current.set(alert.ticker, currentPrice);
+    }
+
+    if (newFlashes.size > 0) {
+      setPriceFlashMap(newFlashes);
+      // Clear flashes after animation
+      const timer = setTimeout(() => setPriceFlashMap(new Map()), 800);
+      return () => clearTimeout(timer);
+    }
+  }, [alerts, stocks]);
+
+  const getFlashState = useCallback(
+    (alertId: string): "up" | "down" | null => {
+      const alert = alerts?.find((a) => a.id === alertId);
+      if (!alert) return null;
+      return priceFlashMap.get(alert.ticker) ?? null;
+    },
+    [alerts, priceFlashMap]
+  );
+
   const [showForm, setShowForm] = useState(false);
   const [search, setSearch] = useState("");
 
@@ -484,6 +525,7 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
                 alert={alert}
                 stocks={stocks}
                 searchHighlight={debouncedSearch}
+                flash={getFlashState(alert.id)}
                 onDelete={() => setConfirmDelete(alert.id)}
                 onToggle={() => {
                   const wasActive = alert.isActive;
@@ -631,9 +673,10 @@ interface AlertRowProps {
   copiedField?: string | null;
   stocks?: { ticker: string; name: string; price: number | null }[];
   searchHighlight?: string;
+  flash?: "up" | "down" | null;
 }
 
-export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUpdate, onCopyTicker, onCopyTarget, stocks, searchHighlight }: AlertRowProps) {
+export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUpdate, onCopyTicker, onCopyTarget, stocks, searchHighlight, flash }: AlertRowProps) {
   const { t } = useTranslation("alerts");
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -995,6 +1038,8 @@ tabIndex={0}
         "group flex cursor-pointer items-center justify-between rounded-md border border-border bg-card px-3 py-2.5 transition-all duration-150 hover:bg-accent/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         !alert.isActive && "opacity-50",
         alert.isTriggered && "border-amber/30 bg-amber/5",
+        flash === "up" && "price-flash-up",
+        flash === "down" && "price-flash-down",
       )}
     >
       <div className="flex items-center gap-3">
