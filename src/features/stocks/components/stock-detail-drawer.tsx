@@ -19,6 +19,7 @@ import { AlertForm } from "@/features/alerts/components/alert-form";
 import { CheckCircle2 } from "lucide-react";
 import { Star } from "lucide-react";
 import { InlineTransactionForm } from "@/features/portfolio/components/inline-transaction-form";
+import { WatchlistToggle } from "@/features/watchlist/components/watchlist-toggle";
 
 interface StockDetailDrawerProps {
   ticker: string | null;
@@ -133,6 +134,12 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
           e.preventDefault();
           handleExportCsv();
           break;
+        case "w":
+        case "W":
+          e.preventDefault();
+          // Watchlist toggle handled by WatchlistToggle component via click
+          document.getElementById(`watchlist-toggle-${stock?.ticker}`)?.click();
+          break;
       }
     };
 
@@ -183,6 +190,11 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
           <div className="flex items-center gap-2">
             {stock && (
               <>
+                <WatchlistToggle
+                  id={`watchlist-toggle-${stock.ticker}`}
+                  ticker={stock.ticker}
+                  className="h-8 w-8"
+                />
                 <button
                   onClick={() => setShowTransactionForm(true)}
                   className="flex items-center gap-1 rounded-md px-2 py-1 text-[10px] text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"

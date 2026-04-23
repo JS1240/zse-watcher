@@ -14,9 +14,10 @@ import { cn } from "@/lib/utils";
 interface WatchlistToggleProps {
   ticker: string;
   className?: string;
+  id?: string;
 }
 
-export const WatchlistToggle = memo(function WatchlistToggle({ ticker, className }: WatchlistToggleProps) {
+export const WatchlistToggle = memo(function WatchlistToggle({ ticker, className, id }: WatchlistToggleProps) {
   const { t } = useTranslation("watchlist");
   const { isAuthenticated } = useAuth();
   const { items: localItems, addItem, removeItem } = useLocalWatchlist();
@@ -85,6 +86,7 @@ export const WatchlistToggle = memo(function WatchlistToggle({ ticker, className
       type="button"
       onClick={handleToggle}
       onKeyDown={handleKeyDown}
+      id={id}
       disabled={isPending}
       aria-label={isWatched ? "Remove from watchlist" : "Add to watchlist"}
       className={cn(
