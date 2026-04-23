@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef, useCallback, memo } from "react";
 import { useTranslation } from "react-i18next";
-import { Bell, BellOff, Pencil, Trash2, X, Check, CheckCircle2, Keyboard, Download, AlertCircle, Search, CircleDot, Pause, TrendingUp, TrendingDown, ArrowUpDown, ArrowUp, Copy, Play, PauseIcon, RotateCcw } from "lucide-react";
+import { Bell, BellOff, Pencil, Trash2, X, Check, CheckCircle2, Keyboard, Download, AlertCircle, Search, CircleDot, Pause, TrendingUp, TrendingDown, ArrowUpDown, ArrowUp, Copy, Play, PauseIcon, RotateCcw, Loader2 } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { toast } from "sonner";
@@ -895,7 +895,11 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
               className="rounded-sm p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               title="Save"
             >
-              <Check className="h-3.5 w-3.5" />
+              {saving ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Check className="h-3.5 w-3.5" />
+              )}
             </button>
             <button
               onClick={handleCancel}
