@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { Crown, Check, X, ArrowUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSubscription } from "@/features/premium/hooks/use-subscription";
@@ -11,6 +12,8 @@ import { PricingSkeleton } from "./pricing-skeleton";
 type BillingCycle = "monthly" | "annual";
 
 export function PricingPage() {
+  const { t } = useTranslation("premium");
+  const { t: tc } = useTranslation("common");
   const [cycle, setCycle] = useState<BillingCycle>("annual");
   const [upgradeLoading, setUpgradeLoading] = useState(false);
   const [scrollTop, setScrollTop] = useState(false);
@@ -47,9 +50,9 @@ export function PricingPage() {
         <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-amber/10">
           <Crown className="h-6 w-6 text-amber" />
         </div>
-        <h2 className="text-lg font-bold text-foreground">Choose Your Plan</h2>
+        <h2 className="text-lg font-bold text-foreground">{t("pricing.title")}</h2>
         <p className="mt-1 text-xs text-muted-foreground">
-          Unlock the full power of ZSE Watcher
+          {t("pricing.subtitle")}
         </p>
       </div>
 
@@ -72,7 +75,7 @@ export function PricingPage() {
                   : "text-muted-foreground",
               )}
             >
-              Monthly
+              {t("pricing.monthly")}
             </button>
             <button
               onClick={() => setCycle("annual")}
@@ -83,9 +86,9 @@ export function PricingPage() {
                   : "text-muted-foreground",
               )}
             >
-              Annual
+              {t("pricing.annual")}
               <span className="ml-1 inline-flex animate-pulse rounded-full bg-price-up/20 px-1.5 py-0.5 text-[9px] font-bold text-price-up">
-                -17%
+                {t("pricing.discount")}
               </span>
             </button>
           </div>
@@ -112,7 +115,7 @@ export function PricingPage() {
             >
               {plan.popular && (
                 <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 animate-pulse rounded-full bg-primary px-3 py-0.5 text-[10px] font-semibold text-primary-foreground shadow-[0_0_12px_hsl(var(--primary)/0.4)]">
-                  Most Popular
+                  {t("pricing.popular")}
                 </div>
               )}
 
@@ -142,7 +145,7 @@ export function PricingPage() {
               <div className="mt-4">
                 {isCurrentPlan ? (
                   <Button variant="outline" className="w-full" disabled>
-                    Current Plan
+                    {t("pricing.currentPlan")}
                   </Button>
                 ) : plan.id === "premium" ? (
                   <Button
@@ -150,7 +153,7 @@ export function PricingPage() {
                     onClick={handleUpgrade}
                     disabled={upgradeLoading || !isAuthenticated}
                   >
-                    {upgradeLoading ? "Redirecting..." : plan.cta}
+                    {upgradeLoading ? t("pricing.redirecting") : plan.cta}
                   </Button>
                 ) : null}
               </div>
@@ -186,8 +189,8 @@ export function PricingPage() {
           "fixed bottom-6 right-6 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-all duration-200 hover:bg-primary/90",
           scrollTop ? "opacity-100 translate-y-0" : "pointer-events-none opacity-0 translate-y-2"
         )}
-        aria-label="Povratak na vrh"
-        title="Povratak na vrh"
+        aria-label={tc("scrollToTop")}
+        title={tc("scrollToTop")}
       >
         <ArrowUp className="h-4 w-4" />
       </button>

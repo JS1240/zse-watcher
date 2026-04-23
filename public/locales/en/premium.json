@@ -1,0 +1,12 @@
+{
+  "pricing": {
+    "title": "Choose Your Plan",
+    "subtitle": "Unlock the full power of ZSE Watcher",
+    "monthly": "Monthly",
+    "annual": "Annual",
+    "discount": "-17%",
+    "popular": "Most Popular",
+    "currentPlan": "Current Plan",
+    "redirecting": "Redirecting..."
+  }
+}
