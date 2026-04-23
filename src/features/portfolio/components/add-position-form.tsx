@@ -7,6 +7,7 @@ import { X, Keyboard, AlertCircle, CheckCircle2, TrendingUp, Euro } from "lucide
 import { toast } from "sonner";
 import { useAddTransaction } from "@/features/portfolio/api/portfolio-queries";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TickerSelect } from "@/components/shared/ticker-select";
@@ -40,6 +41,11 @@ export function AddPositionForm({ onClose, onSuccess }: AddPositionFormProps) {
   const { t } = useTranslation("portfolio");
   const addTransaction = useAddTransaction();
 
+  // Check if stocks are still loading (no data yet = loading)
+  const { data: stocksResult } = useStocksLive();
+  const stocks = useMemo(() => stocksResult?.stocks ?? [], [stocksResult]);
+  const isLoading = !stocksResult?.stocks && stocksResult === undefined;
+
   // Focus state for validation timing
   const [focused, setFocused] = useState({ ticker: false, shares: false, price: false });
   const [touched, setTouched] = useState({ ticker: false, shares: false, price: false });
@@ -57,9 +63,6 @@ export function AddPositionForm({ onClose, onSuccess }: AddPositionFormProps) {
       transactionDate: new Date().toISOString().slice(0, 10),
     },
   });
-
-  const { data: stocksResult } = useStocksLive();
-  const stocks = useMemo(() => stocksResult?.stocks ?? [], [stocksResult]);
 
   const tickerValue = watch("ticker");
   const sharesValue = watch("shares");
@@ -218,6 +221,70 @@ export function AddPositionForm({ onClose, onSuccess }: AddPositionFormProps) {
       e.target.value = formatInputNumber(parsed, 2);
     }
   };
+
+  // Render skeleton while loading (hooks all called above)
+  if (isLoading) {
+    return (
+      <div className="rounded-md border border-border bg-card p-4">
+        <div className="mb-3 flex items-center justify-between">
+          <Skeleton className="h-4 w-24 animate-shimmer" />
+          <Skeleton className="h-4 w-4 rounded animate-shimmer" />
+        </div>
+
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+          {/* Ticker field */}
+          <div>
+            <Skeleton className="mb-1 h-3 w-10 animate-shimmer" />
+            <Skeleton className="h-8 w-full animate-shimmer" />
+            <Skeleton className="mt-1.5 h-4 w-28 animate-shimmer" />
+          </div>
+
+          {/* Transaction type select */}
+          <div>
+            <Skeleton className="mb-1 h-3 w-8 animate-shimmer" />
+            <Skeleton className="h-8 w-full animate-shimmer" />
+          </div>
+
+          {/* Shares field with quick fill buttons */}
+          <div>
+            <Skeleton className="mb-1 h-3 w-12 animate-shimmer" />
+            <Skeleton className="h-8 w-full animate-shimmer" />
+            <div className="mt-1 flex flex-wrap gap-1">
+              <Skeleton className="h-5 w-12 animate-shimmer" />
+              <Skeleton className="h-5 w-12 animate-shimmer" />
+              <Skeleton className="h-5 w-12 animate-shimmer" />
+              <Skeleton className="h-5 w-12 animate-shimmer" />
+              <Skeleton className="h-5 w-12 animate-shimmer" />
+            </div>
+          </div>
+
+          {/* Price field with quick percentage buttons */}
+          <div>
+            <Skeleton className="mb-1 h-3 w-20 animate-shimmer" />
+            <Skeleton className="h-8 w-full animate-shimmer" />
+            <div className="mt-1 flex flex-wrap gap-1">
+              <Skeleton className="h-5 w-8 animate-shimmer" />
+              <Skeleton className="h-5 w-8 animate-shimmer" />
+              <Skeleton className="h-5 w-8 animate-shimmer" />
+              <Skeleton className="h-5 w-8 animate-shimmer" />
+              <Skeleton className="h-5 w-8 animate-shimmer" />
+            </div>
+          </div>
+
+          {/* Date field */}
+          <div>
+            <Skeleton className="mb-1 h-3 w-8 animate-shimmer" />
+            <Skeleton className="h-8 w-full animate-shimmer" />
+          </div>
+
+          {/* Submit button */}
+          <div className="flex items-end md:col-span-1 col-span-2">
+            <Skeleton className="h-8 w-full animate-shimmer" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-md border border-border bg-card p-4">

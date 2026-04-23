@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { X, Keyboard, AlertCircle, CheckCircle2, TrendingUp } from "lucide-react";
 import { useCreateAlert } from "@/features/alerts/api/alerts-queries";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SegmentedControl } from "@/components/ui/segmented-control";
@@ -40,6 +41,9 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
   const createAlert = useCreateAlert();
   const { data: stocksResult } = useStocksLive();
   const stocks = useMemo(() => stocksResult?.stocks ?? [], [stocksResult]);
+
+  // Check if stocks are still loading (no data yet = loading)
+  const isLoading = !stocksResult?.stocks && stocksResult === undefined;
 
   const {
     register,
@@ -184,6 +188,50 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
     if (isNaN(parsed)) return currentValue;
     return formatInputNumber(parsed, isPercentCondition ? 2 : 2);
   })();
+
+  // Render skeleton while loading (hooks all called above)
+  if (isLoading) {
+    return (
+      <div className="rounded-md border border-border bg-card p-4">
+        <div className="mb-3 flex items-center justify-between">
+          <Skeleton className="h-4 w-20 animate-shimmer" />
+          <Skeleton className="h-4 w-4 rounded animate-shimmer" />
+        </div>
+
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+          {/* Ticker field */}
+          <div>
+            <Skeleton className="mb-1 h-3 w-12 animate-shimmer" />
+            <Skeleton className="h-8 w-full animate-shimmer" />
+            <Skeleton className="mt-1.5 h-4 w-24 animate-shimmer" />
+          </div>
+
+          {/* Condition segmented control */}
+          <div>
+            <Skeleton className="mb-1 h-3 w-16 animate-shimmer" />
+            <div className="flex gap-1">
+              <Skeleton className="h-8 flex-1 animate-shimmer" />
+              <Skeleton className="h-8 flex-1 animate-shimmer" />
+              <Skeleton className="h-8 flex-1 animate-shimmer" />
+              <Skeleton className="h-8 flex-1 animate-shimmer" />
+            </div>
+          </div>
+
+          {/* Target value field */}
+          <div>
+            <Skeleton className="mb-1 h-3 w-14 animate-shimmer" />
+            <Skeleton className="h-8 w-full animate-shimmer" />
+            <Skeleton className="mt-1.5 h-4 w-28 animate-shimmer" />
+          </div>
+
+          {/* Submit button */}
+          <div className="flex items-end">
+            <Skeleton className="h-8 w-full animate-shimmer" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-md border border-border bg-card p-4">
