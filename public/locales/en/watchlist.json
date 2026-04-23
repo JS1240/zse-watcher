@@ -53,7 +53,8 @@
     "addFailed": "Failed to add to watchlist",
     "removeFailed": "Failed to remove from watchlist",
     "exported": "Exported to CSV",
-    "copied": "Copied: {{ticker}}"
+    "copied": "Copied: {{ticker}}",
+    "cleared": "Watchlist cleared"
   },
   "shortcut": {
     "search": "search",
@@ -61,5 +62,8 @@
     "toggle": "add/remove",
     "delete": "remove from watchlist"
   },
-  "shortcuts": "Keyboard shortcuts"
+  "shortcuts": "Keyboard shortcuts",
+  "confirmClearAll": "Clear entire watchlist?",
+  "confirmClearAllDescription": "This will remove all stocks from your watchlist. This action cannot be undone.",
+  "clearAll": "Clear all"
 }

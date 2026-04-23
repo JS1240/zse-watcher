@@ -1,6 +1,6 @@
 import { useMemo, useState, useRef, useCallback, memo } from "react";
 import { useTranslation } from "react-i18next";
-import { Star, Search, Keyboard, ArrowUp, ArrowDown, ArrowUpDown, GripVertical, Download, X, TrendingUp, TrendingDown, Minus, CheckCircle2, ChevronUp } from "lucide-react";
+import { Star, Search, Keyboard, Trash2, ArrowUp, ArrowDown, ArrowUpDown, GripVertical, Download, X, TrendingUp, TrendingDown, Minus, CheckCircle2, ChevronUp } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
@@ -612,7 +612,7 @@ function SortableRow({
 function LocalWatchlist() {
   const { t } = useTranslation("watchlist");
   const { t: tc } = useTranslation("common");
-  const { items, removeItem, reorder: reorderItems } = useLocalWatchlist();
+  const { items, removeItem, reorder: reorderItems, clearAll } = useLocalWatchlist();
   const { data: stocksResult, isError, refetch, dataUpdatedAt, isFetching } = useStocksLive();
   const stocks = useMemo(() => stocksResult?.stocks ?? [], [stocksResult]);
   const [search, setSearch] = useState("");
@@ -620,6 +620,7 @@ function LocalWatchlist() {
   const [sectorFilter, setSectorFilter] = useState<SectorFilter>(null);
   const [sort, setSort] = useState<{ column: SortColumn; direction: SortDirection } | null>(null);
   const [confirmRemove, setConfirmRemove] = useState<string | null>(null);
+  const [confirmClearAll, setConfirmClearAll] = useState(false);
   const [activeDragItem, setActiveDragItem] = useState<Stock | null>(null);
   const debouncedSearch = useDebounce(search, 200);
 
@@ -819,6 +820,15 @@ function LocalWatchlist() {
         <Button
           size="sm"
           variant="outline"
+          onClick={() => setConfirmClearAll(true)}
+          disabled={filtered.length === 0}
+          title={t("clearAll") || "Clear all"}
+        >
+          <Trash2 className="h-3.5 w-3.5" />
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
           onClick={handleExportCsv}
           disabled={filtered.length === 0}
           title={t("exportCsv")}
@@ -1006,6 +1016,23 @@ function LocalWatchlist() {
             removeItem(confirmRemove);
             toast.success(t("toast.removed") || "Removed from watchlist", { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
           }
+        }}
+      />
+
+      {/* Clear all confirmation dialog */}
+      <ConfirmationDialog
+        open={confirmClearAll}
+        onOpenChange={(open) => !open && setConfirmClearAll(false)}
+        title={t("confirmClearAll") || "Clear watchlist?"}
+        description={t("confirmClearAllDescription")}
+        confirmLabel={t("actions.clear") || "Clear"}
+        cancelLabel={tc("actions.cancel") || "Cancel"}
+        variant="danger"
+        icon={<Star className="h-5 w-5 fill-amber text-amber" />}
+        onConfirm={() => {
+          clearAll();
+          toast.success(t("toast.cleared") || "Watchlist cleared", { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
+          setConfirmClearAll(false);
         }}
       />
     </div>

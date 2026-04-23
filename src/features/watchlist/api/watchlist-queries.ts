@@ -98,6 +98,38 @@ export function useAddToWatchlist() {
   });
 }
 
+// New function: Clear all items from the watchlist
+export function useClearWatchlist() {
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+
+  return useMutation({
+    mutationFn: async () => {
+      if (!user) throw new Error("Not authenticated");
+
+      // Get default watchlist
+      const { data: watchlists } = await supabase
+        .from("watchlists")
+        .select("id")
+        .eq("user_id", user.id)
+        .order("sort_order")
+        .limit(1);
+
+      if (!watchlists?.length) throw new Error("No watchlist found");
+
+      const { error } = await supabase
+        .from("watchlist_items")
+        .delete()
+        .eq("watchlist_id", watchlists[0].id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["watchlist"] });
+    },
+  });
+}
+
 export function useRemoveFromWatchlist() {
   const { t } = useTranslation("watchlist");
   const queryClient = useQueryClient();
