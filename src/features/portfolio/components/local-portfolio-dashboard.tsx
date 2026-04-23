@@ -339,11 +339,24 @@ export function LocalPortfolioDashboard() {
   }) {
     const isActive = sort?.column === column;
     const direction = isActive ? sort.direction : null;
+
+    // Handle Enter/Space for keyboard sorting (accessibility)
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        handleSort(column);
+      }
+    };
+
     return (
       <button
         onClick={() => handleSort(column)}
-        className="flex items-center gap-1 transition-colors hover:text-foreground"
+        onKeyDown={handleKeyDown}
+        tabIndex={0}
+        role="columnheader"
         aria-sort={isActive ? (direction === "asc" ? "ascending" : "descending") : "none"}
+        aria-label={`Sort by ${label}, currently ${direction === "asc" ? "ascending" : direction === "desc" ? "descending" : "none"}`}
+        className="flex cursor-pointer items-center gap-1 transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background"
       >
         <span>{label}</span>
         {direction === "asc" ? (
