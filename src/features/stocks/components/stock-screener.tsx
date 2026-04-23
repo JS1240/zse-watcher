@@ -237,6 +237,7 @@ export function StockScreener() {
   const [showSaveInput, setShowSaveInput] = useState(false);
   const [presetSearch, setPresetSearch] = useState("");
   const [search, setSearch] = useState("");
+  const [searchFocused, setSearchFocused] = useState(false);
   const [scrollTop, setScrollTop] = useState(false);
   const tableRef = useRef<HTMLDivElement>(null);
   const debouncedSearch = useDebounce(search, 200);
@@ -369,7 +370,9 @@ export function StockScreener() {
               placeholder={tc("actions.search")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-8 pr-14"
+              onFocus={() => setSearchFocused(true)}
+              onBlur={() => setSearchFocused(false)}
+              className={cn("pl-8 pr-14 transition-shadow", searchFocused && "ring-2 ring-ring ring-offset-1 ring-offset-background")}
             />
             {!search && stockCount > 0 && (
               <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-muted-foreground">

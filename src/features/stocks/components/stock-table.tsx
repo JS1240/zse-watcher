@@ -33,6 +33,7 @@ export function StockTable() {
   const [sortField, setSortField] = useState<SortField>("changePct");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [scrollTop, setScrollTop] = useState(false);
+  const [searchFocused, setSearchFocused] = useState(false);
   const tableRef = useRef<HTMLDivElement>(null);
 
   // Compute unique sectors
@@ -147,8 +148,10 @@ export function StockTable() {
             placeholder={t("table.ticker") + ", " + t("table.name") + "..."}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+            onFocus={() => setSearchFocused(true)}
+            onBlur={() => setSearchFocused(false)}
             ref={searchInputRef}
-            className={cn("pl-8 pr-8", search && "pr-8")}
+            className={cn("pl-8 pr-8 transition-shadow", search && "pr-8", searchFocused && "ring-2 ring-ring ring-offset-1 ring-offset-background")}
           />
           {!search && (
             <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-0.5 rounded bg-muted px-1.5 py-0.5 text-[9px] text-muted-foreground">
