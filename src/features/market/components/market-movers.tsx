@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { memo } from "react";
-import { TrendingUp, TrendingDown, Clock, Star } from "lucide-react";
+import { TrendingUp, TrendingDown, Clock, Star, Keyboard } from "lucide-react";
 import { useMovers } from "@/features/market/api/market-queries";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
 import { useAuth } from "@/hooks/use-auth";
@@ -65,6 +65,14 @@ export function MarketMovers() {
         {data.losers.map((m) => (
           <MoverRow key={m.ticker} mover={m} />
         ))}
+      </div>
+
+      {/* Always-visible keyboard shortcuts hint for discoverability */}
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-md border border-border bg-card px-2.5 py-1.5">
+        <Keyboard className="h-2.5 w-2.5 text-muted-foreground" />
+        <span className="text-muted-foreground">{t("shortcut.details")}</span>
+        <span className="text-muted-foreground">·</span>
+        <span className="text-muted-foreground">{t("shortcut.watch")}</span>
       </div>
     </div>
   );
