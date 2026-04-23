@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Moon, Sun, Globe, Monitor, Keyboard, Trash2, Download, Upload, Database, Check } from "lucide-react";
+import { Moon, Sun, Globe, Monitor, Keyboard, Trash2, Download, Upload, Database, Check, ArrowUp } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
 import { useThemeStore } from "@/hooks/use-theme";
@@ -24,6 +24,12 @@ function SettingsPage() {
   const { mode, setMode } = useThemeStore();
   const { isPremium, loading: subLoading } = useSubscription();
   const [showShortcuts, setShowShortcuts] = useState(false);
+  const [scrollTop, setScrollTop] = useState(false);
+
+  // Scroll to top handler
+  const scrollToTop = () => {
+    document.querySelector("[class*='overflow-auto']")?.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   // Data management state
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -178,8 +184,20 @@ function SettingsPage() {
   ];
 
   return (
-    <div className="flex h-full flex-col gap-4 overflow-auto p-4">
+    <div className="flex h-full flex-col gap-4 overflow-auto p-4" onScroll={(e) => setScrollTop((e.target as HTMLDivElement).scrollTop > 200)}>
       <h1 className="font-data text-lg font-bold">{t("nav.settings")}</h1>
+
+      {/* Scroll to top button */}
+      {scrollTop && (
+        <button
+          onClick={scrollToTop}
+          aria-label={t("scrollToTop") || "Scroll to top"}
+          title={t("scrollToTop") || "Scroll to top"}
+          className="fixed bottom-20 right-4 z-40 flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:bottom-6"
+        >
+          <ArrowUp className="h-4 w-4" />
+        </button>
+      )}
 
       {/* Account */}
       <section className="rounded-md border border-border bg-card p-4">
