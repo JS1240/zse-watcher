@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef, useCallback, memo } from "react";
 import { useTranslation } from "react-i18next";
-import { Bell, BellOff, Pencil, Trash2, X, Check, CheckCircle2, Keyboard, Download, AlertCircle, Search, CircleDot, Pause, TrendingUp, TrendingDown, ArrowUpDown, ArrowUp, Copy, Play, PauseIcon } from "lucide-react";
+import { Bell, BellOff, Pencil, Trash2, X, Check, CheckCircle2, Keyboard, Download, AlertCircle, Search, CircleDot, Pause, TrendingUp, TrendingDown, ArrowUpDown, ArrowUp, Copy, Play, PauseIcon, RotateCcw } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { toast } from "sonner";
@@ -392,6 +392,16 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
               icon={<Pause className="h-3 w-3" />}
               count={alerts.filter((a) => !a.isActive).length}
             />
+            {/* Clear all filters button */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => { setSearch(""); setStatusFilter("all"); setConditionFilter("all"); }}
+              className="h-6 text-[10px]"
+            >
+              <RotateCcw className="h-3 w-3" />
+              {tc("common:actions.reset")}
+            </Button>
             {/* Bulk action buttons - show when there are alerts */}
             {alertCounts.total > 1 && (
               <>
