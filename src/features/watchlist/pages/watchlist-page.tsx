@@ -15,7 +15,7 @@ import { WatchlistToggle } from "@/features/watchlist/components/watchlist-toggl
 import { WatchlistSkeleton } from "@/features/watchlist/components/watchlist-skeleton";
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { EmptyState } from "@/components/shared/empty-state";
-import { WatchlistEmptyIllustration } from "@/components/shared/empty-illustrations";
+import { WatchlistEmptyIllustration, SearchEmptyIllustration } from "@/components/shared/empty-illustrations";
 import { ErrorState } from "@/components/shared/error-state";
 import { Highlight } from "@/components/shared/highlight";
 import { Input } from "@/components/ui/input";
@@ -422,7 +422,7 @@ function AuthenticatedWatchlist() {
         <WatchlistTableMemo stocks={filtered} sort={sort} onSort={handleSort} searchQuery={debouncedSearch} />
       ) : debouncedSearch ? (
         <EmptyState
-          icon={<Search className="h-8 w-8" />}
+          icon={<SearchEmptyIllustration className="h-8 w-8" />}
           title={tc("empty.noResults")}
           description={tc("empty.noResultsDescription")}
           action={{ label: tc("empty.clearFilters"), onClick: () => setSearch("") }}
@@ -964,7 +964,7 @@ function LocalWatchlist() {
         )
       ) : debouncedSearch ? (
         <EmptyState
-          icon={<Search className="h-8 w-8" />}
+          icon={<SearchEmptyIllustration className="h-8 w-8" />}
           title={tc("empty.noResults")}
           description={tc("empty.noResultsDescription")}
           action={{ label: tc("empty.clearFilters"), onClick: () => setSearch("") }}
@@ -989,7 +989,7 @@ function LocalWatchlist() {
         />
       ) : (
         <EmptyState
-          icon={<Search className="h-8 w-8" />}
+          icon={<SearchEmptyIllustration className="h-8 w-8" />}
           title={tc("empty.noResults")}
           description={tc("empty.noResultsDescription")}
           action={{ label: tc("empty.clearFilters"), onClick: () => setSearch("") }}
