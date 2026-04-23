@@ -88,7 +88,14 @@
   "analytics": {
     "empty": "Nema analitike bez pozicija",
     "emptyDescription": "Dodajte pozicije u portfelj da biste vidjeli analitiku, sektore i izvedbu.",
-    "addAction": "Dodaj poziciju"
+    "addAction": "Dodaj poziciju",
+    "performance": "Izvedba portfelja",
+    "totalValue": "Ukupna vrijednost",
+    "totalReturn": "Ukupni prinos",
+    "bestPerformer": "Najbolja izvedba",
+    "worstPerformer": "Najgora izvedba",
+    "sectorAllocation": "Alokacija po sektorima",
+    "holdingsBreakdown": "Raspodjela udjela"
   },
   "dividends": {
     "empty": "Nema zaprimljenih dividendi",
@@ -103,5 +110,30 @@
   "shortcut": {
     "view": "detalji dionice",
     "delete": "obrisi"
+  },
+  "dividends": {
+    "form": {
+      "ticker": "Oznaka",
+      "datePaid": "Datum isplate",
+      "shares": "Broj dionica",
+      "perShare": "Po dionici",
+      "currency": "Valuta",
+      "notes": "Napomene",
+      "total": "Ukupno:"
+    },
+    "buttons": {
+      "record": "Zabilježi",
+      "save": "Spremi",
+      "cancel": "Odustani"
+    }
+  },
+  "portfolio": {
+    "localIndicator": "Portfelj spremljen lokalno — prijavite se za sinkronizaciju",
+    "syncedIndicator": "Portfelj sinkroniziran s vašim računom",
+    "positions": {
+      "one": "pozicija",
+      "other": "pozicija"
+    },
+    "saved": "Spremljeno"
   }
 }

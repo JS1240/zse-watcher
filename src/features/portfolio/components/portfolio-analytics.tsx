@@ -96,27 +96,27 @@ export function PortfolioAnalytics() {
       {/* Performance chart */}
       <div className="rounded-md border border-border bg-card p-4">
         <h3 className="mb-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-          Performance
+          {t("analytics.performance")}
         </h3>
         <PortfolioChart />
       </div>
 
       {/* Summary metrics */}
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <MetricCard label="Total Value" value={formatCurrency(analytics.totalValue)} />
+        <MetricCard label={t("analytics.totalValue")} value={formatCurrency(analytics.totalValue)} />
         <MetricCard
-          label="Total Return"
+          label={t("analytics.totalReturn")}
           value={formatCurrency(analytics.totalGain)}
           sub={<ChangeBadge value={analytics.totalGainPct} showIcon={false} />}
           color={analytics.totalGain >= 0 ? "up" : "down"}
         />
         <MetricCard
-          label="Best Performer"
+          label={t("analytics.bestPerformer")}
           value={analytics.best?.ticker ?? "-"}
           sub={analytics.best ? <ChangeBadge value={analytics.best.gainPct} showIcon={false} /> : null}
         />
         <MetricCard
-          label="Worst Performer"
+          label={t("analytics.worstPerformer")}
           value={analytics.worst?.ticker ?? "-"}
           sub={analytics.worst ? <ChangeBadge value={analytics.worst.gainPct} showIcon={false} /> : null}
         />
@@ -125,7 +125,7 @@ export function PortfolioAnalytics() {
       {/* Sector allocation */}
       <div className="rounded-md border border-border bg-card p-4">
         <h3 className="mb-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-          Sector Allocation
+          {t("analytics.sectorAllocation")}
         </h3>
         <div className="flex gap-6">
           {/* Donut chart (SVG) */}
@@ -151,7 +151,7 @@ export function PortfolioAnalytics() {
       {/* Holdings breakdown */}
       <div className="rounded-md border border-border bg-card p-4">
         <h3 className="mb-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-          Holdings Breakdown
+          {t("analytics.holdingsBreakdown")}
         </h3>
         <div className="space-y-2">
           {analytics.enriched

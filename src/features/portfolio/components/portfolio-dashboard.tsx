@@ -343,9 +343,7 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
         <div className="flex items-center gap-2 rounded-sm bg-muted/50 px-2 py-1">
           <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
           <span className="text-[10px] text-muted-foreground">
-            {isLocal
-              ? "Portfolio saved locally — sign in to sync across devices"
-              : "Portfolio synced with your account"}
+            {isLocal ? t("portfolio.localIndicator") : t("portfolio.syncedIndicator")}
           </span>
         </div>
       )}
@@ -500,7 +498,7 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
       {/* Results count */}
       {enrichedHoldings.length > 0 && (
         <div className="text-[10px] text-muted-foreground">
-          {sortedHoldings.length} / {enrichedHoldings.length} {sortedHoldings.length === 1 ? "position" : "positions"}
+          {sortedHoldings.length} / {enrichedHoldings.length} {sortedHoldings.length === 1 ? t("portfolio.positions.one") : t("portfolio.positions.other")}
         </div>
       )}
 

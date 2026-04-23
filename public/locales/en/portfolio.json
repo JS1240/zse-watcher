@@ -87,7 +87,14 @@
   "analytics": {
     "empty": "No analytics without positions",
     "emptyDescription": "Add positions to your portfolio to see analytics, sector allocation and performance.",
-    "addAction": "Add position"
+    "addAction": "Add position",
+    "performance": "Portfolio Performance",
+    "totalValue": "Total Value",
+    "totalReturn": "Total Return",
+    "bestPerformer": "Best Performer",
+    "worstPerformer": "Worst Performer",
+    "sectorAllocation": "Sector Allocation",
+    "holdingsBreakdown": "Holdings Breakdown"
   },
   "dividends": {
     "empty": "No dividends recorded yet",
@@ -102,5 +109,30 @@
   "shortcut": {
     "view": "stock details",
     "delete": "delete"
+  },
+  "dividends": {
+    "form": {
+      "ticker": "Ticker",
+      "datePaid": "Date Paid",
+      "shares": "Shares",
+      "perShare": "Per Share",
+      "currency": "Currency",
+      "notes": "Notes",
+      "total": "Total:"
+    },
+    "buttons": {
+      "record": "Record",
+      "save": "Save",
+      "cancel": "Cancel"
+    }
+  },
+  "portfolio": {
+    "localIndicator": "Portfolio saved locally — sign in to sync across devices",
+    "syncedIndicator": "Portfolio synced with your account",
+    "positions": {
+      "one": "position",
+      "other": "positions"
+    },
+    "saved": "Saved"
   }
 }

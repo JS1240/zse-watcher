@@ -407,7 +407,7 @@ export function LocalPortfolioDashboard() {
         <div className="flex items-center gap-2">
           <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
           <span className="text-[10px] text-muted-foreground">
-            Portfolio saved locally
+            {t("portfolio.localIndicator")}
           </span>
         </div>
         <span
@@ -416,7 +416,7 @@ export function LocalPortfolioDashboard() {
             savedFlash ? "opacity-100" : "opacity-0",
           )}
         >
-          Saved
+          {t("portfolio.saved")}
         </span>
       </div>
 

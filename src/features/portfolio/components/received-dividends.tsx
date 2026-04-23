@@ -85,10 +85,10 @@ export function ReceivedDividends() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Receipt className="h-4 w-4 text-muted-foreground" />
-          <span className="text-xs font-semibold text-foreground">{t("dividendsReceived", "Dividends Received")}</span>
+          <span className="text-xs font-semibold text-foreground">{t("dividendsReceived")}</span>
           {hasDividends && !isHoldingsLoading && (
             <span className="font-data text-[10px] text-muted-foreground">
-              Total: {formatCurrency(totalReceived)} EUR
+              {t("dividends.form.total")} {formatCurrency(totalReceived)} EUR
             </span>
           )}
           {isHoldingsLoading && (
@@ -109,7 +109,7 @@ export function ReceivedDividends() {
             className="h-6 text-[10px]"
           >
             <Plus className="h-3 w-3" />
-            Record
+            {t("dividends.buttons.record")}
           </Button>
         </div>
       </div>
@@ -119,7 +119,7 @@ export function ReceivedDividends() {
         <form onSubmit={handleSubmit} className="rounded-md border border-border bg-card p-3 space-y-2">
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="mb-1 block text-[9px] uppercase text-muted-foreground">Ticker</label>
+              <label className="mb-1 block text-[9px] uppercase text-muted-foreground">{t("dividends.form.ticker")}</label>
               <Input
                 list="dividend-tickers"
                 value={form.ticker}
@@ -132,7 +132,7 @@ export function ReceivedDividends() {
               </datalist>
             </div>
             <div>
-              <label className="mb-1 block text-[9px] uppercase text-muted-foreground">Date Paid</label>
+              <label className="mb-1 block text-[9px] uppercase text-muted-foreground">{t("dividends.form.datePaid")}</label>
               <Input
                 type="date"
                 value={form.payDate}
@@ -141,7 +141,7 @@ export function ReceivedDividends() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-[9px] uppercase text-muted-foreground">Shares</label>
+              <label className="mb-1 block text-[9px] uppercase text-muted-foreground">{t("dividends.form.shares")}</label>
               <Input
                 type="number"
                 step="0.0001"
@@ -153,7 +153,7 @@ export function ReceivedDividends() {
             </div>
             <div className="flex gap-1">
               <div className="flex-1">
-                <label className="mb-1 block text-[9px] uppercase text-muted-foreground">Per Share</label>
+                <label className="mb-1 block text-[9px] uppercase text-muted-foreground">{t("dividends.form.perShare")}</label>
                 <Input
                   type="number"
                   step="0.01"
@@ -164,7 +164,7 @@ export function ReceivedDividends() {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-[9px] uppercase text-muted-foreground">Curr.</label>
+                <label className="mb-1 block text-[9px] uppercase text-muted-foreground">{t("dividends.form.currency")}</label>
                 <select
                   value={form.currency}
                   onChange={(e) => setForm((f) => ({ ...f, currency: e.target.value as "EUR" | "HRK" }))}
@@ -181,10 +181,10 @@ export function ReceivedDividends() {
               value={form.notes}
               onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
               className="h-7 text-[11px]"
-              placeholder="Notes (optional)"
+              placeholder={t("dividends.form.notes")}
             />
-            <Button type="submit" size="sm" className="h-7 text-[11px]">Save</Button>
-            <Button type="button" size="sm" variant="ghost" onClick={() => setShowForm(false)} className="h-7 text-[11px]">Cancel</Button>
+            <Button type="submit" size="sm" className="h-7 text-[11px]">{t("dividends.buttons.save")}</Button>
+            <Button type="button" size="sm" variant="ghost" onClick={() => setShowForm(false)} className="h-7 text-[11px]">{t("dividends.buttons.cancel")}</Button>
           </div>
         </form>
       )}
