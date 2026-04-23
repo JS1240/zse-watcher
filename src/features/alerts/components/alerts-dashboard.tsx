@@ -692,6 +692,28 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
   const [saving, setSaving] = useState(false);
   const rowRef = useRef<HTMLDivElement>(null);
 
+  // Get current price for this alert's ticker
+  const currentPrice = useMemo(() => {
+    if (!stocks || !alert.ticker) return null;
+    const stock = stocks.find((s) => s.ticker === alert.ticker);
+    return stock?.price ?? null;
+  }, [stocks, alert.ticker]);
+
+  // Calculate distance to trigger as percentage
+  const triggerDistance = useMemo(() => {
+    if (!currentPrice || !alert.targetValue) return null;
+    const isPercent = alert.condition.includes("percent");
+    if (isPercent) {
+      // For percent conditions, the target is the percentage change itself
+      return null;
+    }
+    // For absolute price conditions, calculate % distance
+    const percentDiff = alert.condition === "above"
+      ? ((alert.targetValue - currentPrice) / currentPrice) * 100
+      : ((currentPrice - alert.targetValue) / currentPrice) * 100;
+    return percentDiff;
+  }, [currentPrice, alert.targetValue, alert.condition]);
+
   // Handle row-level keyboard shortcuts (outside edit mode)
   const handleRowKeyDown = (e: React.KeyboardEvent) => {
     if (editing) return; // Edit mode has its own handler
@@ -1111,6 +1133,29 @@ tabIndex={0}
                 {isPercent
                   ? `${alert.targetValue}%`
                   : formatPrice(alert.targetValue)}
+              </span>
+            )}
+            {/* Current price + trigger distance */}
+            {currentPrice && !isPercent && (
+              <span className="flex items-center gap-1 text-[9px] text-muted-foreground">
+                <span className="flex items-center gap-0.5">
+                  <TrendingUp className="h-2.5 w-2.5" />
+                  <span className="font-data">{formatPrice(currentPrice)}</span>
+                </span>
+                {triggerDistance !== null && (
+                  <span
+                    className={cn(
+                      "rounded px-1 py-0.5 font-medium",
+                      triggerDistance <= 2
+                        ? "bg-red-500/20 text-red-600 dark:text-red-400"
+                        : triggerDistance <= 5
+                        ? "bg-amber-500/20 text-amber-600 dark:text-amber-400"
+                        : "bg-muted text-muted-foreground"
+                    )}
+                  >
+                    {triggerDistance > 0 ? "+" : ""}{triggerDistance.toFixed(1)}%
+                  </span>
+                )}
               </span>
             )}
             {alert.isLocal && (
