@@ -576,15 +576,51 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
                     </td>
                     <td className="px-3 py-3 md:py-2 text-right font-data tabular-nums text-foreground">
                       {editingHolding === h.ticker ? (
-                        <Input
-                          type="text"
-                          inputMode="decimal"
-                          value={editForm.shares}
-                          onChange={(e) => setEditForm((prev) => ({ ...prev, shares: e.target.value }))}
-                          onClick={(e) => e.stopPropagation()}
-                          className="h-7 w-20 bg-background text-right font-data"
-                          placeholder="dionice"
-                        />
+                        <div className="flex flex-col items-end gap-1">
+                          <div className="flex gap-0.5">
+                            <button
+                              type="button"
+                              onClick={() => setEditForm((prev) => ({ ...prev, shares: Math.round(h.totalShares * 1.1).toString() }))}
+                              className="rounded bg-emerald-500/20 px-1.5 py-0.5 text-[9px] font-medium text-emerald-700 hover:bg-emerald-500/30 dark:text-emerald-300"
+                              title="+10% dionica"
+                            >
+                              +10%
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setEditForm((prev) => ({ ...prev, shares: Math.round(h.totalShares * 1.25).toString() }))}
+                              className="rounded bg-emerald-500/20 px-1.5 py-0.5 text-[9px] font-medium text-emerald-700 hover:bg-emerald-500/30 dark:text-emerald-300"
+                              title="+25% dionica"
+                            >
+                              +25%
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setEditForm((prev) => ({ ...prev, shares: Math.round(h.totalShares * 0.9).toString() }))}
+                              className="rounded bg-red-500/20 px-1.5 py-0.5 text-[9px] font-medium text-red-700 hover:bg-red-500/30 dark:text-red-300"
+                              title="-10% dionica"
+                            >
+                              -10%
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setEditForm((prev) => ({ ...prev, shares: Math.round(h.totalShares * 0.75).toString() }))}
+                              className="rounded bg-red-500/20 px-1.5 py-0.5 text-[9px] font-medium text-red-700 hover:bg-red-500/30 dark:text-red-300"
+                              title="-25% dionica"
+                            >
+                              -25%
+                            </button>
+                          </div>
+                          <Input
+                            type="text"
+                            inputMode="decimal"
+                            value={editForm.shares}
+                            onChange={(e) => setEditForm((prev) => ({ ...prev, shares: e.target.value }))}
+                            onClick={(e) => e.stopPropagation()}
+                            className="h-7 w-20 bg-background text-right font-data"
+                            placeholder="dionice"
+                          />
+                        </div>
                       ) : (
                         h.totalShares.toFixed(0)
                       )}
