@@ -1,7 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
 import { createLogger } from "@/lib/logger";
+import { toast } from "sonner";
 
 const logger = createLogger("useLocalStorage");
+
+const isQuotaExceededError = (error: unknown): boolean => {
+  return error instanceof DOMException && error.name === "QuotaExceededError";
+};
 
 export function useLocalStorage<T>(
   key: string,
@@ -50,11 +55,29 @@ export function useLocalStorage<T>(
           window.localStorage.setItem(key, JSON.stringify(valueToStore));
         }
       } catch (error) {
-        // Handle quota exceeded error
-        if (error instanceof DOMException && error.name === "QuotaExceededError") {
+        if (isQuotaExceededError(error)) {
           logger.error(`localStorage quota exceeded for key "${key}"`);
+          toast.error("Spremanje nije uspjelo — nedostatak prostora", {
+            description: "Pokušajte obrisati stare podatke ili se prijaviti za cloud pohranu.",
+            action: {
+              label: "Obriši stare podatke",
+              onClick: () => {
+                // Clear the largest localStorage keys as recovery
+                const largeKeys = ["zse-portfolio-transactions", "zse-received-dividends"];
+                largeKeys.forEach((k) => {
+                  try {
+                    localStorage.removeItem(k);
+                  } catch {
+                    // ignore
+                  }
+                });
+                toast.success("Stari podaci obrisani. Pokušajte ponovno.");
+              },
+            },
+          });
         } else {
           logger.error(`Error setting localStorage key "${key}":`, error);
+          toast.error("Spremanje nije uspjelo");
         }
       }
     },
