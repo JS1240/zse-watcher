@@ -573,6 +573,7 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
             title={tc("empty.noResults")}
             description={tc("empty.noResultsDescription")}
             action={{ label: tc("empty.clearFilters"), onClick: () => setSearch("") }}
+            shortcut="/"
           />
           {/* Keyboard shortcuts hint for empty state discoverability */}
           <div className="flex items-center justify-center gap-4 text-[9px] text-muted-foreground">
@@ -593,6 +594,7 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
             title={t("empty")}
             description={t("emptyDescription")}
             action={{ label: t("create"), onClick: () => setShowForm(true) }}
+            shortcut="A"
             variant="action"
           />
           {/* Keyboard shortcuts hint for empty state discoverability */}

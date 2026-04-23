@@ -14,6 +14,8 @@ interface EmptyStateProps {
     label: string;
     onClick: () => void;
   };
+  /** Keyboard shortcut to display next to the action button (e.g. 'N' for new, 'A' for add) */
+  shortcut?: string;
   /** Optional quick start steps for new users - shows numbered step-by-step guide */
   steps?: {
     label: string;
@@ -51,6 +53,7 @@ export function EmptyState({
   description,
   hint,
   action,
+  shortcut,
   steps,
   variant = "info",
   className,
@@ -120,14 +123,23 @@ export function EmptyState({
 
       {/* Action */}
       {action && (
-        <Button
-          size="sm"
-          variant={variant === "action" ? "default" : "outline"}
-          className={cn("mt-4", variant === "action" && "animate-cta-pulse")}
-          onClick={action.onClick}
-        >
-          {action.label}
-        </Button>
+        <div className="mt-4 flex items-center gap-2">
+          <Button
+            size="sm"
+            variant={variant === "action" ? "default" : "outline"}
+            className={cn(variant === "action" && "animate-cta-pulse")}
+            onClick={action.onClick}
+          >
+            {action.label}
+          </Button>
+          {/* Keyboard shortcut hint */}
+          {shortcut && (
+            <span className="flex items-center gap-1 text-[9px] text-muted-foreground">
+              <kbd className="rounded bg-muted px-1.5 py-0.5 font-sans text-[8px]">{shortcut}</kbd>
+              {variant === "action" ? "tipkovnica" : "keyboard"}
+            </span>
+          )}
+        </div>
       )}
 
       {/* Hint pill */}

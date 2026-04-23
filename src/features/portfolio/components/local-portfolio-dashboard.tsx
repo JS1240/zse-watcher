@@ -793,6 +793,7 @@ export function LocalPortfolioDashboard() {
               { label: t("quickStart.step3"), description: t("quickStart.step3Desc") ?? "" },
             ] : undefined}
             action={{ label: t("addPosition"), onClick: () => setShowAddForm(true) }}
+            shortcut="N"
             variant="action"
           />
         </div>

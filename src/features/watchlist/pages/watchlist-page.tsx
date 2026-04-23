@@ -426,6 +426,7 @@ function AuthenticatedWatchlist() {
           title={tc("empty.noResults")}
           description={tc("empty.noResultsDescription")}
           action={{ label: tc("empty.clearFilters"), onClick: () => setSearch("") }}
+          shortcut="/"
           variant="no-results"
         />
       ) : (
@@ -438,6 +439,7 @@ function AuthenticatedWatchlist() {
             { label: t("emptyHints.step3"), description: "" },
           ]}
           action={{ label: t("browseAction"), onClick: () => { window.location.href = "/"; } }}
+          shortcut="N"
           variant="action"
         />
       )}
@@ -956,6 +958,7 @@ function LocalWatchlist() {
           title={tc("empty.noResults")}
           description={tc("empty.noResultsDescription")}
           action={{ label: tc("empty.clearFilters"), onClick: () => setSearch("") }}
+          shortcut="/"
           variant="no-results"
         />
       ) : items.length === 0 ? (
@@ -971,6 +974,7 @@ function LocalWatchlist() {
             label: t("browseAction"),
             onClick: () => { window.location.href = "/"; },
           }}
+          shortcut="N"
           variant="action"
         />
       ) : (
@@ -979,6 +983,7 @@ function LocalWatchlist() {
           title={tc("empty.noResults")}
           description={tc("empty.noResultsDescription")}
           action={{ label: tc("empty.clearFilters"), onClick: () => setSearch("") }}
+          shortcut="/"
         />
       )}
 

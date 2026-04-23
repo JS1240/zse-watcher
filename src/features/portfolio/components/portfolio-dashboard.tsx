@@ -752,6 +752,7 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
           title={t("searchNoResults") || "No results found"}
           description={t("searchNoResultsDescription") || "No positions match your search."}
           action={{ label: t("clearSearch") || "Clear search", onClick: () => setSearch("") }}
+          shortcut="/"
         />
       ) : (
         <div className="rounded-md border border-border bg-card">
@@ -765,6 +766,7 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
               { label: t("quickStart.step3"), description: t("quickStart.step3Desc") ?? "" },
             ]}
             action={{ label: t("addPosition"), onClick: () => setShowAddForm(true) }}
+            shortcut="N"
             variant="action"
           />
         </div>
