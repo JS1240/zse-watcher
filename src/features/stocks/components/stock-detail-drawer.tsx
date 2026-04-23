@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, memo } from "react";
-import { X, Info, RefreshCw, Download, Bell, HelpCircle } from "lucide-react";
+import { X, Info, RefreshCw, Download, Bell } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useStockDetail } from "@/features/stocks/api/stock-detail-queries";
@@ -12,7 +12,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+
 import { cn } from "@/lib/utils";
 import { exportToCsv } from "@/lib/export";
 import { AlertForm } from "@/features/alerts/components/alert-form";
@@ -209,30 +209,6 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
                 </button>
               </>
             )}
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  className="flex items-center gap-1 rounded-md px-2 py-1 text-[10px] text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-                  aria-label="Keyboard shortcuts"
-                >
-                  <HelpCircle className="h-3.5 w-3.5" />
-                  <span className="hidden md:inline">Pomoć</span>
-                </button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom" align="end" className="z-[60] space-y-1.5 p-2.5">
-                <p className="text-[10px] font-semibold text-foreground">{t("shortcuts") || "Tipkovnički prečaci"}</p>
-                <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-[9px]">
-                  <kbd className="rounded bg-muted px-1.5 py-0.5 text-[8px] font-sans">Esc</kbd>
-                  <span className="text-muted-foreground">{t("shortcut.close") || "zatvori"}</span>
-                  <kbd className="rounded bg-muted px-1.5 py-0.5 text-[8px] font-sans">T</kbd>
-                  <span className="text-muted-foreground">{t("drawer.recordTransaction") || "unesi transakciju"}</span>
-                  <kbd className="rounded bg-muted px-1.5 py-0.5 text-[8px] font-sans">A</kbd>
-                  <span className="text-muted-foreground">{ta("create") || "kreiraj alarm"}</span>
-                  <kbd className="rounded bg-muted px-1.5 py-0.5 text-[8px] font-sans">D</kbd>
-                  <span className="text-muted-foreground">{t("exportCsv") || "izvoz CSV"}</span>
-                </div>
-              </TooltipContent>
-            </Tooltip>
             <button
               onClick={onClose}
               className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
@@ -242,6 +218,34 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
             </button>
           </div>
         </div>
+
+        {/* Always-visible keyboard shortcuts hint — matching portfolio/stocks pattern */}
+        {stock && (
+          <div className="flex items-center justify-between border-b border-border/50 bg-muted/30 px-4 py-1.5 text-[9px] text-muted-foreground">
+            <div className="flex items-center gap-3">
+              <span className="flex items-center gap-1">
+                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Esc</kbd>
+                <span>{t("shortcut.close") || "zatvori"}</span>
+              </span>
+              <span className="flex items-center gap-1">
+                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">T</kbd>
+                <span>{t("drawer.recordTransaction") || "transakcija"}</span>
+              </span>
+              <span className="flex items-center gap-1">
+                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">A</kbd>
+                <span>{ta("create") || "alarm"}</span>
+              </span>
+              <span className="flex items-center gap-1">
+                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">D</kbd>
+                <span>{t("exportCsv") || "CSV"}</span>
+              </span>
+            </div>
+            <span className="flex items-center gap-1">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">W</kbd>
+              <span>{t("watchlist.add") || "praćenje"}</span>
+            </span>
+          </div>
+        )}
 
         {/* Content */}
         <ScrollArea className="flex-1">
