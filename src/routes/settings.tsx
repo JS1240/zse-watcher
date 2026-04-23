@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Moon, Sun, Globe, Monitor, Keyboard, Trash2, Download, Upload, Database, Check, ArrowUp } from "lucide-react";
 import { toast } from "sonner";
@@ -25,6 +25,22 @@ function SettingsPage() {
   const { isPremium, loading: subLoading } = useSubscription();
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [scrollTop, setScrollTop] = useState(false);
+
+  // Keyboard shortcut: ? to open shortcuts overlay
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "?" && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        // Only trigger if not typing in an input
+        const target = e.target as HTMLElement;
+        if (target.tagName !== "INPUT" && target.tagName !== "TEXTAREA" && !target.isContentEditable) {
+          e.preventDefault();
+          setShowShortcuts(true);
+        }
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   // Scroll to top handler
   const scrollToTop = () => {
