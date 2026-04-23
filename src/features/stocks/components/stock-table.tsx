@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback, useRef, memo } from "react";
 import { useTranslation } from "react-i18next";
-import { Search, ArrowUpDown, ArrowUp, ArrowDown, Download, TrendingUp, TrendingDown, Minus, X, ArrowUp as ScrollToTopIcon, Keyboard } from "lucide-react";
+import { Search, ArrowUpDown, ArrowUp, ArrowDown, Download, TrendingUp, TrendingDown, Minus, X, ArrowUp as ScrollToTopIcon, Keyboard, RotateCcw } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { StockRow } from "@/features/stocks/components/stock-row";
@@ -136,6 +136,13 @@ export function StockTable() {
     );
   }, [filtered]);
 
+  // Reset all filters in one click - consistent with alerts and watchlist UX
+  const handleResetFilters = useCallback(() => {
+    setSearch("");
+    setChangeFilter("all");
+    setSectorFilter(null);
+  }, []);
+
   if (isLoading) return <StockTableSkeleton />;
 
   return (
@@ -179,6 +186,18 @@ export function StockTable() {
           <span className="flex items-center gap-1 rounded-full bg-muted/60 px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
             {filtered.length}
           </span>
+        )}
+        {/* Active filters badge - reset button */}
+        {(search || changeFilter !== "all" || sectorFilter) && (
+          <button
+            onClick={handleResetFilters}
+            className="flex items-center gap-1 rounded-full bg-primary px-2.5 py-1.5 text-[10px] font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-destructive"
+            title={tc("actions.reset") || "Resetiraj filtere"}
+            aria-label={tc("actions.reset") || "Poništi filtere"}
+          >
+            <RotateCcw className="h-3 w-3" />
+            {tc("actions.reset") || "Poništi"}
+          </button>
         )}
         {canAccess("dataExport") && (
           <Button
