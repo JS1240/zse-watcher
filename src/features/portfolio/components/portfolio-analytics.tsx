@@ -1,12 +1,12 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { BarChart3 } from "lucide-react";
 import { usePortfolioHoldings, usePortfolio } from "@/features/portfolio/api/portfolio-queries";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { PortfolioChart } from "@/features/portfolio/components/portfolio-chart";
 import { PortfolioAnalyticsSkeleton } from "@/features/portfolio/components/portfolio-analytics-skeleton";
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { EmptyState } from "@/components/shared/empty-state";
+import { AnalyticsEmptyIllustration } from "@/components/shared/empty-illustrations";
 import { formatCurrency } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 
@@ -76,7 +76,7 @@ export function PortfolioAnalytics() {
   if (!analytics) {
     return (
       <EmptyState
-        icon={<BarChart3 className="h-8 w-8" />}
+        icon={<AnalyticsEmptyIllustration className="h-8 w-8" />}
         title={t("analytics.empty")}
         description={t("analytics.emptyDescription")}
         steps={[
