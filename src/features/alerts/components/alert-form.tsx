@@ -198,6 +198,7 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
         <div>
           <label className="mb-1 block text-[10px] text-muted-foreground">{t("fields.ticker")}</label>
           <TickerSelect
+            id="alert-ticker-input"
             value={tickerValue}
             onChange={(v) => {
               setValue("ticker", v, { shouldValidate: true });
@@ -206,18 +207,19 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
             }}
             placeholder="KOEI-R-A"
             error={!!showTickerError}
+            aria-describedby={showTickerError ? "alert-ticker-error" : undefined}
             className={cn(
               showTickerError && "ring-1 ring-destructive border-destructive",
               isTickerValid && !showTickerError && "ring-1 ring-emerald-500 border-emerald-500"
             )}
           />
           {showTickerError ? (
-            <p className="mt-1.5 flex items-center gap-1.5 rounded-md border border-destructive/30 bg-destructive/15 px-2.5 py-1.5 text-xs font-semibold text-red-600 dark:text-red-400">
+            <p id="alert-ticker-error" className="mt-1.5 flex items-center gap-1.5 rounded-md border border-destructive/30 bg-destructive/15 px-2.5 py-1.5 text-xs font-semibold text-red-600 dark:text-red-400" role="alert">
               <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
               {tickerErrorMessage}
             </p>
           ) : showTickerNotFound ? (
-            <p className="mt-1.5 flex items-center gap-1.5 rounded-md border border-amber-400/30 bg-amber-50 px-2.5 py-1.5 text-xs font-semibold text-amber-700 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-700/30">
+            <p id="alert-ticker-error" className="mt-1.5 flex items-center gap-1.5 rounded-md border border-amber-400/30 bg-amber-50 px-2.5 py-1.5 text-xs font-semibold text-amber-700 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-700/30" role="alert">
               <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
               {tickerErrorMessage}
             </p>
@@ -296,6 +298,7 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
               placeholder={isPercentCondition ? "10,50" : "150,00"}
               defaultValue={targetValueDisplay}
               onFocus={handleTargetFocus}
+              aria-describedby={showTargetError ? "alert-target-error" : undefined}
               {...register("targetValue", {
                 onBlur: (e) => {
                   setFocused((prev) => ({ ...prev, target: false }));
@@ -327,7 +330,7 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
             )}
           </div>
           {showTargetError ? (
-            <p className="mt-1.5 flex items-center gap-1.5 rounded-md border border-destructive/30 bg-destructive/15 px-2.5 py-1.5 text-xs font-semibold text-red-600 dark:text-red-400">
+            <p id="alert-target-error" className="mt-1.5 flex items-center gap-1.5 rounded-md border border-destructive/30 bg-destructive/15 px-2.5 py-1.5 text-xs font-semibold text-red-600 dark:text-red-400" role="alert">
               <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
               {translateError(errors.targetValue?.message, t) || t("validation.positiveNumber")}
             </p>
