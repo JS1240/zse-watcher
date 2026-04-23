@@ -11,10 +11,10 @@
     "oldest": "Oldest",
     "tickerAsc": "Ticker A-Z",
     "tickerDesc": "Ticker Z-A",
-    "valueDesc": "Value ↓",
-    "valueAsc": "Value ↑",
-    "gainPctDesc": "Gain % ↓",
-    "gainPctAsc": "Gain % ↑",
+    "valueDesc": "Value \u2193",
+    "valueAsc": "Value \u2191",
+    "gainPctDesc": "Gain % \u2193",
+    "gainPctAsc": "Gain % \u2191",
     "label": "Sort"
   },
   "filters": {
@@ -24,7 +24,6 @@
     "unchanged": "Unchanged",
     "allSectors": "All sectors"
   },
-  
   "validation": {
     "required": "Required field",
     "positiveNumber": "Enter a positive number",
@@ -79,10 +78,11 @@
     "step3": "Track gains and allocation",
     "step3Desc": "Monitor sectors, performance and total portfolio value"
   },
-  "searchPlaceholder": "Search ticker or name...",  "searchNoResults": "No results found",
+  "searchPlaceholder": "Search ticker or name...",
+  "searchNoResults": "No results found",
   "clearSearch": "Clear search",
   "emptySold": "All positions sold",
-  "emptySoldDescription": "You have transactions in history but no active holdings — all positions have been sold. Add a new buy to continue tracking.",
+  "emptySoldDescription": "You have transactions in history but no active holdings \u2014 all positions have been sold. Add a new buy to continue tracking.",
   "history": "Transaction History",
   "analytics": {
     "empty": "No analytics without positions",
@@ -95,20 +95,6 @@
     "worstPerformer": "Worst Performer",
     "sectorAllocation": "Sector Allocation",
     "holdingsBreakdown": "Holdings Breakdown"
-  },
-  "dividends": {
-    "empty": "No dividends recorded yet",
-    "emptyDescription": "Record your first dividends to start tracking your investment returns.",
-    "recordAction": "Record"
-  },
-  "errors": {
-    "stocksLoadFailed": "Cannot load stock data",
-    "stocksLoadFailedDesc": "Portfolio requires live stock prices to calculate values."
-  },
-  "shortcuts": "Keyboard shortcuts",
-  "shortcut": {
-    "view": "stock details",
-    "delete": "delete"
   },
   "dividends": {
     "form": {
@@ -126,8 +112,18 @@
       "cancel": "Cancel"
     }
   },
+  "errors": {
+    "stocksLoadFailed": "Cannot load stock data",
+    "stocksLoadFailedDesc": "Portfolio requires live stock prices to calculate values."
+  },
+  "shortcuts": "Keyboard shortcuts",
+  "shortcut": {
+    "view": "stock details",
+    "delete": "delete",
+    "search": "search"
+  },
   "portfolio": {
-    "localIndicator": "Portfolio saved locally — sign in to sync across devices",
+    "localIndicator": "Portfolio saved locally \u2014 sign in to sync across devices",
     "syncedIndicator": "Portfolio synced with your account",
     "positions": {
       "one": "position",

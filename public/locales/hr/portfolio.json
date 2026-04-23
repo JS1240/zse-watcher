@@ -11,10 +11,10 @@
     "oldest": "Najstarije",
     "tickerAsc": "Oznaka A-Z",
     "tickerDesc": "Oznaka Z-A",
-    "valueDesc": "Vrijednost ↓",
-    "valueAsc": "Vrijednost ↑",
-    "gainPctDesc": "Dobitak % ↓",
-    "gainPctAsc": "Dobitak % ↑",
+    "valueDesc": "Vrijednost \u2193",
+    "valueAsc": "Vrijednost \u2191",
+    "gainPctDesc": "Dobitak % \u2193",
+    "gainPctAsc": "Dobitak % \u2191",
     "label": "Sortiraj"
   },
   "filters": {
@@ -24,7 +24,6 @@
     "unchanged": "Nepromijenjeno",
     "allSectors": "Svi sektori"
   },
-  
   "validation": {
     "required": "Obavezno polje",
     "positiveNumber": "Unesite pozitivan broj",
@@ -32,7 +31,7 @@
     "targetValid": "Ispravno",
     "selectTicker": "Odaberite dionicu"
   },
-  "tickerNotFound": "Ticker nije pronađen na ZSE",
+  "tickerNotFound": "Ticker nije prona\u0111en na ZSE",
   "useSuggested": "Koristi {{value}}",
   "totalInvestment": "Ukupna vrijednost: {{value}}",
   "fields": {
@@ -59,13 +58,13 @@
     "transactionAddFailed": "Neuspjelo dodavanje transakcije",
     "exported": "Portfelj izvezen u CSV",
     "positionAdded": "Pozicija dodana",
-    "positionUpdated": "Pozicija ažurirana",
+    "positionUpdated": "Pozicija a\u017eurirana",
     "positionDeleted": "Pozicija obrisana",
     "copied": "Kopirano: {{ticker}}",
     "priceCopied": "Kopirana cijena: {{price}}",
     "valueCopied": "Kopirana vrijednost: {{value}}",
     "deleted": "Transakcija obrisana",
-    "holdingUpdated": "Udjeli ažurirani"
+    "holdingUpdated": "Udjeli a\u017eurirani"
   },
   "exportCsv": "CSV",
   "exportTransactions": "Transakcije",
@@ -79,9 +78,9 @@
     "step3": "Pratite dobitak i alokaciju",
     "step3Desc": "Gledajte sektore, izvedbu i ukupnu vrijednost portfelja"
   },
-  "searchPlaceholder": "Pretraži oznaku ili ime...",
+  "searchPlaceholder": "Pretra\u017ei oznaku ili ime...",
   "searchNoResults": "Nema rezultata",
-  "clearSearch": "Očisti pretraživanje",
+  "clearSearch": "O\u010disti pretra\u017eivanje",
   "emptySold": "Sve pozicije prodane",
   "emptySoldDescription": "Imate transakcije u povijesti, ali nema aktivnih pozicija jer su sve prodane. Dodajte novu kupnju da biste nastavili.",
   "history": "Povijest transakcija",
@@ -98,20 +97,6 @@
     "holdingsBreakdown": "Raspodjela udjela"
   },
   "dividends": {
-    "empty": "Nema zaprimljenih dividendi",
-    "emptyDescription": "Zabilježite svoje prve dividende kako biste pratili prinos od ulaganja.",
-    "recordAction": "Zabilježi"
-  },
-  "errors": {
-    "stocksLoadFailed": "Ne mogu ucitati podatke o dionicama",
-    "stocksLoadFailedDesc": "Portfelj zahtijeva live cijene dionica za izracun vrijednosti."
-  },
-  "shortcuts": "Tipkovnicki precaci",
-  "shortcut": {
-    "view": "detalji dionice",
-    "delete": "obrisi"
-  },
-  "dividends": {
     "form": {
       "ticker": "Oznaka",
       "datePaid": "Datum isplate",
@@ -122,14 +107,24 @@
       "total": "Ukupno:"
     },
     "buttons": {
-      "record": "Zabilježi",
+      "record": "Zabilje\u017ei",
       "save": "Spremi",
       "cancel": "Odustani"
     }
   },
+  "errors": {
+    "stocksLoadFailed": "Ne mogu ucitati podatke o dionicama",
+    "stocksLoadFailedDesc": "Portfelj zahtijeva live cijene dionica za izracun vrijednosti."
+  },
+  "shortcuts": "Tipkovnicki precaci",
+  "shortcut": {
+    "view": "detalji dionice",
+    "delete": "obrisi",
+    "search": "pretra\u017eivanje"
+  },
   "portfolio": {
-    "localIndicator": "Portfelj spremljen lokalno — prijavite se za sinkronizaciju",
-    "syncedIndicator": "Portfelj sinkroniziran s vašim računom",
+    "localIndicator": "Portfelj spremljen lokalno \u2014 prijavite se za sinkronizaciju",
+    "syncedIndicator": "Portfelj sinkroniziran s va\u0161im ra\u010dunom",
     "positions": {
       "one": "pozicija",
       "other": "pozicija"

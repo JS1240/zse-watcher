@@ -765,6 +765,21 @@ export function LocalPortfolioDashboard() {
             })}
             </tbody>
           </table>
+          {/* Keyboard shortcuts hint - always visible, matching stocks/watchlist pattern */}
+          {enrichedHoldings.length > 0 && (
+            <div className="flex items-center justify-between border-t border-border/50 px-3 py-2 text-[9px] text-muted-foreground">
+              <span className="flex items-center gap-2">
+                <kbd className="rounded bg-muted px-1.5 py-0.5 font-sans text-[8px]">Enter</kbd>
+                <span className="hidden sm:inline">{t("shortcut.view") || "detalji"}</span>
+                <kbd className="rounded bg-muted px-1.5 py-0.5 font-sans text-[8px]">Del</kbd>
+                <span className="hidden sm:inline">{t("shortcut.delete") || "obriši"}</span>
+              </span>
+              <span className="flex items-center gap-1">
+                <Keyboard className="h-2.5 w-2.5" />
+                <span>{t("shortcut.search") || "/ pretraživanje"}</span>
+              </span>
+            </div>
+          )}
         </div>
       ) : (
         <div className="rounded-md border border-border bg-card">
