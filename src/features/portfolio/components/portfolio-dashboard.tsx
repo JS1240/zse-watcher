@@ -303,11 +303,18 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
     );
 
+    // Localized type labels for Croatian tax reporting (Porezna uprava)
+    const typeLabels: Record<string, string> = {
+      buy: t("types.buy"),
+      sell: t("types.sell"),
+      dividend: t("types.dividend"),
+    };
+
     const headers = ["Date", "Ticker", "Type", "Shares", "Price (EUR)", "Total (EUR)", "Notes"];
     const rows = allTransactions.map((tx) => [
       new Date(tx.date).toISOString().split("T")[0],
       tx.ticker,
-      tx.type,
+      typeLabels[tx.type] || tx.type,
       tx.shares.toString(),
       tx.price.toFixed(2),
       tx.total.toFixed(2),

@@ -396,13 +396,20 @@ export function LocalPortfolioDashboard() {
   const handleExportTransactions = () => {
     if (!transactions.length) return;
 
+    // Localized type labels for Croatian tax reporting (Porezna uprava)
+    const typeLabels: Record<string, string> = {
+      buy: t("types.buy"),
+      sell: t("types.sell"),
+      dividend: t("types.dividend"),
+    };
+
     const headers = ["Date", "Ticker", "Type", "Shares", "Price (EUR)", "Total (EUR)", "Notes"];
     const rows = [...transactions]
       .sort((a, b) => new Date(b.transactionDate).getTime() - new Date(a.transactionDate).getTime())
       .map((tx) => [
         new Date(tx.transactionDate).toISOString().split("T")[0],
         tx.ticker,
-        tx.transactionType,
+        typeLabels[tx.transactionType] || tx.transactionType,
         tx.shares.toString(),
         tx.pricePerShare.toFixed(2),
         tx.totalAmount.toFixed(2),
