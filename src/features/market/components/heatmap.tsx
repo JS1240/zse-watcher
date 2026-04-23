@@ -168,7 +168,10 @@ function LegendItem({
   value: string;
 }) {
   return (
-    <div className="flex items-center gap-1.5" role="listitem">
+    <div
+      className="flex items-center gap-1.5 rounded-sm px-1.5 py-1 transition-all duration-150 hover:bg-muted/50"
+      role="listitem"
+    >
       <span
         className={cn(
           "inline-block h-3 w-3 rounded-sm border",

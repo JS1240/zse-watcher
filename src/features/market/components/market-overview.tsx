@@ -83,7 +83,7 @@ function OverviewCard({ icon: Icon, label, value, changePct, accent }: OverviewC
 
   return (
     <div
-      className={`rounded-md border p-3 ${accent ? "border-primary/30 bg-primary/5" : "border-border bg-card"}`}
+      className={`rounded-md border p-3 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-border/80 ${accent ? "border-primary/30 bg-primary/5" : "border-border bg-card"}`}
       role="group"
       aria-label={`${label}: ${value}, ${changeLabel}`}
     >
