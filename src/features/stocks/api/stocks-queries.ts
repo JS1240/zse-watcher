@@ -3,6 +3,7 @@ import { fetchZseStocks } from "@/lib/eodhd-service";
 import { REFETCH_INTERVALS } from "@/config/constants";
 import type { Stock } from "@/types/stock";
 import { createLogger } from "@/lib/logger";
+import { setLastUpdatedForSource } from "@/hooks/use-last-updated";
 
 const logger = createLogger("StocksQueries");
 
@@ -24,7 +25,11 @@ async function fetchStocksLive(): Promise<{ stocks: Stock[]; isMockData: boolean
 export function useStocksLive() {
   return useQuery({
     queryKey: ["stocks", "live"],
-    queryFn: fetchStocksLive,
+    queryFn: async () => {
+      const result = await fetchStocksLive();
+      setLastUpdatedForSource("stocks");
+      return result;
+    },
     // EOD data doesn't update intraday on free plan — stale after 1 hour
     staleTime: 60 * 60 * 1000,
     refetchInterval: REFETCH_INTERVALS.STOCKS_LIVE,

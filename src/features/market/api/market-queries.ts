@@ -4,6 +4,7 @@ import { MOCK_MARKET_STATUS, MOCK_MOVERS, MOCK_MACRO } from "@/lib/mock-data";
 import { REFETCH_INTERVALS, STALE_TIMES } from "@/config/constants";
 import type { MarketStatus, Mover, MacroData } from "@/types/market";
 import { createLogger } from "@/lib/logger";
+import { setLastUpdatedForSource } from "@/hooks/use-last-updated";
 
 const logger = createLogger("MarketQueries");
 
@@ -37,7 +38,11 @@ async function fetchMacro(): Promise<MacroData> {
 export function useMarketStatus() {
   return useQuery({
     queryKey: ["market", "status"],
-    queryFn: fetchMarketStatus,
+    queryFn: async () => {
+      const result = await fetchMarketStatus();
+      setLastUpdatedForSource("market");
+      return result;
+    },
     refetchInterval: REFETCH_INTERVALS.MARKET_STATUS,
     staleTime: STALE_TIMES.MARKET_STATUS,
   });
@@ -46,7 +51,11 @@ export function useMarketStatus() {
 export function useMovers() {
   return useQuery({
     queryKey: ["market", "movers"],
-    queryFn: fetchMovers,
+    queryFn: async () => {
+      const result = await fetchMovers();
+      setLastUpdatedForSource("movers");
+      return result;
+    },
     refetchInterval: REFETCH_INTERVALS.MOVERS,
   });
 }
@@ -54,7 +63,11 @@ export function useMovers() {
 export function useMacro() {
   return useQuery({
     queryKey: ["market", "macro"],
-    queryFn: fetchMacro,
+    queryFn: async () => {
+      const result = await fetchMacro();
+      setLastUpdatedForSource("macro");
+      return result;
+    },
     refetchInterval: REFETCH_INTERVALS.MACRO,
     staleTime: STALE_TIMES.MACRO,
   });

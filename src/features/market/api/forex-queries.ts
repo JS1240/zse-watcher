@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { setLastUpdatedForSource } from "@/hooks/use-last-updated";
 
 export interface ForexRates {
   eurUsd: number;
@@ -48,7 +49,11 @@ async function fetchForexRates(): Promise<ForexRates> {
 export function useForexRates() {
   return useQuery({
     queryKey: ["forex"],
-    queryFn: fetchForexRates,
+    queryFn: async () => {
+      const result = await fetchForexRates();
+      setLastUpdatedForSource("forex");
+      return result;
+    },
     refetchInterval: 5 * 60 * 1000, // refresh every 5 minutes
     staleTime: 5 * 60 * 1000,
   });

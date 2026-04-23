@@ -4,6 +4,7 @@ import { MOCK_NEWS } from "@/lib/mock-data";
 import { REFETCH_INTERVALS } from "@/config/constants";
 import type { NewsArticle } from "@/types/news";
 import { createLogger } from "@/lib/logger";
+import { setLastUpdatedForSource } from "@/hooks/use-last-updated";
 
 const logger = createLogger("NewsQueries");
 
@@ -19,7 +20,11 @@ async function fetchNews(): Promise<NewsArticle[]> {
 export function useNews() {
   return useQuery({
     queryKey: ["news"],
-    queryFn: fetchNews,
+    queryFn: async () => {
+      const result = await fetchNews();
+      setLastUpdatedForSource("news");
+      return result;
+    },
     refetchInterval: REFETCH_INTERVALS.NEWS,
   });
 }
