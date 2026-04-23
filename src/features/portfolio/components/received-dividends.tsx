@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, Trash2, Receipt, Download } from "lucide-react";
+import { Plus, Trash2, Download } from "lucide-react";
 import { toast } from "sonner";
 import { exportToCsv } from "@/lib/export";
 import { useReceivedDividends } from "@/features/portfolio/hooks/use-received-dividends";
@@ -8,6 +8,7 @@ import { usePortfolioHoldings } from "@/features/portfolio/api/portfolio-queries
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { EmptyState } from "@/components/shared/empty-state";
+import { DividendsCalendarEmptyIllustration } from "@/components/shared/empty-illustrations";
 import { DividendsSkeleton } from "@/features/dividends/components/dividends-skeleton";
 import { formatCurrency, formatDate } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
@@ -84,7 +85,7 @@ export function ReceivedDividends() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Receipt className="h-4 w-4 text-muted-foreground" />
+          <DividendsCalendarEmptyIllustration className="h-4 w-4 text-muted-foreground" />
           <span className="text-xs font-semibold text-foreground">{t("dividendsReceived")}</span>
           {hasDividends && !isHoldingsLoading && (
             <span className="font-data text-[10px] text-muted-foreground">
@@ -192,7 +193,7 @@ export function ReceivedDividends() {
       {/* Dividends list */}
       {!hasDividends ? (
         <EmptyState
-          icon={<Receipt className="h-8 w-8" />}
+          icon={<DividendsCalendarEmptyIllustration className="h-8 w-8" />}
           title={t("dividends.empty", "No dividends recorded yet")}
           description={t("dividends.emptyDescription", "Record your first dividends to start tracking your investment returns.")}
           action={{ label: t("dividends.recordAction", "Record"), onClick: () => setShowForm(true) }}

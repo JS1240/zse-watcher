@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- **Custom Illustration for Received Dividends Empty State** — visual polish for Croatian retail investors
+  - Replaced generic Receipt icon with DividendsCalendarEmptyIllustration
+  - Consistent with other empty states using custom SVG illustrations
+
 - **P/E Ratio and Market Cap in Stock Table** — fundamental data for Croatian retail investors
   - Added sortable P/E and Market Cap columns to stock table (visible at 2xl+ screen width)
   - Added peRatio and marketCapM fields to Stock type, populated in mock data
