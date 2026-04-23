@@ -20,6 +20,7 @@ import { cn } from "@/lib/utils";
 type SortField = "ticker" | "price" | "changePct" | "turnover" | "volume" | "dividendYield";
 type SortDir = "asc" | "desc";
 type ChangeFilter = "all" | "gainers" | "losers" | "unchanged";
+type YieldFilter = "all" | "gt3" | "gt5" | "gt8";
 
 export function StockTable() {
   const { t } = useTranslation("stocks");
@@ -29,6 +30,7 @@ export function StockTable() {
   const { select } = useSelectedStock();
   const [search, setSearch] = useState("");
   const [changeFilter, setChangeFilter] = useState<ChangeFilter>("all");
+  const [yieldFilter, setYieldFilter] = useState<YieldFilter>("all");
   const [sectorFilter, setSectorFilter] = useState<string | null>(null);
   const [sortField, setSortField] = useState<SortField>("changePct");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
@@ -76,6 +78,12 @@ export function StockTable() {
       });
     }
 
+    // Dividend yield filter (from premium Screener)
+    if (yieldFilter !== "all") {
+      const minYield = yieldFilter === "gt3" ? 3 : yieldFilter === "gt5" ? 5 : 8;
+      result = result.filter((s) => s.dividendYield !== null && s.dividendYield >= minYield);
+    }
+
     // Sector filter
     if (sectorFilter) {
       result = result.filter((s) => s.sector === sectorFilter);
@@ -93,7 +101,7 @@ export function StockTable() {
     });
 
     return result;
-  }, [stocks, debouncedSearch, changeFilter, sectorFilter, sortField, sortDir]);
+  }, [stocks, debouncedSearch, changeFilter, yieldFilter, sectorFilter, sortField, sortDir]);
 
   const handleRowFocus = useCallback((ticker: string) => select(ticker), [select]);
 
@@ -140,6 +148,7 @@ export function StockTable() {
   const handleResetFilters = useCallback(() => {
     setSearch("");
     setChangeFilter("all");
+    setYieldFilter("all");
     setSectorFilter(null);
   }, []);
 
@@ -188,7 +197,7 @@ export function StockTable() {
           </span>
         )}
         {/* Active filters badge - reset button */}
-        {(search || changeFilter !== "all" || sectorFilter) && (
+        {(search || changeFilter !== "all" || yieldFilter !== "all" || sectorFilter) && (
           <button
             onClick={handleResetFilters}
             className="flex items-center gap-1 rounded-full bg-primary px-2.5 py-1.5 text-[10px] font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-destructive"
@@ -260,6 +269,51 @@ export function StockTable() {
         >
           <Minus className="h-3 w-3" />
           <span className="hidden sm:inline">{t("filters.unchanged") || "Bez promjene"}</span>
+        </button>
+        {/* Dividend yield filter - from premium Screener for all users */}
+        <button
+          onClick={() => setYieldFilter("all")}
+          className={cn(
+            "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
+            yieldFilter === "all"
+              ? "bg-primary text-primary-foreground shadow-sm"
+              : "bg-muted/60 text-muted-foreground hover:bg-muted",
+          )}
+        >
+          <span className="hidden sm:inline">{t("filters.allYields") || "Svi prinosi"}</span>
+        </button>
+        <button
+          onClick={() => setYieldFilter("gt3")}
+          className={cn(
+            "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
+            yieldFilter === "gt3"
+              ? "bg-primary text-primary-foreground shadow-sm"
+              : "bg-muted/60 text-muted-foreground hover:bg-muted",
+          )}
+        >
+          <span className="hidden sm:inline">{t("filters.gt3")}</span>
+        </button>
+        <button
+          onClick={() => setYieldFilter("gt5")}
+          className={cn(
+            "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
+            yieldFilter === "gt5"
+              ? "bg-primary text-primary-foreground shadow-sm"
+              : "bg-muted/60 text-muted-foreground hover:bg-muted",
+          )}
+        >
+          <span className="hidden sm:inline">{t("filters.gt5")}</span>
+        </button>
+        <button
+          onClick={() => setYieldFilter("gt8")}
+          className={cn(
+            "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
+            yieldFilter === "gt8"
+              ? "bg-primary text-primary-foreground shadow-sm"
+              : "bg-muted/60 text-muted-foreground hover:bg-muted",
+          )}
+        >
+          <span className="hidden sm:inline">{t("filters.gt8")}</span>
         </button>
         {/* Sector filter dropdown */}
         {availableSectors.length > 0 && (

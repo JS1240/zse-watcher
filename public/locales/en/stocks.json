@@ -81,7 +81,11 @@
     "gainers": "Gainers",
     "losers": "Losers",
     "unchanged": "Unchanged",
-    "allSectors": "All Sectors"
+    "allSectors": "All Sectors",
+    "allYields": "All Yields",
+    "gt3": "3%+",
+    "gt5": "5%+",
+    "gt8": "8%+"
   },
   "movers": {
     "title": "Market Movers",

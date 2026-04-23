@@ -80,7 +80,11 @@
     "gainers": "Rastu",
     "losers": "Padaju",
     "unchanged": "Bez promjene",
-    "allSectors": "Svi sektori"
+    "allSectors": "Svi sektori",
+    "allYields": "Svi prinosi",
+    "gt3": "3%+",
+    "gt5": "5%+",
+    "gt8": "8%+"
   },
   "movers": {
     "title": "Pokretaci trzista",
