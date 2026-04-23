@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { CalendarDays, Search, Calendar, Download, ChevronDown, ChevronUp, ArrowUp, Keyboard, HelpCircle } from "lucide-react";
+import { CalendarDays, Search, Calendar, Download, ChevronDown, ChevronUp, ArrowUp, ArrowUpDown, Keyboard, HelpCircle } from "lucide-react";
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { toast } from "sonner";
 import { useDividends } from "@/features/dividends/api/dividends-queries";
@@ -25,6 +25,7 @@ export function DividendsCalendar() {
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [showYearFilter, setShowYearFilter] = useState(false);
+  const [showSortMenu, setShowSortMenu] = useState(false);
   const [scrollTop, setScrollTop] = useState(false);
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const dividendsListRef = useRef<HTMLDivElement>(null);
@@ -279,26 +280,60 @@ export function DividendsCalendar() {
         )}
 
         {/* Sort dropdown */}
-        <select
-          value={`${sortField}-${sortDir}`}
-          onChange={(e) => {
-            const [field, direction] = e.target.value.split("-") as [
-              "yield" | "amount" | "exDivDate",
-              "asc" | "desc",
-            ];
-            setSortField(field);
-            setSortDir(direction);
-          }}
-          className="h-8 rounded-md border border-input bg-background px-2 py-1 text-xs text-foreground"
-          aria-label={t("sortBy") || "Sortiraj"}
-        >
-          <option value="exDivDate-desc">{t("sort.newest") || "Najnoviji datum"}</option>
-          <option value="exDivDate-asc">{t("sort.oldest") || "Najstariji datum"}</option>
-          <option value="yield-desc">{t("sort.yieldDesc") || "Prinos ↓"}</option>
-          <option value="yield-asc">{t("sort.yieldAsc") || "Prinos ↑"}</option>
-          <option value="amount-desc">{t("sort.amountDesc") || "Iznos ↓"}</option>
-          <option value="amount-asc">{t("sort.amountAsc") || "Iznos ↑"}</option>
-        </select>
+        <div className="relative">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setShowSortMenu(!showSortMenu)}
+            className="min-w-[130px] gap-1"
+          >
+            <ChevronUp
+              className={cn("h-3 w-3 transition-transform", sortDir === "asc" ? "" : "rotate-180")}
+            />
+            {t("sortBy")}
+          </Button>
+          {showSortMenu && (
+            <div className="absolute left-0 top-full z-10 mt-1 min-w-[150px] rounded-md border border-border bg-card shadow-md">
+              {([
+                { field: "exDivDate", label: t("sort.date") ?? td("sort.date", "Datum"), defaultDir: "desc" as const },
+                { field: "yield", label: t("sort.yieldDesc") ?? td("sort.yield", "Prinos"), defaultDir: "desc" as const },
+                { field: "amount", label: t("sort.amountDesc") ?? td("sort.amount", "Iznos"), defaultDir: "desc" as const },
+              ] as const).map((opt) => {
+                const isActive = sortField === opt.field;
+                return (
+                  <button
+                    key={opt.field}
+                    onClick={() => {
+                      if (isActive) {
+                        setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+                      } else {
+                        setSortField(opt.field);
+                        setSortDir(opt.defaultDir);
+                      }
+                      setShowSortMenu(false);
+                    }}
+                    className={cn(
+                      "flex w-full items-center justify-between px-3 py-2 text-left text-xs transition-colors hover:bg-accent",
+                      isActive && "bg-accent font-medium"
+                    )}
+                  >
+                    <span className="flex items-center gap-1.5">
+                      {isActive ? (
+                        sortDir === "asc" ? <ArrowUp className="h-3 w-3" /> : <ArrowUp className="h-3 w-3 rotate-180" />
+                      ) : (
+                        <ArrowUpDown className="h-3 w-3 text-muted-foreground/40" />
+                      )}
+                      {opt.label}
+                    </span>
+                    {isActive && (
+                      <ChevronUp className={cn("h-3 w-3", sortDir === "asc" ? "" : "rotate-180")} />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
 
         <Button
           size="sm"

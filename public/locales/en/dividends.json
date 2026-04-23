@@ -9,7 +9,10 @@
     "yieldDesc": "Yield ↓",
     "yieldAsc": "Yield ↑",
     "amountDesc": "Amount ↓",
-    "amountAsc": "Amount ↑"
+    "amountAsc": "Amount ↑",
+    "yield": "Yield",
+    "amount": "Amount",
+    "date": "Date"
   },
   "sortBy": "Sort",
   "tickers": {

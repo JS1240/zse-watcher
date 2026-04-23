@@ -9,7 +9,10 @@
     "yieldDesc": "Prinos ↓",
     "yieldAsc": "Prinos ↑",
     "amountDesc": "Iznos ↓",
-    "amountAsc": "Iznos ↑"
+    "amountAsc": "Iznos ↑",
+    "yield": "Prinos",
+    "amount": "Iznos",
+    "date": "Datum"
   },
   "sortBy": "Sortiraj",
   "tickers": {
