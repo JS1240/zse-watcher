@@ -6,9 +6,16 @@
     "copy": "kopiraj",
     "close": "zatvori",
     "createAlert": "kreiraj alarm",
-    "exportCsv": "izvoz CSV"
+    "exportCsv": "izvoz CSV",
+    "recordTransaction": "unesi transakciju",
+    "watchlist": "prati dionicu"
   },
   "shortcuts": "Tipkovnički prečaci",
+  "drawer": {
+    "addToWatchlist": "Prati",
+    "recordTransaction": "Unesi transakciju",
+    "transactionForm": "Transakcija za {{ticker}}"
+  },
   "header": {
     "tickerLabel": "Oznaka dionice",
     "priceLabel": "Trenutačna cijena",

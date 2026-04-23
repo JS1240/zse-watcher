@@ -17,6 +17,8 @@ import { cn } from "@/lib/utils";
 import { exportToCsv } from "@/lib/export";
 import { AlertForm } from "@/features/alerts/components/alert-form";
 import { CheckCircle2 } from "lucide-react";
+import { Star } from "lucide-react";
+import { InlineTransactionForm } from "@/features/portfolio/components/inline-transaction-form";
 
 interface StockDetailDrawerProps {
   ticker: string | null;
@@ -32,6 +34,7 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
   const isMockData = result?.isMockData ?? false;
   const { addRecentStock } = useRecentStocks();
   const [showAlertForm, setShowAlertForm] = useState(false);
+  const [showTransactionForm, setShowTransactionForm] = useState(false);
 
   // Export stock fundamentals as CSV for Croatian investors
   const handleExportCsv = useCallback(() => {
@@ -120,6 +123,11 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
           e.preventDefault();
           setShowAlertForm(true);
           break;
+        case "t":
+        case "T":
+          e.preventDefault();
+          setShowTransactionForm(true);
+          break;
         case "d":
         case "D":
           e.preventDefault();
@@ -176,6 +184,14 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
             {stock && (
               <>
                 <button
+                  onClick={() => setShowTransactionForm(true)}
+                  className="flex items-center gap-1 rounded-md px-2 py-1 text-[10px] text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                  title={t("drawer.recordTransaction")}
+                >
+                  <Star className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">{t("drawer.recordTransaction")}</span>
+                </button>
+                <button
                   onClick={() => setShowAlertForm(true)}
                   className="flex items-center gap-1 rounded-md px-2 py-1 text-[10px] text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
                   title={ta("create")}
@@ -208,6 +224,8 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
                 <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-[9px]">
                   <kbd className="rounded bg-muted px-1.5 py-0.5 text-[8px] font-sans">Esc</kbd>
                   <span className="text-muted-foreground">{t("shortcut.close") || "zatvori"}</span>
+                  <kbd className="rounded bg-muted px-1.5 py-0.5 text-[8px] font-sans">T</kbd>
+                  <span className="text-muted-foreground">{t("drawer.recordTransaction") || "unesi transakciju"}</span>
                   <kbd className="rounded bg-muted px-1.5 py-0.5 text-[8px] font-sans">A</kbd>
                   <span className="text-muted-foreground">{ta("create") || "kreiraj alarm"}</span>
                   <kbd className="rounded bg-muted px-1.5 py-0.5 text-[8px] font-sans">D</kbd>
@@ -259,6 +277,15 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
                       }}
                     />
                   </div>
+                )}
+
+                {showTransactionForm && stock && (
+                  <InlineTransactionForm
+                    ticker={stock.ticker}
+                    currentPrice={stock.price}
+                    onClose={() => setShowTransactionForm(false)}
+                    onSuccess={() => setShowTransactionForm(false)}
+                  />
                 )}
 
                 {isMockData && (

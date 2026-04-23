@@ -6,9 +6,16 @@
     "copy": "copy",
     "close": "close",
     "createAlert": "create alert",
-    "exportCsv": "export CSV"
+    "exportCsv": "export CSV",
+    "recordTransaction": "record transaction",
+    "watchlist": "watch stock"
   },
-  "shortcuts": "Keyboard shortcuts",
+  "shortcuts": "Keyboard Shortcuts",
+  "drawer": {
+    "addToWatchlist": "Watch",
+    "recordTransaction": "Record Transaction",
+    "transactionForm": "Transaction for {{ticker}}"
+  },
   "header": {
     "tickerLabel": "Stock ticker",
     "priceLabel": "Current price",
