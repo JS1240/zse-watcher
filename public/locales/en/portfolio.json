@@ -64,7 +64,8 @@
     "copied": "Copied: {{ticker}}",
     "priceCopied": "Price copied: {{price}}",
     "valueCopied": "Value copied: {{value}}",
-    "deleted": "Transaction deleted"
+    "deleted": "Transaction deleted",
+    "holdingUpdated": "Holdings updated"
   },
   "exportCsv": "CSV",
   "exportTransactions": "Transactions",

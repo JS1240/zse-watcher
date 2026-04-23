@@ -23,6 +23,7 @@ import { ChangeBadge } from "@/components/shared/change-badge";
 import { EmptyState } from "@/components/shared/empty-state";
 import { PortfolioEmptyIllustration, PortfolioSoldIllustration } from "@/components/shared/empty-illustrations";
 import { formatPrice, formatCurrency } from "@/lib/formatters";
+import { parseLocalizedNumber } from "@/lib/format-input";
 import { exportToCsv } from "@/lib/export";
 import { cn } from "@/lib/utils";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
@@ -31,7 +32,7 @@ import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 export function LocalPortfolioDashboard() {
   const { t } = useTranslation("portfolio");
   const { t: tc } = useTranslation("common");
-  const { transactions, hasLocalTransactions, removeTransaction, clearTransactions } =
+  const { transactions, hasLocalTransactions, removeTransaction, clearTransactions, updateTransaction } =
     useLocalTransactions();
   const { data: stocksResult, isLoading: isStocksLoading } = useStocksLive();
   const stocks = stocksResult?.stocks ?? null;
@@ -41,6 +42,45 @@ export function LocalPortfolioDashboard() {
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [scrollTop, setScrollTop] = useState(false);
   const portfolioRef = useRef<HTMLDivElement>(null);
+
+  // Inline edit state
+  const [editingHolding, setEditingHolding] = useState<{ ticker: string; shares: string; avgPrice: string } | null>(null);
+
+  // Start editing a holding
+  const startEditHolding = useCallback((ticker: string, shares: number, avgPrice: number) => {
+    setEditingHolding({ ticker, shares: shares.toString(), avgPrice: avgPrice.toFixed(2) });
+  }, []);
+
+  // Save edit for shares
+  const saveEditShares = useCallback((ticker: string, sharesStr: string) => {
+    const newShares = parseLocalizedNumber(sharesStr);
+    if (!isNaN(newShares) && newShares > 0) {
+      const tx = transactions.find((tx) => tx.ticker === ticker && tx.transactionType === "buy");
+      if (tx) {
+        updateTransaction(tx.id, { shares: newShares, totalAmount: newShares * tx.pricePerShare });
+        toast.success(t("toast.holdingUpdated") || "Dionice ažurirane");
+      }
+    }
+    setEditingHolding(null);
+  }, [transactions, updateTransaction, t]);
+
+  // Save edit for avg price
+  const saveEditAvgPrice = useCallback((ticker: string, avgPriceStr: string) => {
+    const newPrice = parseLocalizedNumber(avgPriceStr);
+    if (!isNaN(newPrice) && newPrice > 0) {
+      const tx = transactions.find((tx) => tx.ticker === ticker && tx.transactionType === "buy");
+      if (tx) {
+        updateTransaction(tx.id, { pricePerShare: newPrice, totalAmount: newPrice * tx.shares });
+        toast.success(t("toast.holdingUpdated") || "Prosječna cijena ažurirana");
+      }
+    }
+    setEditingHolding(null);
+  }, [transactions, updateTransaction, t]);
+
+  // Cancel editing
+  const cancelEdit = useCallback(() => {
+    setEditingHolding(null);
+  }, []);
 
   // Keyboard navigation for portfolio table rows (mirrors stock-row pattern)
   const handleRowKeyDown = useCallback((e: React.KeyboardEvent, ticker: string, rowIndex: number) => {
@@ -631,10 +671,55 @@ export function LocalPortfolioDashboard() {
                     )}
                   </td>
                   <td className="px-3 py-3 md:py-2 text-right font-data tabular-nums text-foreground">
-                    {h.totalShares.toFixed(0)}
+                    {editingHolding?.ticker === h.ticker ? (
+                      <Input
+                        type="text"
+                        inputMode="numeric"
+                        value={editingHolding.shares}
+                        onChange={(e) => setEditingHolding((prev) => prev ? { ...prev, shares: e.target.value } : null)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") saveEditShares(h.ticker, editingHolding.shares);
+                          else if (e.key === "Escape") cancelEdit();
+                        }}
+                        onBlur={() => saveEditShares(h.ticker, editingHolding.shares)}
+                        className="h-7 w-20 justify-end text-right font-data"
+                        autoFocus
+                      />
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); startEditHolding(h.ticker, h.totalShares, h.avgPrice); }}
+                        className="font-data tabular-nums text-foreground transition-colors hover:text-primary"
+                        title="Klikni za uređivanje"
+                      >
+                        {h.totalShares.toFixed(0)}
+                      </button>
+                    )}
                   </td>
-                  <td className="px-3 py-3 md:py-2 text-right font-data tabular-nums text-muted-foreground">
-                    {formatPrice(h.avgPrice)}
+                  <td className="px-3 py-3 md:py-2 text-right font-data tabular-nums">
+                    {editingHolding?.ticker === h.ticker ? (
+                      <Input
+                        type="text"
+                        inputMode="decimal"
+                        value={editingHolding.avgPrice}
+                        onChange={(e) => setEditingHolding((prev) => prev ? { ...prev, avgPrice: e.target.value } : null)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") saveEditAvgPrice(h.ticker, editingHolding.avgPrice);
+                          else if (e.key === "Escape") cancelEdit();
+                        }}
+                        onBlur={() => saveEditAvgPrice(h.ticker, editingHolding.avgPrice)}
+                        className="h-7 w-20 justify-end text-right font-data"
+                      />
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); startEditHolding(h.ticker, h.totalShares, h.avgPrice); }}
+                        className="font-data tabular-nums text-muted-foreground transition-colors hover:text-primary"
+                        title="Klikni za uređivanje"
+                      >
+                        {formatPrice(h.avgPrice)}
+                      </button>
+                    )}
                   </td>
                   <td className="px-3 py-3 md:py-2">
                     <button

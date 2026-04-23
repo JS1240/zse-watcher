@@ -64,7 +64,8 @@
     "copied": "Kopirano: {{ticker}}",
     "priceCopied": "Kopirana cijena: {{price}}",
     "valueCopied": "Kopirana vrijednost: {{value}}",
-    "deleted": "Transakcija obrisana"
+    "deleted": "Transakcija obrisana",
+    "holdingUpdated": "Udjeli ažurirani"
   },
   "exportCsv": "CSV",
   "exportTransactions": "Transakcije",
