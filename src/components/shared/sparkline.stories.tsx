@@ -1,81 +1,127 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Sparkline } from './sparkline';
+import type { Meta, StoryObj } from "@storybook/react";
+import { Sparkline } from "./sparkline";
 
 const meta: Meta<typeof Sparkline> = {
-  title: 'Shared/Sparkline',
+  title: "Shared/Sparkline",
   component: Sparkline,
-  parameters: {
-    layout: 'centered',
-  },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
-    data: {
-      control: 'object',
-      description: 'Array of numeric values to plot',
-    },
-    width: {
-      control: 'number',
-      description: 'SVG width in pixels',
-    },
-    height: {
-      control: 'number',
-      description: 'SVG height in pixels',
+    width: { control: "number" },
+    height: { control: "number" },
+  },
+  parameters: {
+    docs: {
+      description: {
+        component: "Mini sparkline chart for price trend visualization. Green if up, red if down.",
+      },
     },
   },
 };
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<typeof Sparkline>;
 
-const upTrend = [100, 102, 101, 105, 108, 107, 110, 112, 115, 118];
-const downTrend = [120, 118, 119, 115, 112, 114, 108, 105, 102, 98];
-const volatile = [100, 110, 95, 105, 98, 112, 102, 108, 95, 105];
-const steady = [100, 101, 100, 102, 101, 100, 101, 102, 101, 100];
-
-export const Upward: Story = {
+export const UpTrend: Story = {
   args: {
-    data: upTrend,
-    width: 80,
-    height: 24,
+    data: [100, 102, 101, 103, 105, 104, 106, 108, 107, 109],
+    width: 60,
+    height: 20,
   },
+  render: (args) => (
+    <div className="flex items-center justify-center p-4">
+      <Sparkline {...args} />
+    </div>
+  ),
 };
 
-export const Downward: Story = {
+export const DownTrend: Story = {
   args: {
-    data: downTrend,
-    width: 80,
-    height: 24,
+    data: [109, 107, 108, 106, 104, 105, 103, 101, 102, 100],
+    width: 60,
+    height: 20,
   },
+  render: (args) => (
+    <div className="flex items-center justify-center p-4">
+      <Sparkline {...args} />
+    </div>
+  ),
+};
+
+export const FlatTrend: Story = {
+  args: {
+    data: [100, 100, 100, 100, 100, 100, 100, 100],
+    width: 60,
+    height: 20,
+  },
+  render: (args) => (
+    <div className="flex items-center justify-center p-4">
+      <Sparkline {...args} />
+    </div>
+  ),
 };
 
 export const Volatile: Story = {
   args: {
-    data: volatile,
-    width: 80,
-    height: 24,
+    data: [100, 95, 105, 98, 102, 97, 103, 99, 101, 100],
+    width: 60,
+    height: 20,
   },
+  render: (args) => (
+    <div className="flex items-center justify-center p-4">
+      <Sparkline {...args} />
+    </div>
+  ),
 };
 
-export const Steady: Story = {
+export const Larger: Story = {
   args: {
-    data: steady,
-    width: 80,
-    height: 24,
-  },
-};
-
-export const Small: Story = {
-  args: {
-    data: upTrend,
-    width: 40,
-    height: 16,
-  },
-};
-
-export const Large: Story = {
-  args: {
-    data: upTrend,
+    data: [100, 102, 101, 103, 105, 104, 106, 108, 107, 109, 110, 112, 111, 113, 115],
     width: 120,
-    height: 32,
+    height: 40,
   },
+  render: (args) => (
+    <div className="flex items-center justify-center p-4">
+      <Sparkline {...args} />
+    </div>
+  ),
+};
+
+export const EmptyData: Story = {
+  args: {
+    data: [],
+    width: 60,
+    height: 20,
+  },
+  render: (args) => (
+    <div className="flex items-center justify-center p-4">
+      <Sparkline {...args} />
+    </div>
+  ),
+};
+
+export const SinglePoint: Story = {
+  args: {
+    data: [100],
+    width: 60,
+    height: 20,
+  },
+  render: (args) => (
+    <div className="flex items-center justify-center p-4">
+      <Sparkline {...args} />
+    </div>
+  ),
+};
+
+export const WithClassName: Story = {
+  args: {
+    data: [100, 102, 105, 103, 106, 108, 110],
+    width: 60,
+    height: 20,
+    className: "opacity-50",
+  },
+  render: (args) => (
+    <div className="flex items-center justify-center p-4">
+      <Sparkline {...args} />
+    </div>
+  ),
 };
