@@ -59,6 +59,8 @@
     "transactionAddFailed": "Neuspjelo dodavanje transakcije",
     "exported": "Portfelj izvezen u CSV",
     "positionAdded": "Pozicija dodana",
+    "positionUpdated": "Pozicija ažurirana",
+    "positionDeleted": "Pozicija obrisana",
     "copied": "Kopirano: {{ticker}}",
     "priceCopied": "Kopirana cijena: {{price}}",
     "valueCopied": "Kopirana vrijednost: {{value}}",

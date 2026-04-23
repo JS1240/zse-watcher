@@ -1,6 +1,6 @@
 import { useMemo, useState, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, Download, ChevronUp, ChevronDown, Search, X, Keyboard, TrendingUp, TrendingDown, Minus, CheckCircle2, ArrowUp as ScrollToTopIcon } from "lucide-react";
+import { Plus, Download, ChevronUp, ChevronDown, Search, X, Keyboard, TrendingUp, TrendingDown, Minus, CheckCircle2, ArrowUp as ScrollToTopIcon, Pencil, Trash2, Check } from "lucide-react";
 import { Sparkline } from "@/components/shared/sparkline";
 import { getMockPriceHistory } from "@/lib/mock-data";
 import { Highlight } from "@/components/shared/highlight";
@@ -46,7 +46,7 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
   const { isLoading, data: portfolioData } = usePortfolio();
   const { data: stocksResult, isError: isStocksError, refetch: refetchStocks } = useStocksLive();
   const stocks = stocksResult?.stocks ?? null;
-  const { transactions: localTxs, hasLocalTransactions } = useLocalTransactions();
+  const { transactions: localTxs, hasLocalTransactions, removeTransaction, updateTransaction } = useLocalTransactions();
   const { select } = useSelectedStock();
 
   const [showAddForm, setShowAddForm] = useState(false);
@@ -54,9 +54,11 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
   const [searchFocused, setSearchFocused] = useState(false);
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [scrollTop, setScrollTop] = useState(false);
+  const [editingHolding, setEditingHolding] = useState<string | null>(null); // ticker being edited
+  const [editForm, setEditForm] = useState({ shares: "", price: "", date: "" });
   const portfolioRef = useRef<HTMLDivElement>(null);
 
-  // Click-to-copy handlers for holding values
+  // Keyboard shortcut to focus search
   const handleCopyTicker = useCallback(async (e: React.MouseEvent, ticker: string) => {
     e.stopPropagation();
     await navigator.clipboard.writeText(ticker);
@@ -85,6 +87,48 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
   const searchInputRef = useRef<HTMLInputElement>(null);
   const focusSearch = useCallback(() => searchInputRef.current?.focus(), []);
   useKeyboardShortcut({ key: "/", handler: focusSearch, enabled: true });
+
+  // Inline edit handlers
+  const handleStartEdit = useCallback((ticker: string, shares: number, price: number, date: string) => {
+    setEditingHolding(ticker);
+    setEditForm({ shares: shares.toString(), price: price.toString(), date });
+  }, []);
+
+  const handleCancelEdit = useCallback(() => {
+    setEditingHolding(null);
+    setEditForm({ shares: "", price: "", date: "" });
+  }, []);
+
+  const handleSaveEdit = useCallback((ticker: string) => {
+    // Find the local transaction(s) for this ticker - update the first one
+    const tx = localTxs.find((t) => t.ticker === ticker);
+    if (tx) {
+      const newShares = parseFloat(editForm.shares.replace(",", "."));
+      const newPrice = parseFloat(editForm.price.replace(",", "."));
+      if (!isNaN(newShares) && !isNaN(newPrice) && newShares > 0 && newPrice > 0) {
+        updateTransaction(tx.id, {
+          shares: newShares,
+          pricePerShare: newPrice,
+          totalAmount: newShares * newPrice,
+          transactionDate: editForm.date,
+        });
+        toast.success(t("toast.positionUpdated") || "Position updated", {
+          icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" />,
+        });
+      }
+    }
+    setEditingHolding(null);
+    setEditForm({ shares: "", price: "", date: "" });
+  }, [localTxs, editForm, updateTransaction, t]);
+
+  // Handle delete position (remove all transactions for a ticker)
+  const handleDeletePosition = useCallback((ticker: string) => {
+    const txs = localTxs.filter((t) => t.ticker === ticker);
+    txs.forEach((tx) => removeTransaction(tx.id));
+    toast.success(t("toast.positionDeleted") || "Position removed", { 
+      icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" />,
+    });
+  }, [localTxs, removeTransaction, t]);
 
   const [sortField, setSortField] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
@@ -487,6 +531,9 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
                 <SortableTh field="currentPrice" label={t("fields.currentPrice")} sortField={sortField} sortDir={sortDir} onSort={handleSort} align="right" />
                 <SortableTh field="value" label={t("fields.value")} sortField={sortField} sortDir={sortDir} onSort={handleSort} align="right" className="hidden md:table-cell" />
                 <SortableTh field="gainPct" label={t("fields.gain")} sortField={sortField} sortDir={sortDir} onSort={handleSort} align="right" />
+                <th className="w-16 px-2 py-2 text-center text-[10px] font-medium text-muted-foreground" title="Uredi">
+                  <Pencil className="h-3 w-3 mx-auto" />
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -530,10 +577,34 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
                       )}
                     </td>
                     <td className="px-3 py-3 md:py-2 text-right font-data tabular-nums text-foreground">
-                      {h.totalShares.toFixed(0)}
+                      {editingHolding === h.ticker ? (
+                        <Input
+                          type="text"
+                          inputMode="decimal"
+                          value={editForm.shares}
+                          onChange={(e) => setEditForm((prev) => ({ ...prev, shares: e.target.value }))}
+                          onClick={(e) => e.stopPropagation()}
+                          className="h-7 w-20 bg-background text-right font-data"
+                          placeholder="dionice"
+                        />
+                      ) : (
+                        h.totalShares.toFixed(0)
+                      )}
                     </td>
                     <td className="px-3 py-3 md:py-2 text-right font-data tabular-nums text-muted-foreground">
-                      {formatPrice(h.avgPrice)}
+                      {editingHolding === h.ticker ? (
+                        <Input
+                          type="text"
+                          inputMode="decimal"
+                          value={editForm.price}
+                          onChange={(e) => setEditForm((prev) => ({ ...prev, price: e.target.value }))}
+                          onClick={(e) => e.stopPropagation()}
+                          className="h-7 w-20 bg-background text-right font-data"
+                          placeholder="cijena"
+                        />
+                      ) : (
+                        formatPrice(h.avgPrice)
+                      )}
                     </td>
                     <td className="px-3 py-3 md:py-2 text-right">
                       <button
@@ -563,6 +634,62 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
                     </td>
                     <td className="px-3 py-3 md:py-2 text-right">
                       <ChangeBadge value={h.gainPct} showIcon={false} />
+                    </td>
+                    <td className="px-2 py-3 md:py-2 text-center">
+                      {isLocal ? (
+                        <div className="flex items-center justify-center gap-1">
+                          {editingHolding === h.ticker ? (
+                            <>
+                              <button
+                                type="button"
+                                onClick={() => handleSaveEdit(h.ticker)}
+                                className="rounded-sm p-1 text-emerald-500 hover:bg-emerald-500/10"
+                                title="Spremi"
+                              >
+                                <Check className="h-3 w-3" />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={handleCancelEdit}
+                                className="rounded-sm p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
+                                title="Odustani"
+                              >
+                                <X className="h-3 w-3" />
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  const tx = localTxs.find((t) => t.ticker === h.ticker);
+                                  if (tx) {
+                                    handleStartEdit(h.ticker, h.totalShares, h.avgPrice, tx.transactionDate);
+                                  }
+                                }}
+                                className="rounded-sm p-1 text-muted-foreground hover:bg-primary/10 hover:text-primary"
+                                title="Uredi"
+                              >
+                                <Pencil className="h-3 w-3" />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDeletePosition(h.ticker);
+                                }}
+                                className="rounded-sm p-1 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                                title="Obriši"
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-[9px] text-muted-foreground/40">—</span>
+                      )}
                     </td>
                   </tr>
                 );

@@ -19,6 +19,7 @@ interface LocalTransactionsState {
   transactions: LocalTransaction[];
   addTransaction: (tx: Omit<LocalTransaction, "id" | "createdAt">) => LocalTransaction;
   removeTransaction: (id: string) => void;
+  updateTransaction: (id: string, updates: Partial<Omit<LocalTransaction, "id" | "createdAt">>) => void;
   clearTransactions: () => void;
   hasLocalTransactions: boolean;
 }
@@ -58,10 +59,21 @@ export function useLocalTransactions(): LocalTransactionsState {
     setTransactions([]);
   }, [setTransactions]);
 
+  const updateTransaction = useCallback(
+    (id: string, updates: Partial<Omit<LocalTransaction, "id" | "createdAt">>) => {
+      setTransactions((prev) =>
+        prev.map((tx) =>
+          tx.id === id ? { ...tx, ...updates } : tx
+        )
+      );
+    },
+    [setTransactions]);
+
   return {
     transactions,
     addTransaction,
     removeTransaction,
+    updateTransaction,
     clearTransactions,
     hasLocalTransactions: transactions.length > 0,
   };
