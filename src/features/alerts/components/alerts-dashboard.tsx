@@ -1103,7 +1103,7 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
   return (
     <div
       ref={rowRef}
-tabIndex={0}
+      tabIndex={0}
       onKeyDown={handleRowKeyDown}
       role="row"
       aria-label={`${alert.ticker} alert: ${alert.isActive ? "active" : "paused"}. Press Enter to toggle, E to edit, Delete to remove`}
@@ -1185,6 +1185,7 @@ tabIndex={0}
                 </span>
                 {triggerDistance !== null && (
                   <span
+                    aria-label={`${triggerDistance > 0 ? "+" : ""}${triggerDistance.toFixed(1)}% ${t("distanceAria") || "do cilja"}`}
                     className={cn(
                       "rounded px-1 py-0.5 font-medium",
                       triggerDistance <= 2

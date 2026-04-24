@@ -71,18 +71,18 @@
   "bulk": {
     "activateAll": "Aktiviraj sve",
     "pauseAll": "Pauziraj sve",
-    "deleteTriggered": "Obri\u0161i aktivirane",
-    "deleteAll": "Obri\u0161i sve",
-    "confirmDeleteAll": "Obri\u0161i sve alarme?",
-    "confirmDeleteAllDescription": "Ovo \u010ce trajno obrisati sve va\u0161e alarme. Ova radnja se ne mo\u017ee poni\u0161titi.",
-    "confirmDeleteTriggered": "Obri\u0161i aktivirane alarme?",
-    "confirmDeleteTriggeredDescription": "Ovo \u010ce obrisati sve alarme koji su ve\u0107 aktivirali. Ova radnja se ne mo\u017ee poni\u0161titi.",
+    "deleteTriggered": "Obriši aktivirane",
+    "deleteAll": "Obriši sve",
+    "confirmDeleteAll": "Obriši sve alarme?",
+    "confirmDeleteAllDescription": "Ovo Če trajno obrisati sve vaše alarme. Ova radnja se ne može poništiti.",
+    "confirmDeleteTriggered": "Obriši aktivirane alarme?",
+    "confirmDeleteTriggeredDescription": "Ovo Če obrisati sve alarme koji su već aktivirali. Ova radnja se ne može poništiti.",
     "toastActivatedAll": "Svi alarmi aktivirani",
     "toastPausedAll": "Svi alarmi pauzirani",
     "toastDeletedTriggered": "Aktivirani alarmi obrisani",
     "toastDeletedAll": "Svi alarmi obrisani"
   },
-  "shortcuts": "Tipkovni\u010dki pre\u010daci",
+  "shortcuts": "Tipkovnički prečaci",
   "shortcut": {
     "toggle": "aktiviraj",
     "edit": "uredi",
@@ -103,5 +103,6 @@
     "downBy": "Pad {{value}}%",
     "active": "{{count}} aktivnih alarma, jos nema okidanja",
     "none": "Nema konfiguriranih alarma"
-  }
+  },
+  "distanceAria": "do cilja"
 }

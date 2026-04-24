@@ -103,5 +103,6 @@
     "downBy": "Down {{value}}%",
     "active": "{{count}} active alerts, no triggers yet",
     "none": "No alerts configured"
-  }
+  },
+  "distanceAria": "to target"
 }
