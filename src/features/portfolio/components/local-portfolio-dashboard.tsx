@@ -243,6 +243,7 @@ export function LocalPortfolioDashboard() {
         return {
           ticker,
           totalShares: h.totalShares,
+          totalCost: h.totalCost,
           avgPrice: h.totalCost / h.totalShares,
           currentPrice,
           totalValue,
@@ -626,6 +627,7 @@ export function LocalPortfolioDashboard() {
       {/* Add position form */}
       {showAddForm && (
         <AddPositionForm
+          holdings={enrichedHoldings}
           onClose={() => setShowAddForm(false)}
           onSuccess={() => {
             toast.success(t("toast.transactionAdded"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });

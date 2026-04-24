@@ -519,6 +519,7 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
       {/* Add position form */}
       {showAddForm && (
         <AddPositionForm
+          holdings={enrichedHoldings}
           onClose={() => setShowAddForm(false)}
           onSuccess={() => toast.success(t("toast.transactionAdded"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> })}
         />

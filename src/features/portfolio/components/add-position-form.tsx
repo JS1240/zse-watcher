@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod/v4";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
-import { X, Keyboard, AlertCircle, CheckCircle2, TrendingUp, Euro } from "lucide-react";
+import { X, Keyboard, AlertCircle, AlertTriangle, CheckCircle2, TrendingUp, Euro } from "lucide-react";
 import { toast } from "sonner";
 import { useAddTransaction } from "@/features/portfolio/api/portfolio-queries";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
@@ -30,14 +30,17 @@ const translateError = (key: string | undefined, t: (key: string) => string) => 
   return key.includes(".") ? t(key) : key;
 };
 
+import type { Holding } from "@/features/portfolio/api/portfolio-queries";
+
 type PositionValues = z.infer<typeof positionSchema>;
 
 interface AddPositionFormProps {
+  holdings?: Holding[];
   onClose: () => void;
   onSuccess?: () => void;
 }
 
-export function AddPositionForm({ onClose, onSuccess }: AddPositionFormProps) {
+export function AddPositionForm({ holdings, onClose, onSuccess }: AddPositionFormProps) {
   const { t } = useTranslation("portfolio");
   const addTransaction = useAddTransaction();
 
@@ -182,6 +185,21 @@ export function AddPositionForm({ onClose, onSuccess }: AddPositionFormProps) {
   const showSharesError = touched.shares && (errors.shares || (debouncedShares && !isSharesValid));
   const showPriceError = touched.price && (errors.pricePerShare || (debouncedPrice && !isPriceValid));
 
+  // Get owned shares for sell validation
+  const ownedShares = useMemo(() => {
+    if (!tickerValue || !holdings) return null;
+    const holding = holdings.find((h) => h.ticker.toUpperCase() === tickerValue.toUpperCase());
+    return holding?.totalShares ?? null;
+  }, [tickerValue, holdings]);
+
+  // Check if selling more than owned
+  const hasInsufficientShares = useMemo(() => {
+    if (!ownedShares || !debouncedShares) return false;
+    if (transactionTypeValue !== "sell") return false;
+    const parsed = parseLocalizedNumber(debouncedShares);
+    return parsed > ownedShares;
+  }, [ownedShares, debouncedShares, transactionTypeValue]);
+
   // Show calculated total investment value
   const showTotalInvestment = totalInvestment !== null && totalInvestment > 0;
 
@@ -199,6 +217,12 @@ export function AddPositionForm({ onClose, onSuccess }: AddPositionFormProps) {
     const shares = parseLocalizedNumber(data.shares);
     const pricePerShare = parseLocalizedNumber(data.pricePerShare);
     if (isNaN(shares) || shares <= 0 || isNaN(pricePerShare) || pricePerShare <= 0) return;
+
+    // Prevent selling more than owned
+    if (data.transactionType === "sell" && ownedShares && shares > ownedShares) {
+      toast.error(t("validation.exceedsShares") || "Ne možete prodati više dionica nego što imate");
+      return;
+    }
 
     await addTransaction.mutateAsync({
       ticker: data.ticker,
@@ -419,6 +443,11 @@ export function AddPositionForm({ onClose, onSuccess }: AddPositionFormProps) {
             <p className="flex items-center gap-1.5 text-xs font-medium text-destructive">
               <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
               {translateError(errors.shares?.message, t) || t("validation.positiveNumber")}
+            </p>
+          ) : hasInsufficientShares ? (
+            <p className="flex items-center gap-1.5 text-xs font-medium text-amber-600 dark:text-amber-400">
+              <AlertTriangle className="h-3.5 w-3.5 flex-shrink-0" />
+              {t("validation.exceedsShares")} — {t("validation.maxSell", { max: ownedShares })}
             </p>
           ) : isSharesValid && showTotalInvestment ? (
             <p className="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
