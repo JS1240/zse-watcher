@@ -82,6 +82,16 @@
     "toastDeletedTriggered": "Triggered alerts deleted",
     "toastDeletedAll": "All alerts deleted"
   },
+  "snooze": {
+    "title": "Snooze",
+    "1hour": "1 hour",
+    "24hours": "24 hours",
+    "7days": "7 days",
+    "snoozed": "Alert snoozed",
+    "unsnooze": "Remove snooze",
+    "snoozedUntil": "Snoozed until {{time}}",
+    "hint": "Temporarily hide triggered alert"
+  },
   "shortcuts": "Keyboard shortcuts",
   "shortcut": {
     "toggle": "toggle",

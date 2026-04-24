@@ -82,6 +82,16 @@
     "toastDeletedTriggered": "Aktivirani alarmi obrisani",
     "toastDeletedAll": "Svi alarmi obrisani"
   },
+  "snooze": {
+    "title": "Odgodi",
+    "1hour": "1 sat",
+    "24hours": "24 sata",
+    "7days": "7 dana",
+    "snoozed": "Alarm odgođen",
+    "unsnooze": "Ukloni odgodu",
+    "snoozedUntil": "Odgođen do {{time}}",
+    "hint": "Sakrij aktivirani alarm privremeno"
+  },
   "shortcuts": "Tipkovnički prečaci",
   "shortcut": {
     "toggle": "aktiviraj",

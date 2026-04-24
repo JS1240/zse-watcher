@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from "react";
+import { useMemo, useCallback, useState, useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useAlerts, useDeleteAlert, useToggleAlert, useCreateAlert, useUpdateAlert } from "@/features/alerts/api/alerts-queries";
 import { useLocalAlerts } from "@/features/alerts/hooks/use-local-alerts";
@@ -14,17 +14,38 @@ export interface AlertItem {
   triggeredAt: string | null;
   createdAt: string;
   isLocal: boolean;
+  snoozedUntil: string | null;  // ISO date when snooze expires
 }
 
 export function useAlertsData() {
   const { isAuthenticated } = useAuth();
 
   const { data: remoteAlerts, isLoading: remoteLoading } = useAlerts();
-  const { alerts: localAlerts, addAlert, removeAlert, toggleAlert: toggleLocalAlert, updateAlert: updateLocalAlert } = useLocalAlerts();
+  const { alerts: localAlerts, addAlert, removeAlert, toggleAlert: toggleLocalAlert, updateAlert: updateLocalAlert, snoozeAlert: snoozeLocalAlert } = useLocalAlerts();
   const createAlert = useCreateAlert();
   const deleteAlertMutation = useDeleteAlert();
   const toggleAlertMutation = useToggleAlert();
   const updateAlertMutation = useUpdateAlert();
+
+  // Load snooze state from localStorage for authenticated users
+  const [snoozeMap, setSnoozeMap] = useState<Record<string, string>>({});
+  useEffect(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem("zse-alert-snooze") || "{}");
+      setSnoozeMap(stored);
+    } catch {
+      // Ignore
+    }
+  }, []);
+
+  const refreshSnoozeMap = useCallback(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem("zse-alert-snooze") || "{}");
+      setSnoozeMap(stored);
+    } catch {
+      // Ignore
+    }
+  }, []);
 
   const alerts: AlertItem[] = useMemo(() => {
     if (isAuthenticated && remoteAlerts) {
@@ -38,6 +59,7 @@ export function useAlertsData() {
         triggeredAt: a.triggeredAt,
         createdAt: a.createdAt,
         isLocal: false,
+        snoozedUntil: snoozeMap[a.id] ?? null,
       }));
     }
     return localAlerts.map((a): AlertItem => ({
@@ -50,8 +72,9 @@ export function useAlertsData() {
       triggeredAt: a.triggeredAt,
       createdAt: a.createdAt,
       isLocal: true,
+      snoozedUntil: a.snoozedUntil,
     }));
-  }, [isAuthenticated, remoteAlerts, localAlerts]);
+  }, [isAuthenticated, remoteAlerts, localAlerts, snoozeMap]);
 
   const isLoading = isAuthenticated ? remoteLoading : false;
 
@@ -102,6 +125,28 @@ export function useAlertsData() {
     }
   };
 
+  // Snooze an alert for N hours (0 hours = clear snooze)
+  const snoozeAlert = async (id: string, hours: number) => {
+    if (isAuthenticated) {
+      try {
+        const stored = JSON.parse(localStorage.getItem("zse-alert-snooze") || "{}");
+        if (hours <= 0) {
+          delete stored[id];  // Clear snooze
+        } else {
+          const snoozeUntil = new Date(Date.now() + hours * 60 * 60 * 1000).toISOString();
+          stored[id] = snoozeUntil;
+        }
+        localStorage.setItem("zse-alert-snooze", JSON.stringify(stored));
+        // Refresh the snooze map to trigger re-render
+        refreshSnoozeMap();
+      } catch {
+        // Ignore storage errors
+      }
+    } else {
+      snoozeLocalAlert(id, hours);
+    }
+  };
+
   // Bulk operations for managing multiple alerts at once
   const toggleAllAlerts = async (activate: boolean) => {
     const alertsToToggle = alerts.filter((a) => a.isActive !== activate);
@@ -143,6 +188,7 @@ export function useAlertsData() {
     deleteAlert,
     toggleAlert: toggleAlertActive,
     updateAlert,
+    snoozeAlert,
     toggleAllAlerts,
     deleteAllAlerts,
     deleteTriggeredAlerts,

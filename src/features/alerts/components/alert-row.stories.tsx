@@ -51,8 +51,10 @@ const createAlert = (
     targetValue: number;
     isActive: boolean;
     isTriggered: boolean;
+    triggeredAt: string | null;
     createdAt: string;
     isLocal: boolean;
+    snoozedUntil: string | null;
   }> = {}
 ) => ({
   id: 'alert-1',
@@ -61,8 +63,10 @@ const createAlert = (
   targetValue: 45.0,
   isActive: true,
   isTriggered: false,
+  triggeredAt: null,
   createdAt: '2026-04-15T10:00:00Z',
   isLocal: false,
+  snoozedUntil: null,
   ...overrides,
 });
 

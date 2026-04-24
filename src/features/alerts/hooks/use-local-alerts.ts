@@ -13,14 +13,16 @@ export interface LocalAlert {
   isTriggered: boolean;
   triggeredAt: string | null;
   createdAt: string;
+  snoozedUntil: string | null;  // ISO date when snooze expires
 }
 
 interface UseLocalAlertsReturn {
   alerts: LocalAlert[];
-  addAlert: (alert: Omit<LocalAlert, "id" | "isTriggered" | "triggeredAt" | "createdAt">) => LocalAlert;
+  addAlert: (alert: { ticker: string; condition: AlertCondition; targetValue: number; isActive: boolean }) => LocalAlert;
   removeAlert: (id: string) => void;
   toggleAlert: (id: string) => void;
   updateAlert: (id: string, data: { ticker?: string; condition?: AlertCondition; targetValue?: number }) => void;
+  snoozeAlert: (id: string, hours: number) => void;
   clearAll: () => void;
   hasAlerts: boolean;
 }
@@ -33,13 +35,14 @@ export function useLocalAlerts(): UseLocalAlertsReturn {
   const [alerts, setAlerts] = useLocalStorage<LocalAlert[]>(STORAGE_KEY, []);
 
   const addAlert = useCallback(
-    (a: Omit<LocalAlert, "id" | "isTriggered" | "triggeredAt" | "createdAt">): LocalAlert => {
+    (a: { ticker: string; condition: AlertCondition; targetValue: number; isActive: boolean }): LocalAlert => {
       const newAlert: LocalAlert = {
         ...a,
         id: generateId(),
         isTriggered: false,
         triggeredAt: null,
         createdAt: new Date().toISOString(),
+        snoozedUntil: null,
       };
       setAlerts((prev) => [newAlert, ...prev]);
       return newAlert;
@@ -83,6 +86,19 @@ export function useLocalAlerts(): UseLocalAlertsReturn {
     [setAlerts],
   );
 
+  const snoozeAlert = useCallback(
+    (id: string, hours: number) => {
+      setAlerts((prev) =>
+        prev.map((a) =>
+          a.id === id
+            ? { ...a, snoozedUntil: hours > 0 ? new Date(Date.now() + hours * 60 * 60 * 1000).toISOString() : null }
+            : a
+        )
+      );
+    },
+    [setAlerts],
+  );
+
   const clearAll = useCallback(() => {
     setAlerts([]);
   }, [setAlerts]);
@@ -93,6 +109,7 @@ export function useLocalAlerts(): UseLocalAlertsReturn {
     removeAlert,
     toggleAlert,
     updateAlert,
+    snoozeAlert,
     clearAll,
     hasAlerts: alerts.length > 0,
   };

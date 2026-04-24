@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useRef, useCallback, memo } from "react";
 import { useTranslation } from "react-i18next";
 import i18n from "i18next";
-import { Bell, BellOff, Pencil, Trash2, X, Check, CheckCircle2, Keyboard, Download, AlertCircle, Search, CircleDot, Pause, TrendingUp, TrendingDown, ArrowUpDown, ArrowUp, Copy, Play, PauseIcon, RotateCcw, Loader2, Clock } from "lucide-react";
+import { Bell, BellOff, Pencil, Trash2, X, Check, CheckCircle2, Keyboard, Download, AlertCircle, Search, CircleDot, Pause, TrendingUp, TrendingDown, ArrowUpDown, ArrowUp, Copy, Play, PauseIcon, RotateCcw, Loader2, Clock, BellRing } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { toast } from "sonner";
@@ -73,7 +73,7 @@ interface AlertsDashboardProps {
 export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
   const { t } = useTranslation("alerts");
   const { t: tc } = useTranslation("common");
-  const { alerts, isLoading, deleteAlert, toggleAlert, updateAlert, toggleAllAlerts, deleteAllAlerts, deleteTriggeredAlerts } = useAlertsData();
+  const { alerts, isLoading, deleteAlert, toggleAlert, updateAlert, toggleAllAlerts, deleteAllAlerts, deleteTriggeredAlerts, snoozeAlert } = useAlertsData();
   const { isError, refetch, dataUpdatedAt: alertsDataUpdatedAt, isFetching: alertsIsFetching } = useAlerts();
   const { data: stocksResult } = useStocksLive();
   const stocks = useMemo(() => stocksResult?.stocks ?? [], [stocksResult]);
@@ -246,7 +246,17 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
       if (statusFilter === "active") {
         result = result.filter((a) => a.isActive && !a.isTriggered);
       } else if (statusFilter === "triggered") {
-        result = result.filter((a) => a.isTriggered);
+        // Show triggered alerts, but hide ones that are snoozed (snooze hasn't expired)
+        const now = new Date().getTime();
+        result = result.filter((a) => {
+          if (!a.isTriggered) return false;
+          // Check if snoozed and snooze time hasn't passed
+          if (a.snoozedUntil) {
+            const snoozeUntil = new Date(a.snoozedUntil).getTime();
+            if (snoozeUntil > now) return false;  // Hide snoozed alerts
+          }
+          return true;
+        });
       } else if (statusFilter === "paused") {
         result = result.filter((a) => !a.isActive);
       }
@@ -610,6 +620,14 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
                   await updateAlert(id, data);
                   toast.success(t("toast.updated") || "Alert updated", { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
                 }}
+                onSnooze={async (id, hours) => {
+                  await snoozeAlert(id, hours);
+                  toast.success(t("snooze.snoozed") || "Alert snoozed", { icon: <CheckCircle2 className="h-4 w-4 text-amber-500" /> });
+                }}
+                onUnsnooze={async (id) => {
+                  await snoozeAlert(id, 0);  // 0 hours clears the snooze
+                  toast.success(t("snooze.unsnooze") || "Snooze removed", { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
+                }}
                 onDuplicate={handleDuplicate}
                 onCopyTicker={(e) => handleCopyTicker(e, alert.ticker)}
                 onCopyTarget={(e) => handleCopyTarget(e, alert.targetValue, alert.condition.includes("percent"))}
@@ -735,8 +753,10 @@ interface AlertRowProps {
     targetValue: number;
     isActive: boolean;
     isTriggered: boolean;
+    triggeredAt: string | null;
     createdAt: string;
     isLocal: boolean;
+    snoozedUntil: string | null;
   };
   onDelete: () => void;
   onToggle: () => void;
@@ -744,6 +764,8 @@ interface AlertRowProps {
     id: string,
     data: { ticker: string; condition: AlertCondition; targetValue: number },
   ) => Promise<void>;
+  onSnooze?: (id: string, hours: number) => void;
+  onUnsnooze?: (id: string) => void;
   onDuplicate?: (alert: {
     ticker: string;
     condition: AlertCondition;
@@ -757,7 +779,7 @@ interface AlertRowProps {
   flash?: "up" | "down" | null;
 }
 
-export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUpdate, onDuplicate, onCopyTicker, onCopyTarget, stocks, searchHighlight, flash }: AlertRowProps) {
+export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUpdate, onSnooze, onUnsnooze, onDuplicate, onCopyTicker, onCopyTarget, stocks, searchHighlight, flash }: AlertRowProps) {
   const { t } = useTranslation("alerts");
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -1294,6 +1316,59 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
           >
             <Copy className="h-3.5 w-3.5 rotate-90" />
           </button>
+        )}
+        {/* Snooze button - only show for triggered alerts that are not snoozed */}
+        {alert.isTriggered && !alert.snoozedUntil && onSnooze && (
+          <div className="flex items-center gap-0.5">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={() => onSnooze(alert.id, 1)}
+                  className="flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  title={t("snooze.1hour") || "1 sat"}
+                  aria-label={`Snooze ${alert.ticker} alert 1 hour`}
+                >
+                  <BellRing className="h-3.5 w-3.5" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="top">
+                <p className="text-xs">{t("snooze.1hour") || "1 sat"}</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={() => onSnooze(alert.id, 24)}
+                  className="flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  title={t("snooze.24hours") || "24 sata"}
+                  aria-label={`Snooze ${alert.ticker} alert 24 hours`}
+                >
+                  <Clock className="h-3.5 w-3.5" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="top">
+                <p className="text-xs">{t("snooze.24hours") || "24 sata"}</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
+        )}
+        {/* Unsnooze button - show for snoozed triggered alerts */}
+        {alert.isTriggered && alert.snoozedUntil && onUnsnooze && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={() => onUnsnooze(alert.id)}
+                className="flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                title={t("snooze.unsnooze") || "Ukloni odgodu"}
+                aria-label={`Remove snooze from ${alert.ticker} alert`}
+              >
+                <BellRing className="h-3.5 w-3.5 text-amber" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="left">
+              <p className="text-xs">{alert.snoozedUntil ? new Date(alert.snoozedUntil).toLocaleString(i18n.language === "hr" ? "hr-HR" : "en-US") : ""}</p>
+            </TooltipContent>
+          </Tooltip>
         )}
         <button
           onClick={onDelete}
