@@ -40,7 +40,8 @@
     "targetHint": "Primjer: 150,00 ili 10.5%",
     "quickSet": "Brzo",
     "status": "Status",
-    "created": "Stvoreno"
+    "created": "Stvoreno",
+    "currentPriceHint": "Trenutna cijena: {{price}}"
   },
   "validation": {
     "required": "Obavezno polje",
