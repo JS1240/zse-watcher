@@ -42,15 +42,15 @@ export function StockTableSkeleton({ className }: StockTableSkeletonProps) {
 
       {/* Table skeleton */}
       <div className="overflow-hidden rounded-md border border-border">
-        <table className="w-full text-xs">
+        <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-border bg-muted/50 text-[10px] uppercase tracking-wider text-muted-foreground">
-              <th className="w-28 px-3 py-2 text-left font-medium">{t("table.ticker")}</th>
-              <th className="hidden px-3 py-2 text-left font-medium md:table-cell">{t("table.name")}</th>
-              <th className="px-3 py-2 text-right font-medium">{t("table.price")}</th>
-              <th className="px-3 py-2 text-right font-medium">{t("table.change")}</th>
-              <th className="hidden px-3 py-2 text-right font-medium lg:table-cell">{t("table.volume")}</th>
-              <th className="hidden px-3 py-2 text-right font-medium lg:table-cell">{t("table.turnover")}</th>
+            <tr className="border-b border-border bg-muted/50 text-sm uppercase tracking-wider text-muted-foreground">
+              <th className="w-32 px-3 py-3 text-left font-medium">{t("table.ticker")}</th>
+              <th className="hidden px-3 py-3 text-left font-medium md:table-cell">{t("table.name")}</th>
+              <th className="px-3 py-3 text-right font-medium">{t("table.price")}</th>
+              <th className="px-3 py-3 text-right font-medium">{t("table.change")}</th>
+              <th className="hidden px-3 py-3 text-right font-medium lg:table-cell">{t("table.volume")}</th>
+              <th className="hidden px-3 py-3 text-right font-medium lg:table-cell">{t("table.turnover")}</th>
             </tr>
           </thead>
           <tbody>
@@ -60,31 +60,31 @@ export function StockTableSkeleton({ className }: StockTableSkeletonProps) {
                 className="border-b border-border/50 last:border-b-0"
               >
                 {/* Ticker + Name */}
-                <td className="px-3 py-2">
+                <td className="px-3 py-3">
                   <div className="flex items-center gap-2">
-                    <Skeleton className="h-3.5 w-10 animate-shimmer" />
-                    <Skeleton className="h-3 w-16 animate-shimmer hidden md:inline-block" />
+                    <Skeleton className="h-4 w-12 animate-shimmer" />
+                    <Skeleton className="h-4 w-16 animate-shimmer hidden md:inline-block" />
                   </div>
                 </td>
                 {/* Name (md+) */}
-                <td className="hidden px-3 py-2 md:table-cell">
-                  <Skeleton className="h-3 w-24 animate-shimmer" />
+                <td className="hidden px-3 py-3 md:table-cell">
+                  <Skeleton className="h-4 w-28 animate-shimmer" />
                 </td>
                 {/* Price */}
-                <td className="px-3 py-2 text-right">
-                  <Skeleton className="ml-auto h-3 w-14 animate-shimmer" />
+                <td className="px-3 py-3 text-right">
+                  <Skeleton className="ml-auto h-4 w-16 animate-shimmer" />
                 </td>
                 {/* Change */}
-                <td className="px-3 py-2 text-right">
-                  <Skeleton className="ml-auto h-4 w-12 rounded-sm animate-shimmer" />
+                <td className="px-3 py-3 text-right">
+                  <Skeleton className="ml-auto h-5 w-14 rounded-sm animate-shimmer" />
                 </td>
                 {/* Volume (lg+) */}
-                <td className="hidden px-3 py-2 text-right lg:table-cell">
-                  <Skeleton className="ml-auto h-3 w-16 animate-shimmer" />
+                <td className="hidden px-3 py-3 text-right lg:table-cell">
+                  <Skeleton className="ml-auto h-4 w-16 animate-shimmer" />
                 </td>
                 {/* Turnover (lg+) */}
-                <td className="hidden px-3 py-2 text-right lg:table-cell">
-                  <Skeleton className="ml-auto h-3 w-20 animate-shimmer" />
+                <td className="hidden px-3 py-3 text-right lg:table-cell">
+                  <Skeleton className="ml-auto h-4 w-20 animate-shimmer" />
                 </td>
               </tr>
             ))}

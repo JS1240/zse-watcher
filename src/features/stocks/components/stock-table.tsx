@@ -361,20 +361,20 @@ export function StockTable() {
         onScroll={(e) => setScrollTop((e.target as HTMLDivElement).scrollTop > 200)}
         className="overflow-auto rounded-md border border-border max-h-[70vh] scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted-foreground/30 hover:scrollbar-thumb-muted-foreground/50"
       >
-        <table aria-label={t("table.label")} className="w-full text-xs">
+        <table aria-label={t("table.label")} className="w-full text-sm">
           <thead className="sticky top-0 z-10 bg-muted/95 backdrop-blur supports-[backdrop-filter]:bg-muted/80">
-            <tr className="border-b border-border text-[10px] uppercase tracking-wider text-muted-foreground">
+            <tr className="border-b border-border text-sm uppercase tracking-wider text-muted-foreground">
               <ColumnHeader
                 field="ticker"
                 label={t("table.ticker")}
                 onClick={toggleSort}
                 sortIcon={<SortIcon field="ticker" />}
-                className="w-28 text-left"
+                className="w-32 text-left"
                 currentField={sortField}
                 currentDir={sortDir}
                 tooltip={t("table.tooltips.ticker")}
               />
-              <th className="hidden px-3 py-2 text-left font-medium md:table-cell">
+              <th className="hidden px-3 py-3 text-left font-medium md:table-cell">
                 {t("table.name")}
               </th>
               <ColumnHeader
@@ -586,11 +586,9 @@ function ColumnHeader({
   return (
     <th
       aria-sort={sortDirection}
-      className={`cursor-pointer px-3 py-2 font-medium sticky left-0 z-10 bg-card shadow-[2px_0_4px_hsl(var(--border))] ${className ?? ""}`}
+      className={`cursor-pointer px-3 py-3 font-medium sticky left-0 z-10 bg-card shadow-[2px_0_4px_hsl(var(--border))] ${className ?? ""}`}
     >
       {headerContent}
     </th>
   );
 }
-
-

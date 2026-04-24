@@ -40,7 +40,7 @@ export function Sidebar() {
               <Link
                 to={item.path}
                 className={cn(
-                  "group flex items-center justify-center gap-2 rounded-md px-2 py-2 text-xs transition-colors lg:justify-start",
+                  "group flex items-center justify-center gap-2 rounded-md px-2 py-2 text-sm transition-colors lg:justify-start",
                   isActive
                     ? "bg-accent text-foreground"
                     : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
@@ -48,7 +48,7 @@ export function Sidebar() {
               >
                 <Icon className="h-4 w-4 shrink-0" />
                 <span className="hidden lg:inline">{t(item.labelKey)}</span>
-                <kbd className="ml-auto hidden font-data text-[10px] text-muted-foreground lg:inline">
+                <kbd className="ml-auto hidden font-data text-xs text-muted-foreground lg:inline">
                   {item.shortcut}
                 </kbd>
               </Link>

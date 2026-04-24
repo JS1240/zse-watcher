@@ -9,8 +9,35 @@
 
 html {
   font-family: var(--font-ui);
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.5;
+}
+
+/* Readability floor for dense dashboard labels, badges, and keyboard hints. */
+.text-\[8px\] {
+  font-size: 10px;
+}
+
+.text-\[9px\] {
+  font-size: 11px;
+}
+
+.text-\[10px\] {
+  font-size: 12px;
+}
+
+.text-\[11px\] {
+  font-size: 13px;
+}
+
+.text-xs {
+  font-size: 0.8125rem;
+  line-height: 1.25rem;
+}
+
+.text-sm {
+  font-size: 0.9375rem;
+  line-height: 1.375rem;
 }
 
 body {

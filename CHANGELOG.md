@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+### Changed
+- **NotificationCenter Badge Colors** — normalize triggered alert badge to match codebase amber patterns
+  - Replaced hardcoded amber-500/20, amber-700, amber-900/50 with standard bg-amber
+  - Consistent with triggered status badge in alerts-dashboard.tsx
+  - Croatian retail investors get consistent visual language throughout the app
+
+- **Sidebar Typography**: increased desktop sidebar label and shortcut text size for better readability · files: `src/components/layout/sidebar.tsx` · migration: none
+- **Global Dashboard Typography**: increased base font size and raised tiny label utility sizes for better app-wide readability · files: `src/styles/globals.css` · migration: none
+- **Stock Table Typography**: increased stock table header, row, ticker, company, numeric, and loading-state font sizes for better readability · files: `src/features/stocks/components/stock-table.tsx`, `src/features/stocks/components/stock-row.tsx`, `src/features/stocks/components/stock-table-skeleton.tsx` · migration: none
+
 - **News Feed Keyboard Shortcuts Always Visible** — improve discoverability for Croatian retail investors
   - Changed keyboard shortcuts hint from tooltip-hover to always visible (matching stocks/watchlist/portfolio pattern)
   - Shows ↑↓ navigiraj, Enter otvori, / traži directly in the results bar

@@ -86,7 +86,7 @@ export function NotificationCenter() {
                     >
                       {alert.ticker}
                     </button>
-                    <span className="flex items-center gap-1 rounded bg-amber-500/20 px-1.5 py-0.5 text-[9px] font-medium text-amber-700 dark:bg-amber-900/50 dark:text-amber-300">
+                    <span className="flex items-center gap-1 rounded bg-amber px-1.5 py-0.5 text-[9px] font-medium text-amber-950 dark:text-amber-950">
                       {t("status.triggered")}
                     </span>
                     {alert.id.startsWith("local-") && (

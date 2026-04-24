@@ -162,7 +162,7 @@ const StockRowBase = ({ stock, flash, searchQuery, rowIndex, onFocus }: StockRow
       {...{ [ROW_TICKER_ATTR]: stock.ticker }}
     >
       {/* Star + Ticker */}
-      <td className="sticky left-0 z-[1] bg-card shadow-[2px_0_4px_hsl(var(--border))] px-3 py-2">
+      <td className="sticky left-0 z-[1] bg-card shadow-[2px_0_4px_hsl(var(--border))] px-3 py-3">
         <div className="flex items-center gap-1">
           <WatchlistToggle ticker={stock.ticker} />
           <button
@@ -170,7 +170,7 @@ const StockRowBase = ({ stock, flash, searchQuery, rowIndex, onFocus }: StockRow
             onClick={handleCopyTicker}
             onKeyDown={(e) => e.key === "Enter" && handleCopyTicker(e as unknown as React.MouseEvent)}
             className={cn(
-              "font-data text-xs font-semibold text-foreground",
+              "font-data text-sm font-semibold text-foreground",
               "cursor-pointer transition-colors hover:text-primary",
               copiedField === "ticker" && "text-primary",
             )}
@@ -182,19 +182,19 @@ const StockRowBase = ({ stock, flash, searchQuery, rowIndex, onFocus }: StockRow
       </td>
 
       {/* Name */}
-      <td className="hidden px-3 py-2 md:table-cell">
-        <span className="truncate text-xs text-muted-foreground">
+      <td className="hidden px-3 py-3 md:table-cell">
+        <span className="truncate text-sm text-muted-foreground">
           <Highlight text={stock.name} highlight={searchQuery ?? ""} />
         </span>
       </td>
 
       {/* Price */}
-      <td className="px-3 py-2 text-right">
+      <td className="px-3 py-3 text-right">
         <button
           type="button"
           onClick={handleCopyPrice}
           className={cn(
-            "font-data cursor-pointer text-xs tabular-nums font-medium",
+            "font-data cursor-pointer text-sm tabular-nums font-medium",
             "transition-colors hover:text-primary",
             copiedField === "price" && "text-primary",
           )}
@@ -205,17 +205,17 @@ const StockRowBase = ({ stock, flash, searchQuery, rowIndex, onFocus }: StockRow
       </td>
 
       {/* Change */}
-      <td className="px-3 py-2 text-right">
-        <ChangeBadge value={stock.changePct} showIcon={false} />
+      <td className="px-3 py-3 text-right">
+        <ChangeBadge value={stock.changePct} showIcon={false} className="text-sm" />
       </td>
 
       {/* Volume */}
-      <td className="hidden px-3 py-2 text-right lg:table-cell">
+      <td className="hidden px-3 py-3 text-right lg:table-cell">
         <button
           type="button"
           onClick={handleCopyVolume}
           className={cn(
-            "font-data cursor-pointer text-xs tabular-nums text-muted-foreground",
+            "font-data cursor-pointer text-sm tabular-nums text-muted-foreground",
             "transition-colors hover:text-primary",
             copiedField === "volume" && "text-primary",
           )}
@@ -226,12 +226,12 @@ const StockRowBase = ({ stock, flash, searchQuery, rowIndex, onFocus }: StockRow
       </td>
 
       {/* Turnover */}
-      <td className="hidden px-3 py-2 text-right lg:table-cell">
+      <td className="hidden px-3 py-3 text-right lg:table-cell">
         <button
           type="button"
           onClick={handleCopyTurnover}
           className={cn(
-            "font-data cursor-pointer text-xs tabular-nums text-muted-foreground",
+            "font-data cursor-pointer text-sm tabular-nums text-muted-foreground",
             "transition-colors hover:text-primary",
             copiedField === "turnover" && "text-primary",
           )}
@@ -242,22 +242,22 @@ const StockRowBase = ({ stock, flash, searchQuery, rowIndex, onFocus }: StockRow
       </td>
 
       {/* Dividend Yield */}
-      <td className="hidden px-3 py-2 text-right xl:table-cell">
-        <span className="font-data text-xs tabular-nums text-muted-foreground">
+      <td className="hidden px-3 py-3 text-right xl:table-cell">
+        <span className="font-data text-sm tabular-nums text-muted-foreground">
           {stock.dividendYield != null ? `${stock.dividendYield.toFixed(1)}%` : "—"}
         </span>
       </td>
 
       {/* P/E Ratio */}
-      <td className="hidden px-3 py-2 text-right 2xl:table-cell">
-        <span className="font-data text-xs tabular-nums text-muted-foreground">
+      <td className="hidden px-3 py-3 text-right 2xl:table-cell">
+        <span className="font-data text-sm tabular-nums text-muted-foreground">
           {stock.peRatio != null ? stock.peRatio.toFixed(1) : "—"}
         </span>
       </td>
 
       {/* Market Cap */}
-      <td className="hidden px-3 py-2 text-right 2xl:table-cell">
-        <span className="font-data text-xs tabular-nums text-muted-foreground">
+      <td className="hidden px-3 py-3 text-right 2xl:table-cell">
+        <span className="font-data text-sm tabular-nums text-muted-foreground">
           {stock.marketCapM != null ? `${stock.marketCapM.toFixed(0)} M` : "—"}
         </span>
       </td>
