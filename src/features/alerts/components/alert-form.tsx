@@ -33,10 +33,12 @@ type AlertFormData = z.infer<typeof alertSchema>;
 interface AlertFormProps {
   onClose: () => void;
   defaultTicker?: string;
+  defaultCondition?: AlertCondition;
+  defaultTargetValue?: number;
   onSuccess?: () => void;
 }
 
-export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps) {
+export function AlertForm({ onClose, defaultTicker, defaultCondition, defaultTargetValue, onSuccess }: AlertFormProps) {
   const { t } = useTranslation("alerts");
   const createAlert = useCreateAlert();
   const { data: stocksResult } = useStocksLive();
@@ -55,7 +57,8 @@ export function AlertForm({ onClose, defaultTicker, onSuccess }: AlertFormProps)
     resolver: zodResolver(alertSchema),
     defaultValues: {
       ticker: defaultTicker ?? "",
-      condition: "above",
+      condition: defaultCondition ?? "above",
+      targetValue: defaultTargetValue != null ? defaultTargetValue.toString() : "",
     },
   });
 

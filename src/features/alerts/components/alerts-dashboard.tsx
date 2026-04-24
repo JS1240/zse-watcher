@@ -200,31 +200,16 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
   }, [tc]);
 
   // Handle duplicate alert (opens form pre-filled with alert data)
+  const [duplicateDefaults, setDuplicateDefaults] = useState<{
+    ticker: string;
+    condition: AlertCondition;
+    targetValue: number;
+  } | null>(null);
+
   const handleDuplicate = useCallback((alertData: { ticker: string; condition: AlertCondition; targetValue: number }) => {
+    setDuplicateDefaults(alertData);
     setShowForm(true);
-    // We need to set the default values in the form
-    // The AlertForm component accepts defaultTicker but not other defaults
-    // For simplicity, we'll just prepopulate by calling a function that sets form values
-    const form = document.getElementById('alert-ticker-input') as HTMLInputElement;
-    const targetInput = document.getElementById('alert-target-input') as HTMLInputElement;
-    const conditionSelect = document.getElementById('alert-condition-select') as HTMLSelectElement;
-    
-    if (form) {
-      form.value = alertData.ticker;
-      form.dispatchEvent(new Event('input', { bubbles: true }));
-    }
-    if (conditionSelect) {
-      conditionSelect.value = alertData.condition;
-      conditionSelect.dispatchEvent(new Event('change', { bubbles: true }));
-    }
-    if (targetInput) {
-      targetInput.value = alertData.condition.includes('percent') 
-        ? alertData.targetValue.toString() 
-        : alertData.targetValue.toFixed(2);
-      targetInput.dispatchEvent(new Event('input', { bubbles: true }));
-    }
-    
-    toast.info(t("toast.duplicateHint") || "Alert values pre-filled - adjust and save", { icon: <Pencil className="h-4 w-4" /> });
+    toast.info(t("toast.duplicateHint") || "Alert values pre-filled — adjust and save", { icon: <Pencil className="h-4 w-4" /> });
   }, [t]);
 
   const filteredAlerts = useMemo(() => {
@@ -520,8 +505,11 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
 
       {showForm && (
         <AlertForm
-          onClose={() => setShowForm(false)}
-          onSuccess={() => toast.success(t("toast.created"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> })}
+          onClose={() => { setShowForm(false); setDuplicateDefaults(null); }}
+          defaultTicker={duplicateDefaults?.ticker}
+          defaultCondition={duplicateDefaults?.condition}
+          defaultTargetValue={duplicateDefaults?.targetValue}
+          onSuccess={() => { toast.success(t("toast.created"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> }); setDuplicateDefaults(null); }}
         />
       )}
 
@@ -1240,7 +1228,16 @@ tabIndex={0}
             <Copy className="h-3.5 w-3.5" />
           </button>
         )}
-        {onDuplicate ? (
+        {/* Always show both edit and duplicate buttons */}
+        <button
+          onClick={() => setEditing(true)}
+          className="flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          title="Edit alert (E)"
+          aria-label={`Edit ${alert.ticker} alert`}
+        >
+          <Pencil className="h-3.5 w-3.5" />
+        </button>
+        {onDuplicate && (
           <button
             onClick={() => onDuplicate({
               ticker: alert.ticker,
@@ -1252,15 +1249,6 @@ tabIndex={0}
             aria-label={`Duplicate ${alert.ticker} alert`}
           >
             <Copy className="h-3.5 w-3.5 rotate-90" />
-          </button>
-        ) : (
-          <button
-            onClick={() => setEditing(true)}
-            className="flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            title="Edit alert (E)"
-            aria-label={`Edit ${alert.ticker} alert`}
-          >
-            <Pencil className="h-3.5 w-3.5" />
           </button>
         )}
         <button
