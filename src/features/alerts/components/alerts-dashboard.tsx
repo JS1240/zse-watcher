@@ -1335,58 +1335,63 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
             <Copy className="h-3.5 w-3.5 rotate-90" />
           </button>
         )}
-        {/* Snooze button - only show for triggered alerts that are not snoozed */}
-        {alert.isTriggered && !alert.snoozedUntil && onSnooze && (
-          <div className="flex items-center gap-0.5">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  onClick={() => onSnooze(alert.id, 1)}
-                  className="flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                  title={t("snooze.1hour") || "1 sat"}
-                  aria-label={`Snooze ${alert.ticker} alert 1 hour`}
-                >
-                  <BellRing className="h-3.5 w-3.5" />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent side="top">
-                <p className="text-xs">{t("snooze.1hour") || "1 sat"}</p>
-              </TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  onClick={() => onSnooze(alert.id, 24)}
-                  className="flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                  title={t("snooze.24hours") || "24 sata"}
-                  aria-label={`Snooze ${alert.ticker} alert 24 hours`}
-                >
-                  <Clock className="h-3.5 w-3.5" />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent side="top">
-                <p className="text-xs">{t("snooze.24hours") || "24 sata"}</p>
-              </TooltipContent>
-            </Tooltip>
+        {/* Snooze button - show inline duration selector for triggered alerts */}
+        {alert.isTriggered && (
+          <div className="flex items-center gap-1">
+            {alert.snoozedUntil ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={() => onUnsnooze?.(alert.id)}
+                    className="flex h-7 items-center gap-1 rounded-full px-2.5 text-[9px] font-medium text-amber bg-amber/20 hover:bg-amber/30"
+                    title={t("snooze.unsnooze") || "Ukloni odgodu"}
+                    aria-label={`Remove snooze from ${alert.ticker} alert`}
+                  >
+                    <BellRing className="h-3 w-3" />
+                    <span className="hidden sm:inline">
+                      {new Date(alert.snoozedUntil).toLocaleDateString(i18n.language === "hr" ? "hr-HR" : "en-US", { day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit" })}
+                    </span>
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="left">
+                  <p className="text-xs">{t("snooze.unsnooze") || "Ukloni odgodu"}</p>
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              <>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={() => onSnooze?.(alert.id, 1)}
+                      className="flex h-7 items-center justify-center rounded-full px-2 text-muted-foreground hover:text-foreground hover:bg-accent"
+                      title={t("snooze.1hour") || "1 sat"}
+                      aria-label={`Snooze ${alert.ticker} alert 1 sat`}
+                    >
+                      <BellRing className="h-3.5 w-3.5" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top">
+                    <p className="text-xs">{t("snooze.1hour")}</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={() => onSnooze?.(alert.id, 24)}
+                      className="flex h-7 items-center justify-center rounded-full px-2 text-muted-foreground hover:text-foreground hover:bg-accent"
+                      title={t("snooze.24hours") || "24 sata"}
+                      aria-label={`Snooze ${alert.ticker} alert 24 sata`}
+                    >
+                      <Clock className="h-3.5 w-3.5" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top">
+                    <p className="text-xs">{t("snooze.24hours")}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </>
+            )}
           </div>
-        )}
-        {/* Unsnooze button - show for snoozed triggered alerts */}
-        {alert.isTriggered && alert.snoozedUntil && onUnsnooze && (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                onClick={() => onUnsnooze(alert.id)}
-                className="flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                title={t("snooze.unsnooze") || "Ukloni odgodu"}
-                aria-label={`Remove snooze from ${alert.ticker} alert`}
-              >
-                <BellRing className="h-3.5 w-3.5 text-amber" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="left">
-              <p className="text-xs">{alert.snoozedUntil ? new Date(alert.snoozedUntil).toLocaleString(i18n.language === "hr" ? "hr-HR" : "en-US") : ""}</p>
-            </TooltipContent>
-          </Tooltip>
         )}
         <button
           onClick={onDelete}
