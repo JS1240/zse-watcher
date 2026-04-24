@@ -243,10 +243,10 @@ export function StockTable() {
         <button
           onClick={() => setChangeFilter("all")}
           className={cn(
-            "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
+            "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background btn-press",
             changeFilter === "all"
-              ? "bg-primary text-primary-foreground shadow-sm"
-              : "bg-muted/60 text-muted-foreground hover:bg-muted",
+              ? "bg-primary text-primary-foreground shadow-sm shadow-primary/25"
+              : "bg-muted/60 text-muted-foreground hover:bg-muted hover:scale-[1.02]",
           )}
         >
           <TrendingUp className="h-3 w-3" />
@@ -255,10 +255,10 @@ export function StockTable() {
         <button
           onClick={() => setChangeFilter("gainers")}
           className={cn(
-            "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
+            "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background btn-press",
             changeFilter === "gainers"
-              ? "bg-primary text-primary-foreground shadow-sm"
-              : "bg-muted/60 text-muted-foreground hover:bg-muted",
+              ? "bg-primary text-primary-foreground shadow-sm shadow-primary/25"
+              : "bg-muted/60 text-muted-foreground hover:bg-muted hover:scale-[1.02]",
           )}
         >
           <TrendingUp className="h-3 w-3" />
@@ -267,10 +267,10 @@ export function StockTable() {
         <button
           onClick={() => setChangeFilter("losers")}
           className={cn(
-            "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
+            "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background btn-press",
             changeFilter === "losers"
-              ? "bg-primary text-primary-foreground shadow-sm"
-              : "bg-muted/60 text-muted-foreground hover:bg-muted",
+              ? "bg-primary text-primary-foreground shadow-sm shadow-primary/25"
+              : "bg-muted/60 text-muted-foreground hover:bg-muted hover:scale-[1.02]",
           )}
         >
           <TrendingDown className="h-3 w-3" />
@@ -279,10 +279,10 @@ export function StockTable() {
         <button
           onClick={() => setChangeFilter("unchanged")}
           className={cn(
-            "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
+            "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background btn-press",
             changeFilter === "unchanged"
-              ? "bg-primary text-primary-foreground shadow-sm"
-              : "bg-muted/60 text-muted-foreground hover:bg-muted",
+              ? "bg-primary text-primary-foreground shadow-sm shadow-primary/25"
+              : "bg-muted/60 text-muted-foreground hover:bg-muted hover:scale-[1.02]",
           )}
         >
           <Minus className="h-3 w-3" />
@@ -292,10 +292,10 @@ export function StockTable() {
         <button
           onClick={() => setYieldFilter("all")}
           className={cn(
-            "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
+            "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background btn-press",
             yieldFilter === "all"
-              ? "bg-primary text-primary-foreground shadow-sm"
-              : "bg-muted/60 text-muted-foreground hover:bg-muted",
+              ? "bg-primary text-primary-foreground shadow-sm shadow-primary/25"
+              : "bg-muted/60 text-muted-foreground hover:bg-muted hover:scale-[1.02]",
           )}
         >
           <span className="hidden sm:inline">{t("filters.allYields") || "Svi prinosi"}</span>
@@ -303,10 +303,10 @@ export function StockTable() {
         <button
           onClick={() => setYieldFilter("gt3")}
           className={cn(
-            "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
+            "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background btn-press",
             yieldFilter === "gt3"
-              ? "bg-primary text-primary-foreground shadow-sm"
-              : "bg-muted/60 text-muted-foreground hover:bg-muted",
+              ? "bg-primary text-primary-foreground shadow-sm shadow-primary/25"
+              : "bg-muted/60 text-muted-foreground hover:bg-muted hover:scale-[1.02]",
           )}
         >
           <span className="hidden sm:inline">{t("filters.gt3")}</span>
@@ -314,10 +314,10 @@ export function StockTable() {
         <button
           onClick={() => setYieldFilter("gt5")}
           className={cn(
-            "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
+            "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background btn-press",
             yieldFilter === "gt5"
-              ? "bg-primary text-primary-foreground shadow-sm"
-              : "bg-muted/60 text-muted-foreground hover:bg-muted",
+              ? "bg-primary text-primary-foreground shadow-sm shadow-primary/25"
+              : "bg-muted/60 text-muted-foreground hover:bg-muted hover:scale-[1.02]",
           )}
         >
           <span className="hidden sm:inline">{t("filters.gt5")}</span>
@@ -325,10 +325,10 @@ export function StockTable() {
         <button
           onClick={() => setYieldFilter("gt8")}
           className={cn(
-            "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
+            "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background btn-press",
             yieldFilter === "gt8"
-              ? "bg-primary text-primary-foreground shadow-sm"
-              : "bg-muted/60 text-muted-foreground hover:bg-muted",
+              ? "bg-primary text-primary-foreground shadow-sm shadow-primary/25"
+              : "bg-muted/60 text-muted-foreground hover:bg-muted hover:scale-[1.02]",
           )}
         >
           <span className="hidden sm:inline">{t("filters.gt8")}</span>

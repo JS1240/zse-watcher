@@ -41,11 +41,11 @@ function FilterChip({ active, onClick, label, icon, count }: FilterChipProps) {
     <button
       onClick={onClick}
       className={cn(
-        "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-colors",
+        "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all duration-150",
         active
-          ? "bg-primary text-primary-foreground"
-          : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background"
+          ? "bg-primary text-primary-foreground shadow-sm shadow-primary/25"
+          : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground hover:scale-[1.02]",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background btn-press"
       )}
     >
       {icon}
