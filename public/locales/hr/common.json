@@ -66,7 +66,9 @@
   },
   "toast": {
     "copied": "Kopirano: {{value}}",
-    "copiedTarget": "Kopirano: {{value}}"
+    "copiedTarget": "Kopirano: {{value}}",
+    "exported": "Podaci izvezeni u CSV",
+    "exportCsv": "Izvoz u CSV"
   },
   "empty": {
     "noData": "Nema podataka",

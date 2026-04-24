@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
-import { memo } from "react";
-import { TrendingUp, TrendingDown, Clock, Star, Keyboard } from "lucide-react";
+import { memo, useCallback } from "react";
+import { TrendingUp, TrendingDown, Clock, Star, Keyboard, Download } from "lucide-react";
 import { useMovers } from "@/features/market/api/market-queries";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
 import { useAuth } from "@/hooks/use-auth";
@@ -9,6 +9,7 @@ import { useLocalWatchlist } from "@/features/watchlist/hooks/use-local-watchlis
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { ErrorState } from "@/components/shared/error-state";
 import { formatPrice } from "@/lib/formatters";
+import { exportToCsv } from "@/lib/export";
 import type { Mover } from "@/types/market";
 import { MoversSkeleton } from "./movers-skeleton";
 import { toast } from "sonner";
@@ -24,6 +25,19 @@ export function MarketMovers() {
   const { data, isLoading, isError, refetch, dataUpdatedAt } = useMovers();
   const { t } = useTranslation("stocks");
   const { t: tc } = useTranslation("common");
+
+  const handleExportCsv = useCallback(() => {
+    if (!data) return;
+    const headers = ["Ticker", "Name", "Price", "Change (%)"];
+    const gainerRows = data.gainers.map((m) => [m.ticker, m.name, m.price.toFixed(2), m.changePct.toFixed(2)]);
+    const loserRows = data.losers.map((m) => [m.ticker, m.name, m.price.toFixed(2), m.changePct.toFixed(2)]);
+    const rows = [
+      ...gainerRows.map((r) => ["Gainers", ...r]),
+      ...loserRows.map((r) => ["Losers", ...r]),
+    ];
+    exportToCsv(`zse-movers-${new Date().toISOString().split("T")[0]}`, headers, rows);
+    toast.success(tc("toast.exported") || "Podaci izvezeni u CSV", { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
+  }, [data, tc]);
 
   if (isError) {
     return (
@@ -65,6 +79,19 @@ export function MarketMovers() {
         {data.losers.map((m) => (
           <MoverRow key={m.ticker} mover={m} />
         ))}
+      </div>
+
+      {/* CSV Export button — consistent with news feed and screener */}
+      <div className="flex justify-end">
+        <button
+          type="button"
+          onClick={handleExportCsv}
+          className="flex items-center gap-1 rounded-sm px-2 py-1 text-[10px] text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+          title={tc("toast.exportCsv") || "Izvoz u CSV"}
+        >
+          <Download className="h-3 w-3" />
+          CSV
+        </button>
       </div>
 
       {/* Always-visible keyboard shortcuts hint for discoverability */}

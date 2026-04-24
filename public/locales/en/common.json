@@ -65,7 +65,9 @@
   },
   "toast": {
     "copied": "Copied: {{value}}",
-    "copiedTarget": "Copied: {{value}}"
+    "copiedTarget": "Copied: {{value}}",
+    "exported": "Data exported to CSV",
+    "exportCsv": "Export to CSV"
   },
   "empty": {
     "noData": "No data available",
