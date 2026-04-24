@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { usePortfolioHoldings, usePortfolio } from "@/features/portfolio/api/portfolio-queries";
@@ -28,6 +29,9 @@ export function PortfolioAnalytics() {
   const { data: stocksResult, isLoading: isStocksLoading } = useStocksLive();
   const stocks = stocksResult?.stocks ?? null;
   const isLoading = isPortfolioLoading || isStocksLoading;
+
+  // Track hovered sector for donut chart tooltip
+  const [hoveredSector, setHoveredSector] = useState<string | null>(null);
 
   const analytics = useMemo(() => {
     if (!holdings.length || !stocks) return null;
@@ -129,8 +133,18 @@ export function PortfolioAnalytics() {
         </h3>
         <div className="flex gap-6">
           {/* Donut chart (SVG) */}
-          <div className="flex shrink-0 items-center justify-center">
-            <DonutChart sectors={analytics.sectors} size={140} />
+          <div className="flex shrink-0 flex-col items-center justify-center">
+            <DonutChart 
+              sectors={analytics.sectors} 
+              size={140} 
+              onHover={setHoveredSector}
+            />
+            {/* Tooltip for hovered sector */}
+            {hoveredSector && (
+              <div className="mt-2 animate-fade-in rounded bg-card px-2 py-1 text-[10px] font-medium shadow-lg ring-1 ring-border">
+                {hoveredSector}
+              </div>
+            )}
           </div>
 
           {/* Legend */}
@@ -215,7 +229,8 @@ function MetricCard({
   );
 }
 
-function DonutChart({ sectors, size }: { sectors: { name: string; pct: number; color: string }[]; size: number }) {
+function DonutChart({ sectors, size, onHover }: { sectors: { name: string; pct: number; color: string }[]; size: number; onHover?: (name: string | null) => void }) {
+  const [hoveredArc, setHoveredArc] = useState<string | null>(null);
   const radius = size / 2 - 10;
   const center = size / 2;
   const strokeWidth = 20;
@@ -243,8 +258,18 @@ function DonutChart({ sectors, size }: { sectors: { name: string; pct: number; c
     return { d, color: sector.color, key: sector.name };
   });
 
+  const handleArcHover = (name: string | null) => {
+    setHoveredArc(name);
+    onHover?.(name);
+  };
+
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+      <defs>
+        <filter id="donut-shadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="1" stdDeviation="1" floodOpacity="0.3" />
+        </filter>
+      </defs>
       {arcs.map((arc) => (
         <path
           key={arc.key}
@@ -253,6 +278,12 @@ function DonutChart({ sectors, size }: { sectors: { name: string; pct: number; c
           stroke={arc.color}
           strokeWidth={strokeWidth}
           strokeLinecap="round"
+          className={cn(
+            "cursor-pointer transition-all duration-150",
+            hoveredArc === arc.key ? "filter-[url(#donut-shadow)]" : "opacity-80 hover:opacity-100"
+          )}
+          onMouseEnter={() => handleArcHover(arc.key)}
+          onMouseLeave={() => handleArcHover(null)}
         />
       ))}
     </svg>
