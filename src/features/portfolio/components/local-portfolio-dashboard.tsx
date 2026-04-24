@@ -538,43 +538,56 @@ export function LocalPortfolioDashboard() {
                 </button>
               )}
             </div>
-            {/* Change direction filters */}
-            <div className="flex gap-1">
+            {/* Change direction filters - keyboard navigable with accessible labels */}
+            <div className="flex gap-1" role="group" aria-label={t("filters.directionFilter") || "Promjena cijene"}>
               <button
+                type="button"
                 onClick={() => setChangeFilter("all")}
+                aria-pressed={changeFilter === "all"}
                 className={cn(
-                  "flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-medium transition-all",
+                  "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background btn-press",
                   changeFilter === "all"
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "bg-muted/60 text-muted-foreground hover:bg-muted"
+                    ? "bg-primary text-primary-foreground shadow-sm shadow-primary/25"
+                    : "bg-muted/60 text-muted-foreground hover:bg-muted hover:scale-[1.02]",
                 )}
               >
                 <TrendingUp className="h-3 w-3" />
-                <span className="hidden sm:inline">Svi</span>
+                <span className="hidden sm:inline">{t("filters.all") || "Svi"}</span>
               </button>
               <button
+                type="button"
                 onClick={() => setChangeFilter("gainers")}
+                aria-pressed={changeFilter === "gainers"}
                 className={cn(
-                  "flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-medium transition-all",
+                  "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background btn-press",
                   changeFilter === "gainers"
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "bg-muted/60 text-muted-foreground hover:bg-muted"
+                    ? "bg-primary text-primary-foreground shadow-sm shadow-primary/25"
+                    : "bg-muted/60 text-muted-foreground hover:bg-muted hover:scale-[1.02]",
                 )}
+                aria-label={`${t("filters.gainers") || "Rastu"} (${filteredHoldings.filter((h) => h.gainPct > 0).length})`}
               >
                 <TrendingUp className="h-3 w-3" />
-                <span className="hidden sm:inline">+</span>
+                <span className="hidden sm:inline">{t("filters.gainers") || "Rastu"}</span>
+                {changeFilter !== "gainers" && filteredHoldings.filter((h) => h.gainPct > 0).length > 0 && (
+                  <span className="ml-1 rounded-full bg-muted-foreground/20 px-1.5 py-0.5 text-[9px] font-semibold">
+                    {filteredHoldings.filter((h) => h.gainPct > 0).length}
+                  </span>
+                )}
               </button>
               <button
+                type="button"
                 onClick={() => setChangeFilter("losers")}
+                aria-pressed={changeFilter === "losers"}
                 className={cn(
-                  "flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-medium transition-all",
+                  "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background btn-press",
                   changeFilter === "losers"
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "bg-muted/60 text-muted-foreground hover:bg-muted"
+                    ? "bg-primary text-primary-foreground shadow-sm shadow-primary/25"
+                    : "bg-muted/60 text-muted-foreground hover:bg-muted hover:scale-[1.02]",
                 )}
+                aria-label={`${t("filters.losers") || "Padaju"} (${filteredHoldings.filter((h) => h.gainPct < 0).length})`}
               >
                 <TrendingDown className="h-3 w-3" />
-                <span className="hidden sm:inline">-</span>
+                <span className="hidden sm:inline">{t("filters.losers") || "Padaju"}</span>
               </button>
             </div>
             {/* Active filters badge */}
