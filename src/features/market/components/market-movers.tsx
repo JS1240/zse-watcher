@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
-import { memo, useCallback } from "react";
-import { TrendingUp, TrendingDown, Clock, Star, Keyboard, Download } from "lucide-react";
+import { memo, useCallback, useState } from "react";
+import { TrendingUp, TrendingDown, Clock, Star, Keyboard, Download, CheckCircle2 } from "lucide-react";
 import { useMovers } from "@/features/market/api/market-queries";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
 import { useAuth } from "@/hooks/use-auth";
@@ -13,7 +13,7 @@ import { exportToCsv } from "@/lib/export";
 import type { Mover } from "@/types/market";
 import { MoversSkeleton } from "./movers-skeleton";
 import { toast } from "sonner";
-import { CheckCircle2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 function formatLastUpdated(timestamp: number | undefined): string {
   if (!timestamp) return "";
@@ -113,6 +113,7 @@ const MoverRow = memo(function MoverRow({ mover }: { mover: Mover }) {
   const addMutation = useAddToWatchlist();
   const removeMutation = useRemoveFromWatchlist();
   const { t } = useTranslation("watchlist");
+  const [copiedField, setCopiedField] = useState<string | null>(null);
 
   const isWatched = isAuthenticated
     ? watchlistTickers.has(mover.ticker)
@@ -122,7 +123,23 @@ const MoverRow = memo(function MoverRow({ mover }: { mover: Mover }) {
     select(mover.ticker);
   };
 
-  const handleWatchlistToggle = (e: React.MouseEvent) => {
+  const handleCopyTicker = useCallback(async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    await navigator.clipboard.writeText(mover.ticker);
+    toast.success(t("toast.copied", { ticker: mover.ticker }));
+    setCopiedField("ticker");
+    setTimeout(() => setCopiedField(null), 1200);
+  }, [mover.ticker, t]);
+
+  const handleCopyPrice = useCallback(async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    await navigator.clipboard.writeText(mover.price.toFixed(2));
+    toast.success(t("toast.priceCopied", { price: formatPrice(mover.price) }));
+    setCopiedField("price");
+    setTimeout(() => setCopiedField(null), 1200);
+  }, [mover.price, t]);
+
+  const handleWatchlistToggle = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
     if (isAuthenticated) {
       if (isWatched) {
@@ -141,7 +158,7 @@ const MoverRow = memo(function MoverRow({ mover }: { mover: Mover }) {
         toast.success(t("toast.added"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
       }
     }
-  };
+  }, [isAuthenticated, isWatched, mover.ticker, addMutation, removeMutation, addItem, removeItem, t]);
 
   return (
     <button
@@ -160,18 +177,36 @@ const MoverRow = memo(function MoverRow({ mover }: { mover: Mover }) {
           <Star className={`h-3.5 w-3.5 ${isWatched ? "fill-amber text-amber" : ""}`} />
         </button>
         <div className="flex flex-col">
-          <span className="font-data text-[11px] font-semibold text-foreground">
+          <button
+            type="button"
+            onClick={handleCopyTicker}
+            className={cn(
+              "font-data text-[11px] font-semibold text-foreground",
+              "cursor-pointer transition-colors hover:text-primary",
+              copiedField === "ticker" && "text-primary",
+            )}
+            title="Click to copy ticker"
+          >
             {mover.ticker}
-          </span>
+          </button>
           <span className="max-w-[100px] truncate text-[10px] text-muted-foreground">
             {mover.name}
           </span>
         </div>
       </div>
       <div className="flex flex-col items-end">
-        <span className="font-data text-[11px] tabular-nums text-foreground">
+        <button
+          type="button"
+          onClick={handleCopyPrice}
+          className={cn(
+            "font-data text-[11px] tabular-nums text-foreground",
+            "cursor-pointer transition-colors hover:text-primary",
+            copiedField === "price" && "text-primary",
+          )}
+          title="Click to copy price"
+        >
           {formatPrice(mover.price)}
-        </span>
+        </button>
         <ChangeBadge value={mover.changePct} showIcon={false} className="text-[10px]" />
       </div>
     </button>

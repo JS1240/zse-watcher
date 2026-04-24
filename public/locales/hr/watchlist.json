@@ -58,6 +58,7 @@
     "removeFailed": "Neuspjelo uklanjanje iz liste praćenja",
     "exported": "Izvezeno u CSV",
     "copied": "Kopirano: {{ticker}}",
+    "priceCopied": "Kopirana cijena: {{price}}",
     "cleared": "Lista praćenja obrisana"
   },
   "shortcut": {

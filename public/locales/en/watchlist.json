@@ -58,6 +58,7 @@
     "removeFailed": "Failed to remove from watchlist",
     "exported": "Exported to CSV",
     "copied": "Copied: {{ticker}}",
+    "priceCopied": "Price copied: {{price}}",
     "cleared": "Watchlist cleared"
   },
   "shortcut": {
