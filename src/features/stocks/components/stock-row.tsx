@@ -249,14 +249,14 @@ const StockRowBase = ({ stock, flash, searchQuery, rowIndex, onFocus }: StockRow
       </td>
 
       {/* P/E Ratio */}
-      <td className="hidden px-3 py-3 text-right 2xl:table-cell">
+      <td className="hidden px-3 py-3 text-right xl:table-cell">
         <span className="font-data text-sm tabular-nums text-muted-foreground">
           {stock.peRatio != null ? stock.peRatio.toFixed(1) : "—"}
         </span>
       </td>
 
       {/* Market Cap */}
-      <td className="hidden px-3 py-3 text-right 2xl:table-cell">
+      <td className="hidden px-3 py-3 text-right xl:table-cell">
         <span className="font-data text-sm tabular-nums text-muted-foreground">
           {stock.marketCapM != null ? `${stock.marketCapM.toFixed(0)} M` : "—"}
         </span>

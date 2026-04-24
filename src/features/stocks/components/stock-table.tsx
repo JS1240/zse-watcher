@@ -432,7 +432,7 @@ export function StockTable() {
                 label={t("table.peRatio") || "P/E"}
                 onClick={toggleSort}
                 sortIcon={<SortIcon field="peRatio" />}
-                className="hidden w-16 text-right 2xl:table-cell"
+                className="hidden w-16 text-right xl:table-cell"
                 currentField={sortField}
                 currentDir={sortDir}
                 tooltip={t("table.tooltips.peRatio")}
@@ -442,7 +442,7 @@ export function StockTable() {
                 label={t("table.marketCap") || "Tržišna kap."}
                 onClick={toggleSort}
                 sortIcon={<SortIcon field="marketCapM" />}
-                className="hidden w-24 text-right 2xl:table-cell"
+                className="hidden w-24 text-right xl:table-cell"
                 currentField={sortField}
                 currentDir={sortDir}
                 tooltip={t("table.tooltips.marketCap")}
