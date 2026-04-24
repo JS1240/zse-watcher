@@ -34,7 +34,17 @@ export function NotificationCenter() {
   return (
     <Popover.Root>
       <Popover.Trigger asChild>
-        <button className="relative rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground">
+        <button
+          className="relative rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+          aria-label={t("notification.title")}
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              (e.target as HTMLButtonElement).click();
+            }
+          }}
+        >
           <Bell className="h-3.5 w-3.5" />
           {hasNotifications && (
             <span className="absolute -right-0.5 -top-0.5 flex h-3.5 w-3.5 animate-notification-pulse items-center justify-center rounded-full bg-destructive text-[8px] font-bold text-white">
