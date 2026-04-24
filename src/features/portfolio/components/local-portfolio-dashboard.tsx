@@ -390,17 +390,24 @@ export function LocalPortfolioDashboard() {
       "Value (EUR)",
       "Gain (EUR)",
       "Gain (%)",
+      "P/E Ratio",
+      "Dividend Yield (%)",
     ];
-    const rows = sortedHoldings.map((h) => [
-      h.ticker,
-      h.name,
-      h.totalShares.toString(),
-      h.avgPrice.toFixed(2),
-      h.currentPrice.toFixed(2),
-      h.totalValue.toFixed(2),
-      h.totalGain.toFixed(2),
-      h.gainPct.toFixed(2),
-    ]);
+    const rows = sortedHoldings.map((h) => {
+      const stock = stocks?.find((s) => s.ticker === h.ticker);
+      return [
+        h.ticker,
+        h.name,
+        h.totalShares.toString(),
+        h.avgPrice.toFixed(2),
+        h.currentPrice.toFixed(2),
+        h.totalValue.toFixed(2),
+        h.totalGain.toFixed(2),
+        h.gainPct.toFixed(2),
+        stock?.peRatio ? stock.peRatio.toFixed(2) : "",
+        stock?.dividendYield ? stock.dividendYield.toFixed(2) : "",
+      ];
+    });
     exportToCsv(`zse-portfolio-local-${new Date().toISOString().split("T")[0]}`, headers, rows);
     toast.success(t("toast.exported"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
   };
