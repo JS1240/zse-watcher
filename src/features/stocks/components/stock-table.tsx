@@ -49,6 +49,16 @@ export function StockTable() {
   const flashMap = usePriceFlash(stocks);
   const debouncedSearch = useDebounce(search, 200);
 
+  // Count active filters for badge
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (debouncedSearch) count++;
+    if (changeFilter !== "all") count++;
+    if (yieldFilter !== "all") count++;
+    if (sectorFilter) count++;
+    return count;
+  }, [debouncedSearch, changeFilter, yieldFilter, sectorFilter]);
+
   // Keyboard shortcut to focus search
   const searchInputRef = useRef<HTMLInputElement>(null);
   const focusSearch = useCallback(() => searchInputRef.current?.focus(), []);
@@ -209,6 +219,11 @@ export function StockTable() {
           >
             <RotateCcw className="h-3 w-3" />
             {tc("actions.reset") || "Poništi"}
+            {activeFilterCount > 0 && (
+              <span className="ml-0.5 rounded-full bg-primary-foreground/20 px-1.5 py-0.5 text-[9px]">
+                {activeFilterCount}
+              </span>
+            )}
           </button>
         )}
         {canAccess("dataExport") && (
