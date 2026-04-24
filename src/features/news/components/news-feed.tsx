@@ -9,6 +9,7 @@ import { NewsSkeleton } from "@/features/news/components/news-skeleton";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { formatDate, formatTime, formatRelativeTime } from "@/lib/formatters";
+import { Highlight } from "@/components/shared/highlight";
 import { EmptyState } from "@/components/shared/empty-state";
 import { NewsEmptyIllustration, SearchEmptyIllustration } from "@/components/shared/empty-illustrations";
 import { ErrorState } from "@/components/shared/error-state";
@@ -280,7 +281,7 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
       >
         <div className="min-w-0 flex-1">
           <h4 className="line-clamp-2 text-xs font-medium text-foreground group-hover:text-primary">
-            {article.title}
+            <Highlight text={article.title} highlight={search ?? ""} />
           </h4>
           {article.summary && (
             <p className="mt-0.5 line-clamp-1 text-[10px] text-muted-foreground">
