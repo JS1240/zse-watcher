@@ -45,8 +45,8 @@ function OverviewCardSkeleton({ icon: Icon, label, accent }: OverviewCardSkeleto
         </span>
       </div>
       <div className="mt-1.5 flex items-baseline gap-2">
-        <Skeleton className="h-7 w-20" />
-        <Skeleton className="h-5 w-12" />
+        <Skeleton className="h-7 w-20 animate-shimmer" />
+        <Skeleton className="h-5 w-12 animate-shimmer" />
       </div>
     </div>
   );
