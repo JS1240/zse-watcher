@@ -56,6 +56,14 @@
   "cancelHint": "Esc to cancel",
   "empty": "No alerts configured",
   "emptyDescription": "Create an alert to get notified when a stock reaches your target price.",
+  "emptyHints": {
+    "step1": "Choose a stock",
+    "step1Desc": "Go to the stocks page and find a stock to track.",
+    "step2": "Set an alert",
+    "step2Desc": "Press A to create a new alert and enter your condition.",
+    "step3": "Track the price",
+    "step3Desc": "Get notified when the price hits your target."
+  },
   "toast": {
     "created": "Alert created",
     "deleted": "Alert deleted",

@@ -675,6 +675,11 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
             icon={<AlertEmptyIllustration className="h-8 w-8" />}
             title={t("empty")}
             description={t("emptyDescription")}
+            steps={[
+              { label: t("emptyHints.step1"), description: t("emptyHints.step1Desc") },
+              { label: t("emptyHints.step2"), description: t("emptyHints.step2Desc") },
+              { label: t("emptyHints.step3"), description: t("emptyHints.step3Desc") },
+            ]}
             action={{ label: t("create"), onClick: () => setShowForm(true) }}
             shortcut="A"
             variant="action"

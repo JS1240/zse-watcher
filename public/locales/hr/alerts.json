@@ -55,7 +55,15 @@
   "pressEnter": "Enter za spremanje",
   "cancelHint": "Esc za odustanak",
   "empty": "Nemate postavljenih alarma",
-  "emptyDescription": "Postavite alarm i primajte obavijesti kada cijena doseze odredenu razinu.",
+  "emptyDescription": "Postavite alarm i primajte obavijesti kada cijena doseze određenu razinu.",
+  "emptyHints": {
+    "step1": "Odaberi dionicu",
+    "step1Desc": "Na stranici dionica pronađi dionicu koju želiš pratiti.",
+    "step2": "Postavi alarm",
+    "step2Desc": "Klikni A za novi alarm i unesi uvjet.",
+    "step3": "Prati cijenu",
+    "step3Desc": "Primit obavijest kad cijena doseže cilj."
+  },
   "toast": {
     "created": "Alarm stvoren",
     "deleted": "Alarm obrisan",
