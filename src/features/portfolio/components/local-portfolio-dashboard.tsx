@@ -513,6 +513,13 @@ export function LocalPortfolioDashboard() {
                 placeholder={t("searchPlaceholder")}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Escape") {
+                    e.preventDefault();
+                    setSearch("");
+                    searchInputRef.current?.blur();
+                  }
+                }}
                 className="w-32 pl-8 pr-14 py-2.5 text-xs h-9"
               />
               {!search && (

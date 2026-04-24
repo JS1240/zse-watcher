@@ -169,8 +169,8 @@ function AuthenticatedWatchlist() {
   const debouncedSearch = useDebounce(search, 200);
 
   // Keyboard shortcut to focus search
-  const searchInputRef = useRef<HTMLInputElement>(null);
-  const focusSearch = useCallback(() => searchInputRef.current?.focus(), []);
+  const localSearchInputRef = useRef<HTMLInputElement>(null);
+  const focusSearch = useCallback(() => localSearchInputRef.current?.focus(), []);
   useKeyboardShortcut({ key: "/", handler: focusSearch, enabled: true });
 
   const watchedStocks = useMemo(() => {
@@ -294,6 +294,13 @@ function AuthenticatedWatchlist() {
             onChange={(e) => setSearch(e.target.value)}
             onFocus={() => setSearchFocused(true)}
             onBlur={() => setSearchFocused(false)}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") {
+                e.preventDefault();
+                setSearch("");
+                localSearchInputRef.current?.blur();
+              }
+            }}
             className={`pl-8 pr-14 transition-shadow ${searchFocused ? "ring-2 ring-ring ring-offset-1 ring-offset-background" : ""}`}
           />
           {!search && watchedStocks.length > 0 && (
@@ -649,6 +656,11 @@ function LocalWatchlist() {
   const [activeDragItem, setActiveDragItem] = useState<Stock | null>(null);
   const debouncedSearch = useDebounce(search, 200);
 
+  // Keyboard shortcut to focus search
+  const localSearchInputRef = useRef<HTMLInputElement>(null);
+  const focusSearch = useCallback(() => localSearchInputRef.current?.focus(), []);
+  useKeyboardShortcut({ key: "/", handler: focusSearch, enabled: true });
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -800,6 +812,13 @@ function LocalWatchlist() {
             onChange={(e) => setSearch(e.target.value)}
             onFocus={() => setSearchFocused(true)}
             onBlur={() => setSearchFocused(false)}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") {
+                e.preventDefault();
+                setSearch("");
+                localSearchInputRef.current?.blur();
+              }
+            }}
             className={`pl-8 pr-14 transition-shadow ${searchFocused ? "ring-2 ring-ring ring-offset-1 ring-offset-background" : ""}`}
           />
           {!search && watchedStocks.length > 0 && (

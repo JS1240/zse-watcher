@@ -180,6 +180,13 @@ export function StockTable() {
             onChange={(e) => setSearch(e.target.value)}
             onFocus={() => setSearchFocused(true)}
             onBlur={() => setSearchFocused(false)}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") {
+                e.preventDefault();
+                setSearch("");
+                searchInputRef.current?.blur();
+              }
+            }}
             ref={searchInputRef}
             className={cn("pl-8 pr-8 transition-shadow", search && "pr-8", searchFocused && "ring-2 ring-ring ring-offset-1 ring-offset-background")}
           />

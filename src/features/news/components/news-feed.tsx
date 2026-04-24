@@ -349,6 +349,7 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
                 onChange={(e) => setSearch(e.target.value)}
                 onFocus={() => setSearchFocused(true)}
                 onBlur={() => setSearchFocused(false)}
+                onKeyDown={(e) => { if (e.key === "Escape") { e.preventDefault(); setSearch(""); searchInputRef.current?.blur(); } }}
                 className={cn("pl-8 pr-14 transition-shadow", searchFocused && "ring-2 ring-ring ring-offset-1 ring-offset-background")}
               />
               {!search && (
@@ -441,6 +442,7 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
                 onChange={(e) => setSearch(e.target.value)}
                 onFocus={() => setSearchFocused(true)}
                 onBlur={() => setSearchFocused(false)}
+                onKeyDown={(e) => { if (e.key === "Escape") { e.preventDefault(); setSearch(""); searchInputRef.current?.blur(); } }}
                 className={cn("pl-8 pr-14 transition-shadow", searchFocused && "ring-2 ring-ring ring-offset-1 ring-offset-background")}
               />
               {!search && (

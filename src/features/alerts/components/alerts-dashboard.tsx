@@ -351,6 +351,13 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
                 placeholder={tc("actions.search")}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Escape") {
+                    e.preventDefault();
+                    setSearch("");
+                    searchInputRef.current?.blur();
+                  }
+                }}
                 className="pl-8 pr-14"
               />
               {!search && (
