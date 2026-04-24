@@ -231,14 +231,21 @@ export function DividendsCalendar() {
 
   if (!grouped.length && searchQuery) {
     return (
-      <EmptyState
-        icon={<Search className="h-8 w-8" />}
-        title={t("empty.noResults")}
-        description={t("empty.noResultsDescription")}
-        variant="no-results"
-        action={{ label: t("clear"), onClick: () => setSearchQuery("") }}
-        shortcut="/"
-      />
+      <div className="flex flex-col gap-6">
+        <EmptyState
+          icon={<Search className="h-8 w-8" />}
+          title={t("empty.noResults")}
+          description={t("empty.noResultsDescription")}
+          variant="no-results"
+          action={{ label: t("clear"), onClick: () => setSearchQuery("") }}
+          shortcut="/"
+        />
+        {/* Search shortcuts hint */}
+        <div className="flex items-center justify-center gap-4 text-[9px] text-muted-foreground">
+          <kbd className="rounded bg-muted px-1.5 py-0.5 font-sans text-[8px]">/</kbd>
+          <span>{t("shortcut.search") || "pretrazi"}</span>
+        </div>
+      </div>
     );
   }
 
