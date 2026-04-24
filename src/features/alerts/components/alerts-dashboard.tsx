@@ -1002,6 +1002,10 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
         targetValue: parsed,
       });
       setEditing(false);
+    } catch (error) {
+      // Keep edit mode open on error so user can try again
+      console.error("Failed to update alert:", error);
+      toast.error(t("toast.updateFailed") || "Error updating alert");
     } finally {
       setSaving(false);
     }
