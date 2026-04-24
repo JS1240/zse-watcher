@@ -15,7 +15,12 @@
     "upgradeNow": "Pretplati se sada",
     "savePercent": "Uštedi 17%",
     "twelveMonths": "12 mjeseci po cijeni 10",
-    "cancelAnytime": "Otkaži bilo kada. Plaćanje putem Stripea."
+    "cancelAnytime": "Otkaži bilo kada. Plaćanje putem Stripea.",
+    "secure": "Sigurno plaćanje putem Stripea",
+    "current": "Vaš plan",
+    "monthlyShort": "mjesečno",
+    "annualShort": "godišnje",
+    "navigate": "planovi"
   },
   "upgradeModal": {
     "title": "Pretplati se na Premium",

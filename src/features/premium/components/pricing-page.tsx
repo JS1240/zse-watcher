@@ -1,6 +1,6 @@
 import { useState, useRef, memo } from "react";
 import { useTranslation } from "react-i18next";
-import { Crown, Check, X, ArrowUp } from "lucide-react";
+import { Crown, Check, X, ArrowUp, Keyboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSubscription } from "@/features/premium/hooks/use-subscription";
 import { useAuth } from "@/hooks/use-auth";
@@ -21,9 +21,13 @@ export const PricingPage = memo(function PricingPage() {
   const { isPremium, loading: subLoading } = useSubscription();
   const { isAuthenticated, loading: authLoading } = useAuth();
 
-  // Show skeleton while checking subscription status
+  // Show skeleton while checking subscription status (same scroll container)
   if (subLoading || authLoading) {
-    return <PricingSkeleton />;
+    return (
+      <div ref={pricingRef} className="overflow-auto max-h-[85vh] p-1">
+        <PricingSkeleton />
+      </div>
+    );
   }
 
   const handleUpgrade = async () => {
@@ -56,9 +60,33 @@ export const PricingPage = memo(function PricingPage() {
         </p>
       </div>
 
+      {/* Always-visible keyboard shortcuts hint for discoverability */}
+      <div className="flex items-center justify-center gap-4 text-[9px] text-muted-foreground">
+        <span className="flex items-center gap-0.5">
+          <kbd className="rounded bg-muted px-1.5 py-0.5 font-sans text-[8px]">M</kbd>
+          <span>{t("pricing.monthlyShort") || "mjesečno"}</span>
+        </span>
+        <span className="flex items-center gap-0.5">
+          <kbd className="rounded bg-muted px-1.5 py-0.5 font-sans text-[8px]">G</kbd>
+          <span>{t("pricing.annualShort") || "godišnje"}</span>
+        </span>
+        <span className="flex items-center gap-0.5">
+          <kbd className="rounded bg-muted px-1.5 py-0.5 font-sans text-[8px]">↑</kbd>
+          <kbd className="rounded bg-muted px-1.5 py-0.5 font-sans text-[8px]">↓</kbd>
+          <span>{t("pricing.navigate") || "planovi"}</span>
+        </span>
+        <span className="flex items-center gap-0.5">
+          <Keyboard className="h-2.5 w-2.5" />
+          <span>{tc("shortcut.search") || "/ traži"}</span>
+        </span>
+      </div>
+
       {/* Billing toggle */}
-      <div className="flex items-center justify-center gap-2 animate-pricing-card animate-pricing-card-delay-1">
-        <div className="relative rounded-full bg-muted p-1">
+      <div className="flex flex-col items-center gap-2">
+        <div className="relative rounded-full bg-muted p-1" onKeyDown={(e) => {
+          if (e.key === "m" || e.key === "M") setCycle("monthly");
+          if (e.key === "g" || e.key === "G") setCycle("annual");
+        }}>
           <div
             className={cn(
               "absolute top-1 h-[calc(100%-8px)] rounded-full bg-primary transition-all duration-300 ease-out",
@@ -69,7 +97,7 @@ export const PricingPage = memo(function PricingPage() {
             <button
               onClick={() => setCycle("monthly")}
               className={cn(
-                "z-10 flex-1 rounded-full px-4 py-1.5 text-xs font-medium transition-colors hover:bg-primary/50",
+                "z-10 flex-1 rounded-full px-4 py-1.5 text-xs font-medium transition-colors hover:bg-primary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                 cycle === "monthly"
                   ? "text-primary-foreground"
                   : "text-muted-foreground",
@@ -80,7 +108,7 @@ export const PricingPage = memo(function PricingPage() {
             <button
               onClick={() => setCycle("annual")}
               className={cn(
-                "z-10 flex-1 rounded-full px-4 py-1.5 text-xs font-medium transition-colors hover:bg-primary/50",
+                "z-10 flex-1 rounded-full px-4 py-1.5 text-xs font-medium transition-colors hover:bg-primary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                 cycle === "annual"
                   ? "text-primary-foreground"
                   : "text-muted-foreground",
@@ -93,6 +121,17 @@ export const PricingPage = memo(function PricingPage() {
             </button>
           </div>
         </div>
+        <div className="flex items-center gap-1.5 text-[9px] text-muted-foreground">
+          <span className="flex items-center gap-0.5">
+            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">M</kbd>
+            <span>{t("pricing.monthlyShort") || "mjesečno"}</span>
+          </span>
+          <span className="text-muted-foreground/40">·</span>
+          <span className="flex items-center gap-0.5">
+            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">G</kbd>
+            <span>{t("pricing.annualShort") || "godišnje"}</span>
+          </span>
+        </div>
       </div>
 
       {/* Plan cards */}
@@ -101,12 +140,27 @@ export const PricingPage = memo(function PricingPage() {
           const price = cycle === "monthly" ? plan.monthlyPrice : plan.annualPrice;
           const isCurrentPlan =
             (plan.id === "free" && !isPremium) || (plan.id === "premium" && isPremium);
+          const monthlyEquivalent = cycle === "annual" && plan.annualPrice > 0
+            ? (plan.annualPrice / 12).toFixed(2)
+            : null;
 
           return (
             <div
               key={plan.id}
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+                  e.preventDefault();
+                  const next = e.currentTarget.nextElementSibling as HTMLElement | null;
+                  next?.focus();
+                } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+                  e.preventDefault();
+                  const prev = e.currentTarget.previousElementSibling as HTMLElement | null;
+                  prev?.focus();
+                }
+              }}
               className={cn(
-                "relative rounded-lg border p-5 transition-all duration-200 animate-pricing-card",
+                "relative rounded-lg border p-5 transition-all duration-200 animate-pricing-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                 index === 0 ? "animate-pricing-card-delay-1" : "animate-pricing-card-delay-2",
                 plan.popular
                   ? "border-primary bg-primary/5 hover:-translate-y-0.5 hover:border-primary hover:shadow-lg hover:shadow-primary/10"
@@ -119,7 +173,14 @@ export const PricingPage = memo(function PricingPage() {
                 </div>
               )}
 
-              <h3 className="text-sm font-bold text-foreground">{plan.name}</h3>
+              <div className="flex items-start justify-between">
+                <h3 className="text-sm font-bold text-foreground">{plan.name}</h3>
+                {isCurrentPlan && (
+                  <span className="rounded-full bg-muted px-2 py-0.5 text-[9px] font-medium text-muted-foreground">
+                    {t("pricing.current") || "Vaš plan"}
+                  </span>
+                )}
+              </div>
 
               <div className="mt-2 flex items-baseline gap-1">
                 {price > 0 ? (
@@ -138,9 +199,16 @@ export const PricingPage = memo(function PricingPage() {
                 )}
               </div>
 
-              {cycle === "annual" && plan.annualPrice > 0 && (
+              {monthlyEquivalent && (
                 <p className="mt-1 text-[10px] text-muted-foreground">
-                  {(plan.annualPrice / 12).toFixed(2)} {t("pricing.perMonthBilled")}
+                  {monthlyEquivalent} {t("pricing.perMonthBilled")}
+                </p>
+              )}
+
+              {cycle === "annual" && plan.id === "premium" && (
+                <p className="mt-1 flex items-center gap-1 text-[10px] font-medium text-price-up">
+                  <Check className="h-3 w-3" />
+                  {t("pricing.savePercent")}
                 </p>
               )}
 
@@ -182,6 +250,14 @@ export const PricingPage = memo(function PricingPage() {
             </div>
           );
         })}
+      </div>
+
+      {/* Footer note */}
+      <div className="flex flex-col items-center gap-1 text-center text-[10px] text-muted-foreground">
+        <span>{t("pricing.cancelAnytime")}</span>
+        <span className="flex items-center gap-1">
+          <span>{t("pricing.secure") || "Sigurno plaćanje putem Stripea"}</span>
+        </span>
       </div>
 
       {/* Scroll to top button */}

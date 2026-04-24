@@ -15,7 +15,12 @@
     "upgradeNow": "Upgrade Now",
     "savePercent": "Save 17%",
     "twelveMonths": "12 months for the price of 10",
-    "cancelAnytime": "Cancel anytime. Powered by Stripe."
+    "cancelAnytime": "Cancel anytime. Powered by Stripe.",
+    "secure": "Secure payment via Stripe",
+    "current": "Your plan",
+    "monthlyShort": "monthly",
+    "annualShort": "annual",
+    "navigate": "plans"
   },
   "upgradeModal": {
     "title": "Upgrade to Premium",
