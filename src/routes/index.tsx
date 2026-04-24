@@ -6,7 +6,9 @@ import { MarketStatus } from "@/features/market/components/market-status";
 import { MarketMovers } from "@/features/market/components/market-movers";
 import { StockTable } from "@/features/stocks/components/stock-table";
 import { NewsFeed } from "@/features/news/components/news-feed";
+import { LiveDataIndicator } from "@/components/shared/live-data-indicator";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 
 export const Route = createFileRoute("/")({
   component: StocksPage,
@@ -14,6 +16,7 @@ export const Route = createFileRoute("/")({
 
 function StocksPage() {
   const { t } = useTranslation("common");
+  const { dataUpdatedAt, isFetching } = useStocksLive();
 
   return (
     <div className="flex h-full">
@@ -25,6 +28,33 @@ function StocksPage() {
           <MarketStatus />
         </div>
         <MarketOverview />
+
+        {/* Always-visible keyboard shortcuts hint — consistent with watchlist/screener/alerts pattern */}
+        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded-sm border border-border/50 bg-muted/30 px-3 py-1.5 text-[9px] text-muted-foreground">
+          <LiveDataIndicator updatedAt={dataUpdatedAt ?? 0} isFetching={isFetching} />
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <span className="flex items-center gap-1">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
+              <span>{t("shortcut.details") || "detalji"}</span>
+            </span>
+            <span className="hidden items-center gap-1 xs:flex">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">S</kbd>
+              <span>{t("shortcut.watch") || "praćenje"}</span>
+            </span>
+            <span className="hidden items-center gap-1 sm:flex">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">A</kbd>
+              <span>{t("shortcut.alert") || "alarm"}</span>
+            </span>
+            <span className="flex items-center gap-1">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">/</kbd>
+              <span>{t("shortcut.search") || "traži"}</span>
+            </span>
+            <span className="flex items-center gap-1">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">?</kbd>
+              <span>{t("shortcut.shortcuts") || "prečaci"}</span>
+            </span>
+          </div>
+        </div>
 
         {/* Stock table */}
         <StockTable />
