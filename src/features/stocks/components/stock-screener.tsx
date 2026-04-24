@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef, useCallback } from "react";
+import { useState, useMemo, useEffect, useRef, useCallback, memo } from "react";
 import { useTranslation } from "react-i18next";
 import { Filter, RotateCcw, ArrowUpDown, ArrowUp, ArrowDown, Info, Download, Save, Trash2, Bookmark, Search, ChevronDown, AlertTriangle, X, Keyboard, ChevronUp } from "lucide-react";
 import { toast } from "sonner";
@@ -206,6 +206,51 @@ function SortHeader({
     </button>
   );
 }
+
+/** Memoized screener table row — prevents re-renders when other rows or parent state change */
+const ScreenerRow = memo(function ScreenerRow({
+  stock,
+  search,
+  onSelect,
+}: {
+  stock: Stock;
+  search: string;
+  onSelect: (ticker: string) => void;
+}) {
+  return (
+    <tr
+      className="border-b border-border/50 cursor-pointer transition-all duration-150 hover:bg-accent/70"
+      onClick={() => onSelect(stock.ticker)}
+    >
+      <td className="px-3 py-2 font-data font-semibold text-foreground">
+        <Highlight text={stock.ticker} highlight={search} />
+      </td>
+      <td className="px-1 py-2 text-muted-foreground">
+        <Highlight text={stock.name} highlight={search} />
+      </td>
+      <td className="px-1 py-2">
+        <span className="rounded-sm bg-accent px-1.5 py-0.5 text-[10px]">
+          {stock.sector}
+        </span>
+      </td>
+      <td className="px-1 py-2 text-right font-data tabular-nums text-foreground">
+        {formatPrice(stock.price)}
+      </td>
+      <td className="px-1 py-2 text-right">
+        <ChangeBadge value={stock.changePct} showIcon={false} />
+      </td>
+      <td className="hidden px-1 py-2 text-right font-data tabular-nums text-muted-foreground lg:table-cell">
+        {formatVolume(stock.turnover)} EUR
+      </td>
+      <td className="hidden px-1 py-2 text-right font-data tabular-nums text-muted-foreground lg:table-cell">
+        {stock.dividendYield !== null ? `${stock.dividendYield.toFixed(1)}%` : "—"}
+      </td>
+      <td className="hidden px-1 py-2 text-right font-data tabular-nums text-muted-foreground lg:table-cell">
+        {formatVolume(stock.volume)}
+      </td>
+    </tr>
+  );
+});
 
 export function StockScreener() {
   const { t } = useTranslation("stocks");
@@ -746,38 +791,7 @@ export function StockScreener() {
           </thead>
           <tbody>
             {results.map((s) => (
-              <tr
-                key={s.ticker}
-                className="border-b border-border/50 cursor-pointer transition-all duration-150 hover:bg-accent/70"
-                onClick={() => select(s.ticker)}
-              >
-                <td className="px-3 py-2 font-data font-semibold text-foreground">
-                  <Highlight text={s.ticker} highlight={debouncedSearch} />
-                </td>
-                <td className="px-1 py-2 text-muted-foreground">
-                  <Highlight text={s.name} highlight={debouncedSearch} />
-                </td>
-                <td className="px-1 py-2">
-                  <span className="rounded-sm bg-accent px-1.5 py-0.5 text-[10px]">
-                    {s.sector}
-                  </span>
-                </td>
-                <td className="px-1 py-2 text-right font-data tabular-nums text-foreground">
-                  {formatPrice(s.price)}
-                </td>
-                <td className="px-1 py-2 text-right">
-                  <ChangeBadge value={s.changePct} showIcon={false} />
-                </td>
-                <td className="hidden px-1 py-2 text-right font-data tabular-nums text-muted-foreground lg:table-cell">
-                  {formatVolume(s.turnover)} EUR
-                </td>
-                <td className="hidden px-1 py-2 text-right font-data tabular-nums text-muted-foreground lg:table-cell">
-                  {s.dividendYield !== null ? `${s.dividendYield.toFixed(1)}%` : "—"}
-                </td>
-                <td className="hidden px-1 py-2 text-right font-data tabular-nums text-muted-foreground lg:table-cell">
-                  {formatVolume(s.volume)}
-                </td>
-              </tr>
+              <ScreenerRow key={s.ticker} stock={s} search={debouncedSearch} onSelect={select} />
             ))}
           </tbody>
         </table>
