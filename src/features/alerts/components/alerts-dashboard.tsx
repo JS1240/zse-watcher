@@ -144,6 +144,7 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
 
   const [showForm, setShowForm] = useState(false);
   const [search, setSearch] = useState("");
+  const [focusedAlertIndex, setFocusedAlertIndex] = useState(-1); // -1 = none focused, 0+ = row index
 
   // Keyboard shortcut to focus search
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -299,6 +300,33 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
 
     return result;
   }, [alerts, debouncedSearch, statusFilter, sort]);
+
+  // Arrow key navigation for alerts list - defined after filteredAlerts
+  const handleAlertNavigation = useCallback((key: "ArrowUp" | "ArrowDown") => {
+    if (filteredAlerts.length === 0) return;
+    setFocusedAlertIndex((prev) => {
+      if (prev === -1) return 0;
+      if (key === "ArrowUp") {
+        return Math.max(0, prev - 1);
+      }
+      return Math.min(filteredAlerts.length - 1, prev + 1);
+    });
+  }, [filteredAlerts.length]);
+
+  // Register arrow key shortcuts using useEffect (so filteredAlerts is in scope)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+        // Only handle if not in an input field
+        const target = e.target as HTMLElement;
+        if (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable) return;
+        e.preventDefault();
+        handleAlertNavigation(e.key);
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [handleAlertNavigation]);
 
   if (isLoading) {
     return <AlertsSkeleton />;
@@ -582,6 +610,10 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
           {/* Always-visible keyboard shortcuts hint for discoverability */}
           <div className="flex items-center gap-2 text-[9px] text-muted-foreground">
             <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">↑↓</kbd>
+              <span className="text-muted-foreground">{t("shortcut.navigate") || "navigiraj"}</span>
+            </span>
+            <span className="flex items-center gap-0.5">
               <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
               <span className="text-muted-foreground">{t("shortcut.toggle") || "aktiviraj/pauziraj"}</span>
             </span>
@@ -609,13 +641,16 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
             onScroll={(e) => setScrollTop((e.target as HTMLDivElement).scrollTop > 200)}
             className="max-h-[calc(100vh-280px)] space-y-1 overflow-y-auto pr-1"
           >
-            {filteredAlerts.map((alert) => (
+            {filteredAlerts.map((alert, index) => (
               <AlertRow
                 key={alert.id}
                 alert={alert}
                 stocks={stocks}
                 searchHighlight={debouncedSearch}
                 flash={getFlashState(alert.id)}
+                isFocused={focusedAlertIndex === index}
+                onFocusNext={() => setFocusedAlertIndex(index + 1)}
+                onFocusPrev={() => setFocusedAlertIndex(index - 1)}
                 onDelete={() => setConfirmDelete(alert.id)}
                 onToggle={() => {
                   const wasActive = alert.isActive;
@@ -789,9 +824,12 @@ interface AlertRowProps {
   stocks?: { ticker: string; name: string; price: number | null }[];
   searchHighlight?: string;
   flash?: "up" | "down" | null;
+  isFocused?: boolean;
+  onFocusNext?: () => void;
+  onFocusPrev?: () => void;
 }
 
-export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUpdate, onSnooze, onUnsnooze, onDuplicate, onCopyTicker, onCopyTarget, stocks, searchHighlight, flash }: AlertRowProps) {
+export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUpdate, onSnooze, onUnsnooze, onDuplicate, onCopyTicker, onCopyTarget, stocks, searchHighlight, flash, isFocused, onFocusNext, onFocusPrev }: AlertRowProps) {
   const { t } = useTranslation("alerts");
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -819,11 +857,26 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
     return percentDiff;
   }, [currentPrice, alert.targetValue, alert.condition]);
 
+  // Auto-focus row when keyboard navigation focuses it
+  useEffect(() => {
+    if (isFocused && rowRef.current) {
+      rowRef.current.focus();
+    }
+  }, [isFocused]);
+
   // Handle row-level keyboard shortcuts (outside edit mode)
   const handleRowKeyDown = (e: React.KeyboardEvent) => {
     if (editing) return; // Edit mode has its own handler
 
     switch (e.key) {
+      case "ArrowUp":
+        e.preventDefault();
+        onFocusPrev?.();
+        break;
+      case "ArrowDown":
+        e.preventDefault();
+        onFocusNext?.();
+        break;
       case "Enter":
       case " ":
         e.preventDefault();
@@ -1190,6 +1243,7 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
         alert.isTriggered && "border-amber/30 bg-amber/5",
         flash === "up" && "price-flash-up",
         flash === "down" && "price-flash-down",
+        isFocused && "ring-2 ring-primary",
       )}
     >
       <div className="flex items-center gap-3">

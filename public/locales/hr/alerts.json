@@ -107,7 +107,8 @@
     "edit": "uredi",
     "duplicate": "kopiraj",
     "delete": "obrisi",
-    "create": "stvori alarm"
+    "create": "stvori alarm",
+    "navigate": "navigiraj"
   },
   "inlineEdit": {
     "save": "Spremi",

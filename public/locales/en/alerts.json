@@ -107,7 +107,8 @@
     "edit": "edit",
     "duplicate": "duplicate",
     "delete": "delete",
-    "create": "create alert"
+    "create": "create alert",
+    "navigate": "navigate"
   },
   "inlineEdit": {
     "save": "Save",
