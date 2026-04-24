@@ -1,9 +1,9 @@
-import { useMemo, useCallback } from "react";
+import { useMemo, useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod/v4";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
-import { X, CheckCircle2, AlertCircle, AlertTriangle } from "lucide-react";
+import { X, CheckCircle2, AlertCircle, AlertTriangle, Keyboard } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -57,6 +57,15 @@ export function InlineTransactionForm({
       transactionDate: new Date().toISOString().slice(0, 10),
     },
   });
+
+  // Keyboard shortcut: Esc to close, focus first input on mount
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const sharesInput = document.getElementById("inline-shares-input");
+      sharesInput?.focus();
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   const sharesValue = watch("shares");
   const priceValue = watch("pricePerShare");
@@ -174,6 +183,7 @@ export function InlineTransactionForm({
           <div>
             <label className="mb-1 block text-[9px] text-muted-foreground">{t("fields.shares")}</label>
             <Input
+              id="inline-shares-input"
               type="text"
               inputMode="decimal"
               placeholder="100"
@@ -247,7 +257,10 @@ export function InlineTransactionForm({
               {t("totalInvestment", { value: formatPrice(total) })}
             </span>
           ) : (
-            <span />
+            <span className="flex items-center gap-1 text-[9px] text-muted-foreground">
+              <Keyboard className="h-2.5 w-2.5" />
+              <span>Esc {t("cancelHint")} · Enter {t("submitHint")}</span>
+            </span>
           )}
           <Button
             type="submit"
