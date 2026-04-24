@@ -68,7 +68,7 @@ function CategoryChip({
   );
 }
 
-export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
+export function NewsFeed({ ticker: propsTicker, category, limit }: NewsFeedProps) {
   const { data: articles, isLoading, isError, refetch } = useNews();
   const { t } = useTranslation("common");
   const { t: tn } = useTranslation("news");
@@ -79,11 +79,20 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   // Internal category filter state (when not set by prop)
   const [categoryFilter, setCategoryFilter] = useState<"all" | "general" | "trading">("all");
+  // Internal ticker filter state
+  const [tickerFilter, setTickerFilter] = useState<string>("");
   // Keyboard navigation state for article list
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const articleRefs = useRef<Map<number, HTMLButtonElement>>(new Map());
   const effectiveCategory = category ?? categoryFilter;
   const debouncedSearch = useDebounce(search, 200);
+
+  // Get unique tickers from articles
+  const availableTickers = useMemo((): string[] => {
+    if (!articles) return [];
+    const tickerSet = new Set(articles.map((a) => a.ticker).filter(Boolean) as string[]);
+    return Array.from(tickerSet).sort();
+  }, [articles]);
 
   // Keyboard shortcut to focus search
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -113,8 +122,10 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
     if (!articles) return [];
     let result = articles;
 
-    if (ticker) {
-      result = result.filter((a) => a.ticker === ticker);
+    // Props take precedence, then internal filter
+    const effectiveTicker = propsTicker ?? tickerFilter;
+    if (effectiveTicker) {
+      result = result.filter((a) => a.ticker === effectiveTicker);
     }
     if (effectiveCategory && effectiveCategory !== "all") {
       result = result.filter((a) => a.category === effectiveCategory);
@@ -147,7 +158,7 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
     });
 
     return result;
-  }, [articles, ticker, effectiveCategory, limit, debouncedSearch, sortField, sortDir]);
+  }, [articles, propsTicker, tickerFilter, effectiveCategory, limit, debouncedSearch, sortField, sortDir]);
 
   // Keyboard navigation handler (needs filtered)
   const handleNewsKeyDown = useCallback((e: React.KeyboardEvent) => {
@@ -391,6 +402,18 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
                   count={categoryCounts.trading}
                   icon={TrendingUp}
                 />
+                {availableTickers.length > 0 && (
+                  <select
+                    value={tickerFilter}
+                    onChange={(e) => setTickerFilter(e.target.value)}
+                    className="rounded-full px-2.5 py-1 text-[10px] font-medium bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    <option value="">{tn("filter.allTickers") || "Sve dionice"}</option>
+                    {availableTickers.map((t) => (
+                      <option key={t} value={t}>{t}</option>
+                    ))}
+                  </select>
+                )}
               </div>
             )}
             <div className="flex items-center gap-2">
@@ -484,6 +507,18 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
                   count={categoryCounts.trading}
                   icon={TrendingUp}
                 />
+                {availableTickers.length > 0 && (
+                  <select
+                    value={tickerFilter}
+                    onChange={(e) => setTickerFilter(e.target.value)}
+                    className="rounded-full px-2.5 py-1 text-[10px] font-medium bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    <option value="">{tn("filter.allTickers") || "Sve dionice"}</option>
+                    {availableTickers.map((t) => (
+                      <option key={t} value={t}>{t}</option>
+                    ))}
+                  </select>
+                )}
               </div>
             )}
             <div className="flex items-center gap-2">

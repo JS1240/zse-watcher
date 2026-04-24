@@ -3,7 +3,8 @@
   "filter": {
     "all": "All",
     "general": "General",
-    "trading": "Trading"
+    "trading": "Trading",
+    "allTickers": "All tickers"
   },
   "sort": {
     "date": "Date",

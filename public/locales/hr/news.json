@@ -5,7 +5,8 @@
   "filter": {
     "all": "Sve",
     "general": "Generalne",
-    "trading": "Trgovanje"
+    "trading": "Trgovanje",
+    "allTickers": "Sve dionice"
   },
   "sort": {
     "date": "Datum",
