@@ -64,7 +64,8 @@
     "createFailed": "Failed to create alert",
     "deleteFailed": "Failed to delete alert",
     "updateFailed": "Failed to update alert",
-    "exported": "Alerts exported to CSV"
+    "exported": "Alerts exported to CSV",
+    "duplicateHint": "Alert pre-filled - adjust and save"
   },
   "bulk": {
     "activateAll": "Activate all",
@@ -84,6 +85,7 @@
   "shortcut": {
     "toggle": "toggle",
     "edit": "edit",
+    "duplicate": "duplicate",
     "delete": "delete",
     "create": "create alert"
   },

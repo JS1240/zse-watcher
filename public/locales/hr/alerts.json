@@ -64,7 +64,8 @@
     "createFailed": "Neuspjelo stvaranje alarma",
     "deleteFailed": "Neuspjelo brisanje alarma",
     "updateFailed": "Neuspjelo azuriranje alarma",
-    "exported": "Alarmi izvezeni u CSV"
+    "exported": "Alarmi izvezeni u CSV",
+    "duplicateHint": "Vrijednosti alarma popunjene - prilagodi i spremi"
   },
   "bulk": {
     "activateAll": "Aktiviraj sve",
@@ -84,6 +85,7 @@
   "shortcut": {
     "toggle": "aktiviraj",
     "edit": "uredi",
+    "duplicate": "kopiraj",
     "delete": "obrisi",
     "create": "stvori alarm"
   },
