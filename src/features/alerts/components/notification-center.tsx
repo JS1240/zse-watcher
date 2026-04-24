@@ -3,11 +3,12 @@ import * as Popover from "@radix-ui/react-popover";
 import { useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
+import { toast } from "sonner";
 
 import { useAuth } from "@/hooks/use-auth";
 import { useTriggeredAlerts, useActiveAlertCount } from "@/features/alerts/api/alerts-queries";
 import { useLocalAlerts } from "@/features/alerts/hooks/use-local-alerts";
-import { formatPrice, formatDate } from "@/lib/formatters";
+import { formatPrice, formatRelativeTime } from "@/lib/formatters";
 import type { AlertCondition } from "@/types/alert";
 
 export function NotificationCenter() {
@@ -70,30 +71,41 @@ export function NotificationCenter() {
                 <button
                   key={alert.id}
                   onClick={handleViewAllTriggered}
-                  className="flex w-full items-center justify-between border-b border-border/50 px-3 py-2 text-left last:border-b-0 transition-colors hover:bg-accent/50"
+                  className="group flex w-full items-center justify-between gap-2 border-b border-border/50 px-3 py-2.5 text-left transition-colors hover:bg-accent/50 last:border-b-0"
                 >
                   <div className="flex items-center gap-2">
-                    <span className="font-data text-[11px] font-semibold text-foreground">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigator.clipboard.writeText(alert.ticker);
+                        toast.success(`${alert.ticker} kopiran`);
+                      }}
+                      className="font-data text-[11px] font-semibold text-foreground transition-colors hover:text-primary"
+                      title="Copy ticker"
+                    >
                       {alert.ticker}
-                    </span>
-                    <span className="text-[10px] text-amber">
+                    </button>
+                    <span className="flex items-center gap-1 rounded bg-amber-500/20 px-1.5 py-0.5 text-[9px] font-medium text-amber-700 dark:bg-amber-900/50 dark:text-amber-300">
                       {t("status.triggered")}
                     </span>
-                    {"id" in alert && alert.id.startsWith("local-") && (
+                    {alert.id.startsWith("local-") && (
                       <span className="rounded bg-muted px-1 py-0.5 text-[8px] text-muted-foreground">
                         local
                       </span>
                     )}
                   </div>
-                  <p className="text-[10px] text-muted-foreground">
-                    {formatConditionText(alert.condition, alert.targetValue, t)}
-                  </p>
-                  {alert.triggeredAt && (
-                    <p className="text-[9px] text-muted-foreground/70">
-                      {formatDate(alert.triggeredAt)}
-                    </p>
-                  )}
-                  <ArrowRight className="h-3 w-3 text-muted-foreground/30" />
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] text-muted-foreground">
+                      {formatConditionText(alert.condition, alert.targetValue, t)}
+                    </span>
+                    {alert.triggeredAt && (
+                      <span className="text-[9px] text-muted-foreground/60">
+                        {formatRelativeTime(alert.triggeredAt)}
+                      </span>
+                    )}
+                    <ArrowRight className="h-3 w-3 shrink-0 text-muted-foreground/40 transition-transform group-hover:translate-x-0.5" />
+                  </div>
                 </button>
               ))
             ) : (
