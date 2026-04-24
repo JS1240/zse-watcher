@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+### Added
+
+- **News Ticker Filter** — filter news by specific stock ticker for Croatian retail investors
+  - Added ticker dropdown to news feed toolbar (appears when articles have tickers)
+  - Complements existing category filters (all/general/trading)
+  - Users can filter to see news about stocks they own or watch
+  - Translation keys: filter.allTickers ("Sve dionice" / "All tickers")
+
 ### Changed
 - **NotificationCenter Badge Colors** — normalize triggered alert badge to match codebase amber patterns
   - Replaced hardcoded amber-500/20, amber-700, amber-900/50 with standard bg-amber
