@@ -10,6 +10,7 @@
     "targetAsc": "Cilj ↑"
   },
   "create": "Stvori alarm",
+  "submitHint": "Enter za spremanje",
   "exportCsv": "CSV",
   "filter": {
     "all": "Sve",

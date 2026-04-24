@@ -504,6 +504,10 @@ export function AddPositionForm({ onClose, onSuccess }: AddPositionFormProps) {
           <Button type="submit" className="w-full" loading={isSubmitting}>
             {t("addPosition")}
           </Button>
+          <span className="pointer-events-none absolute bottom-2 flex items-center gap-1 text-[9px] text-muted-foreground">
+            <Keyboard className="h-2.5 w-2.5" />
+            {t("submitHint") || "Enter za spremanje"}
+          </span>
         </div>
       </form>
     </div>

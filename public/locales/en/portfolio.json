@@ -2,6 +2,7 @@
   "title": "Portfolio",
   "dividendsReceived": "Dividends Received",
   "addPosition": "Add Position",
+  "submitHint": "Enter to save",
   "holdings": "Holdings",
   "totalValue": "Total Value",
   "totalGain": "Total Gain/Loss",

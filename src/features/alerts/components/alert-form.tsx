@@ -402,6 +402,10 @@ export function AlertForm({ onClose, defaultTicker, defaultCondition, defaultTar
           <Button type="submit" className="w-full" loading={isSubmitting}>
             {t("create")}
           </Button>
+          <span className="pointer-events-none absolute bottom-2 flex items-center gap-1 text-[9px] text-muted-foreground">
+            <Keyboard className="h-2.5 w-2.5" />
+            {t("submitHint")}
+          </span>
         </div>
       </form>
     </div>

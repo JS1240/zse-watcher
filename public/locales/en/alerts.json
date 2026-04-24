@@ -10,6 +10,7 @@
     "targetAsc": "Target ↑"
   },
   "create": "Create Alert",
+  "submitHint": "Enter to save",
   "exportCsv": "CSV",
   "filter": {
     "all": "All",
