@@ -300,7 +300,8 @@ tr[data-clickable]:active,
 .alert-edit-container {
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows 0.22s ease-out;
+  transition: grid-template-rows 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
 }
 
 .alert-edit-container.open {
@@ -309,6 +310,57 @@ tr[data-clickable]:active,
 
 .alert-edit-inner {
   overflow: hidden;
+}
+
+/* Validation icon success pulse for alert form */
+@keyframes validation-success {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.animate-validation-success {
+  animation: validation-success 0.3s ease-out;
+}
+
+/* Edit mode subtle glow border animation */
+@keyframes edit-border-pulse {
+  0%, 100% { border-color: hsl(var(--primary) / 0.4); }
+  50% { border-color: hsl(var(--primary) / 0.7); }
+}
+
+.animate-edit-border-pulse {
+  animation: edit-border-pulse 2s ease-in-out infinite;
+}
+
+/* Alert form field entrance — staggered fade-in for form fields */
+@keyframes form-field-in {
+  0% { opacity: 0; transform: translateY(4px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.animate-form-field {
+  animation: form-field-in 0.2s ease-out forwards;
+  opacity: 0;
+}
+
+.animate-form-field:nth-child(1) { animation-delay: 0ms; }
+.animate-form-field:nth-child(2) { animation-delay: 50ms; }
+.animate-form-field:nth-child(3) { animation-delay: 100ms; }
+.animate-form-field:nth-child(4) { animation-delay: 150ms; }
+
+/* Suggested target chips hover effect */
+.suggested-chip {
+  transition: transform 0.1s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.suggested-chip:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px hsl(var(--muted) / 0.3);
+}
+
+.suggested-chip:active {
+  transform: scale(0.97);
 }
 
 /** Smooth focus transition for interactive elements */

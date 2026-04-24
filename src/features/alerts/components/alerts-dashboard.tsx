@@ -916,7 +916,7 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
 
   if (editing) {
     return (
-      <div className="rounded-md border-2 border-primary/80 bg-card ring-2 ring-primary/50 shadow-lg shadow-primary/20 transition-all duration-200">
+      <div className="rounded-md border-2 border-primary/60 bg-card animate-edit-border-pulse shadow-lg shadow-primary/10 transition-all duration-200">
         <div className="alert-edit-container open">
           <div className="alert-edit-inner px-3 py-2.5">
         <div className="mb-2 flex items-center justify-between">
@@ -927,7 +927,7 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
             <button
               onClick={handleSave}
               disabled={saving}
-              className="rounded-sm p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="rounded-sm p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring btn-press"
               title="Save"
             >
               {saving ? (
@@ -939,7 +939,7 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
             <button
               onClick={handleCancel}
               disabled={saving}
-              className="rounded-sm p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="rounded-sm p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring btn-press"
               title="Cancel"
             >
               <X className="h-3.5 w-3.5" />
@@ -947,8 +947,8 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-2">
-          <div>
+        <div className="grid grid-cols-3 gap-2 animate-form-field">
+          <div className="animate-form-field">
             <label className="mb-0.5 block text-[9px] uppercase tracking-wider text-muted-foreground">
               {t("fields.ticker")}
             </label>
@@ -1046,7 +1046,7 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
                     setEditTarget(editSuggestedTargets.up5.toFixed(2));
                     setEditCondition("above");
                   }}
-                  className="flex items-center gap-0.5 rounded bg-emerald-500/20 px-1.5 py-0.5 text-[9px] font-medium text-emerald-700 hover:bg-emerald-500/30 dark:text-emerald-300"
+                  className="flex items-center gap-0.5 rounded bg-emerald-500/20 px-1.5 py-0.5 text-[9px] font-medium text-emerald-700 hover:bg-emerald-500/30 dark:text-emerald-300 suggested-chip"
                 >
                   <TrendingUp className="h-2.5 w-2.5" />+5%
                 </button>
@@ -1056,7 +1056,7 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
                     setEditTarget(editSuggestedTargets.up10.toFixed(2));
                     setEditCondition("above");
                   }}
-                  className="flex items-center gap-0.5 rounded bg-emerald-500/20 px-1.5 py-0.5 text-[9px] font-medium text-emerald-700 hover:bg-emerald-500/30 dark:text-emerald-300"
+                  className="flex items-center gap-0.5 rounded bg-emerald-500/20 px-1.5 py-0.5 text-[9px] font-medium text-emerald-700 hover:bg-emerald-500/30 dark:text-emerald-300 suggested-chip"
                 >
                   <TrendingUp className="h-2.5 w-2.5" />+10%
                 </button>
@@ -1066,7 +1066,7 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
                     setEditTarget(editSuggestedTargets.down5.toFixed(2));
                     setEditCondition("below");
                   }}
-                  className="flex items-center gap-0.5 rounded bg-red-500/20 px-1.5 py-0.5 text-[9px] font-medium text-red-700 hover:bg-red-500/30 dark:text-red-300"
+                  className="flex items-center gap-0.5 rounded bg-red-500/20 px-1.5 py-0.5 text-[9px] font-medium text-red-700 hover:bg-red-500/30 dark:text-red-300 suggested-chip"
                 >
                   <TrendingDown className="h-2.5 w-2.5" />-5%
                 </button>
@@ -1076,7 +1076,7 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
                     setEditTarget(editSuggestedTargets.down10.toFixed(2));
                     setEditCondition("below");
                   }}
-                  className="flex items-center gap-0.5 rounded bg-red-500/20 px-1.5 py-0.5 text-[9px] font-medium text-red-700 hover:bg-red-500/30 dark:text-red-300"
+                  className="flex items-center gap-0.5 rounded bg-red-500/20 px-1.5 py-0.5 text-[9px] font-medium text-red-700 hover:bg-red-500/30 dark:text-red-300 suggested-chip"
                 >
                   <TrendingDown className="h-2.5 w-2.5" />-10%
                 </button>

@@ -237,16 +237,16 @@ export function AlertForm({ onClose, defaultTicker, defaultCondition, defaultTar
   }
 
   return (
-    <div className="rounded-md border border-border bg-card p-4">
+    <div className="rounded-md border border-border bg-card p-4 shadow-sm">
       <div className="mb-3 flex items-center justify-between">
         <h3 className="text-xs font-semibold text-foreground">{t("create")}</h3>
-        <button onClick={onClose} className="text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm" aria-label="Close alert form">
+        <button onClick={onClose} className="text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm btn-press" aria-label="Close alert form">
           <X className="h-4 w-4" />
         </button>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <div>
+        <div className="animate-form-field">
           <label className="mb-1 block text-[10px] text-muted-foreground">{t("fields.ticker")}</label>
           <TickerSelect
             id="alert-ticker-input"
