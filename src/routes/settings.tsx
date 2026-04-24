@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useRef, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Moon, Sun, Globe, Monitor, Keyboard, Trash2, Download, Upload, Database, Check, ArrowUp } from "lucide-react";
+import { Moon, Sun, Globe, Monitor, Keyboard, Trash2, Download, Upload, Database, Check, ArrowUp, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
 import { useThemeStore } from "@/hooks/use-theme";
@@ -9,6 +9,7 @@ import { useSubscription } from "@/features/premium/hooks/use-subscription";
 import { LoginPrompt } from "@/features/auth/components/login-prompt";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { cn } from "@/lib/utils";
 import type { ThemeMode } from "@/types/user";
 import { SettingsSkeleton } from "@/features/settings/components/settings-skeleton";
@@ -56,6 +57,7 @@ function SettingsPage() {
     dividends: true,
     presets: true,
   });
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
 
   // Check if user has local data
   const hasLocalData = (() => {
@@ -157,7 +159,7 @@ function SettingsPage() {
     [t]
   );
 
-  // Handle selective clear
+  // Handle selective clear (called from ConfirmationDialog)
   const handleSelectiveClear = useCallback(() => {
     const keysToRemove: Record<string, string> = {
       watchlist: "zse-local-watchlist",
@@ -180,6 +182,7 @@ function SettingsPage() {
       // Trigger page refresh
       window.location.reload();
     }
+    setShowClearConfirm(false);
   }, [t, clearOptions]);
 
   if (loading || subLoading) return <SettingsSkeleton />;
@@ -368,12 +371,28 @@ function SettingsPage() {
             <Button
               variant="destructive"
               size="sm"
-              onClick={handleSelectiveClear}
+              onClick={() => setShowClearConfirm(true)}
               className="w-full text-xs"
             >
               <Trash2 className="mr-2 h-3.5 w-3.5" />
               {t("localData.clearAll")}
             </Button>
+
+            {/* Clear confirmation dialog */}
+            <ConfirmationDialog
+              open={showClearConfirm}
+              onOpenChange={setShowClearConfirm}
+              onConfirm={handleSelectiveClear}
+              title={t("localData.clearConfirmTitle") || " Briši sve lokalne podatke?"}
+              description={
+                t("localData.clearConfirmDesc") ||
+                "Ovo će trajno izbrisati odabrane podatke iz preglednika. Ovo se ne može poništiti."
+              }
+              confirmLabel={t("localData.clearAll") || "Briši sve"}
+              cancelLabel={t("common.cancel") || "Odustani"}
+              variant="danger"
+              icon={<AlertTriangle className="h-5 w-5" />}
+            />
           </div>
         </section>
       )}
