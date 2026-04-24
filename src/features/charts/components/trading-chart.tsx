@@ -8,6 +8,9 @@ import {
   ColorType,
   CrosshairMode,
 } from "lightweight-charts";
+import { useTranslation } from "react-i18next";
+import { EmptyState } from "@/components/shared/empty-state";
+import { ChartEmptyIllustration } from "@/components/shared/empty-illustrations";
 import type { PricePoint } from "@/types/stock";
 
 /** Get responsive chart height based on container width */
@@ -29,6 +32,10 @@ interface TradingChartProps {
   chartType?: "area" | "candlestick";
   height?: number;
   className?: string;
+  /** Callback to retry loading data (e.g., refetch from API) */
+  onRetry?: () => void;
+  /** Whether data is currently loading */
+  isLoading?: boolean;
 }
 
 export function TradingChart({
@@ -36,10 +43,16 @@ export function TradingChart({
   chartType = "area",
   height = 300,
   className,
+  onRetry,
+  isLoading,
 }: TradingChartProps) {
+  const { t } = useTranslation("common");
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const [currentHeight, setCurrentHeight] = useState(height);
+
+  // Check if we have data
+  const hasData = data.length > 0;
 
   const getThemeColors = useCallback(() => {
     const isDark = document.documentElement.classList.contains("dark");
@@ -177,6 +190,21 @@ export function TradingChart({
       chartRef.current = null;
     };
   }, [data, chartType, height, getThemeColors, currentHeight]);
+
+  // Render empty state when no data is available
+  if (!isLoading && !hasData) {
+    return (
+      <EmptyState
+        icon={<ChartEmptyIllustration className="h-12 w-12" />}
+        title={t("empty.noChartData")}
+        description={t("empty.noChartDataDescription")}
+        action={onRetry ? { label: t("empty.retry"), onClick: onRetry } : undefined}
+        variant="info"
+        className={className}
+        style={{ height: `${currentHeight}px` }}
+      />
+    );
+  }
 
   return (
     <div

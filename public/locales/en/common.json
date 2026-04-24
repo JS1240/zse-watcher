@@ -72,7 +72,10 @@
     "noResults": "No results found",
     "noDataDescription": "Please try again later or refresh the page.",
     "noResultsDescription": "Try adjusting your search terms or clearing the filters.",
-    "clearFilters": "Clear filters"
+    "clearFilters": "Clear filters",
+    "noChartData": "No price history",
+    "noChartDataDescription": "There's no historical price data available for this stock yet.",
+    "retry": "Try again"
   },
   "searchPlaceholder": "Ticker or name...",
   "fields": {

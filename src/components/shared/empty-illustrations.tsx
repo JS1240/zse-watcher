@@ -361,3 +361,43 @@ export function DividendsCalendarEmptyIllustration({ className }: { className?: 
     </svg>
   );
 }
+
+/** Chart/line illustration for chart empty state */
+export function ChartEmptyIllustration({ className }: { className?: string }): ReactNode {
+  return (
+    <svg
+      viewBox="0 0 80 80"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      aria-hidden="true"
+    >
+      {/* Background circle */}
+      <circle cx="40" cy="40" r="36" className="fill-muted/40" />
+      {/* Chart area outline */}
+      <rect x="14" y="16" width="52" height="48" rx="3" className="fill-card" stroke="currentColor" strokeWidth="1.5" style={{ stroke: 'hsl(var(--border))' }} />
+      {/* Y-axis */}
+      <line x1="18" y1="20" x2="18" y2="58" className="stroke-border" strokeWidth="1" />
+      {/* X-axis */}
+      <line x1="18" y1="58" x2="60" y2="58" className="stroke-border" strokeWidth="1" />
+      {/* Empty chart area with placeholder line */}
+      <path
+        d="M18 50 L26 50 L34 50 L42 50 L50 50 L58 50"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeDasharray="4 3"
+        className="stroke-muted-foreground/40"
+      />
+      {/* X mark indicating no data */}
+      <path
+        d="M36 36 L44 44 M44 36 L36 44"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        className="stroke-destructive"
+      />
+    </svg>
+  );
+}

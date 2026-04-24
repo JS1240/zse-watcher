@@ -73,7 +73,10 @@
     "noResults": "Nema rezultata",
     "noDataDescription": "Pokušajte kasnije ili osvježite stranicu.",
     "noResultsDescription": "Pokušajte promijeniti uvjete pretraživanja ili filtere.",
-    "clearFilters": "Očisti filtere"
+    "clearFilters": "Očisti filtere",
+    "noChartData": "Nema podataka o cijeni",
+    "noChartDataDescription": "Za ovu dionicu trenutno nema dostupnih povijesnih podataka o cijeni.",
+    "retry": "Pokušaj ponovo"
   },
   "searchPlaceholder": "Ticker ili naziv...",
   "fields": {

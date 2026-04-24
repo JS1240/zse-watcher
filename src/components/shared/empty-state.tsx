@@ -1,4 +1,4 @@
-import { type ReactNode } from "react";
+import { type ReactNode, type CSSProperties } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Lightbulb, ArrowRight } from "lucide-react";
@@ -26,6 +26,8 @@ interface EmptyStateProps {
   className?: string;
   /** Additional class for the icon wrapper div (e.g. 'h-10 w-10') */
   iconClassName?: string;
+  /** Inline styles for custom height/width (e.g. for chart empty state) */
+  style?: CSSProperties;
 }
 
 const variantClasses: Record<EmptyStateVariant, { container: string; icon: string }> = {
@@ -58,6 +60,7 @@ export function EmptyState({
   variant = "info",
   className,
   iconClassName,
+  style,
 }: EmptyStateProps) {
   return (
     <div
@@ -66,6 +69,7 @@ export function EmptyState({
         "animate-empty-state",
         className
       )}
+      style={style}
     >
       {/* Icon container */}
       <div
