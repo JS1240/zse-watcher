@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { CalendarDays, Search, Calendar, Download, ChevronDown, ChevronUp, ArrowUp, ArrowUpDown, Keyboard, TrendingUp, TrendingDown, Copy, X } from "lucide-react";
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { toast } from "sonner";
-import { DividendsCalendarEmptyIllustration } from "@/components/shared/empty-illustrations";
+import { DividendsCalendarEmptyIllustration, SearchEmptyIllustration } from "@/components/shared/empty-illustrations";
 import { useDividends } from "@/features/dividends/api/dividends-queries";
 import { DividendsSkeleton } from "./dividends-skeleton";
 
@@ -233,7 +233,7 @@ export function DividendsCalendar() {
     return (
       <div className="flex flex-col gap-6">
         <EmptyState
-          icon={<Search className="h-8 w-8" />}
+          icon={<SearchEmptyIllustration className="h-8 w-8" />}
           title={t("empty.noResults")}
           description={t("empty.noResultsDescription")}
           variant="no-results"
