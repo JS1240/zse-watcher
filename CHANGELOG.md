@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+- **News Feed Keyboard Shortcuts Always Visible** — improve discoverability for Croatian retail investors
+  - Changed keyboard shortcuts hint from tooltip-hover to always visible (matching stocks/watchlist/portfolio pattern)
+  - Shows ↑↓ navigiraj, Enter otvori, / traži directly in the results bar
+  - Helps users discover keyboard navigation without hovering
+
 - **Enhanced Portfolio CSV Export** — add fundamental data for Croatian retail investors
   - Added P/E Ratio and Dividend Yield columns to portfolio CSV exports
   - Works in both local and authenticated portfolio views

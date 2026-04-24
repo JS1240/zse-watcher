@@ -501,7 +501,7 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
           </div>
         )}
 
-        {/* Results count + live data indicator */}
+        {/* Results count + live data indicator + always-visible keyboard shortcuts hint */}
         {totalCount > 0 && (
           <div className="flex items-center justify-between text-[10px] text-muted-foreground">
             <span>
@@ -509,13 +509,19 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
               {debouncedSearch && totalCount !== filteredCount && ` / ${totalCount}`}
               {!debouncedSearch && ` / ${totalCount}`}
             </span>
-            <div className="flex items-center gap-1">
-              <span className="flex h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
-              <span>Live</span>
-              <span className="flex items-center gap-0.5 ml-1">
-                <Keyboard className="h-2.5 w-2.5" />
-                <span className="text-muted-foreground/60">↑↓</span>
-                <span className="text-muted-foreground/60">/</span>
+            {/* Always-visible keyboard shortcuts hint for discoverability - matching stocks/watchlist/portfolio pattern */}
+            <div className="flex items-center gap-2 text-[9px]">
+              <span className="flex items-center gap-0.5">
+                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">↑↓</kbd>
+                <span>navigiraj</span>
+              </span>
+              <span className="flex items-center gap-0.5">
+                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
+                <span>otvori</span>
+              </span>
+              <span className="flex items-center gap-0.5">
+                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">/</kbd>
+                <span>traži</span>
               </span>
             </div>
           </div>
