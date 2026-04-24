@@ -152,10 +152,10 @@ export function AlertForm({ onClose, defaultTicker, defaultCondition, defaultTar
     ? t("tickerNotFound")
     : translateError(errors.ticker?.message, t) || t("validation.selectTicker");
 
-  // Keyboard hint based on condition
-  const keyboardHint = isPercentCondition
-    ? t("fields.targetHint").replace("Primjer", "npr.") + " — " + t("pressEnter")
-    : t("fields.targetHint") + " — " + t("pressEnter");
+  // Helper text with example for target input
+  const targetHelperText = isPercentCondition
+    ? t("fields.targetHelperPercent") || "npr. 5 za 5% promjenu cijene"
+    : t("fields.targetHelperPrice") || "npr. 15,00 za kupnju ispod 15 EUR";
 
   // Handle focus for real-time validation
   const handleTargetFocus = useCallback(() => {
@@ -368,9 +368,10 @@ export function AlertForm({ onClose, defaultTicker, defaultCondition, defaultTar
               })}
               error={!!showTargetError}
               className={cn(
-                "pr-16",
+                "pr-16 transition-shadow",
                 showTargetError && "ring-1 ring-destructive border-destructive",
-                isTargetValid && !focused.target && !showTargetError && "ring-1 ring-emerald-500 border-emerald-500"
+                isTargetValid && !focused.target && !showTargetError && "ring-1 ring-emerald-500 border-emerald-500",
+                focused.target && !showTargetError && "ring-2 ring-ring ring-offset-1 ring-offset-background"
               )}
             />
             {/* Context badge: show current price when ticker is selected */}
@@ -393,7 +394,7 @@ export function AlertForm({ onClose, defaultTicker, defaultCondition, defaultTar
           ) : (
             <p className="mt-1.5 flex items-center gap-1.5 text-[9px] text-muted-foreground">
               <Keyboard className="h-3 w-3 flex-shrink-0" />
-              {keyboardHint}
+              {targetHelperText}
             </p>
           )}
         </div>

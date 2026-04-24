@@ -38,6 +38,8 @@
     "condition": "Uvjet",
     "target": "Ciljna vrijednost",
     "targetHint": "Primjer: 150,00 ili 10.5%",
+    "targetHelperPercent": "npr. 5 za 5% promjenu cijene",
+    "targetHelperPrice": "npr. 15,00 za kupnju ispod 15 EUR",
     "quickSet": "Brzo",
     "status": "Status",
     "created": "Stvoreno",

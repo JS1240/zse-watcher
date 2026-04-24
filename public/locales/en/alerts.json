@@ -38,6 +38,8 @@
     "condition": "Condition",
     "target": "Target Value",
     "targetHint": "Example: 150.00 or 10.5%",
+    "targetHelperPercent": "e.g. 5 for 5% price change",
+    "targetHelperPrice": "e.g. 15.00 to buy below 15 EUR",
     "quickSet": "Quick",
     "status": "Status",
     "created": "Created",
