@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Crown, X, Check, Zap, Sparkles } from "lucide-react";
+import { Crown, X, Check, Zap } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { createCheckoutSession } from "@/features/premium/api/stripe-api";
@@ -13,6 +14,7 @@ interface UpgradeModalProps {
 }
 
 export function UpgradeModal({ open, onClose, featureContext }: UpgradeModalProps) {
+  const { t } = useTranslation("premium");
   const [loading, setLoading] = useState(false);
   const [cycle, setCycle] = useState<"monthly" | "annual">("annual");
   const { isAuthenticated } = useAuth();
@@ -41,7 +43,7 @@ export function UpgradeModal({ open, onClose, featureContext }: UpgradeModalProp
         <button
           onClick={onClose}
           className="absolute right-3 top-3 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
-          aria-label="Close upgrade modal"
+          aria-label={t("upgradeModal.close")}
         >
           <X className="h-4 w-4" />
         </button>
@@ -51,12 +53,12 @@ export function UpgradeModal({ open, onClose, featureContext }: UpgradeModalProp
             <Crown className="h-7 w-7 text-amber" />
           </div>
 
-          <h2 className="text-lg font-bold text-foreground">Upgrade to Premium</h2>
+          <h2 className="text-lg font-bold text-foreground">{t("upgradeModal.title")}</h2>
 
           {featureContext && (
             <p className="mt-1 text-xs text-muted-foreground">
               <Zap className="mr-1 inline h-3 w-3 text-amber" />
-              Unlock: {featureContext}
+              {t("upgradeModal.featureUnlocks", { feature: featureContext })}
             </p>
           )}
         </div>
@@ -64,11 +66,11 @@ export function UpgradeModal({ open, onClose, featureContext }: UpgradeModalProp
         {/* Quick feature highlights */}
         <div className="mt-5 space-y-2">
           {[
-            { text: "Candlestick charts + technical indicators", included: true },
-            { text: "Stock screener with advanced filters", included: true },
-            { text: "Portfolio analytics & sector allocation", included: true },
-            { text: "Unlimited watchlists, portfolios & alerts", included: true },
-            { text: "CSV data export", included: true },
+            { text: t("upgradeModal.features.candlestick"), included: true },
+            { text: t("upgradeModal.features.screener"), included: true },
+            { text: t("upgradeModal.features.analytics"), included: true },
+            { text: t("upgradeModal.features.unlimited"), included: true },
+            { text: t("upgradeModal.features.export"), included: true },
           ].map((feature) => (
             <div key={feature.text} className="flex items-center gap-2.5 text-xs text-foreground">
               <div className="flex h-4 w-4 items-center justify-center rounded-full bg-emerald/10">
@@ -82,7 +84,7 @@ export function UpgradeModal({ open, onClose, featureContext }: UpgradeModalProp
         {/* Toggle */}
         <div className="mt-5 flex items-center justify-center gap-3">
           <span className={cn("text-xs font-medium", cycle === "monthly" ? "text-foreground" : "text-muted-foreground")}>
-            Monthly
+            {t("upgradeModal.monthly")}
           </span>
           <button
             onClick={() => setCycle(cycle === "monthly" ? "annual" : "monthly")}
@@ -101,9 +103,9 @@ export function UpgradeModal({ open, onClose, featureContext }: UpgradeModalProp
             />
           </button>
           <span className={cn("text-xs font-medium", cycle === "annual" ? "text-foreground" : "text-muted-foreground")}>
-            Annual
+            {t("upgradeModal.annual")}
             <span className="ml-1.5 rounded-sm bg-emerald/10 px-1.5 py-0.5 text-[10px] font-semibold text-emerald">
-              Save 17%
+              {t("pricing.savePercent")}
             </span>
           </span>
         </div>
@@ -111,30 +113,30 @@ export function UpgradeModal({ open, onClose, featureContext }: UpgradeModalProp
         {/* CTA buttons */}
         <div className="mt-4 space-y-2">
           <Button
-            className="w-full gap-2"
+            className="w-full"
             onClick={handleUpgrade}
             disabled={loading}
           >
             {loading ? (
-              "Redirecting..."
+              t("upgradeModal.loading")
             ) : (
               <>
-                <Sparkles className="h-4 w-4" />
+                <Crown className="mr-2 h-4 w-4" />
                 {cycle === "annual"
-                  ? `${premiumPlan?.annualPrice.toFixed(2)} EUR/year`
-                  : `${premiumPlan?.monthlyPrice.toFixed(2)} EUR/month`}
+                  ? `${premiumPlan?.annualPrice.toFixed(2)} EUR/${t("pricing.perYear").split("/")[1].trim()}`
+                  : `${premiumPlan?.monthlyPrice.toFixed(2)} EUR/${t("pricing.perMonth").split("/")[1].trim()}`}
               </>
             )}
           </Button>
           {cycle === "annual" && (
             <p className="text-center text-[10px] text-muted-foreground">
-              12 months for the price of 10
+              {t("pricing.twelveMonths")}
             </p>
           )}
         </div>
 
         <p className="mt-3 text-center text-[10px] text-muted-foreground">
-          Cancel anytime. Powered by Stripe.
+          {t("pricing.cancelAnytime")}
         </p>
       </div>
     </div>

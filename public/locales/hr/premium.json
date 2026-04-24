@@ -7,6 +7,35 @@
     "discount": "-17%",
     "popular": "Najpopularniji",
     "currentPlan": "Trenutni plan",
-    "redirecting": "Preusmjeravanje..."
+    "redirecting": "Preusmjeravanje...",
+    "free": "Besplatno",
+    "perMonth": "EUR / mj",
+    "perYear": "EUR / god",
+    "perMonthBilled": "EUR/mj, plaćanje godišnje",
+    "upgradeNow": "Pretplati se sada",
+    "savePercent": "Uštedi 17%",
+    "twelveMonths": "12 mjeseci po cijeni 10",
+    "cancelAnytime": "Otkaži bilo kada. Plaćanje putem Stripea."
+  },
+  "upgradeModal": {
+    "title": "Pretplati se na Premium",
+    "featureUnlocks": "Otkrij: {{feature}}",
+    "features": {
+      "candlestick": "Svijećne karte + tehnički indikatori",
+      "screener": "Screener dionica s naprednim filtrima",
+      "analytics": "Analitika portfelja i alokacija sektora",
+      "unlimited": "Neograničeni watchlisti, portfelji i upozorenja",
+      "export": "CSV izvoz podataka"
+    },
+    "monthly": "Mjesečno",
+    "annual": "Godišnje",
+    "loading": "Preusmjeravanje...",
+    "close": "Zatvori"
+  },
+  "premiumGate": {
+    "defaultTitle": "Premium funkcija",
+    "defaultDescription": "Pretplati se za pristup ovoj funkciji.",
+    "upgrade": "Pretplati se na Premium",
+    "premium": "Premium"
   }
 }

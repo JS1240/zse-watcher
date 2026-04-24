@@ -128,17 +128,19 @@ export function PricingPage() {
                       {price.toFixed(2)}
                     </span>
                     <span className="text-xs text-muted-foreground">
-                      EUR / {cycle === "monthly" ? "mo" : "yr"}
+                      EUR / {cycle === "monthly" ? t("pricing.perMonth").split("/")[1].trim() : t("pricing.perYear").split("/")[1].trim()}
                     </span>
                   </>
                 ) : (
-                  <span className="font-data text-3xl font-bold text-foreground">Free</span>
+                  <span className="font-data text-3xl font-bold text-foreground">
+                    {t("pricing.free")}
+                  </span>
                 )}
               </div>
 
               {cycle === "annual" && plan.annualPrice > 0 && (
                 <p className="mt-1 text-[10px] text-muted-foreground">
-                  {(plan.annualPrice / 12).toFixed(2)} EUR/mo billed annually
+                  {(plan.annualPrice / 12).toFixed(2)} {t("pricing.perMonthBilled")}
                 </p>
               )}
 
@@ -153,7 +155,7 @@ export function PricingPage() {
                     onClick={handleUpgrade}
                     disabled={upgradeLoading || !isAuthenticated}
                   >
-                    {upgradeLoading ? t("pricing.redirecting") : plan.cta}
+                    {upgradeLoading ? t("pricing.redirecting") : t("pricing.upgradeNow")}
                   </Button>
                 ) : null}
               </div>

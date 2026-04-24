@@ -7,6 +7,35 @@
     "discount": "-17%",
     "popular": "Most Popular",
     "currentPlan": "Current Plan",
-    "redirecting": "Redirecting..."
+    "redirecting": "Redirecting...",
+    "free": "Free",
+    "perMonth": "EUR / mo",
+    "perYear": "EUR / yr",
+    "perMonthBilled": "EUR/mo billed annually",
+    "upgradeNow": "Upgrade Now",
+    "savePercent": "Save 17%",
+    "twelveMonths": "12 months for the price of 10",
+    "cancelAnytime": "Cancel anytime. Powered by Stripe."
+  },
+  "upgradeModal": {
+    "title": "Upgrade to Premium",
+    "featureUnlocks": "Unlock: {{feature}}",
+    "features": {
+      "candlestick": "Candlestick charts + technical indicators",
+      "screener": "Stock screener with advanced filters",
+      "analytics": "Portfolio analytics & sector allocation",
+      "unlimited": "Unlimited watchlists, portfolios & alerts",
+      "export": "CSV data export"
+    },
+    "monthly": "Monthly",
+    "annual": "Annual",
+    "loading": "Redirecting...",
+    "close": "Close"
+  },
+  "premiumGate": {
+    "defaultTitle": "Premium Feature",
+    "defaultDescription": "Upgrade to unlock this feature.",
+    "upgrade": "Upgrade to Premium",
+    "premium": "Premium"
   }
 }

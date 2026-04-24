@@ -1,5 +1,6 @@
 import { type ReactNode, useState } from "react";
 import { Crown, Lock } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { UpgradeModal } from "@/features/premium/components/upgrade-modal";
 import { Button } from "@/components/ui/button";
 import type { PremiumFeature } from "@/features/premium/config/tiers";
@@ -12,9 +13,13 @@ interface PremiumGateProps {
   fallbackDescription?: string;
 }
 
-export function PremiumGate({ feature, children, fallbackTitle = "Premium Feature", fallbackDescription = "Upgrade to unlock this feature." }: PremiumGateProps) {
+export function PremiumGate({ feature, children, fallbackTitle, fallbackDescription }: PremiumGateProps) {
+  const { t } = useTranslation("premium");
   const { canAccess } = useSubscription();
   const [showUpgrade, setShowUpgrade] = useState(false);
+
+  const title = fallbackTitle ?? t("premiumGate.defaultTitle");
+  const description = fallbackDescription ?? t("premiumGate.defaultDescription");
 
   if (canAccess(feature)) {
     return <>{children}</>;
@@ -40,24 +45,24 @@ export function PremiumGate({ feature, children, fallbackTitle = "Premium Featur
           </div>
         </div>
         
-        <h3 className="text-lg font-semibold text-foreground">{fallbackTitle}</h3>
+        <h3 className="text-lg font-semibold text-foreground">{title}</h3>
         <p className="max-w-xs text-center text-sm text-muted-foreground">
-          {fallbackDescription}
+          {description}
         </p>
 
-        <Button 
+        <Button
           onClick={() => setShowUpgrade(true)}
           className="gap-2 bg-amber hover:bg-amber/90"
         >
           <Crown className="h-4 w-4" />
-          Upgrade to Premium
+          {t("premiumGate.upgrade")}
         </Button>
       </div>
 
-      <UpgradeModal 
+      <UpgradeModal
         open={showUpgrade}
         onClose={() => setShowUpgrade(false)}
-        featureContext={fallbackTitle}
+        featureContext={title}
       />
     </div>
   );
