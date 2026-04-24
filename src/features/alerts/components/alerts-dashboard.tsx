@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useRef, useCallback, memo } from "react";
 import { useTranslation } from "react-i18next";
-import { Bell, BellOff, Pencil, Trash2, X, Check, CheckCircle2, Keyboard, Download, AlertCircle, Search, CircleDot, Pause, TrendingUp, TrendingDown, ArrowUpDown, ArrowUp, Copy, Play, PauseIcon, RotateCcw, Loader2 } from "lucide-react";
+import i18n from "i18next";
+import { Bell, BellOff, Pencil, Trash2, X, Check, CheckCircle2, Keyboard, Download, AlertCircle, Search, CircleDot, Pause, TrendingUp, TrendingDown, ArrowUpDown, ArrowUp, Copy, Play, PauseIcon, RotateCcw, Loader2, Clock } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { toast } from "sonner";
@@ -14,7 +15,7 @@ import { LiveDataIndicator } from "@/components/shared/live-data-indicator";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { TickerSelect } from "@/components/shared/ticker-select";
-import { formatPrice, formatDate } from "@/lib/formatters";
+import { formatPrice, formatDate, formatRelativeTime } from "@/lib/formatters";
 import { normalizeNumberInput, formatInputNumber, parseLocalizedNumber } from "@/lib/format-input";
 import { cn } from "@/lib/utils";
 import type { AlertCondition } from "@/types/alert";
@@ -76,6 +77,30 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
   const { isError, refetch, dataUpdatedAt: alertsDataUpdatedAt, isFetching: alertsIsFetching } = useAlerts();
   const { data: stocksResult } = useStocksLive();
   const stocks = useMemo(() => stocksResult?.stocks ?? [], [stocksResult]);
+
+  // Track when alerts were last checked against live prices
+  // Persisted in localStorage so users can see when alerts were last evaluated
+  const [lastCheckedTime, setLastCheckedTime] = useState<number>(() => {
+    try {
+      const stored = localStorage.getItem("zse-alerts-last-checked");
+      return stored ? parseInt(stored, 10) : 0;
+    } catch {
+      return 0;
+    }
+  });
+
+  // Update last checked time when stock prices are fetched
+  useEffect(() => {
+    if (stocksResult && stocksResult.stocks) {
+      const now = Date.now();
+      setLastCheckedTime(now);
+      try {
+        localStorage.setItem("zse-alerts-last-checked", now.toString());
+      } catch {
+        // Ignore storage errors
+      }
+    }
+  }, [stocksResult]);
 
   // Get stock prices for flash detection (only include tickers that have alerts)
   // Track previous prices to detect changes for flash animation
@@ -342,6 +367,24 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
                   updatedAt={alertsDataUpdatedAt ?? 0}
                   isFetching={alertsIsFetching}
                 />
+                {/* Last checked timestamp - when alerts were evaluated against live prices */}
+                {lastCheckedTime > 0 && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="flex h-8 items-center gap-1 px-2 text-[10px] text-muted-foreground">
+                        <Clock className="h-3 w-3" />
+                        <span className="hidden sm:inline">
+                          {tc("time.lastChecked") || "Provjereno"} {formatRelativeTime(new Date(lastCheckedTime), i18n.language)}
+                        </span>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="text-xs">
+                        {formatDate(new Date(lastCheckedTime) as unknown as string)}
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                )}
                 {/* Sort dropdown */}
                 <select
                   value={`${sort.column}-${sort.direction}`}

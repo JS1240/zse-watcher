@@ -86,7 +86,8 @@
     "justNow": "upravo sada",
     "secondsAgo": "prije {{count}} sek",
     "minutesAgo": "prije {{count}} min",
-    "hoursAgo": "prije {{count}} sat"
+    "hoursAgo": "prije {{count}} sat",
+    "lastChecked": "Provjereno"
   },
   "commandPalette": {
     "placeholder": "Pretrazi dionice, akcije...",
