@@ -1,11 +1,12 @@
 import { useTranslation } from "react-i18next";
-import { memo, useCallback, useState } from "react";
+import { memo, useCallback, useState, useMemo } from "react";
 import { TrendingUp, TrendingDown, Clock, Star, Keyboard, Download, CheckCircle2 } from "lucide-react";
 import { useMovers } from "@/features/market/api/market-queries";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
 import { useAuth } from "@/hooks/use-auth";
 import { useWatchlistTickers, useAddToWatchlist, useRemoveFromWatchlist } from "@/features/watchlist/api/watchlist-queries";
 import { useLocalWatchlist } from "@/features/watchlist/hooks/use-local-watchlist";
+import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { ErrorState } from "@/components/shared/error-state";
 import { formatPrice } from "@/lib/formatters";
@@ -115,6 +116,20 @@ const MoverRow = memo(function MoverRow({ mover }: { mover: Mover }) {
   const { t } = useTranslation("watchlist");
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
+  // Get live price for flash detection
+  const { data: stocksResult } = useStocksLive();
+  const stocks = useMemo(() => stocksResult?.stocks ?? [], [stocksResult]);
+  const livePrice = useMemo(() => {
+    const stock = stocks.find((s) => s.ticker === mover.ticker);
+    return stock?.price ?? null;
+  }, [stocks, mover.ticker]);
+
+  // Determine flash direction based on live price vs mover price
+  const flashDirection = useMemo(() => {
+    if (!livePrice || livePrice === mover.price) return null;
+    return livePrice > mover.price ? "up" : "down";
+  }, [livePrice, mover.price]);
+
   const isWatched = isAuthenticated
     ? watchlistTickers.has(mover.ticker)
     : localItems.some((item) => item.ticker === mover.ticker);
@@ -164,7 +179,11 @@ const MoverRow = memo(function MoverRow({ mover }: { mover: Mover }) {
     <button
       type="button"
       onClick={handleClick}
-      className="group flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left transition-colors hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary"
+      className={cn(
+        "group flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left transition-colors hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary",
+        flashDirection === "up" && "price-flash-up",
+        flashDirection === "down" && "price-flash-down",
+      )}
     >
       <div className="flex flex-1 items-center gap-2">
         <button
