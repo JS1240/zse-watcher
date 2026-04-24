@@ -39,6 +39,12 @@
   - Only re-renders when relevant props actually change
   - Helps users with larger watchlists avoid lag when filtering, sorting, or searching
 
+- **Triggered Timestamp on Alert Rows** — show when triggered alerts fired for Croatian retail investors
+  - Added triggeredAt date display between created date and triggered badge
+  - Shows "→ 24.04.2026" format in amber color to distinguish from creation time
+  - Helps users know exactly when their target price was hit
+  - Null-safe: only shows when alert.isTriggered AND alert.triggeredAt exists
+
 ### Added
 
 - **News Feed Polish** — visual and UX improvements for Croatian retail investors

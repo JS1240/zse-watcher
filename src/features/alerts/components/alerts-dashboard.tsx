@@ -1285,6 +1285,12 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
           </div>
           <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
             <span>{formatDate(alert.createdAt)}</span>
+            {alert.isTriggered && alert.triggeredAt && (
+              <>
+                <span className="text-amber-500">→</span>
+                <span className="text-amber-600 dark:text-amber-400">{formatDate(alert.triggeredAt)}</span>
+              </>
+            )}
             {alert.isTriggered && (
               <Badge variant="success" className="text-[9px]">
                 {t("status.triggered")}
