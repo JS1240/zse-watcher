@@ -24,6 +24,7 @@ import { ErrorState } from "@/components/shared/error-state";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
 import { PortfolioEmptyIllustration, SearchEmptyIllustration } from "@/components/shared/empty-illustrations";
 import type { Holding } from "@/features/portfolio/api/portfolio-queries";
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 
 interface EnrichedHolding extends Holding {
   currentPrice: number;
@@ -43,6 +44,7 @@ interface PortfolioDashboardProps {
 
 export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps) {
   const { t } = useTranslation("portfolio");
+  const { t: tc } = useTranslation("common");
   const { isLoading, data: portfolioData } = usePortfolio();
   const { data: stocksResult, isError: isStocksError, refetch: refetchStocks } = useStocksLive();
   const stocks = stocksResult?.stocks ?? null;
@@ -56,6 +58,7 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
   const [scrollTop, setScrollTop] = useState(false);
   const [editingHolding, setEditingHolding] = useState<string | null>(null); // ticker being edited
   const [editForm, setEditForm] = useState({ shares: "", price: "", date: "" });
+  const [deleteTicker, setDeleteTicker] = useState<string | null>(null); // delete confirmation
   const portfolioRef = useRef<HTMLDivElement>(null);
 
   // Keyboard shortcut to focus search
@@ -135,6 +138,19 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
   const [gainFilter, setGainFilter] = useState<"all" | "gainers" | "losers" | "unchanged">("all");
   const [sectorFilter, setSectorFilter] = useState<SectorFilter>(null);
   const debouncedSearch = useDebounce(search, 200);
+
+  // Keyboard navigation for portfolio rows (matching watchlist/stocks pattern)
+  // Supports: Enter=view stock details, Delete=remove position
+  const handleRowKeyDown = useCallback((e: React.KeyboardEvent, ticker: string) => {
+    e.preventDefault();
+    if (e.key === "Enter" || e.key === " ") {
+      // Navigate to stock details
+      select(ticker);
+    } else if (e.key === "Delete" || e.key === "Backspace") {
+      // Open delete confirmation
+      setDeleteTicker(ticker);
+    }
+  }, [select]);
 
   const holdings = useMemo(() => {
     return computeHoldings(portfolioData?.transactions ?? [], localTxs);
@@ -568,6 +584,9 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
                       flash === "down" && "price-flash-down",
                     )}
                     onClick={() => select(h.ticker)}
+                    onKeyDown={(e) => handleRowKeyDown(e, h.ticker)}
+                    tabIndex={0}
+                    role="row"
                   >
                     <td className="px-3 py-3 md:py-2">
                       <div className="flex items-center gap-1">
@@ -807,6 +826,28 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
           <ScrollToTopIcon className="h-4 w-4" />
         </button>
       )}
+
+      {/* Delete confirmation dialog */}
+      <ConfirmationDialog
+        open={!!deleteTicker}
+        onOpenChange={(open) => !open && setDeleteTicker(null)}
+        title={t("confirmRemove") || "Remove from portfolio?"}
+        description={
+          deleteTicker
+            ? t("confirmRemoveDescription")?.replace("{ticker}", deleteTicker) ?? `Remove ${deleteTicker} from your portfolio? All transactions will be deleted.`
+            : ""
+        }
+        confirmLabel={tc("actions.delete") || "Remove"}
+        cancelLabel={tc("actions.cancel") || "Cancel"}
+        variant="danger"
+        icon={<Trash2 className="h-5 w-5 text-destructive" />}
+        onConfirm={() => {
+          if (deleteTicker) {
+            handleDeletePosition(deleteTicker);
+            setDeleteTicker(null);
+          }
+        }}
+      />
     </div>
   );
 }
