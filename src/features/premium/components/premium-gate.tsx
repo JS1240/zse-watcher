@@ -1,6 +1,7 @@
 import { type ReactNode, useState } from "react";
-import { Crown, Lock } from "lucide-react";
+import { Crown } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { PremiumLockedIllustration } from "@/components/shared/empty-illustrations";
 import { UpgradeModal } from "@/features/premium/components/upgrade-modal";
 import { Button } from "@/components/ui/button";
 import type { PremiumFeature } from "@/features/premium/config/tiers";
@@ -37,13 +38,8 @@ export function PremiumGate({ feature, children, fallbackTitle, fallbackDescript
 
       {/* Lock overlay */}
       <div className="relative flex flex-col items-center justify-center gap-4 bg-background/60 backdrop-blur-xl">
-        {/* Animated lock badge */}
-        <div className="relative">
-          <div className="absolute inset-0 animate-pulse rounded-full bg-amber-500/30" />
-          <div className="relative flex h-14 w-14 items-center justify-center rounded-full border-2 border-amber-500/50 bg-amber-500/10 shadow-lg shadow-amber-500/20">
-            <Lock className="h-6 w-6 text-amber-500" />
-          </div>
-        </div>
+        {/* PremiumLocked custom illustration */}
+        <PremiumLockedIllustration className="h-16 w-16" />
         
         <h3 className="text-lg font-semibold text-foreground">{title}</h3>
         <p className="max-w-xs text-center text-sm text-muted-foreground">

@@ -401,3 +401,50 @@ export function ChartEmptyIllustration({ className }: { className?: string }): R
     </svg>
   );
 }
+
+/** Crown + Lock illustration for premium locked features */
+export function PremiumLockedIllustration({ className }: { className?: string }): ReactNode {
+  return (
+    <svg
+      viewBox="0 0 80 80"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      aria-hidden="true"
+    >
+      {/* Background circle */}
+      <circle cx="40" cy="40" r="36" className="fill-muted/40" />
+      {/* Lock body outline */}
+      <rect x="26" y="32" width="28" height="24" rx="3" className="fill-card" stroke="currentColor" strokeWidth="2" style={{ stroke: 'hsl(var(--border))' }} />
+      {/* Lock shackle */}
+      <path
+        d="M30 32 L30 26 Q30 20 40 20 Q50 20 50 26 L50 32"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        className="stroke-muted-foreground"
+      />
+      {/* Crown on top - premium indicator */}
+      <path
+        d="M35 14 L38 10 L40 13 L42 10 L45 14 Z"
+        className="fill-amber"
+      />
+      {/* Keyhole detail */}
+      <circle cx="40" cy="42" r="3" className="fill-muted-foreground/30" />
+      <rect x="38.5" y="42" width="3" height="6" rx="1" className="fill-muted-foreground/30" />
+      {/* Subtle premium sparkle */}
+      <path
+        d="M24 26 L25.5 28 L27.5 28 L26 29.5 L26.5 31.5 L24 30 L21.5 31.5 L22 29.5 L20.5 28 L22.5 28 Z"
+        className="fill-amber"
+        transform="scale(0.5) translate(28, 12)"
+      />
+      {/* Second sparkle */}
+      <path
+        d="M24 26 L25.5 28 L27.5 28 L26 29.5 L26.5 31.5 L24 30 L21.5 31.5 L22 29.5 L20.5 28 L22.5 28 Z"
+        className="fill-amber"
+        transform="scale(0.4) translate(96, -8)"
+      />
+    </svg>
+  );
+}
