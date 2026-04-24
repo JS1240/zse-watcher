@@ -33,7 +33,9 @@
     "change": "Change",
     "volume": "Volume",
     "turnover": "Turnover",
-    "dividendYield": "Div. %"
+    "dividendYield": "Div. %",
+    "peRatio": "P/E",
+    "marketCap": "Market Cap"
   },
   "tooltips": {
     "sector": "Industry sector the stock belongs to. Groups similar companies.",

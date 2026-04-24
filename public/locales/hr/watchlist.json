@@ -33,7 +33,9 @@
     "change": "Promjena",
     "volume": "Volumen",
     "turnover": "Promet",
-    "dividendYield": "Div. %"
+    "dividendYield": "Div. %",
+    "peRatio": "P/E",
+    "marketCap": "Tržiš. kap."
   },
   "tooltips": {
     "sector": "Sektor industrije kojem dionica pripada. Grupira dionice sličnih kompanija.",

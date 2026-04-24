@@ -47,7 +47,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import type { Stock } from "@/types/stock";
 
-type SortColumn = keyof Pick<Stock, "price" | "changePct" | "turnover" | "volume" | "name" | "sector" | "dividendYield">;
+type SortColumn = keyof Pick<Stock, "price" | "changePct" | "turnover" | "volume" | "name" | "sector" | "dividendYield" | "peRatio" | "marketCapM">;
 type SortDirection = "asc" | "desc";
 type ChangeFilter = "all" | "gainers" | "losers" | "unchanged";
 type SectorFilter = string | null;
@@ -604,6 +604,20 @@ function SortableRow({
             : "—"}
         </span>
       </td>
+      <td className="hidden px-3 py-2 text-right xl:table-cell">
+        <span className="font-data text-xs tabular-nums text-muted-foreground">
+          {stock.peRatio !== null && stock.peRatio !== undefined
+            ? stock.peRatio.toFixed(1)
+            : "—"}
+        </span>
+      </td>
+      <td className="hidden px-3 py-2 text-right 2xl:table-cell">
+        <span className="font-data text-xs tabular-nums text-muted-foreground">
+          {stock.marketCapM !== null && stock.marketCapM !== undefined
+            ? `${stock.marketCapM.toFixed(0)}`
+            : "—"}
+        </span>
+      </td>
       {showRemove && <td />}
     </tr>
   );
@@ -1085,6 +1099,12 @@ function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort, dragEnable
             <th className="hidden px-3 py-2 text-right font-medium xl:table-cell">
               <SortHeader column="dividendYield" label={t("table.dividendYield")} sort={sort} onSort={onSort} tooltip={t("tooltips.dividendYield")} />
             </th>
+            <th className="hidden px-3 py-2 text-right font-medium xl:table-cell">
+              <SortHeader column="peRatio" label={t("table.peRatio")} sort={sort} onSort={onSort} tooltip={t("tooltips.peRatio")} />
+            </th>
+            <th className="hidden px-3 py-2 text-right font-medium 2xl:table-cell">
+              <SortHeader column="marketCapM" label={t("table.marketCap")} sort={sort} onSort={onSort} tooltip={t("tooltips.marketCap")} />
+            </th>
             {showRemove && <th className="w-10" />}
           </tr>
         </thead>
@@ -1261,6 +1281,20 @@ function WatchlistRow({ stock, showRemove, onRemove, flash, searchQuery }: Watch
         <span className="font-data text-xs tabular-nums text-muted-foreground">
           {stock.dividendYield !== null && stock.dividendYield !== undefined
             ? `${stock.dividendYield.toFixed(1)}%`
+            : "—"}
+        </span>
+      </td>
+      <td className="hidden px-3 py-2 text-right xl:table-cell">
+        <span className="font-data text-xs tabular-nums text-muted-foreground">
+          {stock.peRatio !== null && stock.peRatio !== undefined
+            ? stock.peRatio.toFixed(1)
+            : "—"}
+        </span>
+      </td>
+      <td className="hidden px-3 py-2 text-right 2xl:table-cell">
+        <span className="font-data text-xs tabular-nums text-muted-foreground">
+          {stock.marketCapM !== null && stock.marketCapM !== undefined
+            ? `${stock.marketCapM.toFixed(0)}`
             : "—"}
         </span>
       </td>
