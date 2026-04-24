@@ -148,16 +148,28 @@ function MacroPage() {
         </div>
       </div>
 
-      {/* Always-visible keyboard shortcuts hint for discoverability */}
-      <div className="mt-4 flex items-center justify-center gap-4 rounded-md border border-border bg-card/50 px-3 py-2 text-[10px] text-muted-foreground">
-        <button
-          onClick={() => setShowShortcuts(true)}
-          className="flex items-center gap-1 rounded px-1.5 py-1 text-[10px] text-muted-foreground hover:bg-muted hover:text-foreground"
-        >
-          <Keyboard className="h-2.5 w-2.5" />
-          <span>?</span>
-        </button>
-        <span>{tc("shortcuts.showAll") || "Svi prečaci"}</span>
+      {/* Always-visible keyboard shortcuts hint — consistent with stocks/watchlist/portfolio pattern */}
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded-sm border border-border/50 bg-muted/30 px-3 py-1.5 text-[9px] text-muted-foreground">
+        <div className="flex items-center gap-2">
+          <MarketStatus />
+        </div>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+          <span className="flex items-center gap-1">
+            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">?</kbd>
+            <span>{tc("shortcut.shortcuts") || "prečaci"}</span>
+          </span>
+          <span className="flex items-center gap-1">
+            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">T</kbd>
+            <span>{tc("shortcut.theme") || "tema"}</span>
+          </span>
+          <button
+            onClick={() => setShowShortcuts(true)}
+            className="flex items-center gap-1 hover:text-foreground"
+          >
+            <Keyboard className="h-2.5 w-2.5" />
+            <span className="text-[9px]">{tc("shortcuts.showAll") || "svi prečaci"}</span>
+          </button>
+        </div>
       </div>
 
       {/* Scroll to top button */}
