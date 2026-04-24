@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+- **Enhanced Portfolio CSV Export** — add fundamental data for Croatian retail investors
+  - Added P/E Ratio and Dividend Yield columns to portfolio CSV exports
+  - Works in both local and authenticated portfolio views
+  - Enables better fundamental analysis for investment decisions
+
 - **Custom Illustration for Received Dividends Empty State** — visual polish for Croatian retail investors
   - Replaced generic Receipt icon with DividendsCalendarEmptyIllustration
   - Consistent with other empty states using custom SVG illustrations
