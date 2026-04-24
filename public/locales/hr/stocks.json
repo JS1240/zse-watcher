@@ -92,6 +92,7 @@
   },
   "exportCsv": "Izvoz",
   "filters": {
+    "label": "Filtraj dionice prema performansi",
     "all": "Sve",
     "gainers": "Rastu",
     "losers": "Padaju",

@@ -93,6 +93,7 @@
   },
   "exportCsv": "Export",
   "filters": {
+    "label": "Filter stocks by performance",
     "all": "All",
     "gainers": "Gainers",
     "losers": "Losers",
