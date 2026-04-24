@@ -249,9 +249,19 @@ const SectorCell = memo(function SectorCell({
     <div
       className={cn(
         "flex flex-col gap-1 rounded-md border border-border/50 p-2 transition-all duration-150 hover:border-border hover:shadow-md",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
         getHeatColor(sector.avgChange),
       )}
       style={{ minHeight: `${height}px` }}
+      tabIndex={0}
+      role="button"
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onSelectSector();
+        }
+      }}
+      aria-label={`${sector.sector}: prosjek ${formatPercent(sector.avgChange)}, ${sector.stocks.length} dionica, ${formatCurrency(sector.totalTurnover)} prometa. Enter za pregled.`}
       onMouseEnter={(e) => onHover?.(sector, e)}
       onMouseLeave={() => onHover?.(sector, { clientX: -9999, clientY: -9999 } as React.MouseEvent<HTMLDivElement>)}
     >
