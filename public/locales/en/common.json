@@ -84,7 +84,8 @@
     "ago": "ago",
     "justNow": "just now",
     "secondsAgo": "{{count}}s ago",
-    "minutesAgo": "{{count}}m ago"
+    "minutesAgo": "{{count}}m ago",
+    "hoursAgo": "{{count}}h ago"
   },
   "commandPalette": {
     "placeholder": "Search stocks, actions...",
