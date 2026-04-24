@@ -24,23 +24,50 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/* Price flash animation */
+/* Price flash animation with scale effect */
 @keyframes flash-green {
-  0% { background-color: hsl(142 71% 45% / 0.25); }
-  100% { background-color: transparent; }
+  0% { background-color: hsl(142 71% 45% / 0.3); transform: scale(1.02); }
+  50% { background-color: hsl(142 71% 45% / 0.1); transform: scale(1.01); }
+  100% { background-color: transparent; transform: scale(1); }
 }
 
 @keyframes flash-red {
-  0% { background-color: hsl(0 84% 60% / 0.25); }
-  100% { background-color: transparent; }
+  0% { background-color: hsl(0 84% 60% / 0.3); transform: scale(1.02); }
+  50% { background-color: hsl(0 84% 60% / 0.1); transform: scale(1.01); }
+  100% { background-color: transparent; transform: scale(1); }
 }
 
 .price-flash-up {
-  animation: flash-green 0.8s ease-out;
+  animation: flash-green 0.7s ease-out forwards;
 }
 
 .price-flash-down {
-  animation: flash-red 0.8s ease-out;
+  animation: flash-red 0.7s ease-out forwards;
+}
+
+/* Button press feedback - tactile feel for Croatian retail investors */
+@keyframes button-press {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.97); }
+  100% { transform: scale(1); }
+}
+
+.btn-press {
+  transition: transform 0.1s ease-out;
+}
+
+.btn-press:active {
+  transform: scale(0.97);
+}
+
+/* Card hover lift - interactive feel */
+.card-interactive {
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, border-color 0.2s ease-out;
+}
+
+.card-interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px hsl(var(--card) / 0.15);
 }
 
 /* Custom scrollbar using theme variables */
@@ -177,6 +204,32 @@ button:focus-visible,
 tr[data-clickable]:focus-visible {
   outline: 2px solid currentColor;
   outline-offset: -2px;
+}
+
+/* Table row hover effect - interactive feel */
+tr[data-clickable],
+.stock-row {
+  transition: background-color 0.15s ease-out, transform 0.15s ease-out;
+}
+
+tr[data-clickable]:hover,
+.stock-row:hover {
+  background-color: hsl(var(--accent) / 0.3);
+}
+
+tr[data-clickable]:active,
+.stock-row:active {
+  transform: scale(0.995);
+}
+
+/* Badge subtle pulse for status changes */
+@keyframes badge-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+.animate-badge-pulse {
+  animation: badge-pulse 0.6s ease-out;
 }
 
 /* Fade animations for drawers and modals */
