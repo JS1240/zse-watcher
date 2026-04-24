@@ -23,6 +23,7 @@ import { useSelectedStock } from "@/hooks/use-selected-stock";
 import { useRecentStocks } from "@/hooks/use-recent-stocks";
 import { eventBus } from "@/lib/event-bus";
 import { formatPrice, formatPercent } from "@/lib/formatters";
+import { SearchEmptyIllustration } from "@/components/shared/empty-illustrations";
 
 export function CommandPalette() {
   const [open, setOpen] = useState(false);
@@ -177,13 +178,16 @@ export function CommandPalette() {
             </Command.Group>
           )}
 
-          <Command.Empty className="py-6 text-center text-sm text-muted-foreground">
-            {search.length > 0 && matchingStocks.length === 0
-              ? t("commandPalette.noResults")
-              : stocksLoading
-                ? t("commandPalette.loading")
-                : t("commandPalette.hint")}
-          </Command.Empty>
+          <div className="flex flex-col items-center justify-center py-8 px-4">
+            <SearchEmptyIllustration className="h-12 w-12 mb-3" />
+            <p className="text-sm text-muted-foreground">
+              {search.length > 0 && matchingStocks.length === 0
+                ? t("commandPalette.noResults")
+                : stocksLoading
+                  ? t("commandPalette.loading")
+                  : t("commandPalette.hint")}
+            </p>
+          </div>
 
           {/* Stock search results */}
           {matchingStocks.length > 0 && (
