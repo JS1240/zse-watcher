@@ -13,13 +13,15 @@
   },
   "title": "Praćenje",
   "empty": "Nema dionica u listi praćenja",
-  "emptyDescription": "Kliknite zvjezdicu pokraj dionice da je dodate u listu.",
-  "emptyHints": {
-    "step1": "Pregledajte dionice klikom na 'Pregledaj dionice'",
-    "step2": "Kliknite zvjezdicu ☆ pokraj dionice koju želite pratiti",
-    "step3": " pratite cijenu i promjene iz ove liste"
+  "emptyDescription": "Pratite dionice koje vas zanimaju da lako pratite njihovu vrijednost.",
+  "quickStart": {
+    "step1": "Pregledaj dionice",
+    "step1Desc": "Idi na stranicu dionica i pronađi dionicu koju želiš pratiti.",
+    "step2": "Klikni zvjezdicu",
+    "step2Desc": "Klikni ☆ pokraj dionice da je dodaš u listu praćenja.",
+    "step3": "Prati cijenu",
+    "step3Desc": "Vidi cijenu i promjene iz ove liste kad god želiš."
   },
-  "emptyHint": "Pratite dionice koje vas zanimaju i lako pratite njihovu vrijednost.",
   "add": "Dodaj u listu praćenja",
   "remove": "Ukloni iz liste praćenja",
   "searchPlaceholder": "Pretraži dionice...",

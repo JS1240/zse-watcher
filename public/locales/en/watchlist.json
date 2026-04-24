@@ -13,13 +13,15 @@
   },
   "title": "Watchlist",
   "empty": "No stocks in watchlist",
-  "emptyDescription": "Click the star next to a stock to add it to your watchlist.",
-  "emptyHints": {
-    "step1": "Browse stocks by clicking 'Browse stocks'",
-    "step2": "Click the star ☆ next to any stock you want to track",
-    "step3": " track price and changes from this list"
+  "emptyDescription": "Track stocks you're interested in to easily monitor their value.",
+  "quickStart": {
+    "step1": "Browse stocks",
+    "step1Desc": "Go to the stocks page and find a stock you want to track.",
+    "step2": "Click the star",
+    "step2Desc": "Click ☆ next to the stock to add it to your watchlist.",
+    "step3": "Track price",
+    "step3Desc": "View price and changes from this list whenever you want."
   },
-  "emptyHint": "Track stocks you're interested in and easily monitor their value.",
   "add": "Add to watchlist",
   "remove": "Remove from watchlist",
   "searchPlaceholder": "Search stocks...",
