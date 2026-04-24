@@ -496,12 +496,21 @@ export function DividendsCalendar() {
             <span className="ml-1 text-primary">({selectedYear})</span>
           )}
         </span>
-        <span className="flex items-center gap-1.5 text-[9px] text-muted-foreground">
-          <kbd className="rounded bg-muted px-1.5 py-0.5 font-sans text-[8px]">/</kbd>
-          <span className="hidden sm:inline">{td("shortcut.search")}</span>
-          <kbd className="rounded bg-muted px-1.5 py-0.5 font-sans text-[8px]">Enter</kbd>
-          <span className="hidden sm:inline">{td("shortcut.view")}</span>
-        </span>
+        {/* Always-visible keyboard shortcuts hint for discoverability */}
+        <div className="flex items-center gap-2 text-[9px] text-muted-foreground">
+          <span className="flex items-center gap-0.5">
+            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
+            <span className="hidden sm:inline">{td("shortcut.view")}</span>
+          </span>
+          <span className="flex items-center gap-0.5">
+            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">↑↓</kbd>
+            <span className="hidden sm:inline">navigiraj</span>
+          </span>
+          <span className="flex items-center gap-0.5">
+            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">/</kbd>
+            <span className="hidden sm:inline">{td("shortcut.search")}</span>
+          </span>
+        </div>
       </div>
 
       {grouped.length > 0 && (
