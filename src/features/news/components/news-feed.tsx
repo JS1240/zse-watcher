@@ -25,8 +25,8 @@ interface NewsFeedProps {
   limit?: number;
 }
 
-// Compact category filter chip with count badge — similar to stock table filter chips
-function CategoryChip({
+// Compact category filter chip with count badge — memoized to prevent re-renders
+const CategoryChip = memo(function CategoryChip({
   active,
   onClick,
   label,
@@ -66,7 +66,7 @@ function CategoryChip({
       )}
     </button>
   );
-}
+});
 
 export function NewsFeed({ ticker: propsTicker, category, limit }: NewsFeedProps) {
   const { data: articles, isLoading, isError, refetch } = useNews();
