@@ -1,9 +1,10 @@
-import { useState, useRef, memo } from "react";
+import { useState, useRef, memo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Crown, Check, X, ArrowUp, Keyboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSubscription } from "@/features/premium/hooks/use-subscription";
 import { useAuth } from "@/hooks/use-auth";
+import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { PRICING_PLANS } from "@/features/premium/config/pricing";
 import { cn } from "@/lib/utils";
 import { createCheckoutSession } from "@/features/premium/api/stripe-api";
@@ -42,6 +43,12 @@ export const PricingPage = memo(function PricingPage() {
       setUpgradeLoading(false);
     }
   };
+
+  // Keyboard shortcuts for billing cycle toggle
+  const setToMonthly = useCallback(() => setCycle("monthly"), []);
+  const setToAnnual = useCallback(() => setCycle("annual"), []);
+  useKeyboardShortcut({ key: "m", handler: setToMonthly, enabled: true });
+  useKeyboardShortcut({ key: "g", handler: setToAnnual, enabled: true });
 
   return (
     <div 
