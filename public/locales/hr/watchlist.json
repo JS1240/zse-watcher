@@ -67,5 +67,12 @@
   "shortcuts": "Tipkovnički prečaci",
   "confirmClearAll": "Obriši cijelu listu?",
   "confirmClearAllDescription": "Ovo će ukloniti sve dionice iz liste praćenja. Ova radnja se ne može poništiti.",
-  "clearAll": "Obriši sve"
+  "clearAll": "Obriši sve",
+  "quickAdd": "Brzo dodavanje",
+  "quickAddPlaceholder": "Npr. KOEI-R-A, AD Plastika, ...",
+  "quickAddTooltip": "Unesite ticker dionice za brzo dodavanje u listu praćenja",
+  "quickAddButton": "Dodaj",
+  "quickAddSuccess": "{{ticker}} dodan u listu praćenja",
+  "quickAddInvalid": "Nepoznata dionica: {{ticker}}",
+  "quickAddAlreadyWatched": "{{ticker}} je već u listi praćenja"
 }

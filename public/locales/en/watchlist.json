@@ -67,5 +67,12 @@
   "shortcuts": "Keyboard shortcuts",
   "confirmClearAll": "Clear entire watchlist?",
   "confirmClearAllDescription": "This will remove all stocks from your watchlist. This action cannot be undone.",
-  "clearAll": "Clear all"
+  "clearAll": "Clear all",
+  "quickAdd": "Quick add",
+  "quickAddPlaceholder": "e.g. KOEI-R-A, AD Plastika, ...",
+  "quickAddTooltip": "Enter a ticker to quickly add it to your watchlist",
+  "quickAddButton": "Add",
+  "quickAddSuccess": "{{ticker}} added to watchlist",
+  "quickAddInvalid": "Unknown stock: {{ticker}}",
+  "quickAddAlreadyWatched": "{{ticker}} is already in your watchlist"
 }

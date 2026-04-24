@@ -5,13 +5,14 @@ import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocalWatchlist } from "@/features/watchlist/hooks/use-local-watchlist";
-import { useWatchlistItems } from "@/features/watchlist/api/watchlist-queries";
+import { useWatchlistItems, useAddToWatchlist } from "@/features/watchlist/api/watchlist-queries";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { LiveDataIndicator } from "@/components/shared/live-data-indicator";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
 import { usePriceFlash } from "@/hooks/use-price-flash";
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { WatchlistToggle } from "@/features/watchlist/components/watchlist-toggle";
+import { QuickAddTicker } from "@/features/watchlist/components/quick-add-ticker";
 import { WatchlistSkeleton } from "@/features/watchlist/components/watchlist-skeleton";
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { EmptyState } from "@/components/shared/empty-state";
@@ -155,6 +156,7 @@ function AuthenticatedWatchlist() {
   const { t } = useTranslation("watchlist");
   const { t: tc } = useTranslation("common");
   const watchlistItems = useWatchlistItems();
+  const addMutation = useAddToWatchlist();
   const { data: stocksResult, isError, refetch, dataUpdatedAt, isFetching } = useStocksLive();
   const stocks = useMemo(() => stocksResult?.stocks ?? [], [stocksResult]);
   const [search, setSearch] = useState("");
@@ -344,6 +346,14 @@ function AuthenticatedWatchlist() {
           <Download className="h-3.5 w-3.5" />
           CSV
         </Button>
+        {/* Quick add button - only show when there are stocks available */}
+        {stocks.length > 0 && (
+          <QuickAddTicker
+            stocks={stocks}
+            watchedTickers={new Set(watchedStocks.map((s) => s.ticker))}
+            onAdd={(ticker) => addMutation.mutate(ticker)}
+          />
+        )}
       </div>
 
       {/* Quick filters: change direction + sector */}
@@ -626,7 +636,7 @@ function SortableRow({
 function LocalWatchlist() {
   const { t } = useTranslation("watchlist");
   const { t: tc } = useTranslation("common");
-  const { items, removeItem, reorder: reorderItems, clearAll } = useLocalWatchlist();
+  const { items, addItem, removeItem, reorder: reorderItems, clearAll } = useLocalWatchlist();
   const { data: stocksResult, isError, refetch, dataUpdatedAt, isFetching } = useStocksLive();
   const stocks = useMemo(() => stocksResult?.stocks ?? [], [stocksResult]);
   const [search, setSearch] = useState("");
@@ -850,6 +860,14 @@ function LocalWatchlist() {
           <Download className="h-3.5 w-3.5" />
           CSV
         </Button>
+        {/* Quick add button for local watchlist */}
+        {stocks.length > 0 && (
+          <QuickAddTicker
+            stocks={stocks}
+            watchedTickers={new Set(items.map((i) => i.ticker))}
+            onAdd={(ticker) => addItem(ticker)}
+          />
+        )}
       </div>
 
       {/* Quick filters: gainers / losers / unchanged */}
