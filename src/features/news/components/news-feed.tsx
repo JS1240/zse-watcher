@@ -348,7 +348,7 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
                 onChange={(e) => setSearch(e.target.value)}
                 onFocus={() => setSearchFocused(true)}
                 onBlur={() => setSearchFocused(false)}
-                className="pl-8 pr-14"
+                className={cn("pl-8 pr-14 transition-shadow", searchFocused && "ring-2 ring-ring ring-offset-1 ring-offset-background")}
               />
               {!search && (
                 <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-0.5 rounded bg-muted px-1.5 py-0.5 text-[9px] text-muted-foreground">
@@ -440,7 +440,7 @@ export function NewsFeed({ ticker, category, limit }: NewsFeedProps) {
                 onChange={(e) => setSearch(e.target.value)}
                 onFocus={() => setSearchFocused(true)}
                 onBlur={() => setSearchFocused(false)}
-                className="pl-8 pr-14"
+                className={cn("pl-8 pr-14 transition-shadow", searchFocused && "ring-2 ring-ring ring-offset-1 ring-offset-background")}
               />
               {!search && (
                 <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-0.5 rounded bg-muted px-1.5 py-0.5 text-[9px] text-muted-foreground">
