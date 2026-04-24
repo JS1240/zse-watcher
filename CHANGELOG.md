@@ -10,6 +10,13 @@
   - Users can filter to see news about stocks they own or watch
   - Translation keys: filter.allTickers ("Sve dionice" / "All tickers")
 
+- **LiveDataIndicator on News Feed** — show data freshness for Croatian retail investors
+  - Added LiveDataIndicator to news feed toolbar showing last update time
+  - Amber pulsing dot when data is stale (>5 minutes)
+  - Green pulsing dot when data is fresh (<1 minute)
+  - Shows "Osvježavam..." during fetch, relative time otherwise
+  - Consistent with stocks table, watchlist, and alerts dashboard
+
 ### Changed
 - **NotificationCenter Badge Colors** — normalize triggered alert badge to match codebase amber patterns
   - Replaced hardcoded amber-500/20, amber-700, amber-900/50 with standard bg-amber

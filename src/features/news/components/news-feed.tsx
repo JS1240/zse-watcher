@@ -13,6 +13,7 @@ import { Highlight } from "@/components/shared/highlight";
 import { EmptyState } from "@/components/shared/empty-state";
 import { NewsEmptyIllustration, SearchEmptyIllustration } from "@/components/shared/empty-illustrations";
 import { ErrorState } from "@/components/shared/error-state";
+import { LiveDataIndicator } from "@/components/shared/live-data-indicator";
 import { exportToCsv } from "@/lib/export";
 import { cn } from "@/lib/utils";
 import type { NewsArticle } from "@/types/news";
@@ -69,7 +70,7 @@ const CategoryChip = memo(function CategoryChip({
 });
 
 export function NewsFeed({ ticker: propsTicker, category, limit }: NewsFeedProps) {
-  const { data: articles, isLoading, isError, refetch } = useNews();
+  const { data: articles, isLoading, isError, refetch, dataUpdatedAt, isFetching } = useNews();
   const { t } = useTranslation("common");
   const { t: tn } = useTranslation("news");
   const [selectedArticle, setSelectedArticle] = useState<NewsArticle | null>(null);
@@ -419,6 +420,10 @@ export function NewsFeed({ ticker: propsTicker, category, limit }: NewsFeedProps
             <div className="flex items-center gap-2">
               <SortHeader field="date" label={t("sort.date") || "Datum"} />
               <SortHeader field="ticker" label={t("sort.ticker") || "Dionica"} />
+              <LiveDataIndicator
+                updatedAt={dataUpdatedAt}
+                isFetching={isFetching}
+              />
               <Button
                 variant="ghost"
                 size="sm"
@@ -524,6 +529,10 @@ export function NewsFeed({ ticker: propsTicker, category, limit }: NewsFeedProps
             <div className="flex items-center gap-2">
               <SortHeader field="date" label={t("sort.date") || "Datum"} />
               <SortHeader field="ticker" label={t("sort.ticker") || "Dionica"} />
+              <LiveDataIndicator
+                updatedAt={dataUpdatedAt}
+                isFetching={isFetching}
+              />
               <Button
                 variant="ghost"
                 size="sm"
