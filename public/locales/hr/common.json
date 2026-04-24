@@ -123,5 +123,14 @@
     "select": "odaberi",
     "first": "prvi",
     "noResults": "Nema rezultata"
+  },
+  "terms": {
+    "label": "Prihvaćam",
+    "link": "Uvjete korištenja",
+    "and": "i",
+    "privacy": "Pravila o privatnosti"
+  },
+  "validation": {
+    "termsRequired": "Morate prihvatiti uvjete korištenja"
   }
 }

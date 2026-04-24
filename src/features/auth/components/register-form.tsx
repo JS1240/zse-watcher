@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod/v4";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
-import { AlertCircle, CheckCircle2 } from "lucide-react";
+import { AlertCircle, CheckCircle2, Check } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +14,7 @@ const registerSchema = z.object({
   displayName: z.string().min(2),
   email: z.email(),
   password: z.string().min(6),
+  termsAccepted: z.literal(true, "validation.termsRequired"),
 });
 
 type RegisterValues = z.infer<typeof registerSchema>;
@@ -229,6 +230,48 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
             {passwordInput.length > 0 && `${passwordInput.length}/6`}
           </p>
         )}
+      </div>
+
+      {/* GDPR consent checkbox - Croatian retail investors need explicit consent */}
+      <div className="flex items-start gap-2">
+        <label className="relative mt-0.5 flex cursor-pointer items-center">
+          <input
+            type="checkbox"
+            {...register("termsAccepted")}
+            className="peer h-4 w-4 cursor-pointer appearance-none rounded border border-input bg-background transition-all checked:border-primary checked:bg-primary hover:border-primary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50"
+          />
+          <Check className="pointer-events-none absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rotate-0 scale-0 text-primary-foreground transition-all peer-checked:rotate-0 peer-checked:scale-100" />
+        </label>
+        <label className="flex cursor-pointer flex-col text-[10px] leading-relaxed">
+          <span className="text-foreground">
+            {t("terms.label") || "Prihvaćam"}{" "}
+            <a
+              href="/terms"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:no-underline"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {t("terms.link") || "Uvijete korištenja"}
+            </a>
+            {" "}{t("terms.and") || "i"}{" "}
+            <a
+              href="/privacy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:no-underline"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {t("terms.privacy") || "Pravila o privatnosti"}
+            </a>
+          </span>
+          {errors.termsAccepted && (
+            <p className="mt-1 flex items-center gap-1.5 text-destructive">
+              <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
+              {t("validation.termsRequired") || "Morate prihvatiti uvjete"}
+            </p>
+          )}
+        </label>
       </div>
 
       {error && (

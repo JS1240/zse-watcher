@@ -122,5 +122,14 @@
     "select": "select",
     "first": "first",
     "noResults": "No results"
+  },
+  "terms": {
+    "label": "I accept the",
+    "link": "Terms of Service",
+    "and": "and",
+    "privacy": "Privacy Policy"
+  },
+  "validation": {
+    "termsRequired": "You must accept the terms"
   }
 }
