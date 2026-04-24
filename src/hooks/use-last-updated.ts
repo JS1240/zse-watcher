@@ -32,7 +32,7 @@ export function useLastUpdated(source: string = "general") {
 }
 
 // Singleton for tracking across the app
-let trackedSources: Record<string, number> = {};
+const trackedSources: Record<string, number> = {};
 
 export function getLastUpdatedForSource(source: string): number | null {
   return trackedSources[source] ?? null;

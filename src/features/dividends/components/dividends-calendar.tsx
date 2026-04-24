@@ -36,6 +36,21 @@ export function DividendsCalendar() {
   const dividendsListRef = useRef<HTMLDivElement>(null);
   const { select, selectedTicker } = useSelectedStock();
 
+  // Close dropdowns on outside click — must be called before any early returns
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (showYearFilter || showSortMenu) {
+        const target = e.target as HTMLElement;
+        if (!target.closest("[data-dropdown]")) {
+          setShowYearFilter(false);
+          setShowSortMenu(false);
+        }
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [showYearFilter, showSortMenu]);
+
   // Stats computed from filtered results (not sorted/grouped)
   const stats = useMemo(() => {
     if (!dividends) return { count: 0, avgYield: 0, totalAmount: 0 };
@@ -226,21 +241,6 @@ export function DividendsCalendar() {
       />
     );
   }
-
-  // Close dropdowns on outside click
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (showYearFilter || showSortMenu) {
-        const target = e.target as HTMLElement;
-        if (!target.closest("[data-dropdown]")) {
-          setShowYearFilter(false);
-          setShowSortMenu(false);
-        }
-      }
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, [showYearFilter, showSortMenu]);
 
   // Export enriched dividends to CSV — includes all relevant fields for Croatian tax planning
   const handleExportCsv = () => {
