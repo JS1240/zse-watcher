@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, memo } from "react";
 import { useTranslation } from "react-i18next";
 import { Crown, Check, X, ArrowUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import { PricingSkeleton } from "./pricing-skeleton";
 
 type BillingCycle = "monthly" | "annual";
 
-export function PricingPage() {
+export const PricingPage = memo(function PricingPage() {
   const { t } = useTranslation("premium");
   const { t: tc } = useTranslation("common");
   const [cycle, setCycle] = useState<BillingCycle>("annual");
@@ -198,4 +198,4 @@ export function PricingPage() {
       </button>
     </div>
   );
-}
+});
