@@ -181,6 +181,14 @@ function AuthenticatedWatchlist() {
   // Compute unique sectors from watched stocks
   const availableSectors = useMemo(() => getUniqueSectors(watchedStocks), [watchedStocks]);
 
+  // Compute filter counts for badges (from all watched stocks, not filtered results)
+  const filterCounts = useMemo(() => ({
+    all: watchedStocks.length,
+    gainers: watchedStocks.filter((s) => s.changePct > 0).length,
+    losers: watchedStocks.filter((s) => s.changePct < 0).length,
+    unchanged: watchedStocks.filter((s) => s.changePct === 0).length,
+  }), [watchedStocks]);
+
   const filtered = useMemo(() => {
     let result = watchedStocks;
     if (debouncedSearch) {
@@ -378,6 +386,16 @@ function AuthenticatedWatchlist() {
           >
             <Icon className="h-3 w-3" />
             <span className="hidden sm:inline">{t(labelKey)}</span>
+            {typeof filterCounts[value] === "number" && filterCounts[value] > 0 && (
+              <span className={cn(
+                "ml-0.5 rounded-full px-1.5 py-0.5 text-[9px] font-semibold",
+                changeFilter === value
+                  ? "bg-primary-foreground/20 text-primary-foreground"
+                  : "bg-muted-foreground/20 text-muted-foreground"
+              )}>
+                {filterCounts[value]}
+              </span>
+            )}
           </button>
         ))}
         {/* Sector filter dropdown */}
@@ -700,6 +718,14 @@ function LocalWatchlist() {
   // Compute unique sectors from watched stocks
   const availableSectors = useMemo(() => getUniqueSectors(watchedStocks), [watchedStocks]);
 
+  // Compute filter counts for badges (from all watched stocks, not filtered results)
+  const filterCounts = useMemo(() => ({
+    all: watchedStocks.length,
+    gainers: watchedStocks.filter((s) => s.changePct > 0).length,
+    losers: watchedStocks.filter((s) => s.changePct < 0).length,
+    unchanged: watchedStocks.filter((s) => s.changePct === 0).length,
+  }), [watchedStocks]);
+
   const filtered = useMemo(() => {
     let result = watchedStocks;
     if (debouncedSearch) {
@@ -906,6 +932,16 @@ function LocalWatchlist() {
               >
                 <Icon className="h-3 w-3" />
                 <span className="hidden sm:inline">{t(labelKey)}</span>
+                {typeof filterCounts[value] === "number" && filterCounts[value] > 0 && (
+                  <span className={cn(
+                    "ml-0.5 rounded-full px-1.5 py-0.5 text-[9px] font-semibold",
+                    changeFilter === value
+                      ? "bg-primary-foreground/20 text-primary-foreground"
+                      : "bg-muted-foreground/20 text-muted-foreground"
+                  )}>
+                    {filterCounts[value]}
+                  </span>
+                )}
               </button>
             </TooltipTrigger>
             <TooltipContent side="top" className="text-xs">
