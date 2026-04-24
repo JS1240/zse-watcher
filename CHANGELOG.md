@@ -4,6 +4,13 @@
 
 ### Added
 
+- **Heatmap Keyboard Navigation** — add keyboard accessibility to sector cells for Croatian retail investors
+  - SectorCell now accepts Tab focus with tabIndex=0
+  - Enter/Space activates sector drawer (same as click)
+  - aria-label summarizes sector: avg change, stock count, turnover
+  - focus-visible ring matches the app's established accessibility pattern
+  - Screen reader users can navigate and activate sector cells
+
 - **News Ticker Filter** — filter news by specific stock ticker for Croatian retail investors
   - Added ticker dropdown to news feed toolbar (appears when articles have tickers)
   - Complements existing category filters (all/general/trading)
