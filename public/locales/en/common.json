@@ -107,6 +107,8 @@
     "exportAll": "Export All Data",
     "importData": "Import Data",
     "selectData": "Select data to clear",
+    "selectAll": "All",
+    "selectNone": "None",
     "watchlist": "Watchlist",
     "portfolio": "Portfolio",
     "alerts": "Alerts",

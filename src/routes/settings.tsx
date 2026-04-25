@@ -204,7 +204,14 @@ function SettingsPage() {
 
   return (
     <div className="flex h-full flex-col gap-4 overflow-auto p-4" onScroll={(e) => setScrollTop((e.target as HTMLDivElement).scrollTop > 200)}>
-      <h1 className="font-data text-lg font-bold">{t("nav.settings")}</h1>
+      <div className="flex flex-col gap-1">
+        <h1 className="font-data text-lg font-bold">{t("nav.settings")}</h1>
+        <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+          <Keyboard className="h-3 w-3" />
+          <kbd className="font-data">?</kbd>
+          <span className="text-[9px]">{t("shortcuts.showAll") || "svi prečaci"}</span>
+        </div>
+      </div>
 
       {/* Scroll to top button */}
       {scrollTop && (
@@ -329,9 +336,26 @@ function SettingsPage() {
 
             {/* Selective clear options */}
             <div className="space-y-2 py-2">
-              <p className="text-[10px] text-muted-foreground">
-                {t("localData.selectData")}
-              </p>
+              <div className="flex items-center justify-between">
+                <p className="text-[10px] text-muted-foreground">
+                  {t("localData.selectData")}
+                </p>
+                <div className="flex gap-1 text-[9px]">
+                  <button
+                    onClick={() => setClearOptions({ watchlist: true, portfolio: true, alerts: true, dividends: true, presets: true })}
+                    className="rounded px-1.5 py-0.5 text-muted-foreground hover:bg-accent hover:text-foreground"
+                  >
+                    {t("localData.selectAll") || "Svi"}
+                  </button>
+                  <span className="text-muted-foreground">/</span>
+                  <button
+                    onClick={() => setClearOptions({ watchlist: false, portfolio: false, alerts: false, dividends: false, presets: false })}
+                    className="rounded px-1.5 py-0.5 text-muted-foreground hover:bg-accent hover:text-foreground"
+                  >
+                    {t("localData.selectNone") || "Ništa"}
+                  </button>
+                </div>
+              </div>
               <div className="grid grid-cols-2 gap-2">
                 {([
                   ["watchlist", t("localData.watchlist"), <Database className="h-3.5 w-3.5" />],

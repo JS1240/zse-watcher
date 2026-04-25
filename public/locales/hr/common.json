@@ -108,6 +108,8 @@
     "exportAll": "Izvezi sve podatke",
     "importData": "Uvezi podatke",
     "selectData": "Odaberi podatke za brisanje",
+    "selectAll": "Svi",
+    "selectNone": "Ništa",
     "watchlist": "Lista praćenja",
     "portfolio": "Portfelj",
     "alerts": "Alarmi",
