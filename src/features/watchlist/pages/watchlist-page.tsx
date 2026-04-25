@@ -484,7 +484,7 @@ function AuthenticatedWatchlist() {
   );
 }
 
-function SortableRow({
+const SortableRowBase = function SortableRow({
   stock,
   showRemove,
   onRemove,
@@ -496,7 +496,7 @@ function SortableRow({
   onRemove?: (ticker: string) => void;
   flash?: "up" | "down" | null;
   searchQuery?: string;
-}) {
+}): React.JSX.Element {
   const { t } = useTranslation("watchlist");
   const { t: tc } = useTranslation("common");
   const {
@@ -659,10 +659,18 @@ function SortableRow({
   );
 }
 
-const SortableRowMemo = memo(SortableRow, (prev, next) => {
+export const SortableRow = memo(SortableRowBase, (prev, next) => {
   return (
     prev.stock.ticker === next.stock.ticker &&
     prev.stock.price === next.stock.price &&
+    prev.stock.changePct === next.stock.changePct &&
+    prev.stock.name === next.stock.name &&
+    prev.stock.sector === next.stock.sector &&
+    prev.stock.volume === next.stock.volume &&
+    prev.stock.turnover === next.stock.turnover &&
+    prev.stock.dividendYield === next.stock.dividendYield &&
+    prev.stock.peRatio === next.stock.peRatio &&
+    prev.stock.marketCapM === next.stock.marketCapM &&
     prev.showRemove === next.showRemove &&
     prev.onRemove === next.onRemove &&
     prev.flash === next.flash &&
@@ -1196,7 +1204,7 @@ function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort, dragEnable
         <tbody>
           {stocks.map((stock) =>
             dragEnabled ? (
-              <SortableRowMemo
+              <SortableRow
                 key={stock.ticker}
                 stock={stock}
                 showRemove={showRemove}

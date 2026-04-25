@@ -1463,16 +1463,29 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
     </div>
   );
 }, (prev, next) => {
-  // Only re-render if alert data or search highlight changed
-  return (
-    prev.alert.id === next.alert.id &&
-    prev.alert.ticker === next.alert.ticker &&
-    prev.alert.condition === next.alert.condition &&
-    prev.alert.targetValue === next.alert.targetValue &&
-    prev.alert.isActive === next.alert.isActive &&
-    prev.alert.isTriggered === next.alert.isTriggered &&
-    prev.searchHighlight === next.searchHighlight &&
-    prev.onCopyTicker === next.onCopyTicker &&
-    prev.onCopyTarget === next.onCopyTarget
-  );
+  if (
+    prev.alert.id !== next.alert.id ||
+    prev.alert.ticker !== next.alert.ticker ||
+    prev.alert.condition !== next.alert.condition ||
+    prev.alert.targetValue !== next.alert.targetValue ||
+    prev.alert.isActive !== next.alert.isActive ||
+    prev.alert.isTriggered !== next.alert.isTriggered ||
+    prev.alert.snoozedUntil !== next.alert.snoozedUntil
+  ) return false;
+
+  if (
+    prev.searchHighlight !== next.searchHighlight ||
+    prev.flash !== next.flash ||
+    prev.isFocused !== next.isFocused ||
+    prev.onCopyTicker !== next.onCopyTicker ||
+    prev.onCopyTarget !== next.onCopyTarget
+  ) return false;
+
+
+  const prevStock = prev.stocks?.find(s => s.ticker === prev.alert.ticker);
+  const nextStock = next.stocks?.find(s => s.ticker === next.alert.ticker);
+  if (prevStock?.price !== nextStock?.price) return false;
+
+
+  return true;
 });
