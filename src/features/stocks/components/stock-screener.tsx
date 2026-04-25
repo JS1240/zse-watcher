@@ -706,7 +706,7 @@ export function StockScreener() {
             variant="ghost"
             size="sm"
             onClick={() => {
-              const headers = ["Ticker", "Name", "Sector", "Price (EUR)", "Change (%)", "Turnover (EUR)", "Dividend Yield (%)", "Volume"];
+              const headers = ["Ticker", "Name", "Sector", "Price (EUR)", "Change (%)", "Turnover (EUR)", "Dividend Yield (%)", "P/E Ratio", "Market Cap (MEUR)", "Volume"];
               const rows = results.map((s) => [
                 s.ticker,
                 s.name,
@@ -715,6 +715,8 @@ export function StockScreener() {
                 s.changePct.toFixed(2),
                 s.turnover.toFixed(0),
                 s.dividendYield !== null ? s.dividendYield.toFixed(1) : "",
+                s.peRatio !== null ? s.peRatio.toFixed(2) : "",
+                s.marketCapM !== null ? s.marketCapM.toFixed(1) : "",
                 s.volume.toString(),
               ]);
               exportToCsv(`zse-screener-${new Date().toISOString().split("T")[0]}`, headers, rows);
