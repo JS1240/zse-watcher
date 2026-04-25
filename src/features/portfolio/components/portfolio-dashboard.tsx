@@ -1,6 +1,6 @@
 import { useMemo, useState, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, Download, ChevronUp, ChevronDown, Search, X, Keyboard, TrendingUp, TrendingDown, Minus, CheckCircle2, ArrowUp as ScrollToTopIcon, Pencil, Trash2, Check } from "lucide-react";
+import { Plus, Download, ChevronUp, ChevronDown, Search, X, Keyboard, TrendingUp, TrendingDown, Minus, CheckCircle2, ArrowUp as ScrollToTopIcon, Pencil, Trash2, Check, Banknote } from "lucide-react";
 import { Sparkline } from "@/components/shared/sparkline";
 import { getMockPriceHistory } from "@/lib/mock-data";
 import { Highlight } from "@/components/shared/highlight";
@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { usePortfolio } from "@/features/portfolio/api/portfolio-queries";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { useLocalTransactions } from "@/features/portfolio/hooks/use-local-transactions";
+import { useReceivedDividends } from "@/features/portfolio/hooks/use-received-dividends";
 import { AddPositionForm } from "@/features/portfolio/components/add-position-form";
 import { PortfolioSkeleton } from "@/features/portfolio/components/portfolio-skeleton";
 import { Button } from "@/components/ui/button";
@@ -49,6 +50,7 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
   const { data: stocksResult, isError: isStocksError, refetch: refetchStocks } = useStocksLive();
   const stocks = stocksResult?.stocks ?? null;
   const { transactions: localTxs, hasLocalTransactions, removeTransaction, updateTransaction } = useLocalTransactions();
+  const { dividends: receivedDividends } = useReceivedDividends();
   const { select } = useSelectedStock();
 
   const [showAddForm, setShowAddForm] = useState(false);
@@ -264,6 +266,18 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
 
   const { totalValue: totalPortfolioValue, totalGain: totalPortfolioGain, gainPct: totalGainPct } = totals;
 
+  // Calculate received dividends total (from the /dividends received tracker)
+  const receivedDividendsTotal = useMemo(() => {
+    if (!receivedDividends || receivedDividends.length === 0) return { count: 0, totalEur: 0, totalHrk: 0 };
+    const totalEur = receivedDividends
+      .filter((d) => d.currency === "EUR")
+      .reduce((sum, d) => sum + d.totalAmount, 0);
+    const totalHrk = receivedDividends
+      .filter((d) => d.currency === "HRK")
+      .reduce((sum, d) => sum + d.totalAmount, 0);
+    return { count: receivedDividends.length, totalEur, totalHrk };
+  }, [receivedDividends]);
+
   // Flash map for price change animations
   const flashMap = usePriceFlash(stocks);
 
@@ -378,8 +392,8 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
         </div>
       )}
 
-      {/* Summary cards */}
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
+      {/* Summary cards - now including received dividends for Croatian tax reporting */}
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <div className="rounded-md border border-border bg-card p-3">
           <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
             {t("totalValue")}
@@ -412,6 +426,35 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
             {enrichedHoldings.length}
           </div>
         </div>
+        {/* Received dividends summary - for Croatian tax reporting (porez na dividende) */}
+        {receivedDividendsTotal.count > 0 && (
+          <div className="rounded-md border border-emerald-500/30 bg-emerald-500/5 p-3">
+            <div className="flex items-center gap-1.5">
+              <Banknote className="h-3.5 w-3.5 text-emerald-500" />
+              <span className="text-[10px] uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                {t("receivedDividends") || "Primljene dividende"}
+              </span>
+            </div>
+            <div className="mt-1 font-data text-lg font-bold tabular-nums text-emerald-600 dark:text-emerald-400">
+              {receivedDividendsTotal.totalEur > 0 && (
+                <>
+                  <span>€{receivedDividendsTotal.totalEur.toFixed(2)}</span>
+                  {receivedDividendsTotal.totalHrk > 0 && (
+                    <span className="text-xs font-normal text-muted-foreground ml-1">
+                      + {receivedDividendsTotal.totalHrk.toFixed(2)} HRK
+                    </span>
+                  )}
+                </>
+              )}
+              {receivedDividendsTotal.totalHrk > 0 && receivedDividendsTotal.totalEur === 0 && (
+                <span>{receivedDividendsTotal.totalHrk.toFixed(2)} HRK</span>
+              )}
+            </div>
+            <div className="text-[9px] text-muted-foreground">
+              {receivedDividendsTotal.count} {receivedDividendsTotal.count === 1 ? "isplata" : "isplata"}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Search + Action buttons */}
