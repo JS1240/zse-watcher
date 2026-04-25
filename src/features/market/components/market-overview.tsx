@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Activity, TrendingUp, DollarSign } from "lucide-react";
+import { Activity, TrendingUp, DollarSign, Keyboard } from "lucide-react";
 import { useMacro } from "@/features/market/api/market-queries";
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { ErrorState } from "@/components/shared/error-state";
@@ -58,6 +58,19 @@ export function MarketOverview() {
         value={macro.eurUsd.toFixed(4)}
         changePct={0}
       />
+      </div>
+
+      {/* Always-visible keyboard shortcuts hint — consistent with stocks/watchlist/portfolio pattern */}
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-sm border border-border/50 bg-muted/30 px-3 py-1.5 text-[9px] text-muted-foreground">
+        <Keyboard className="h-2.5 w-2.5" />
+        <span className="flex items-center gap-0.5">
+          <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">?</kbd>
+          <span>prečaci</span>
+        </span>
+        <span className="flex items-center gap-0.5">
+          <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">T</kbd>
+          <span>tema</span>
+        </span>
       </div>
     </div>
   );
