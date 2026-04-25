@@ -8,6 +8,7 @@
     "createAlert": "create alert",
     "exportCsv": "export CSV",
     "recordTransaction": "record transaction",
+    "navigate": "navigate",
     "watchlist": "watch stock"
   },
   "shortcuts": "Keyboard Shortcuts",

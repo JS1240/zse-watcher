@@ -534,6 +534,10 @@ export function StockTable() {
             <span>{t("shortcut.watch")}</span>
           </span>
           <span className="flex items-center gap-0.5">
+            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">↑↓</kbd>
+            <span>{t("shortcut.navigate")}</span>
+          </span>
+          <span className="flex items-center gap-0.5">
             <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">/</kbd>
             <span>{t("shortcut.search")}</span>
           </span>
