@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, Trash2, Download } from "lucide-react";
+import { Plus, Trash2, Download, Keyboard } from "lucide-react";
 import { toast } from "sonner";
 import { exportToCsv } from "@/lib/export";
 import { useReceivedDividends } from "@/features/portfolio/hooks/use-received-dividends";
@@ -231,6 +231,20 @@ export function ReceivedDividends() {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Always-visible keyboard shortcuts hint for discoverability - matching stocks/watchlist/portfolio pattern */}
+      {dividends.length > 0 && (
+        <div className="flex items-center justify-between rounded-md border-t border-border/50 px-3 py-2 text-[9px] text-muted-foreground">
+          <span className="flex items-center gap-2">
+            <kbd className="rounded bg-muted px-1.5 py-0.5 font-sans text-[8px]">Del</kbd>
+            <span className="hidden sm:inline">{t("shortcut.delete") || "obriši"}</span>
+          </span>
+          <span className="flex items-center gap-1">
+            <Keyboard className="h-2.5 w-2.5" />
+            <span>N {t("shortcut.new") || "novi unos"}</span>
+          </span>
         </div>
       )}
     </div>
