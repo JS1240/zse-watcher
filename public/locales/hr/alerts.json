@@ -19,7 +19,10 @@
     "paused": "Pauzirane",
     "allConditions": "Svi uvjeti",
     "priceAlerts": "Cijena",
-    "percentAlerts": "Postotak"
+    "percentAlerts": "Postotak",
+    "allDistances": "Sve udaljenosti",
+    "nearTrigger": "Blizu cilja",
+    "farFromTrigger": "Daleko od cilja"
   },
   "condition": {
     "above": "Cijena iznad",

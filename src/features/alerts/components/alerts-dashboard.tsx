@@ -162,6 +162,8 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
   const [scrollTop, setScrollTop] = useState(false);
   const alertsListRef = useRef<HTMLDivElement>(null);
   const [conditionFilter, setConditionFilter] = useState<"all" | "price" | "percent">("all");
+  // Filter by how close the alert is to triggering - useful for monitoring alerts about to fire
+  const [nearTriggerFilter, setNearTriggerFilter] = useState<"all" | "near" | "far">("all");
   const [sort, setSort] = useState<{ column: "ticker" | "createdAt" | "targetValue"; direction: "asc" | "desc" }>({
     column: "createdAt",
     direction: "desc",
@@ -270,6 +272,37 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
       } else if (conditionFilter === "percent") {
         result = result.filter((a) => a.condition.includes("percent"));
       }
+    }
+
+    // Filter by how close to triggering (near-trigger shows alerts within 5% of target)
+    if (nearTriggerFilter !== "all") {
+      result = result.filter((a) => {
+        // Skip triggered alerts
+        if (a.isTriggered) return nearTriggerFilter === "far";
+        // Skip paused alerts
+        if (!a.isActive) return nearTriggerFilter === "far";
+        // Get current price
+        const stock = stocks?.find((s) => s.ticker === a.ticker);
+        const currentPrice = stock?.price ?? null;
+        if (!currentPrice) return nearTriggerFilter === "far";
+        // Calculate distance to target
+        const isPercentCondition = a.condition.includes("percent");
+        if (isPercentCondition) {
+          // For percent alerts, we can't calculate "near" without knowing baseline price
+          return nearTriggerFilter === "far";
+        }
+        // For absolute price conditions
+        let distancePct: number;
+        if (a.condition === "above") {
+          distancePct = ((a.targetValue - currentPrice) / currentPrice) * 100;
+        } else {
+          distancePct = ((currentPrice - a.targetValue) / currentPrice) * 100;
+        }
+        // Near = within 5% of triggering
+        if (nearTriggerFilter === "near") return distancePct > 0 && distancePct <= 5;
+        // Far = not near or already past
+        return distancePct <= 0 || distancePct > 5;
+      });
     }
 
     // Filter by search term
@@ -606,6 +639,44 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
               label={t("filter.percentAlerts") || "Postotak"}
               icon={<TrendingDown className="h-3 w-3" />}
               count={alerts.filter((a) => a.condition.includes("percent")).length}
+            />
+            <span className="mx-1 h-4 w-px bg-border" />
+            <FilterChip
+              active={nearTriggerFilter === "all"}
+              onClick={() => setNearTriggerFilter("all")}
+              label={t("filter.allDistances") || "Sve udaljenosti"}
+              icon={<ArrowUpDown className="h-3 w-3" />}
+            />
+            <FilterChip
+              active={nearTriggerFilter === "near"}
+              onClick={() => setNearTriggerFilter("near")}
+              label={t("filter.nearTrigger") || "Blizu cilja"}
+              icon={<TrendingUp className="h-3 w-3" />}
+              // Show count of alerts within 5% of triggering
+              count={(() => {
+                if (!stocks) return undefined;
+                let count = 0;
+                alerts.forEach((a) => {
+                  if (a.isTriggered || !a.isActive) return;
+                  const stock = stocks.find((s) => s.ticker === a.ticker);
+                  const currentPrice = stock?.price;
+                  if (!currentPrice || a.condition.includes("percent")) return;
+                  let distancePct: number;
+                  if (a.condition === "above") {
+                    distancePct = ((a.targetValue - currentPrice) / currentPrice) * 100;
+                  } else {
+                    distancePct = ((currentPrice - a.targetValue) / currentPrice) * 100;
+                  }
+                  if (distancePct > 0 && distancePct <= 5) count++;
+                });
+                return count || undefined;
+              })()}
+            />
+            <FilterChip
+              active={nearTriggerFilter === "far"}
+              onClick={() => setNearTriggerFilter("far")}
+              label={t("filter.farFromTrigger") || "Daleko od cilja"}
+              icon={<TrendingDown className="h-3 w-3" />}
             />
           </div>
         )}

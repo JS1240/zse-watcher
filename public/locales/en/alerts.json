@@ -19,7 +19,10 @@
     "paused": "Paused",
     "allConditions": "All conditions",
     "priceAlerts": "Price",
-    "percentAlerts": "Percent"
+    "percentAlerts": "Percent",
+    "allDistances": "All distances",
+    "nearTrigger": "Near target",
+    "farFromTrigger": "Far from target"
   },
   "condition": {
     "above": "Price Above",
