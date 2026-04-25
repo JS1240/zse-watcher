@@ -508,3 +508,11 @@ textarea {
     opacity: 1 !important;
   }
 }
+
+/* UI Polish for Croatian investors: ensure touch targets are at least 44px */
+@media (max-width: 640px) {
+  button, [role="button"], .btn-press {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
