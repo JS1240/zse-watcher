@@ -276,6 +276,8 @@ export const StockRow = memo(StockRowBase, (prev, next) => {
     prev.stock.dividendYield === next.stock.dividendYield &&
     prev.stock.peRatio === next.stock.peRatio &&
     prev.stock.marketCapM === next.stock.marketCapM &&
+    prev.stock.volume === next.stock.volume &&
+    prev.stock.turnover === next.stock.turnover &&
     prev.flash === next.flash &&
     prev.searchQuery === next.searchQuery &&
     prev.rowIndex === next.rowIndex

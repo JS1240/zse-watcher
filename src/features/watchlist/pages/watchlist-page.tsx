@@ -659,6 +659,17 @@ function SortableRow({
   );
 }
 
+const SortableRowMemo = memo(SortableRow, (prev, next) => {
+  return (
+    prev.stock.ticker === next.stock.ticker &&
+    prev.stock.price === next.stock.price &&
+    prev.showRemove === next.showRemove &&
+    prev.onRemove === next.onRemove &&
+    prev.flash === next.flash &&
+    prev.searchQuery === next.searchQuery
+  );
+});
+
 function LocalWatchlist() {
   const { t } = useTranslation("watchlist");
   const { t: tc } = useTranslation("common");
@@ -1185,7 +1196,7 @@ function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort, dragEnable
         <tbody>
           {stocks.map((stock) =>
             dragEnabled ? (
-              <SortableRow
+              <SortableRowMemo
                 key={stock.ticker}
                 stock={stock}
                 showRemove={showRemove}
@@ -1381,6 +1392,14 @@ const WatchlistRowMemo = memo(WatchlistRow, (prev, next) => {
   return (
     prev.stock.ticker === next.stock.ticker &&
     prev.stock.price === next.stock.price &&
+    prev.stock.changePct === next.stock.changePct &&
+    prev.stock.name === next.stock.name &&
+    prev.stock.sector === next.stock.sector &&
+    prev.stock.volume === next.stock.volume &&
+    prev.stock.turnover === next.stock.turnover &&
+    prev.stock.dividendYield === next.stock.dividendYield &&
+    prev.stock.peRatio === next.stock.peRatio &&
+    prev.stock.marketCapM === next.stock.marketCapM &&
     prev.showRemove === next.showRemove &&
     prev.onRemove === next.onRemove &&
     prev.flash === next.flash &&
