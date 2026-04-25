@@ -96,11 +96,24 @@ export function MarketMovers() {
       </div>
 
       {/* Always-visible keyboard shortcuts hint for discoverability */}
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-md border border-border bg-card px-2.5 py-1.5">
-        <Keyboard className="h-2.5 w-2.5 text-muted-foreground" />
-        <span className="text-muted-foreground">{t("shortcut.details")}</span>
-        <span className="text-muted-foreground">·</span>
-        <span className="text-muted-foreground">{t("shortcut.watch")}</span>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-sm border border-border/50 bg-muted/30 px-3 py-1.5 text-[9px] text-muted-foreground">
+        <Keyboard className="h-2.5 w-2.5" />
+        <span className="flex items-center gap-0.5">
+          <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">↑↓</kbd>
+          <span>{t("shortcut.navigate") || "navigiraj"}</span>
+        </span>
+        <span className="flex items-center gap-0.5">
+          <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
+          <span>{t("shortcut.details") || "detalji"}</span>
+        </span>
+        <span className="flex items-center gap-0.5">
+          <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">S</kbd>
+          <span>{t("shortcut.watch") || "prati"}</span>
+        </span>
+        <span className="flex items-center gap-0.5">
+          <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">C</kbd>
+          <span>{t("shortcut.copy") || "kopiraj"}</span>
+        </span>
       </div>
     </div>
   );
