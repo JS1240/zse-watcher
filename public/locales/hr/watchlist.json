@@ -77,5 +77,6 @@
   "quickAddButton": "Dodaj",
   "quickAddSuccess": "{{ticker}} dodan u listu praćenja",
   "quickAddInvalid": "Nepoznata dionica: {{ticker}}",
-  "quickAddAlreadyWatched": "{{ticker}} je već u listi praćenja"
+  "quickAddAlreadyWatched": "{{ticker}} je već u listi praćenja",
+    "tickerNotFound": "Dionica ne postoji na ZSE"
 }

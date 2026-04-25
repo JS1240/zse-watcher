@@ -4,7 +4,13 @@
 
 ### Added
 
-- **Heatmap Keyboard Navigation** — add keyboard accessibility to sector cells for Croatian retail investors
+- **Quick Add Ticker UX Polish** — add inline validation feedback with current price display for Croatian retail investors
+  - Added real-time ticker validation (valid format check, exists check, already watched check)
+  - Added inline error message when ticker not found on ZSE (red border)
+  - Added inline warning when ticker already watched (amber border)
+  - Added inline valid feedback with current price display (green border)
+  - Matches AlertForm polish pattern for unified UX
+  - Added tickerNotFound translation key to watchlist locales (HR + EN)
   - SectorCell now accepts Tab focus with tabIndex=0
   - Enter/Space activates sector drawer (same as click)
   - aria-label summarizes sector: avg change, stock count, turnover

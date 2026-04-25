@@ -77,5 +77,6 @@
   "quickAddButton": "Add",
   "quickAddSuccess": "{{ticker}} added to watchlist",
   "quickAddInvalid": "Unknown stock: {{ticker}}",
-  "quickAddAlreadyWatched": "{{ticker}} is already in your watchlist"
+  "quickAddAlreadyWatched": "{{ticker}} is already in your watchlist",
+    "tickerNotFound": "Stock does not exist on ZSE"
 }
