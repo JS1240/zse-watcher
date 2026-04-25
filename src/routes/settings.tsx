@@ -213,6 +213,26 @@ function SettingsPage() {
         </div>
       </div>
 
+      {/* Always-visible keyboard shortcuts hint */}
+      <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 rounded-md border border-dashed border-border bg-muted/30 px-3 py-2 text-[9px] text-muted-foreground">
+        <span className="flex items-center gap-1">
+          <kbd className="rounded bg-muted px-1.5 py-0.5 font-sans text-[8px]">K</kbd>
+          <span>{t("shortcuts.commandPalette") || "naredbe"}</span>
+        </span>
+        <span className="flex items-center gap-1">
+          <kbd className="rounded bg-muted px-1.5 py-0.5 font-sans text-[8px]">1-9</kbd>
+          <span>navigacija</span>
+        </span>
+        <span className="flex items-center gap-1">
+          <kbd className="rounded bg-muted px-1.5 py-0.5 font-sans text-[8px]">T</kbd>
+          <span>tema</span>
+        </span>
+        <span className="flex items-center gap-1">
+          <kbd className="rounded bg-muted px-1.5 py-0.5 font-sans text-[8px]">?</kbd>
+          <span>{t("shortcuts.showAll") || "svi prečaci"}</span>
+        </span>
+      </div>
+
       {/* Scroll to top button */}
       {scrollTop && (
         <button
