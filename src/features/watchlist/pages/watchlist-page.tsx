@@ -213,18 +213,18 @@ function AuthenticatedWatchlist() {
     }
     if (!sort) return result;
     return [...result].sort((a, b) => {
-      const aVal = a[sort.column];
-      const bVal = b[sort.column];
+      const aVal = a[sort.column as keyof Stock];
+      const bVal = b[sort.column as keyof Stock];
       if (typeof aVal === "string" && typeof bVal === "string") {
         return sort.direction === "asc"
           ? aVal.localeCompare(bVal)
           : bVal.localeCompare(aVal);
       }
       return sort.direction === "asc"
-        ? (aVal as number) - (bVal as number)
-        : (bVal as number) - (aVal as number);
+        ? ((aVal as number) || 0) - ((bVal as number) || 0)
+        : ((bVal as number) || 0) - ((aVal as number) || 0);
     });
-  }, [watchedStocks, debouncedSearch, sectorFilter, changeFilter, sort]);
+  }, [watchedStocks, debouncedSearch, sectorFilter, changeFilter, sort, watchlistItems.data]);
 
   const handleSort = (col: SortColumn) => {
     setSort((prev) => {
