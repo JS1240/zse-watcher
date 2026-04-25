@@ -426,7 +426,16 @@ export function DividendsCalendar() {
             size="sm"
             variant="outline"
             onClick={() => setShowSortMenu(!showSortMenu)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                setShowSortMenu(!showSortMenu);
+              }
+            }}
             className="min-w-[130px] gap-1"
+            tabIndex={0}
+            role="columnheader"
+            aria-label={`${td("sortBy") || "Sortiraj"}: ${sortField} ${sortDir === "asc" ? "↑" : "↓"}. Enter za sortiranje.`}
           >
             <ChevronUp
               className={cn("h-3 w-3 transition-transform", sortDir === "asc" ? "" : "rotate-180")}
