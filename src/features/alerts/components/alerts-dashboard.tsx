@@ -342,10 +342,10 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
     );
   }
 
-  // CSV export for alerts
+  // CSV export for alerts - enhanced with current price and distance to target for Croatian retail investors
   const handleExport = () => {
     if (!filteredAlerts || filteredAlerts.length === 0) return;
-    const headers = ["Ticker", "Condition", "Target", "Status", "Active", "Created"];
+    const headers = ["Ticker", "Condition", "Target", "Current Price", "Distance (%)", "Status", "Active", "Created"];
     const rows = alerts.map((a) => {
       const conditionLabels: Record<string, string> = {
         above: t("condition.above"),
@@ -353,10 +353,30 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
         percent_change_up: t("condition.percentUp"),
         percent_change_down: t("condition.percentDown"),
       };
+      
+      // Get current price from stocks data
+      const stock = stocks?.find((s) => s.ticker === a.ticker);
+      const currentPrice = stock?.price ?? null;
+      
+      // Calculate distance to target as percentage
+      let distancePct = "";
+      if (currentPrice && a.targetValue) {
+        const isPercentCondition = a.condition.includes("percent");
+        if (!isPercentCondition) {
+          // For absolute price conditions, calculate % distance
+          const diff = a.condition === "above" 
+            ? ((a.targetValue - currentPrice) / currentPrice) * 100
+            : ((currentPrice - a.targetValue) / currentPrice) * 100;
+          distancePct = diff > 0 ? `+${diff.toFixed(1)}` : diff.toFixed(1);
+        }
+      }
+      
       return [
         a.ticker.toUpperCase(),
         conditionLabels[a.condition] || a.condition,
         a.condition.includes("percent") ? `${a.targetValue}%` : formatPrice(a.targetValue),
+        currentPrice ? formatPrice(currentPrice) : "—",
+        distancePct,
         a.isTriggered ? t("status.triggered") : "—",
         a.isActive ? "✓" : "—",
         formatDate(a.createdAt),
