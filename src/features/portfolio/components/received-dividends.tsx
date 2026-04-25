@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, Trash2, Download, Keyboard } from "lucide-react";
+import { Plus, Trash2, Download, Keyboard, ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import { toast } from "sonner";
 import { exportToCsv } from "@/lib/export";
 import { useReceivedDividends } from "@/features/portfolio/hooks/use-received-dividends";
@@ -11,13 +11,13 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { DividendsCalendarEmptyIllustration } from "@/components/shared/empty-illustrations";
 import { DividendsSkeleton } from "@/features/dividends/components/dividends-skeleton";
 import { formatCurrency, formatDate } from "@/lib/formatters";
-import { cn } from "@/lib/utils";
 
 export function ReceivedDividends() {
   const { t } = useTranslation("portfolio");
   const { dividends, addDividend, removeDividend, hasDividends } = useReceivedDividends();
   const holdings = usePortfolioHoldings();
   const [showForm, setShowForm] = useState(false);
+  const [sort, setSort] = useState<{ column: "ticker" | "amount" | "date"; direction: "asc" | "desc" } | null>({ column: "date", direction: "desc" });
   const [form, setForm] = useState({
     ticker: "",
     shares: "",
@@ -56,17 +56,37 @@ export function ReceivedDividends() {
     return sum + eur;
   }, 0);
 
-  const grouped = dividends.reduce<Record<string, typeof dividends>>((acc, d) => {
-    const year = d.payDate.slice(0, 4);
-    if (!acc[year]) acc[year] = [];
-    acc[year].push(d);
-    return acc;
-  }, {});
+  const sortedDividends = useMemo(() => {
+    if (!sort) return [...dividends].sort((a, b) => b.payDate.localeCompare(a.payDate));
+    return [...dividends].sort((a, b) => {
+      if (sort.column === "ticker") {
+        return sort.direction === "asc" 
+          ? a.ticker.localeCompare(b.ticker)
+          : b.ticker.localeCompare(a.ticker);
+      }
+      if (sort.column === "amount") {
+        const aAmt = a.currency === "HRK" ? a.totalAmount / 7.5 : a.totalAmount;
+        const bAmt = b.currency === "HRK" ? b.totalAmount / 7.5 : b.totalAmount;
+        return sort.direction === "asc" ? aAmt - bAmt : bAmt - aAmt;
+      }
+      // date
+      return sort.direction === "asc" 
+        ? a.payDate.localeCompare(b.payDate)
+        : b.payDate.localeCompare(a.payDate);
+    });
+  }, [dividends, sort]);
+
+  const handleSort = (col: "ticker" | "amount" | "date") => {
+    setSort((prev) => {
+      if (prev?.column !== col) return { column: col, direction: "desc" };
+      if (prev.direction === "desc") return { column: col, direction: "asc" };
+      return null;
+    });
+  };
 
   const handleExportCsv = () => {
     const headers = ["Ticker", "Shares", "Per Share", "Total Amount", "Currency", "Date Paid", "Notes"];
-    const rows = dividends
-      .sort((a, b) => b.payDate.localeCompare(a.payDate))
+    const rows = sortedDividends
       .map((d) => [
         d.ticker,
         d.shares.toString(),
@@ -190,7 +210,7 @@ export function ReceivedDividends() {
         </form>
       )}
 
-      {/* Dividends list */}
+      {/* Dividends list with sortable table headers for keyboard navigation */}
       {!hasDividends ? (
         <EmptyState
           icon={<DividendsCalendarEmptyIllustration className="h-8 w-8" />}
@@ -200,37 +220,92 @@ export function ReceivedDividends() {
           className="rounded-md border border-border"
         />
       ) : (
-        <div className={cn("space-y-3", hasDividends && "rounded-md border border-border bg-card p-3")}>
-          {Object.entries(grouped).sort(([a], [b]) => b.localeCompare(a)).map(([year, divs]) => (
-            <div key={year}>
-              <h4 className="mb-1 text-[9px] font-semibold uppercase tracking-wider text-muted-foreground">{year}</h4>
-              <div className="space-y-1">
-                {divs.sort((a, b) => b.payDate.localeCompare(a.payDate)).map((d) => {
-                  const eurAmount = d.currency === "HRK" ? d.totalAmount / 7.5 : d.totalAmount;
-                  return (
-                    <div key={d.id} className="flex items-center justify-between rounded-sm border border-border/50 bg-card px-3 py-2">
-                      <div className="flex items-center gap-3">
+        <div className="rounded-md border border-border bg-card overflow-hidden">
+          <table className="w-full text-xs">
+            <thead className="bg-muted/50">
+              <tr className="border-b border-border text-[9px] uppercase tracking-wider text-muted-foreground">
+                <th className="px-3 py-2 text-left font-medium">
+                  <button
+                    onClick={() => handleSort("ticker")}
+                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleSort("ticker"); }}}
+                    tabIndex={0}
+                    role="columnheader"
+                    aria-sort={sort?.column === "ticker" ? (sort.direction === "asc" ? "ascending" : "descending") : "none"}
+                    className="flex items-center gap-1 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background rounded-sm"
+                  >
+                    <span>Ticker</span>
+                    {sort?.column === "ticker" ? (
+                      sort.direction === "asc" ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />
+                    ) : <ArrowUpDown className="h-3 w-3 text-muted-foreground/40" />}
+                  </button>
+                </th>
+                <th className="px-3 py-2 text-right font-medium">
+                  <button
+                    onClick={() => handleSort("amount")}
+                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleSort("amount"); }}}
+                    tabIndex={0}
+                    role="columnheader"
+                    aria-sort={sort?.column === "amount" ? (sort.direction === "asc" ? "ascending" : "descending") : "none"}
+                    className="flex items-center gap-1 ml-auto hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background rounded-sm"
+                  >
+                    <span>Iznos (EUR)</span>
+                    {sort?.column === "amount" ? (
+                      sort.direction === "asc" ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />
+                    ) : <ArrowUpDown className="h-3 w-3 text-muted-foreground/40" />}
+                  </button>
+                </th>
+                <th className="px-3 py-2 text-right font-medium">
+                  <button
+                    onClick={() => handleSort("date")}
+                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleSort("date"); }}}
+                    tabIndex={0}
+                    role="columnheader"
+                    aria-sort={sort?.column === "date" ? (sort.direction === "asc" ? "ascending" : "descending") : "none"}
+                    className="flex items-center gap-1 ml-auto hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background rounded-sm"
+                  >
+                    <span>Datum</span>
+                    {sort?.column === "date" ? (
+                      sort.direction === "asc" ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />
+                    ) : <ArrowUpDown className="h-3 w-3 text-muted-foreground/40" />}
+                  </button>
+                </th>
+                <th className="w-10 px-2 py-2" />
+              </tr>
+            </thead>
+            <tbody>
+              {sortedDividends.map((d) => {
+                const eurAmount = d.currency === "HRK" ? d.totalAmount / 7.5 : d.totalAmount;
+                return (
+                  <tr key={d.id} className="border-b border-border/50 hover:bg-accent/30">
+                    <td className="px-3 py-2">
+                      <div className="flex items-center gap-2">
                         <span className="font-data text-[11px] font-semibold text-foreground">{d.ticker}</span>
                         <span className="text-[10px] text-muted-foreground">{d.shares} × {formatCurrency(d.amountPerShare)}</span>
-                        <span className="text-[10px] text-muted-foreground">{formatDate(d.payDate)}</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-data text-[11px] tabular-nums text-price-up">
-                          +{formatCurrency(eurAmount)} EUR
-                        </span>
-                        <button
-                          onClick={() => removeDividend(d.id)}
-                          className="text-muted-foreground/40 hover:text-price-down"
-                        >
-                          <Trash2 className="h-3 w-3" />
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
+                      <div className="text-[9px] text-muted-foreground/60">{d.notes || formatDate(d.payDate)}</div>
+                    </td>
+                    <td className="px-3 py-2 text-right">
+                      <span className="font-data text-[11px] tabular-nums text-price-up">
+                        +{formatCurrency(eurAmount)} EUR
+                      </span>
+                    </td>
+                    <td className="px-3 py-2 text-right">
+                      <span className="font-data text-[10px] text-muted-foreground">{formatDate(d.payDate)}</span>
+                    </td>
+                    <td className="px-2 py-2 text-right">
+                      <button
+                        onClick={() => removeDividend(d.id)}
+                        className="text-muted-foreground/40 hover:text-price-down"
+                        title={t("shortcut.delete")}
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       )}
 
