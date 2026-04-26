@@ -437,18 +437,22 @@ export function NewsFeed({ ticker: propsTicker, category, limit }: NewsFeedProps
             </div>
           </div>
         )}
+        {/* Empty states: no-results for filtered empty, info for first-visit empty */}
         {totalCount > 0 ? (
           <EmptyState
             icon={<SearchEmptyIllustration className="h-8 w-8" />}
             title={t("empty.noResults")}
             description={t("empty.noResultsDescription")}
+            variant="no-results"
             action={{ label: tn("empty.clearFilters") || t("empty.clearFilters"), onClick: handleClearSearch }}
+            shortcut="/"
           />
         ) : (
           <EmptyState
             icon={<NewsEmptyIllustration className="h-10 w-10" />}
             title={tn("empty") || t("empty.noData")}
             description={tn("emptyDescription") || t("empty.noDataDescription")}
+            variant="info"
           />
         )}
       </div>
