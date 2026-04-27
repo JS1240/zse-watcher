@@ -1,6 +1,7 @@
 import { useMemo, useState, useEffect, useRef, useCallback, memo } from "react";
 import { useTranslation } from "react-i18next";
 import { CalendarDays, Search, Calendar, Download, ChevronDown, ChevronUp, ArrowUp, ArrowUpDown, Keyboard, TrendingUp, TrendingDown, Copy, X } from "lucide-react";
+import { useDebounce } from "@/hooks/use-debounce";
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { toast } from "sonner";
 import { DividendsCalendarEmptyIllustration, SearchEmptyIllustration } from "@/components/shared/empty-illustrations";
@@ -10,6 +11,7 @@ import { DividendsSkeleton } from "./dividends-skeleton";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/shared/empty-state";
+import { Highlight } from "@/components/shared/highlight";
 import { ErrorState } from "@/components/shared/error-state";
 import { StockDetailDrawer } from "@/features/stocks/components/stock-detail-drawer";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
@@ -25,6 +27,7 @@ export function DividendsCalendar() {
   const { t: td } = useTranslation("dividends");
   const { data: dividends, isLoading, isError, refetch } = useDividends();
   const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearch = useDebounce(searchQuery, 200);
   const [sortField, setSortField] = useState<"yield" | "amount" | "exDivDate">("exDivDate");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
@@ -547,6 +550,7 @@ export function DividendsCalendar() {
                       onCopyAmount={handleCopyAmount}
                       onCopyYield={handleCopyYield}
                       onSelect={select}
+                      highlight={debouncedSearch}
                     />
                   ))}
                 </div>
@@ -588,6 +592,7 @@ interface DividendRowProps {
   onCopyAmount: (e: React.MouseEvent, amount: number) => void;
   onCopyYield: (e: React.MouseEvent, yieldPct: number) => void;
   onSelect: (ticker: string) => void;
+  highlight?: string;
 }
 
 const DividendRow = memo(function DividendRow({
@@ -600,6 +605,7 @@ const DividendRow = memo(function DividendRow({
   onCopyAmount,
   onCopyYield,
   onSelect,
+  highlight,
 }: DividendRowProps) {
   const isPast = new Date(d.exDivDate) < new Date();
 
@@ -657,9 +663,9 @@ const DividendRow = memo(function DividendRow({
               )}
               title="Click to copy ticker"
             >
-              {d.ticker}
+              <Highlight text={d.ticker} highlight={highlight ?? ""} />
             </button>
-            <span className="text-[10px] text-muted-foreground">{d.name}</span>
+            <Highlight text={d.name} highlight={highlight ?? ""} className="text-[10px] text-muted-foreground" />
           </div>
           <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
             <span>
