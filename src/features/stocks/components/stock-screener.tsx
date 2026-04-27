@@ -16,6 +16,9 @@ import { ScreenerSkeleton } from "@/features/stocks/components/screener-skeleton
 import { formatPrice, formatVolume } from "@/lib/formatters";
 import { exportToCsv } from "@/lib/export";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
+import { usePriceFlash } from "@/hooks/use-price-flash";
+import { getMockPriceHistory } from "@/lib/mock-data";
+import { Sparkline } from "@/components/shared/sparkline";
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { useDebounce } from "@/hooks/use-debounce";
 import type { Stock } from "@/types/stock";
@@ -226,14 +229,22 @@ const ScreenerRow = memo(function ScreenerRow({
   stock,
   search,
   onSelect,
+  flash,
+  sparkline,
 }: {
   stock: Stock;
   search: string;
   onSelect: (ticker: string) => void;
+  flash?: "up" | "down" | null;
+  sparkline?: number[];
 }) {
   return (
     <tr
-      className="border-b border-border/50 cursor-pointer transition-all duration-150 hover:bg-accent/70"
+      className={cn(
+        "border-b border-border/50 cursor-pointer transition-all duration-150 hover:bg-accent/70",
+        flash === "up" && "price-flash-up",
+        flash === "down" && "price-flash-down",
+      )}
       onClick={() => onSelect(stock.ticker)}
     >
       <td className="px-3 py-2 font-data font-semibold text-foreground">
@@ -262,6 +273,11 @@ const ScreenerRow = memo(function ScreenerRow({
       <td className="hidden px-1 py-2 text-right font-data tabular-nums text-muted-foreground lg:table-cell">
         {formatVolume(stock.volume)}
       </td>
+      <td className="hidden px-3 py-2 text-center xl:table-cell">
+        {sparkline && sparkline.length > 1 && (
+          <Sparkline data={sparkline} width={50} height={18} />
+        )}
+      </td>
     </tr>
   );
 });
@@ -272,6 +288,15 @@ export function StockScreener() {
   const { data: result, isLoading, isError, refetch, dataUpdatedAt, isFetching } = useStocksLive();
   const stocks = result?.stocks ?? null;
   const isMockData = result?.isMockData ?? false;
+  const flashMap = usePriceFlash(stocks);
+  const sparklineData = useMemo(() => {
+    if (!stocks) return new Map<string, number[]>();
+    const map = new Map<string, number[]>();
+    for (const s of stocks) {
+      map.set(s.ticker, getMockPriceHistory(s.ticker, "1W").map((p) => p.close));
+    }
+    return map;
+  }, [stocks]);
   const { select } = useSelectedStock();
   const [filters, setFilters] = useState<ScreenerFilters>(INITIAL_FILTERS);
   const [filtersCollapsed, setFiltersCollapsed] = useState(false);
@@ -803,11 +828,14 @@ export function StockScreener() {
                   onSort={handleSort}
                 />
               </th>
+              <th className="hidden px-3 py-2 text-center font-medium xl:table-cell" title="1W trend">
+                {t("table.trend") || "Trend"}
+              </th>
             </tr>
           </thead>
           <tbody>
             {results.map((s) => (
-              <ScreenerRow key={s.ticker} stock={s} search={debouncedSearch} onSelect={select} />
+              <ScreenerRow key={s.ticker} stock={s} search={debouncedSearch} onSelect={select} flash={flashMap.get(s.ticker) ?? null} sparkline={sparklineData.get(s.ticker)} />
             ))}
           </tbody>
         </table>

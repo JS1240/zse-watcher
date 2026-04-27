@@ -38,6 +38,7 @@
     "dividendYield": "Div. %",
     "peRatio": "P/E",
     "marketCap": "Mkt Cap",
+  "trend": "1W Trend",
     "tooltips": {
       "ticker": "Unique stock ticker symbol on the exchange",
       "name": "Full issuer company name",

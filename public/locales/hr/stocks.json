@@ -38,6 +38,7 @@
     "dividendYield": "Div. %",
     "peRatio": "P/E",
     "marketCap": "Trz. kap.",
+  "trend": "Trend 1T",
     "tooltips": {
       "ticker": "Jedinstvena oznaka dionice na burzi",
       "name": "Puno ime izdavatelja",

@@ -84,6 +84,9 @@ export function ScreenerSkeleton({ className }: ScreenerSkeletonProps) {
                   <Skeleton className="animate-shimmer h-3 w-3 rounded" />
                 </div>
               </th>
+              <th className="hidden px-3 py-2 text-center font-medium xl:table-cell">
+                <Skeleton className="animate-shimmer mx-auto h-2.5 w-8" />
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -127,6 +130,10 @@ export function ScreenerSkeleton({ className }: ScreenerSkeletonProps) {
                 {/* Volume (lg) */}
                 <td className="hidden px-1 py-2 text-right lg:table-cell">
                   <Skeleton className="animate-shimmer ml-auto h-3 w-14" />
+                </td>
+                {/* Trend sparkline (xl) */}
+                <td className="hidden px-3 py-2 text-center xl:table-cell">
+                  <Skeleton className="animate-shimmer mx-auto h-[18px] w-[50px]" />
                 </td>
               </tr>
             ))}
