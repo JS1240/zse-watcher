@@ -62,6 +62,9 @@
   "cancelHint": "Esc za odustanak",
   "empty": "Nemate postavljenih alarma",
   "emptyDescription": "Postavite alarm i primajte obavijesti kada cijena doseze određenu razinu.",
+  "demoAlert": "Isprobaj primjer alarma",
+  "demoAlertCreated": "Demo alarm stvoren za ATGR",
+  "demoAlertError": "Greška pri stvaranju alarma",
   "emptyHints": {
     "step1": "Odaberi dionicu",
     "step1Desc": "Na stranici dionica pronađi dionicu koju želiš pratiti.",

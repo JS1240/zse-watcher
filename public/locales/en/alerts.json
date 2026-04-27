@@ -62,6 +62,9 @@
   "cancelHint": "Esc to cancel",
   "empty": "No alerts configured",
   "emptyDescription": "Create an alert to get notified when a stock reaches your target price.",
+  "demoAlert": "Try a sample alert",
+  "demoAlertCreated": "Demo alert created for ATGR",
+  "demoAlertError": "Error creating alert",
   "emptyHints": {
     "step1": "Choose a stock",
     "step1Desc": "Go to the stocks page and find a stock to track.",

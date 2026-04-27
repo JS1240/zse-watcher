@@ -115,7 +115,7 @@ interface AlertsDashboardProps {
 export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
   const { t } = useTranslation("alerts");
   const { t: tc } = useTranslation("common");
-  const { alerts, isLoading, deleteAlert, toggleAlert, updateAlert, toggleAllAlerts, deleteAllAlerts, deleteTriggeredAlerts, snoozeAlert } = useAlertsData();
+  const { alerts, isLoading, deleteAlert, toggleAlert, updateAlert, toggleAllAlerts, deleteAllAlerts, deleteTriggeredAlerts, snoozeAlert, addAlert } = useAlertsData();
   const { isError, refetch, dataUpdatedAt: alertsDataUpdatedAt, isFetching: alertsIsFetching } = useAlerts();
   const { data: stocksResult } = useStocksLive();
   const stocks = useMemo(() => stocksResult?.stocks ?? [], [stocksResult]);
@@ -281,6 +281,29 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
     setShowForm(true);
     toast.info(t("toast.duplicateHint") || "Alert values pre-filled — adjust and save", { icon: <Pencil className="h-4 w-4" /> });
   }, [t]);
+
+  // Create a demo alert with a popular Croatian stock
+  const handleCreateDemoAlert = useCallback(async () => {
+    // Use ATGR as a popular stock for Croatian investors
+    const demoTicker = "ATGR";
+    const demoCondition: AlertCondition = "above";
+    // Set target slightly below current price so it can potentially trigger
+    const demoTarget = stocks?.find(s => s.ticker === demoTicker)?.price ? 
+      stocks.find(s => s.ticker === demoTicker)!.price! * 0.95 : 
+      100;
+    
+    try {
+      await addAlert({
+        ticker: demoTicker,
+        condition: demoCondition,
+        targetValue: demoTarget,
+      });
+      toast.success(t("demoAlertCreated") || "Demo alarm stvoren za ATGR", { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
+    } catch (error) {
+      console.error("Failed to create demo alert:", error);
+      toast.error(t("demoAlertError") || "Greška pri stvaranju alarma");
+    }
+  }, [stocks, addAlert, t]);
 
   const filteredAlerts = useMemo(() => {
     if (!alerts) return [];
@@ -864,6 +887,16 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
             shortcut="A"
             variant="action"
           />
+          {/* Demo alert button - helps users understand how alerts work */}
+          <div className="flex justify-center">
+            <button
+              onClick={handleCreateDemoAlert}
+              className="flex items-center gap-2 rounded-md border border-dashed border-muted-foreground/30 px-4 py-2 text-sm text-muted-foreground transition-all hover:border-primary/50 hover:bg-primary/5 hover:text-primary"
+            >
+              <BellRing className="h-4 w-4" />
+              <span>{t("demoAlert") || "Isprobaj primjer alarm"}</span>
+            </button>
+          </div>
           {/* Keyboard shortcuts hint for empty state discoverability */}
           <div className="flex items-center justify-center gap-4 text-[9px] text-muted-foreground">
             <span className="flex items-center gap-0.5">
