@@ -135,7 +135,13 @@
     "upBy": "Up {{value}}%",
     "downBy": "Down {{value}}%",
     "active": "{{count}} active alerts, no triggers yet",
-    "none": "No alerts configured"
+    "none": "No alerts configured",
+    "noTriggers": "{{count}} active alerts, no triggers yet",
+    "waitingForPrice": "Waiting for price to hit target...",
+    "createFirst": "Create your first alert →",
+    "markAllRead": "Mark all as read",
+    "markedAllRead": "All notifications marked as read",
+    "dismiss": "Dismiss"
   },
   "distanceAria": "to target"
 }

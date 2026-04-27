@@ -135,7 +135,13 @@
     "upBy": "Porast {{value}}%",
     "downBy": "Pad {{value}}%",
     "active": "{{count}} aktivnih alarma, jos nema okidanja",
-    "none": "Nema konfiguriranih alarma"
+    "none": "Nema konfiguriranih alarma",
+    "noTriggers": "{{count}} aktivnih alarma, jos nema okidanja",
+    "waitingForPrice": "Cekam da cijena doseže cilj...",
+    "createFirst": "Stvori svoj prvi alarm →",
+    "markAllRead": "Oznaci sve kao procitano",
+    "markedAllRead": "Sve obavijesti oznacene kao procitano",
+    "dismiss": "Odbaci"
   },
   "distanceAria": "do cilja"
 }
