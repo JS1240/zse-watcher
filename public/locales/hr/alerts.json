@@ -121,7 +121,9 @@
     "duplicate": "kopiraj",
     "delete": "obrisi",
     "create": "stvori alarm",
-    "navigate": "navigiraj"
+    "navigate": "navigiraj",
+    "new": "novi alarm",
+    "clear": "ponisti focus"
   },
   "inlineEdit": {
     "save": "Spremi",

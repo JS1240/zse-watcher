@@ -121,7 +121,9 @@
     "duplicate": "duplicate",
     "delete": "delete",
     "create": "create alert",
-    "navigate": "navigate"
+    "navigate": "navigate",
+    "new": "new alert",
+    "clear": "clear focus"
   },
   "inlineEdit": {
     "save": "Save",

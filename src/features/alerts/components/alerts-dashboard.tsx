@@ -411,20 +411,58 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
     });
   }, [filteredAlerts.length]);
 
-  // Register arrow key shortcuts using useEffect (so filteredAlerts is in scope)
+  // Register keyboard shortcuts for alerts navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      const isInput = target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable;
+      
       if (e.key === "ArrowUp" || e.key === "ArrowDown") {
         // Only handle if not in an input field
-        const target = e.target as HTMLElement;
-        if (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable) return;
+        if (isInput) return;
         e.preventDefault();
         handleAlertNavigation(e.key);
+      }
+      
+      if (e.key === "Enter") {
+        // Toggle focused alert - only if not in input and an alert is focused
+        if (isInput) return;
+        if (focusedAlertIndex >= 0 && focusedAlertIndex < filteredAlerts.length) {
+          const alert = filteredAlerts[focusedAlertIndex];
+          toggleAlert(alert.id);
+        }
+      }
+      
+      if (e.key === "Delete" || e.key === "Backspace") {
+        // Delete focused alert - only if not in input
+        if (isInput) return;
+        if (focusedAlertIndex >= 0 && focusedAlertIndex < filteredAlerts.length) {
+          const alert = filteredAlerts[focusedAlertIndex];
+          setConfirmDelete(alert.id);
+        }
+      }
+      
+      if (e.key === "Escape") {
+        // Clear focus when Escape is pressed
+        setFocusedAlertIndex(-1);
+        // Also blur any focused element
+        if (document.activeElement instanceof HTMLElement) {
+          document.activeElement.blur();
+        }
+      }
+      
+      // New alert: 'n' key when not in input
+      if (e.key === "n" || e.key === "N") {
+        if (isInput) return;
+        // Open create form if not already open
+        if (!showForm) {
+          setShowForm(true);
+        }
       }
     };
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [handleAlertNavigation]);
+  }, [handleAlertNavigation, focusedAlertIndex, filteredAlerts, toggleAlert, showForm]);
 
   if (isLoading) {
     return <AlertsSkeleton />;
@@ -771,6 +809,10 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
           {/* Always-visible keyboard shortcuts hint for discoverability */}
           <div className="flex items-center gap-2 text-[9px] text-muted-foreground">
             <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">N</kbd>
+              <span className="text-muted-foreground">{t("shortcut.new") || "novi alarm"}</span>
+            </span>
+            <span className="flex items-center gap-0.5">
               <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">↑↓</kbd>
               <span className="text-muted-foreground">{t("shortcut.navigate") || "navigiraj"}</span>
             </span>
@@ -789,6 +831,10 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
             <span className="flex items-center gap-0.5">
               <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Del</kbd>
               <span className="text-muted-foreground">{t("shortcut.delete") || "obri\u0161i"}</span>
+            </span>
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Esc</kbd>
+              <span className="text-muted-foreground">{t("shortcut.clear") || "poni\u0161ti"}</span>
             </span>
           </div>
         </div>
