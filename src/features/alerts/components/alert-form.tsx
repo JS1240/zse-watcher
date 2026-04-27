@@ -143,6 +143,20 @@ export function AlertForm({ onClose, defaultTicker, defaultCondition, defaultTar
     return !isNaN(parsed) && parsed > 0;
   }, [debouncedTarget]);
 
+  // Live distance from current price - shows how far user's target is from current price
+  const targetDistance = useMemo((): { absolute: number; percent: number; direction: "up" | "down" } | null => {
+    if (!currentPrice || !debouncedTarget || !isTargetValid || isPercentCondition) return null;
+    const target = parseLocalizedNumber(debouncedTarget);
+    if (isNaN(target) || target <= 0) return null;
+    const diff = target - currentPrice;
+    const percentChange = (diff / currentPrice) * 100;
+    return {
+      absolute: diff,
+      percent: percentChange,
+      direction: diff > 0 ? "up" : "down",
+    };
+  }, [currentPrice, debouncedTarget, isTargetValid, isPercentCondition]);
+
   // Show errors: field was touched AND (has error OR valid check failed when not focused)
   const showTickerError = touched.ticker && (errors.ticker || (tickerValue && !isTickerValid));
   const showTargetError = touched.target && (errors.targetValue || (debouncedTarget && !isTargetValid));
@@ -386,6 +400,21 @@ export function AlertForm({ onClose, defaultTicker, defaultCondition, defaultTar
               <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
               {translateError(errors.targetValue?.message, t) || t("validation.positiveNumber")}
             </p>
+          ) : isTargetValid && !focused.target && targetDistance ? (
+            <div className="mt-1.5 flex flex-col gap-1">
+              <p className="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
+                <CheckCircle2 className="h-3.5 w-3.5 flex-shrink-0" />
+                {t("validation.targetValid")}
+              </p>
+              {/* Live distance indicator - shows how far target is from current price */}
+              <p className={cn(
+                "flex items-center gap-1 text-[9px] font-medium",
+                targetDistance.direction === "up" ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"
+              )}>
+                <TrendingUp className={cn("h-2.5 w-2.5", targetDistance.direction === "down" && "rotate-90")} />
+                <span>{targetDistance.direction === "up" ? "+" : ""}{targetDistance.percent.toFixed(1)}% od {t("fields.currentPrice") || "trenutne cijene"} ({currentPrice ? formatPrice(currentPrice) : "—"})</span>
+              </p>
+            </div>
           ) : isTargetValid && !focused.target ? (
             <p className="mt-1.5 flex items-center gap-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
               <CheckCircle2 className="h-3.5 w-3.5 flex-shrink-0" />

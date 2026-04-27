@@ -379,6 +379,11 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
   const handleExport = () => {
     if (!filteredAlerts || filteredAlerts.length === 0) return;
     const headers = ["Ticker", "Condition", "Target", "Current Price", "Distance (%)", "Status", "Active", "Created"];
+    
+    // Build stock price map once for O(1) lookups instead of O(n) per alert
+    const stockPriceMap = new Map<string, number>();
+    stocks?.forEach((s) => stockPriceMap.set(s.ticker, s.price ?? 0));
+    
     const rows = alerts.map((a) => {
       const conditionLabels: Record<string, string> = {
         above: t("condition.above"),
@@ -387,9 +392,8 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
         percent_change_down: t("condition.percentDown"),
       };
       
-      // Get current price from stocks data
-      const stock = stocks?.find((s) => s.ticker === a.ticker);
-      const currentPrice = stock?.price ?? null;
+      // Get current price from pre-built map (O(1) instead of O(n) find)
+      const currentPrice = stockPriceMap.get(a.ticker) ?? null;
       
       // Calculate distance to target as percentage
       let distancePct = "";
