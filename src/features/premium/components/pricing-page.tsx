@@ -164,6 +164,12 @@ export const PricingPage = memo(function PricingPage() {
                   e.preventDefault();
                   const prev = e.currentTarget.previousElementSibling as HTMLElement | null;
                   prev?.focus();
+                } else if (e.key === "Enter") {
+                  e.preventDefault();
+                  // Only premium card triggers upgrade action
+                  if (plan.id === "premium") {
+                    handleUpgrade();
+                  }
                 }
               }}
               className={cn(
