@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Crown, X, Check, Zap } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
+import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { createCheckoutSession } from "@/features/premium/api/stripe-api";
 import { PRICING_PLANS } from "@/features/premium/config/pricing";
 import { cn } from "@/lib/utils";
@@ -19,6 +20,10 @@ export function UpgradeModal({ open, onClose, featureContext }: UpgradeModalProp
   const [cycle, setCycle] = useState<"monthly" | "annual">("annual");
   const { isAuthenticated } = useAuth();
   const premiumPlan = PRICING_PLANS.find((p) => p.id === "premium");
+
+  // Keyboard shortcut to toggle billing cycle
+  const toggleCycle = useCallback(() => setCycle((c) => (c === "monthly" ? "annual" : "monthly")), []);
+  useKeyboardShortcut({ key: "y", handler: toggleCycle, enabled: !!open });
 
   if (!open) return null;
 
@@ -138,6 +143,18 @@ export function UpgradeModal({ open, onClose, featureContext }: UpgradeModalProp
         <p className="mt-3 text-center text-[10px] text-muted-foreground">
           {t("pricing.cancelAnytime")}
         </p>
+
+        {/* Always-visible keyboard shortcut hint for discoverability */}
+        <div className="mt-3 flex items-center justify-center gap-2 text-[9px] text-muted-foreground">
+          <span className="flex items-center gap-0.5">
+            <kbd className="rounded bg-muted px-1.5 py-0.5 font-sans text-[8px]">Y</kbd>
+            <span>{t("upgradeModal.toggleCycle") || "mjesečno/godišnje"}</span>
+          </span>
+          <span className="flex items-center gap-0.5">
+            <kbd className="rounded bg-muted px-1.5 py-0.5 font-sans text-[8px]">Esc</kbd>
+            <span>{t("upgradeModal.close")}</span>
+          </span>
+        </div>
       </div>
     </div>
   );

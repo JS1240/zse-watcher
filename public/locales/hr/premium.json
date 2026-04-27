@@ -34,6 +34,7 @@
     },
     "monthly": "Mjesečno",
     "annual": "Godišnje",
+    "toggleCycle": "mjesečno/godišnje",
     "loading": "Preusmjeravanje...",
     "close": "Zatvori"
   },
