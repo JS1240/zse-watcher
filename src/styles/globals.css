@@ -179,6 +179,10 @@ body {
   50% { transform: translateY(-5px); }
 }
 
+.animate-empty-float {
+  animation: empty-icon-float 3s ease-in-out infinite;
+}
+
 .animate-empty-state {
   animation: empty-state-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   opacity: 0;
