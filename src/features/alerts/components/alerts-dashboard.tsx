@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useRef, useCallback, memo } from "react";
 import { useTranslation } from "react-i18next";
 import i18n from "i18next";
-import { Bell, BellOff, Pencil, Trash2, X, Check, CheckCircle2, Keyboard, Download, AlertCircle, Search, CircleDot, Pause, TrendingUp, TrendingDown, ArrowUpDown, ArrowUp, Copy, Play, PauseIcon, RotateCcw, Loader2, Clock, BellRing } from "lucide-react";
+import { Bell, BellOff, Pencil, Trash2, X, Check, CheckCircle2, Keyboard, Download, AlertCircle, Search, CircleDot, Pause, TrendingUp, TrendingDown, ArrowUpDown, ArrowUp, ArrowDown, Copy, Play, PauseIcon, RotateCcw, Loader2, Clock, BellRing } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { toast } from "sonner";
@@ -61,6 +61,48 @@ function FilterChip({ active, onClick, label, icon, count }: FilterChipProps) {
         >
           {count}
         </span>
+      )}
+    </button>
+  );
+}
+
+// Reusable sort button for alerts columns
+function SortButton({
+  label,
+  active,
+  direction,
+  onClick,
+}: {
+  label: string;
+  active: boolean;
+  direction: "asc" | "desc" | null;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onClick();
+        }
+      }}
+      tabIndex={0}
+      role="columnheader"
+      aria-sort={active ? (direction === "asc" ? "ascending" : "descending") : "none"}
+      aria-label={`Sort by ${label}, currently ${direction === "asc" ? "ascending" : direction === "desc" ? "descending" : "none"}`}
+      className={cn(
+        "flex items-center gap-1 rounded px-2 py-1 text-[10px] font-medium transition-all hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
+        active ? "bg-accent text-foreground" : "text-muted-foreground"
+      )}
+    >
+      <span>{label}</span>
+      {direction === "asc" ? (
+        <ArrowUp className="h-3 w-3 shrink-0" />
+      ) : direction === "desc" ? (
+        <ArrowDown className="h-3 w-3 shrink-0" />
+      ) : (
+        <ArrowUpDown className="h-3 w-3 shrink-0 text-muted-foreground/40" />
       )}
     </button>
   );
@@ -487,26 +529,27 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
                     </TooltipContent>
                   </Tooltip>
                 )}
-                {/* Sort dropdown */}
-                <select
-                  value={`${sort.column}-${sort.direction}`}
-                  onChange={(e) => {
-                    const [column, direction] = e.target.value.split("-") as [
-                      "ticker" | "createdAt" | "targetValue",
-                      "asc" | "desc",
-                    ];
-                    setSort({ column, direction });
-                  }}
-                  className="h-8 rounded-md border border-input bg-background px-2 py-1 text-xs text-foreground"
-                  aria-label={t("sortBy") || "Sortiraj"}
-                >
-                  <option value="createdAt-desc">{t("sort.newest") || "Najnovije"}</option>
-                  <option value="createdAt-asc">{t("sort.oldest") || "Najstarije"}</option>
-                  <option value="ticker-asc">{t("sort.tickerAsc") || "A-Z"}</option>
-                  <option value="ticker-desc">{t("sort.tickerDesc") || "Z-A"}</option>
-                  <option value="targetValue-desc">{t("sort.targetDesc") || "Cilj ↓"}</option>
-                  <option value="targetValue-asc">{t("sort.targetAsc") || "Cilj ↑"}</option>
-                </select>
+                {/* Sort buttons - clickable column headers for sorting */}
+                <div className="flex items-center gap-1">
+                  <SortButton
+                    label={t("fields.created")}
+                    active={sort.column === "createdAt"}
+                    direction={sort.column === "createdAt" ? sort.direction : null}
+                    onClick={() => setSort({ column: "createdAt", direction: sort.column === "createdAt" && sort.direction === "desc" ? "asc" : "desc" })}
+                  />
+                  <SortButton
+                    label={t("fields.ticker")}
+                    active={sort.column === "ticker"}
+                    direction={sort.column === "ticker" ? sort.direction : null}
+                    onClick={() => setSort({ column: "ticker", direction: sort.column === "ticker" && sort.direction === "asc" ? "desc" : "asc" })}
+                  />
+                  <SortButton
+                    label={t("fields.target")}
+                    active={sort.column === "targetValue"}
+                    direction={sort.column === "targetValue" ? sort.direction : null}
+                    onClick={() => setSort({ column: "targetValue", direction: sort.column === "targetValue" && sort.direction === "desc" ? "asc" : "desc" })}
+                  />
+                </div>
                 <Button size="sm" variant="secondary" onClick={handleExport}>
                   <Download className="h-3.5 w-3.5" />
                   {t("exportCsv")}
