@@ -293,6 +293,14 @@ const MoverRow = memo(function MoverRow({ mover }: { mover: Mover }) {
     select(mover.ticker);
   };
 
+  // Handle keyboard navigation - Enter/Space to open stock detail
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      select(mover.ticker);
+    }
+  }, [mover.ticker, select]);
+
   const handleCopyTicker = useCallback(async (e: React.MouseEvent) => {
     e.stopPropagation();
     await navigator.clipboard.writeText(mover.ticker);
@@ -334,11 +342,13 @@ const MoverRow = memo(function MoverRow({ mover }: { mover: Mover }) {
     <button
       type="button"
       onClick={handleClick}
+      onKeyDown={handleKeyDown}
       className={cn(
         "group flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left transition-colors hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary",
         flashDirection === "up" && "price-flash-up",
         flashDirection === "down" && "price-flash-down",
       )}
+      aria-label={`${mover.ticker} ${mover.name} - ${mover.price.toFixed(2)} EUR, ${mover.changePct > 0 ? '+' : ''}${mover.changePct.toFixed(2)}%`}
     >
       <div className="flex flex-1 items-center gap-2">
         <button
