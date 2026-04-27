@@ -1,9 +1,10 @@
-import { useState, useRef, useEffect, useCallback } from "react";
-import { ChevronDown, Check } from "lucide-react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import { ChevronDown, Check, AlertCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { useDebounce } from "@/hooks/use-debounce";
 import { cn } from "@/lib/utils";
+import { formatPrice } from "@/lib/formatters";
 
 interface TickerSelectProps {
   value: string;
@@ -12,6 +13,8 @@ interface TickerSelectProps {
   className?: string;
   error?: boolean;
   id?: string;
+  /** When true, shows validation feedback (green for valid, amber for not found) */
+  showValidation?: boolean;
 }
 
 export function TickerSelect({
@@ -21,6 +24,7 @@ export function TickerSelect({
   className,
   error,
   id,
+  showValidation = false,
 }: TickerSelectProps) {
   const { t } = useTranslation("common");
   const [text, setText] = useState(value);
@@ -32,6 +36,28 @@ export function TickerSelect({
 
   const { data: result } = useStocksLive();
   const stocks = result?.stocks ?? [];
+
+  // Validation checks (only when showValidation is enabled)
+  const isTickerValid = useMemo(() => {
+    if (!showValidation || !text) return false;
+    return stocks.some((s) => s.ticker.toUpperCase() === text.toUpperCase());
+  }, [showValidation, text, stocks]);
+
+  const isTickerFormatValid = useMemo(() => {
+    if (!showValidation || !text) return false;
+    return /^[A-Z0-9_-]{3,10}$/i.test(text);
+  }, [showValidation, text]);
+
+  const showTickerNotFound = useMemo(() => {
+    return showValidation && isTickerFormatValid && !isTickerValid && text.length >= 3;
+  }, [showValidation, isTickerFormatValid, isTickerValid, text]);
+
+  // Current price for valid ticker
+  const currentPrice = useMemo(() => {
+    if (!showValidation || !isTickerValid || !text) return null;
+    const stock = stocks.find((s) => s.ticker.toUpperCase() === text.toUpperCase());
+    return stock?.price ?? null;
+  }, [showValidation, isTickerValid, text, stocks]);
 
   // Filter stocks by ticker/name text
   const suggestions = debouncedText
@@ -155,10 +181,26 @@ export function TickerSelect({
             "placeholder:text-muted-foreground",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
             error && "border-destructive focus-visible:ring-destructive",
+            showValidation && isTickerValid && !error && "border-emerald-500 ring-1 ring-emerald-500",
+            showValidation && showTickerNotFound && !error && "border-amber-400 ring-1 ring-amber-400",
           )}
         />
         <ChevronDown className="pointer-events-none absolute right-2 h-3.5 w-3.5 text-muted-foreground" />
       </div>
+
+      {/* Validation feedback message */}
+      {showValidation && isTickerValid && currentPrice && (
+        <p className="mt-1.5 flex items-center gap-1.5 rounded-md border border-emerald-400/30 bg-emerald-50 px-2.5 py-1.5 text-xs font-semibold text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-700/30">
+          <Check className="h-3.5 w-3.5 flex-shrink-0" />
+          {formatPrice(currentPrice)}
+        </p>
+      )}
+      {showValidation && showTickerNotFound && (
+        <p className="mt-1.5 flex items-center gap-1.5 rounded-md border border-amber-400/30 bg-amber-50 px-2.5 py-1.5 text-xs font-semibold text-amber-700 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-700/30">
+          <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
+          {t("tickerNotFound") || "Dionica ne postoji na ZSE"}
+        </p>
+      )}
 
       {hint}
 
