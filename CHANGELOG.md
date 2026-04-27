@@ -4,6 +4,12 @@
 
 ### Added
 
+- **Market Movers Sorting** — sort gainers and losers by change %, price, or ticker for Croatian retail investors
+  - Added sort buttons to gainers and losers section headers
+  - Sort options: Ticker, Cijena (price), Promjena (change %)
+  - Click to toggle ascending/descending order
+  - Helps investors quickly find stocks matching their criteria
+
 - **Quick Add Ticker UX Polish** — add inline validation feedback with current price display for Croatian retail investors
   - Added real-time ticker validation (valid format check, exists check, already watched check)
   - Added inline error message when ticker not found on ZSE (red border)
