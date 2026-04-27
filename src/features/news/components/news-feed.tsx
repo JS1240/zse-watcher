@@ -1,9 +1,10 @@
 import { useState, useCallback, memo, useRef, useEffect } from "react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { ExternalLink, Newspaper, Search, ArrowUp, ArrowDown, ArrowUpDown, Download, Keyboard, X, ArrowUp as ScrollTop, TrendingUp, Copy } from "lucide-react";
+import { ExternalLink, Newspaper, Search, ArrowUp, ArrowDown, ArrowUpDown, Download, Keyboard, X, ArrowUp as ScrollTop, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
 import { useNews } from "@/features/news/api/news-queries";
+import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { ArticleDrawer } from "@/features/news/components/article-drawer";
 import { NewsSkeleton } from "@/features/news/components/news-skeleton";
 import { Input } from "@/components/ui/input";
@@ -19,6 +20,8 @@ import { cn } from "@/lib/utils";
 import type { NewsArticle } from "@/types/news";
 import { useDebounce } from "@/hooks/use-debounce";
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
+import { useSelectedStock } from "@/hooks/use-selected-stock";
+import { usePriceFlash } from "@/hooks/use-price-flash";
 
 interface NewsFeedProps {
   ticker?: string;
@@ -71,6 +74,10 @@ const CategoryChip = memo(function CategoryChip({
 
 export function NewsFeed({ ticker: propsTicker, category, limit }: NewsFeedProps) {
   const { data: articles, isLoading, isError, refetch, dataUpdatedAt, isFetching } = useNews();
+  const { data: stocksResult } = useStocksLive();
+  const stocks = useMemo(() => stocksResult?.stocks ?? [], [stocksResult]);
+  const priceFlashMap = usePriceFlash(stocks);
+  const { select } = useSelectedStock();
   const { t } = useTranslation("common");
   const { t: tn } = useTranslation("news");
   const [selectedArticle, setSelectedArticle] = useState<NewsArticle | null>(null);
@@ -258,12 +265,17 @@ export function NewsFeed({ ticker: propsTicker, category, limit }: NewsFeedProps
   const [scrollTop, setScrollTop] = useState(false);
   const newsFeedRef = useRef<HTMLDivElement>(null);
 
-  // Click-to-copy ticker
+  // Click-to-copy ticker (right-click)
   const handleCopyTicker = useCallback(async (e: React.MouseEvent, ticker: string) => {
     e.stopPropagation();
     await navigator.clipboard.writeText(ticker);
     toast.success(`${ticker} ${t("toast.copied") || "kopirano"}`);
   }, [t]);
+
+  // Handle ticker click - opens stock detail drawer
+  const handleSelectTicker = useCallback((ticker: string) => {
+    select(ticker);
+  }, [select]);
 
   // Memoized article item with ref registration for keyboard navigation
   const ArticleItem = memo(function ArticleItem({
@@ -271,16 +283,24 @@ export function NewsFeed({ ticker: propsTicker, category, limit }: NewsFeedProps
     index,
     onClick,
     isSelected,
+    flashMap,
+    onSelectTicker,
   }: {
     article: NewsArticle;
     index: number;
     onClick: (article: NewsArticle) => void;
     isSelected: boolean;
+    flashMap: Map<string, "up" | "down" | null>;
+    onSelectTicker: (ticker: string) => void;
   }) {
     const ref = useCallback((el: HTMLButtonElement | null) => {
       if (el) articleRefs.current.set(index, el);
       else articleRefs.current.delete(index);
     }, [index]);
+
+    // Get flash state for this ticker's price change
+    const tickerKey = article.ticker || "";
+    const flash = flashMap.get(tickerKey);
 
     return (
       <button
@@ -303,12 +323,23 @@ export function NewsFeed({ ticker: propsTicker, category, limit }: NewsFeedProps
           <div className="mt-1 flex flex-wrap items-center gap-2 text-[10px] text-muted-foreground">
             {article.ticker && (
               <button
-                onClick={(e) => handleCopyTicker(e, article.ticker!)}
-                className="flex items-center gap-1 rounded-sm bg-accent px-1.5 py-0.5 font-data font-medium text-foreground transition-colors hover:bg-accent/80"
-                title={t("toast.copied") || "Kopiraj"}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onSelectTicker(article.ticker!);
+                }}
+                onContextMenu={(e) => {
+                  e.preventDefault();
+                  handleCopyTicker(e, article.ticker!);
+                }}
+                className={cn(
+                  "flex items-center gap-1 rounded-sm bg-accent px-1.5 py-0.5 font-data font-medium text-foreground transition-colors hover:bg-accent/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                  flash === "up" && "price-flash-up",
+                  flash === "down" && "price-flash-down"
+                )}
+                title="Click for stock details"
               >
                 {article.ticker}
-                <Copy className="h-2.5 w-2.5 opacity-50" />
+                <TrendingUp className={cn("h-2.5 w-2.5 opacity-50", flash === "up" && "text-emerald-500", flash === "down" && "text-red-500 rotate-180")} />
               </button>
             )}
             <span>{formatRelativeTime(article.publishedAt)}</span>
@@ -326,6 +357,13 @@ export function NewsFeed({ ticker: propsTicker, category, limit }: NewsFeedProps
         </div>
         <ExternalLink className="mt-0.5 h-3 w-3 shrink-0 flex-none text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
       </button>
+    );
+  }, (prev, next) => {
+    // Custom comparison for memo - only re-render when these change
+    return (
+      prev.article.id === next.article.id &&
+      prev.flashMap.get(prev.article.ticker ?? "") === next.flashMap.get(next.article.ticker ?? "") &&
+      prev.isSelected === next.isSelected
     );
   });
 
@@ -593,6 +631,8 @@ export function NewsFeed({ ticker: propsTicker, category, limit }: NewsFeedProps
               index={index}
               onClick={handleArticleClick}
               isSelected={index === selectedIndex}
+              flashMap={priceFlashMap}
+              onSelectTicker={handleSelectTicker}
             />
           ))}
         </div>
