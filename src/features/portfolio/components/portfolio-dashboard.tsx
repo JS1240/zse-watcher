@@ -575,10 +575,27 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
         </div>
       )}
 
-      {/* Results count */}
+      {/* Results count + keyboard shortcuts hint */}
       {enrichedHoldings.length > 0 && (
-        <div className="text-[10px] text-muted-foreground">
-          {sortedHoldings.length} / {enrichedHoldings.length} {sortedHoldings.length === 1 ? t("portfolio.positions.one") : t("portfolio.positions.other")}
+        <div className="flex items-center justify-between">
+          <span className="text-[10px] text-muted-foreground">
+            {sortedHoldings.length} / {enrichedHoldings.length} {sortedHoldings.length === 1 ? t("portfolio.positions.one") : t("portfolio.positions.other")}
+          </span>
+          {/* Always-visible keyboard shortcuts hint for discoverability */}
+          <div className="flex items-center gap-2 text-[9px] text-muted-foreground">
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
+              <span>{t("shortcut.view") || "detalji"}</span>
+            </span>
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Del</kbd>
+              <span>{t("shortcut.delete") || "obriši"}</span>
+            </span>
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">/</kbd>
+              <span>{t("shortcut.search") || "traži"}</span>
+            </span>
+          </div>
         </div>
       )}
 
