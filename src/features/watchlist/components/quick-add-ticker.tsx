@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, AlertCircle, CheckCircle2, Star, TrendingUp } from "lucide-react";
+import { Plus, AlertCircle, CheckCircle2, Star, TrendingUp, Keyboard } from "lucide-react";
 import { toast } from "sonner";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
@@ -114,21 +114,28 @@ export function QuickAddTicker({ stocks, watchedTickers, onAdd }: QuickAddTicker
 
   return (
     <div className="flex items-center gap-1">
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <button
-            onClick={handleToggle}
-            className="flex h-8 items-center gap-1 rounded-md border border-dashed border-input bg-background px-2.5 py-1 text-[10px] text-muted-foreground transition-colors hover:border-primary hover:text-primary"
-            title={t("quickAddTooltip")}
-          >
-            <Plus className="h-3 w-3" />
-            <span className="hidden sm:inline">{t("quickAdd")}</span>
-          </button>
-        </TooltipTrigger>
-        <TooltipContent side="bottom" className="text-xs">
-          <p>{t("quickAddTooltip")}</p>
-        </TooltipContent>
-      </Tooltip>
+      <div className="flex items-center gap-1">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              onClick={handleToggle}
+              className="flex h-8 items-center gap-1 rounded-md border border-dashed border-input bg-background px-2.5 py-1 text-[10px] text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+              title={t("quickAddTooltip")}
+            >
+              <Plus className="h-3 w-3" />
+              <span className="hidden sm:inline">{t("quickAdd")}</span>
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom" className="text-xs">
+            <p>{t("quickAddTooltip")}</p>
+          </TooltipContent>
+        </Tooltip>
+        {/* Always-visible keyboard shortcut hint for discoverability */}
+        <span className="flex items-center gap-0.5 rounded px-1 py-0.5 text-[9px] text-muted-foreground/70">
+          <Keyboard className="h-2.5 w-2.5" />
+          <span>/</span>
+        </span>
+      </div>
       {isOpen && (
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-1">

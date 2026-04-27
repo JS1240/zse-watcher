@@ -4,6 +4,11 @@
 
 ### Added
 
+- **Quick Add Ticker Shortcut Visibility** — always-visible keyboard shortcut hint for search focus in watchlist
+  - Added keyboard shortcut hint (/  icon) next to Quick Add ticker button
+  - Matches stocks/watchlist/portfolio/alerts pattern for discoverability
+  - Helps Croatian retail investors discover the "/" shortcut for search
+
 - **Market Movers Sorting** — sort gainers and losers by change %, price, or ticker for Croatian retail investors
   - Added sort buttons to gainers and losers section headers
   - Sort options: Ticker, Cijena (price), Promjena (change %)
