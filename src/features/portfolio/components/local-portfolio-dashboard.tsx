@@ -1,6 +1,6 @@
 import { useState, useMemo, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, Trash2, ChevronDown, ChevronUp, Download, Search, X, ArrowUp, ArrowDown, ArrowUpDown, TrendingUp, TrendingDown, Keyboard, CheckCircle2, ArrowUp as ScrollToTopIcon, HelpCircle, Wallet, Banknote } from "lucide-react";
+import { Plus, Trash2, ChevronDown, ChevronUp, Download, Search, X, ArrowUp, ArrowDown, ArrowUpDown, TrendingUp, TrendingDown, Minus, Keyboard, CheckCircle2, ArrowUp as ScrollToTopIcon, HelpCircle, Wallet, Banknote } from "lucide-react";
 import { Sparkline } from "@/components/shared/sparkline";
 import { getMockPriceHistory } from "@/lib/mock-data";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
@@ -642,6 +642,26 @@ export function LocalPortfolioDashboard() {
               >
                 <TrendingDown className="h-3 w-3" />
                 <span className="hidden sm:inline">{t("filters.losers") || "Padaju"}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setChangeFilter("unchanged")}
+                aria-pressed={changeFilter === "unchanged"}
+                className={cn(
+                  "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background btn-press",
+                  changeFilter === "unchanged"
+                    ? "bg-primary text-primary-foreground shadow-sm shadow-primary/25"
+                    : "bg-muted/60 text-muted-foreground hover:bg-muted hover:scale-[1.02]",
+                )}
+                aria-label={`${t("filters.unchanged") || "Nepromijenjeno"} (${filteredHoldings.filter((h) => h.gainPct === 0).length})`}
+              >
+                <Minus className="h-3 w-3" />
+                <span className="hidden sm:inline">{t("filters.unchanged") || "Nepromijenjeno"}</span>
+                {changeFilter !== "unchanged" && filteredHoldings.filter((h) => h.gainPct === 0).length > 0 && (
+                  <span className="ml-1 rounded-full bg-muted-foreground/20 px-1.5 py-0.5 text-[9px] font-semibold">
+                    {filteredHoldings.filter((h) => h.gainPct === 0).length}
+                  </span>
+                )}
               </button>
             </div>
             {/* Active filters badge */}
