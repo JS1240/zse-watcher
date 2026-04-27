@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Moon, Sun, Globe, Monitor, Keyboard, Trash2, Download, Upload, Database, Check, ArrowUp, AlertTriangle } from "lucide-react";
+import { Moon, Sun, Globe, Monitor, Keyboard, Trash2, Download, Upload, Database, Check, ArrowUp, AlertTriangle, HardDrive } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
 import { useThemeStore } from "@/hooks/use-theme";
@@ -60,19 +60,41 @@ function SettingsPage() {
   const [showClearConfirm, setShowClearConfirm] = useState(false);
 
   // Check if user has local data
-  const hasLocalData = (() => {
+  const localDataStats = useMemo(() => {
     try {
-      return !!(
-        localStorage.getItem("zse-local-watchlist") ||
-        localStorage.getItem("zse-portfolio-transactions") ||
-        localStorage.getItem("zse-local-alerts") ||
-        localStorage.getItem("zse-received-dividends") ||
-        localStorage.getItem("zse-screener-presets")
-      );
+      const stats: Record<string, { count: number; size: number }> = {};
+      const keys = {
+        watchlist: "zse-local-watchlist",
+        portfolio: "zse-portfolio-transactions",
+        alerts: "zse-local-alerts",
+        dividends: "zse-received-dividends",
+        presets: "zse-screener-presets",
+      };
+      Object.entries(keys).forEach(([key, storageKey]) => {
+        const item = localStorage.getItem(storageKey);
+        if (item) {
+          const parsed = JSON.parse(item);
+          // Count items: array length or Object.keys length
+          const count = Array.isArray(parsed) ? parsed.length : Object.keys(parsed).length;
+          const size = new Blob([item]).size;
+          stats[key] = { count, size };
+        }
+      });
+      return stats;
     } catch {
-      return false;
+      return {};
     }
-  })();
+  }, []);
+
+  const totalLocalItems = Object.values(localDataStats).reduce((sum, s) => sum + s.count, 0);
+  const totalLocalSize = Object.values(localDataStats).reduce((sum, s) => sum + s.size, 0);
+  const hasLocalData = totalLocalItems > 0;
+
+  const formatSize = (bytes: number) => {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  };
 
   // Export all local data as JSON
   const handleExportAll = useCallback(() => {
@@ -321,8 +343,17 @@ function SettingsPage() {
       {/* Data Management - for all users with localStorage */}
       {hasLocalData && (
         <section className="rounded-md border border-border bg-card p-4">
-          <h2 className="mb-3 text-[10px] uppercase tracking-wider text-muted-foreground">
-            {t("localData.title")}
+          <h2 className="mb-3 flex items-center justify-between text-[10px] uppercase tracking-wider text-muted-foreground">
+            <span className="flex items-center gap-2">
+              <Database className="h-3.5 w-3.5" />
+              {t("localData.title")}
+            </span>
+            <span className="flex items-center gap-2 rounded-full bg-primary/10 px-2 py-1 text-[9px] font-medium text-primary">
+              <HardDrive className="h-3 w-3" />
+              <span>{totalLocalItems} stavki</span>
+              <span className="text-primary/60">·</span>
+              <span>{formatSize(totalLocalSize)}</span>
+            </span>
           </h2>
           <div className="space-y-3">
             {/* Export all data button */}
