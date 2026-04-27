@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { memo, useCallback, useState, useMemo } from "react";
-import { TrendingUp, TrendingDown, Clock, Star, Keyboard, Download, CheckCircle2 } from "lucide-react";
+import { TrendingUp, TrendingDown, Clock, Star, Keyboard, Download, CheckCircle2, ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import { useMovers } from "@/features/market/api/market-queries";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
 import { useAuth } from "@/hooks/use-auth";
@@ -22,10 +22,88 @@ function formatLastUpdated(timestamp: number | undefined): string {
   return date.toLocaleTimeString("hr-HR", { hour: "2-digit", minute: "2-digit" });
 }
 
+type SortColumn = "changePct" | "price" | "ticker";
+type SortDirection = "asc" | "desc";
+
+function SortHeader({
+  column,
+  label,
+  activeColumn,
+  direction,
+  onSort,
+}: {
+  column: SortColumn;
+  label: string;
+  activeColumn: SortColumn;
+  direction: SortDirection;
+  onSort: (col: SortColumn) => void;
+}) {
+  const isActive = activeColumn === column;
+  const sortIcon = isActive
+    ? direction === "asc"
+      ? ArrowUp
+      : ArrowDown
+    : ArrowUpDown;
+  const Icon = sortIcon;
+
+  return (
+    <button
+      onClick={() => onSort(column)}
+      className={cn(
+        "flex items-center gap-1 rounded px-1.5 py-0.5 text-[9px] font-medium transition-colors hover:bg-accent",
+        isActive ? "text-foreground" : "text-muted-foreground"
+      )}
+      title={`Sortiraj po ${label.toLowerCase()}`}
+    >
+      <Icon className="h-2.5 w-2.5" />
+      <span className="hidden sm:inline">{label}</span>
+    </button>
+  );
+}
+
 export function MarketMovers() {
   const { data, isLoading, isError, refetch, dataUpdatedAt } = useMovers();
   const { t } = useTranslation("stocks");
   const { t: tc } = useTranslation("common");
+
+  // Sort state for gainers and losers
+  const [gainersSort, setGainersSort] = useState<{ column: SortColumn; direction: SortDirection }>({
+    column: "changePct",
+    direction: "desc",
+  });
+  const [losersSort, setLosersSort] = useState<{ column: SortColumn; direction: SortDirection }>({
+    column: "changePct",
+    direction: "asc",
+  });
+
+  // Sort movers by selected column
+  const sortedGainers = useMemo(() => {
+    if (!data) return [];
+    return [...data.gainers].sort((a, b) => {
+      const aVal = a[gainersSort.column];
+      const bVal = b[gainersSort.column];
+      if (typeof aVal === "string" && typeof bVal === "string") {
+        return gainersSort.direction === "asc" ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+      }
+      return gainersSort.direction === "asc"
+        ? ((aVal as number) || 0) - ((bVal as number) || 0)
+        : ((bVal as number) || 0) - ((aVal as number) || 0);
+    });
+  }, [data, gainersSort]);
+
+  const sortedLosers = useMemo(() => {
+    if (!data) return [];
+    return [...data.losers].sort((a, b) => {
+      const aVal = a[losersSort.column];
+      const bVal = b[losersSort.column];
+      if (typeof aVal === "string" && typeof bVal === "string") {
+        return losersSort.direction === "asc" ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+      }
+      return losersSort.direction === "asc"
+        ? ((aVal as number) || 0) - ((bVal as number) || 0)
+        : ((bVal as number) || 0) - ((aVal as number) || 0);
+    });
+  }, [data, losersSort]);
 
   const handleExportCsv = useCallback(() => {
     if (!data) return;
@@ -57,33 +135,11 @@ export function MarketMovers() {
   return (
     <div className="space-y-2">
       {/* Last updated timestamp */}
-      <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
-        <Clock className="h-3 w-3" />
-        <span>Zadnje ažurirano {formatLastUpdated(dataUpdatedAt)}</span>
-      </div>
-
-      <h3 className="flex items-center gap-2 text-xs font-semibold text-foreground">
-        <TrendingUp className="h-3.5 w-3.5 text-price-up" />
-        {t("movers.gainers")}
-      </h3>
-      <div className="space-y-0.5">
-        {data.gainers.map((m) => (
-          <MoverRow key={m.ticker} mover={m} />
-        ))}
-      </div>
-
-      <h3 className="flex items-center gap-2 text-xs font-semibold text-foreground">
-        <TrendingDown className="h-3.5 w-3.5 text-price-down" />
-        {t("movers.losers")}
-      </h3>
-      <div className="space-y-0.5">
-        {data.losers.map((m) => (
-          <MoverRow key={m.ticker} mover={m} />
-        ))}
-      </div>
-
-      {/* CSV Export button — consistent with news feed and screener */}
-      <div className="flex justify-end">
+      <div className="flex items-center justify-between gap-1 text-[10px] text-muted-foreground">
+        <div className="flex items-center gap-1">
+          <Clock className="h-3 w-3" />
+          <span>Zadnje ažurirano {formatLastUpdated(dataUpdatedAt)}</span>
+        </div>
         <button
           type="button"
           onClick={handleExportCsv}
@@ -93,6 +149,92 @@ export function MarketMovers() {
           <Download className="h-3 w-3" />
           CSV
         </button>
+      </div>
+
+      <h3 className="flex items-center gap-2 text-xs font-semibold text-foreground">
+        <TrendingUp className="h-3.5 w-3.5 text-price-up" />
+        {t("movers.gainers")}
+        {/* Sort controls for gainers */}
+        <div className="ml-auto flex items-center gap-0.5">
+          <SortHeader
+            column="ticker"
+            label="Ticker"
+            activeColumn={gainersSort.column}
+            direction={gainersSort.direction}
+            onSort={(col) => setGainersSort((prev) => ({
+              column: col,
+              direction: prev.column === col && prev.direction === "desc" ? "asc" : "desc",
+            }))}
+          />
+          <SortHeader
+            column="price"
+            label="Cijena"
+            activeColumn={gainersSort.column}
+            direction={gainersSort.direction}
+            onSort={(col) => setGainersSort((prev) => ({
+              column: col,
+              direction: prev.column === col && prev.direction === "desc" ? "asc" : "desc",
+            }))}
+          />
+          <SortHeader
+            column="changePct"
+            label="Promjena"
+            activeColumn={gainersSort.column}
+            direction={gainersSort.direction}
+            onSort={(col) => setGainersSort((prev) => ({
+              column: col,
+              direction: prev.column === col && prev.direction === "desc" ? "asc" : "desc",
+            }))}
+          />
+        </div>
+      </h3>
+      <div className="space-y-0.5">
+        {sortedGainers.map((m) => (
+          <MoverRow key={m.ticker} mover={m} />
+        ))}
+      </div>
+
+      <h3 className="flex items-center gap-2 text-xs font-semibold text-foreground">
+        <TrendingDown className="h-3.5 w-3.5 text-price-down" />
+        {t("movers.losers")}
+        {/* Sort controls for losers */}
+        <div className="ml-auto flex items-center gap-0.5">
+          <SortHeader
+            column="ticker"
+            label="Ticker"
+            activeColumn={losersSort.column}
+            direction={losersSort.direction}
+            onSort={(col) => setLosersSort((prev) => ({
+              column: col,
+              direction: prev.column === col && prev.direction === "desc" ? "asc" : "desc",
+            }))}
+          />
+          <SortHeader
+            column="price"
+            label="Cijena"
+            activeColumn={losersSort.column}
+            direction={losersSort.direction}
+            onSort={(col) => setLosersSort((prev) => ({
+              column: col,
+              direction: prev.column === col && prev.direction === "desc" ? "asc" : "desc",
+            }))}
+          />
+          <SortHeader
+            column="changePct"
+            label="Promjena"
+            activeColumn={losersSort.column}
+            direction={losersSort.direction}
+            onSort={(col) => setLosersSort((prev) => ({
+              column: col,
+              direction: prev.column === col && prev.direction === "desc" ? "asc" : "desc",
+            }))}
+          />
+        </div>
+      </h3>
+      <div className="space-y-0.5">
+        {sortedLosers.map((m) => (
+          <MoverRow key={m.ticker} mover={m} />
+        ))}
       </div>
 
       {/* Always-visible keyboard shortcuts hint for discoverability */}
