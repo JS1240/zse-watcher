@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, memo } from "react";
-import { X, Info, RefreshCw, Download, Bell } from "lucide-react";
+import { X, Info, RefreshCw, Download, Bell, Copy } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useStockDetail } from "@/features/stocks/api/stock-detail-queries";
@@ -83,6 +83,17 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
     toast.success(t("toast.exported"));
   }, [stock, t]);
 
+  // Copy deep link to clipboard for Croatian retail investors to share stocks
+  const handleCopyLink = useCallback(() => {
+    if (!stock) return;
+    const url = `${window.location.origin}/#${stock.ticker}`;
+    navigator.clipboard.writeText(url).then(() => {
+      toast.success(t("toast.linkCopied") || "Link copied", { icon: <Copy className="h-4 w-4 text-emerald-500" /> });
+    }).catch(() => {
+      toast.error(tc("errors.generic"));
+    });
+  }, [stock, t, tc]);
+
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
 
@@ -144,6 +155,11 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
           e.preventDefault();
           // Watchlist toggle handled by WatchlistToggle component via click
           document.getElementById(`watchlist-toggle-${stock?.ticker}`)?.click();
+          break;
+        case "l":
+        case "L":
+          e.preventDefault();
+          handleCopyLink();
           break;
       }
     };
@@ -239,7 +255,7 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
         {/* Always-visible keyboard shortcuts hint — matching portfolio/stocks pattern */}
         {stock && (
           <div className="flex items-center justify-between border-b border-border/50 bg-muted/30 px-4 py-1.5 text-[9px] text-muted-foreground">
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
               <span className="flex items-center gap-1">
                 <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Esc</kbd>
                 <span>{t("shortcut.close") || "zatvori"}</span>
@@ -251,6 +267,10 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
               <span className="flex items-center gap-1">
                 <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">A</kbd>
                 <span>{ta("create") || "alarm"}</span>
+              </span>
+              <span className="flex items-center gap-1">
+                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">L</kbd>
+                <span>{t("toast.linkCopied") || "kopiraj"}</span>
               </span>
               <span className="flex items-center gap-1">
                 <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">D</kbd>

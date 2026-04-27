@@ -90,7 +90,8 @@
     "volumeCopied": "Volume copied",
     "turnoverCopied": "Turnover copied",
     "addedToWatchlist": "Added to watchlist",
-    "removedFromWatchlist": "Removed from watchlist"
+    "removedFromWatchlist": "Removed from watchlist",
+    "linkCopied": "Link copied"
   },
   "exportCsv": "Export",
   "filters": {

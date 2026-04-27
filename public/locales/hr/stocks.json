@@ -89,7 +89,8 @@
     "volumeCopied": "Kopiran volumen",
     "turnoverCopied": "Kopiran promet",
     "addedToWatchlist": "Dodano na popis praćenja",
-    "removedFromWatchlist": "Uklonjeno s popisa praćenja"
+    "removedFromWatchlist": "Uklonjeno s popisa praćenja",
+    "linkCopied": "Link kopiran"
   },
   "exportCsv": "Izvoz",
   "filters": {

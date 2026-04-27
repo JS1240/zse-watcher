@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import type { ReactNode } from "react";
 import { Header } from "@/components/layout/header";
 import { Sidebar } from "@/components/layout/sidebar";
@@ -13,7 +14,15 @@ interface AppShellProps {
 }
 
 export function AppShell({ children }: AppShellProps) {
-  const { selectedTicker, clear } = useSelectedStock();
+  const { selectedTicker, clear, urlTicker, select } = useSelectedStock();
+
+  useEffect(() => {
+    // If there's a URL ticker (not yet selected), open it
+    if (urlTicker && !selectedTicker) {
+      // Validate and select the ticker from URL
+      setTimeout(() => select(urlTicker), 0);
+    }
+  }, [urlTicker, selectedTicker, select]);
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-background text-foreground">
