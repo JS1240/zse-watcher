@@ -16,6 +16,7 @@ import { useReceivedDividends } from "@/features/portfolio/hooks/use-received-di
 import { AddPositionForm } from "@/features/portfolio/components/add-position-form";
 import { PortfolioSkeleton } from "@/features/portfolio/components/portfolio-skeleton";
 import { Button } from "@/components/ui/button";
+import { LiveDataIndicator } from "@/components/shared/live-data-indicator";
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { formatPrice, formatCurrency } from "@/lib/formatters";
 import { exportToCsv } from "@/lib/export";
@@ -47,7 +48,7 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
   const { t } = useTranslation("portfolio");
   const { t: tc } = useTranslation("common");
   const { isLoading, data: portfolioData } = usePortfolio();
-  const { data: stocksResult, isError: isStocksError, refetch: refetchStocks } = useStocksLive();
+  const { data: stocksResult, isError: isStocksError, refetch: refetchStocks, isFetching, dataUpdatedAt } = useStocksLive();
   const stocks = stocksResult?.stocks ?? null;
   const { transactions: localTxs, hasLocalTransactions, removeTransaction, updateTransaction } = useLocalTransactions();
   const { dividends: receivedDividends } = useReceivedDividends();
@@ -515,6 +516,10 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
             <Download className="h-3.5 w-3.5" />
             {t("exportTransactions") || "Transactions"}
           </Button>
+          <LiveDataIndicator
+            updatedAt={dataUpdatedAt}
+            isFetching={isFetching}
+          />
           <Button size="sm" id="add-position-btn" onClick={() => setShowAddForm(!showAddForm)}>
             <Plus className="h-3.5 w-3.5" />
             {t("addPosition")}

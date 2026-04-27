@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { EmptyState } from "@/components/shared/empty-state";
 import { PortfolioEmptyIllustration, PortfolioSoldIllustration } from "@/components/shared/empty-illustrations";
+import { LiveDataIndicator } from "@/components/shared/live-data-indicator";
 import { formatPrice, formatCurrency } from "@/lib/formatters";
 import { parseLocalizedNumber } from "@/lib/format-input";
 import { exportToCsv } from "@/lib/export";
@@ -34,7 +35,7 @@ export function LocalPortfolioDashboard() {
   const { t: tc } = useTranslation("common");
   const { transactions, hasLocalTransactions, removeTransaction, clearTransactions, updateTransaction } =
     useLocalTransactions();
-  const { data: stocksResult, isLoading: isStocksLoading } = useStocksLive();
+  const { data: stocksResult, isLoading: isStocksLoading, isFetching, dataUpdatedAt } = useStocksLive();
   const stocks = stocksResult?.stocks ?? null;
   const { select } = useSelectedStock();
   const [showAddForm, setShowAddForm] = useState(false);
@@ -710,6 +711,10 @@ export function LocalPortfolioDashboard() {
                 {t("exportTransactions") || "Transactions"}
               </Button>
             )}
+            <LiveDataIndicator
+              updatedAt={dataUpdatedAt}
+              isFetching={isFetching}
+            />
           </>
         )}
         <Button size="sm" onClick={() => setShowAddForm(!showAddForm)}>
