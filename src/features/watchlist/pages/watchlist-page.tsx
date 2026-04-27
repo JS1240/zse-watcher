@@ -1165,8 +1165,9 @@ function LocalWatchlist() {
           title={t("empty")}
           description={t("emptyDescription")}
           steps={[
-            { label: t("emptyHints.step1"), description: t("emptyHints.step2") },
-            { label: t("emptyHints.step3"), description: "" },
+            { label: t("quickStart.step1"), description: t("quickStart.step1Desc") },
+            { label: t("quickStart.step2"), description: t("quickStart.step2Desc") },
+            { label: t("quickStart.step3"), description: t("quickStart.step3Desc") },
           ]}
           action={{
             label: t("browseAction"),
