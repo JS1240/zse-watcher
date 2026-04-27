@@ -111,6 +111,11 @@ function ScreenerFilterInput({
   };
 
 
+  const handleClear = () => {
+    setLocalValue("");
+    onChange(field, "");
+  };
+
   return (
     <div className={className}>
       <label className={cn("mb-1 block text-[9px] uppercase", error ? "text-destructive" : "text-muted-foreground")}>
@@ -127,16 +132,25 @@ function ScreenerFilterInput({
           className={cn(
             "h-7 text-[11px] font-data transition-all",
             error && "border-destructive/60 bg-destructive/5 pr-7",
-            hasValue && !error && "border-primary/40 bg-primary/5",
+            hasValue && !error && "border-primary/40 bg-primary/5 pr-7",
           )}
         />
-        {error && (
+        {error ? (
           <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-1.5">
             <span className="text-[9px] font-medium text-destructive">
               {error}
             </span>
           </span>
-        )}
+        ) : hasValue ? (
+          <button
+            type="button"
+            onClick={handleClear}
+            className="absolute inset-y-0 right-0 flex items-center pr-1.5 text-muted-foreground hover:text-foreground"
+            aria-label={`Clear ${label} filter`}
+          >
+            <X className="h-3 w-3" />
+          </button>
+        ) : null}
       </div>
     </div>
   );
