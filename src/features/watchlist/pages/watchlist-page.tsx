@@ -253,6 +253,53 @@ function AuthenticatedWatchlist() {
     toast.success(t("toast.exported"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
   };
 
+  // Hidden file input ref for CSV import
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImportCsv = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const content = await readFileAsText(file);
+      const tickers = parseTickersFromCsv(content);
+
+      if (tickers.length === 0) {
+        toast.error(t("toast.importEmpty") || "No valid tickers found in CSV", { icon: <AlertCircle className="h-4 w-4 text-red-500" /> });
+        return;
+      }
+
+      // Find valid tickers (those that exist in stocks data)
+      const validTickers = tickers.filter((t) => stocks.some((s) => s.ticker === t));
+      const invalidTickers = tickers.filter((t) => !stocks.some((s) => s.ticker === t));
+
+      // Add each valid ticker to authenticated watchlist
+      let added = 0;
+      const watchedTickers = new Set(watchlistItems.data?.map((i) => i.ticker) ?? []);
+      for (const ticker of validTickers) {
+        if (!watchedTickers.has(ticker)) {
+          await addMutation.mutateAsync(ticker);
+          added++;
+        }
+      }
+
+      // Show results
+      if (added > 0) {
+        toast.success(t("toast.imported", { count: added, invalid: invalidTickers.length }) || `Added ${added} ticker${added !== 1 ? "s" : ""}${invalidTickers.length > 0 ? ` (${invalidTickers.length} not found)` : ""}`, { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
+      } else if (invalidTickers.length > 0) {
+        toast.warning(t("toast.importNotFound", { count: invalidTickers.length, invalid: invalidTickers.join(", ") }) || `${invalidTickers.length} tickers not found on ZSE: ${invalidTickers.join(", ")}`, { icon: <AlertCircle className="h-4 w-4 text-amber-500" /> });
+      } else {
+        toast.info(t("toast.importAlready") || "All tickers already in watchlist", { icon: <CheckCircle2 className="h-4 w-4" /> });
+      }
+    } catch (error) {
+      console.error("CSV import error:", error);
+      toast.error(t("toast.importError") || "Failed to import CSV", { icon: <AlertCircle className="h-4 w-4 text-red-500" /> });
+    } finally {
+      // Reset file input so same file can be selected again
+      e.target.value = "";
+    }
+  }, [stocks, watchlistItems.data, addMutation, t]);
+
   // Loading and error states (conditional render instead of early return for React hooks compliance)
   const isLoading = watchlistItems.isLoading;
   const showError = isError;
@@ -362,7 +409,7 @@ function AuthenticatedWatchlist() {
           <Download className="h-3.5 w-3.5" />
           CSV
         </Button>
-        {/* CSV import button }
+        {/* CSV import button for authenticated watchlist */}
         <input
           ref={fileInputRef}
           type="file"
