@@ -71,6 +71,7 @@
     "step3Desc": "Get notified when the price hits your target."
   },
   "toast": {
+    "tickerCopied": "{{ticker}} copied",
     "created": "Alert created",
     "deleted": "Alert deleted",
     "updated": "Alert updated",

@@ -71,6 +71,7 @@
     "step3Desc": "Primit obavijest kad cijena doseže cilj."
   },
   "toast": {
+    "tickerCopied": "{{ticker}} kopiran",
     "created": "Alarm stvoren",
     "deleted": "Alarm obrisan",
     "updated": "Alarm azuriran",
