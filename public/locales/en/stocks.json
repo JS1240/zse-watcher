@@ -74,7 +74,9 @@
   },
   "chart": {
     "noData": "No chart data available",
-    "loadError": "Failed to load chart data"
+    "loadError": "Failed to load chart data",
+    "exportHistory": "Export price history",
+    "historyExported": "Price history exported"
   },
   "ranges": {
     "1D": "1D",

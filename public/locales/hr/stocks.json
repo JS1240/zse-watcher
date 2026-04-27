@@ -73,7 +73,9 @@
     "isinTooltip": "Međunarodni identifikacijski broj vrijednosnih papira (International Securities Identification Number)."
   },
   "chart": {
-    "noData": "Nema podataka za graf"
+    "noData": "Nema podataka za graf",
+    "exportHistory": "Izvoz cijene povijesti",
+    "historyExported": "Povijest cijena izvezena"
   },
   "ranges": {
     "1D": "1D",
