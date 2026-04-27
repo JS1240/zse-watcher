@@ -12,10 +12,10 @@
     "oldest": "Oldest",
     "tickerAsc": "Ticker A-Z",
     "tickerDesc": "Ticker Z-A",
-    "valueDesc": "Value \u2193",
-    "valueAsc": "Value \u2191",
-    "gainPctDesc": "Gain % \u2193",
-    "gainPctAsc": "Gain % \u2191",
+    "valueDesc": "Value ↓",
+    "valueAsc": "Value ↑",
+    "gainPctDesc": "Gain % ↓",
+    "gainPctAsc": "Gain % ↑",
     "label": "Sort"
   },
   "filters": {
@@ -89,7 +89,7 @@
   "searchNoResults": "No results found",
   "clearSearch": "Clear search",
   "emptySold": "All positions sold",
-  "emptySoldDescription": "You have transactions in history but no active holdings \u2014 all positions have been sold. Add a new buy to continue tracking.",
+  "emptySoldDescription": "You have transactions in history but no active holdings — all positions have been sold. Add a new buy to continue tracking.",
   "history": "Transaction History",
   "analytics": {
     "empty": "No analytics without positions",
@@ -130,12 +130,21 @@
     "search": "search"
   },
   "portfolio": {
-    "localIndicator": "Portfolio saved locally \u2014 sign in to sync across devices",
+    "localIndicator": "Portfolio saved locally — sign in to sync across devices",
     "syncedIndicator": "Portfolio synced with your account",
     "positions": {
       "one": "position",
       "other": "positions"
     },
     "saved": "Saved"
+  },
+  "plPreview": {
+    "title": "Market comparison",
+    "atMarket": "At market price",
+    "atMarketDesc": "Your price matches market — buying at fair value",
+    "aboveMarket": "+{{pct}}% above market",
+    "aboveMarketDesc": "Buying above market — check why (premium, limit order...)",
+    "belowMarket": "{{pct}}% below market",
+    "belowMarketDesc": "Buying below market — good opportunity!"
   }
 }

@@ -12,10 +12,10 @@
     "oldest": "Najstarije",
     "tickerAsc": "Oznaka A-Z",
     "tickerDesc": "Oznaka Z-A",
-    "valueDesc": "Vrijednost \u2193",
-    "valueAsc": "Vrijednost \u2191",
-    "gainPctDesc": "Dobitak % \u2193",
-    "gainPctAsc": "Dobitak % \u2191",
+    "valueDesc": "Vrijednost ↓",
+    "valueAsc": "Vrijednost ↑",
+    "gainPctDesc": "Dobitak % ↓",
+    "gainPctAsc": "Dobitak % ↑",
     "label": "Sortiraj"
   },
   "filters": {
@@ -35,7 +35,7 @@
     "exceedsShares": "Prodajete više nego što imate",
     "maxSell": "Maksimum: {{max}} kom"
   },
-  "tickerNotFound": "Ticker nije prona\u0111en na ZSE",
+  "tickerNotFound": "Ticker nije pronađen na ZSE",
   "useSuggested": "Koristi {{value}}",
   "totalInvestment": "Ukupna vrijednost: {{value}}",
   "fields": {
@@ -65,13 +65,13 @@
     "transactionAddFailed": "Neuspjelo dodavanje transakcije",
     "exported": "Portfelj izvezen u CSV",
     "positionAdded": "Pozicija dodana",
-    "positionUpdated": "Pozicija a\u017eurirana",
+    "positionUpdated": "Pozicija ažurirana",
     "positionDeleted": "Pozicija obrisana",
     "copied": "Kopirano: {{ticker}}",
     "priceCopied": "Kopirana cijena: {{price}}",
     "valueCopied": "Kopirana vrijednost: {{value}}",
     "deleted": "Transakcija obrisana",
-    "holdingUpdated": "Udjeli a\u017eurirani"
+    "holdingUpdated": "Udjeli ažurirani"
   },
   "exportCsv": "CSV",
   "exportTransactions": "Transakcije",
@@ -85,9 +85,9 @@
     "step3": "Pratite dobitak i alokaciju",
     "step3Desc": "Gledajte sektore, izvedbu i ukupnu vrijednost portfelja"
   },
-  "searchPlaceholder": "Pretra\u017ei oznaku ili ime...",
+  "searchPlaceholder": "Pretraži oznaku ili ime...",
   "searchNoResults": "Nema rezultata",
-  "clearSearch": "O\u010disti pretra\u017eivanje",
+  "clearSearch": "Očisti pretraživanje",
   "emptySold": "Sve pozicije prodane",
   "emptySoldDescription": "Imate transakcije u povijesti, ali nema aktivnih pozicija jer su sve prodane. Dodajte novu kupnju da biste nastavili.",
   "history": "Povijest transakcija",
@@ -114,7 +114,7 @@
       "total": "Ukupno:"
     },
     "buttons": {
-      "record": "Zabilje\u017ei",
+      "record": "Zabilježi",
       "save": "Spremi",
       "cancel": "Odustani"
     }
@@ -127,15 +127,24 @@
   "shortcut": {
     "view": "detalji dionice",
     "delete": "obrisi",
-    "search": "pretra\u017eivanje"
+    "search": "pretraživanje"
   },
   "portfolio": {
-    "localIndicator": "Portfelj spremljen lokalno \u2014 prijavite se za sinkronizaciju",
-    "syncedIndicator": "Portfelj sinkroniziran s va\u0161im ra\u010dunom",
+    "localIndicator": "Portfelj spremljen lokalno — prijavite se za sinkronizaciju",
+    "syncedIndicator": "Portfelj sinkroniziran s vašim računom",
     "positions": {
       "one": "pozicija",
       "other": "pozicija"
     },
     "saved": "Spremljeno"
+  },
+  "plPreview": {
+    "title": "Usporedba s tržištem",
+    "atMarket": "Po tržišnoj cijeni",
+    "atMarketDesc": "Vaša cijena odgovara tržišnoj — kupujete po fer vrijednosti",
+    "aboveMarket": "+{{pct}}% iznad tržišta",
+    "aboveMarketDesc": "Kupujete skuplje od tržišta — provjerite zašto (premium, limit order...)",
+    "belowMarket": "{{pct}}% ispod tržišta",
+    "belowMarketDesc": "Kupujete jeftinije od tržišta — dobra prilika!"
   }
 }
