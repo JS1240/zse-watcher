@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Keyboard, ArrowUp } from "lucide-react";
+import { Keyboard, ArrowUp, Download } from "lucide-react";
 import { MarketOverview } from "@/features/market/components/market-overview";
 import { MarketStatus } from "@/features/market/components/market-status";
 import { useMacro } from "@/features/market/api/market-queries";
@@ -11,7 +11,9 @@ import { formatPrice } from "@/lib/formatters";
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { MacroSkeleton } from "@/features/market/components/macro-skeleton";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 import { ErrorState } from "@/components/shared/error-state";
+import { exportToCsv } from "@/lib/export";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/macro")({
@@ -31,6 +33,46 @@ function MacroPage() {
   const scrollToTop = () => {
     contentRef.current?.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  // Export macro data to CSV
+  const handleExportCsv = useCallback(() => {
+    const rows: string[][] = [];
+    const now = new Date().toISOString();
+
+    // Add index data
+    if (macro) {
+      rows.push([
+        t("indices.crobex"),
+        macro.crobex.value.toFixed(2),
+        `${macro.crobex.changePct >= 0 ? "+" : ""}${macro.crobex.changePct.toFixed(2)}%`,
+        now,
+      ]);
+      rows.push([
+        t("indices.crobex10"),
+        macro.crobex10.value.toFixed(2),
+        `${macro.crobex10.changePct >= 0 ? "+" : ""}${macro.crobex10.changePct.toFixed(2)}%`,
+        now,
+      ]);
+      rows.push([
+        t("indices.euroStoxx"),
+        macro.euroStoxx50.value.toFixed(2),
+        `${macro.euroStoxx50.changePct >= 0 ? "+" : ""}${macro.euroStoxx50.changePct.toFixed(2)}%`,
+        now,
+      ]);
+    }
+
+    // Add forex data
+    if (forex) {
+      rows.push(["EUR/USD", forex.eurUsd.toFixed(4), "", now]);
+      rows.push(["USD/HRK", forex.usdHrk.toFixed(4), "", now]);
+      rows.push(["EUR/CHF", forex.eurChf.toFixed(4), "", now]);
+      rows.push(["EUR/GBP", forex.eurGbp.toFixed(4), "", now]);
+      rows.push(["EUR/HRK", forex.eurHrk.toFixed(4), "(CNB fixing)", now]);
+    }
+
+    const headers = ["Indicator", "Value", "Change", "Timestamp"];
+    exportToCsv(`zse-macro-${new Date().toISOString().split("T")[0]}`, headers, rows);
+  }, [macro, forex, t]);
 
   // Combined error state - show error if either macro or forex fails
   const hasError = isError || forexError;
@@ -66,7 +108,20 @@ function MacroPage() {
     <div className="flex h-full flex-col gap-4 overflow-auto p-4">
       <div className="flex items-center justify-between gap-2">
         <h1 className="font-data text-lg font-bold">{t("title")}</h1>
-        <MarketStatus />
+        <div className="flex items-center gap-2">
+          {!isLoading && macro && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleExportCsv}
+              title={t("exportCsv")}
+            >
+              <Download className="h-3.5 w-3.5" />
+              CSV
+            </Button>
+          )}
+          <MarketStatus />
+        </div>
       </div>
 
       <MarketOverview />
