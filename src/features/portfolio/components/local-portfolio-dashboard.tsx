@@ -371,6 +371,60 @@ export function LocalPortfolioDashboard() {
     );
   }
 
+  // Handle sort for transaction history table
+  const handleTxSort = (column: TxSortColumn) => {
+    setTxSort((prev) => {
+      if (prev?.column !== column) return { column, direction: "desc" };
+      if (prev.direction === "desc") return { column, direction: "asc" };
+      return { column, direction: "desc" };
+    });
+  };
+
+  // Reusable sort header for transaction history table
+  function TxSortHeader({
+    column,
+    label,
+    sort,
+    onSort,
+  }: {
+    column: TxSortColumn;
+    label: string;
+    sort: { column: TxSortColumn; direction: "asc" | "desc" };
+    onSort: (col: TxSortColumn) => void;
+  }) {
+    const isActive = sort.column === column;
+    const direction = isActive ? sort.direction : null;
+
+    // Handle Enter/Space for keyboard sorting (accessibility)
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        onSort(column);
+      }
+    };
+
+    return (
+      <button
+        onClick={() => onSort(column)}
+        onKeyDown={handleKeyDown}
+        tabIndex={0}
+        role="columnheader"
+        aria-sort={isActive ? (direction === "asc" ? "ascending" : "descending") : "none"}
+        aria-label={`Sortiraj po ${label}, ${direction === "asc" ? "uzlazno" : direction === "desc" ? "silazno" : "nesortirano"}`}
+        className="flex cursor-pointer items-center gap-1 transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background"
+      >
+        <span>{label}</span>
+        {direction === "asc" ? (
+          <ArrowUp className="h-3 w-3 shrink-0" />
+        ) : direction === "desc" ? (
+          <ArrowDown className="h-3 w-3 shrink-0" />
+        ) : (
+          <ArrowUpDown className="h-3 w-3 shrink-0 text-muted-foreground/40" />
+        )}
+      </button>
+    );
+  }
+
   // Memoize totals — recalculates on enrichedHoldings change (infrequent)
   const totals = useMemo(() => {
     const totalValue = enrichedHoldings.reduce((sum, h) => sum + h.totalValue, 0);
@@ -970,23 +1024,7 @@ export function LocalPortfolioDashboard() {
                   </div>
                 )}
                 <div className="flex gap-2">
-                  {/* Sort dropdown for additional sorting options */}
-                  <select
-                    value={`${txSort.column}-${txSort.direction}`}
-                    onChange={(e) => {
-                      const [column, direction] = e.target.value.split("-") as [TxSortColumn, "asc" | "desc"];
-                      setTxSort({ column, direction });
-                    }}
-                    className="rounded border border-border bg-background px-2 py-1 text-[10px] text-foreground"
- aria-label={t("sort.label") || "Sortiraj"}
-                  >
-                    <option value="transactionDate-desc">{t("sort.newest") || "Najnovije"}</option>
-                    <option value="transactionDate-asc">{t("sort.oldest") || "Najstarije"}</option>
-                    <option value="ticker-asc">{t("sort.tickerAsc") || "A-Z"}</option>
-                    <option value="ticker-desc">{t("sort.tickerDesc") || "Z-A"}</option>
-                    <option value="totalAmount-desc">{t("sort.valueDesc") || "Vrijednost ↓"}</option>
-                    <option value="totalAmount-asc">{t("sort.valueAsc") || "Vrijednost ↑"}</option>
-                  </select>
+                  {/* CSV export and Clear buttons - sorting now done via column headers */}
                   <button
                     type="button"
                     onClick={() => {
@@ -1025,12 +1063,24 @@ export function LocalPortfolioDashboard() {
               <table className="w-full text-xs">
                 <thead>
                   <tr className="border-b border-border/50 bg-muted/30 text-[10px] uppercase tracking-wider text-muted-foreground">
-                    <th className="px-3 py-1.5 text-left font-medium">Date</th>
-                    <th className="px-3 py-1.5 text-left font-medium">Ticker</th>
-                    <th className="px-3 py-1.5 text-left font-medium">Type</th>
-                    <th className="px-3 py-1.5 text-right font-medium">Shares</th>
-                    <th className="px-3 py-1.5 text-right font-medium">Price</th>
-                    <th className="px-3 py-1.5 text-right font-medium">Total</th>
+                    <th className="px-3 py-1.5 text-left font-medium">
+                      <TxSortHeader column="transactionDate" label={t("fields.date") || "Date"} sort={txSort} onSort={handleTxSort} />
+                    </th>
+                    <th className="px-3 py-1.5 text-left font-medium">
+                      <TxSortHeader column="ticker" label={t("fields.ticker") || "Ticker"} sort={txSort} onSort={handleTxSort} />
+                    </th>
+                    <th className="px-3 py-1.5 text-left font-medium">
+                      <TxSortHeader column="transactionType" label={t("fields.type") || "Type"} sort={txSort} onSort={handleTxSort} />
+                    </th>
+                    <th className="px-3 py-1.5 text-right font-medium">
+                      <TxSortHeader column="shares" label={t("fields.shares") || "Shares"} sort={txSort} onSort={handleTxSort} />
+                    </th>
+                    <th className="px-3 py-1.5 text-right font-medium">
+                      <TxSortHeader column="pricePerShare" label={t("fields.price") || "Price"} sort={txSort} onSort={handleTxSort} />
+                    </th>
+                    <th className="px-3 py-1.5 text-right font-medium">
+                      <TxSortHeader column="totalAmount" label={t("fields.total") || "Total"} sort={txSort} onSort={handleTxSort} />
+                    </th>
                     <th className="px-3 py-1.5 w-8" />
                   </tr>
                 </thead>

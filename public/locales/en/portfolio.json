@@ -50,7 +50,10 @@
     "date": "Date",
     "valid": "Valid",
     "sharesHint": "enter number of shares",
-    "priceHint": "price per share (e.g. 142.50)"
+    "priceHint": "price per share (e.g. 142.50)",
+    "type": "Type",
+    "price": "Price",
+    "total": "Total"
   },
   "type": {
     "buy": "Buy",

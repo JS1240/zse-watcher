@@ -50,7 +50,10 @@
     "date": "Datum",
     "valid": "Ispravno",
     "sharesHint": "unesite broj dionica",
-    "priceHint": "cijena po dionici (npr. 142,50)"
+    "priceHint": "cijena po dionici (npr. 142,50)",
+    "type": "Vrsta",
+    "price": "Cijena",
+    "total": "Ukupno"
   },
   "type": {
     "buy": "Kupnja",
