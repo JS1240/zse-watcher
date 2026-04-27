@@ -27,6 +27,7 @@
   "searchPlaceholder": "Search stocks...",
   "browseAction": "Browse stocks",
   "exportCsv": "Export to CSV",
+  "importCsv": "Import from CSV",
   "table": {
     "ticker": "Ticker",
     "name": "Name",
@@ -57,6 +58,11 @@
     "addFailed": "Failed to add to watchlist",
     "removeFailed": "Failed to remove from watchlist",
     "exported": "Exported to CSV",
+    "imported": "Added {{count}} ticker(s){{invalid}}",
+    "importEmpty": "No valid tickers found in CSV file",
+    "importNotFound": "{{count}} tickers not found on ZSE: {{invalid}}",
+    "importAlready": "All tickers already in watchlist",
+    "importError": "Failed to import CSV file",
     "copied": "Copied: {{ticker}}",
     "priceCopied": "Price copied: {{price}}",
     "cleared": "Watchlist cleared"

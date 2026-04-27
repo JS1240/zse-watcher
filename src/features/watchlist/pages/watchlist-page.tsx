@@ -1,6 +1,6 @@
 import { useMemo, useState, useRef, useCallback, memo } from "react";
 import { useTranslation } from "react-i18next";
-import { Star, Search, Keyboard, Trash2, ArrowUp, ArrowDown, ArrowUpDown, GripVertical, Download, X, TrendingUp, TrendingDown, Minus, CheckCircle2, ChevronUp } from "lucide-react";
+import { Star, Search, Keyboard, Trash2, ArrowUp, ArrowDown, ArrowUpDown, GripVertical, Download, Upload, X, TrendingUp, TrendingDown, Minus, CheckCircle2, ChevronUp, AlertCircle } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
@@ -23,6 +23,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { formatPrice, formatVolume } from "@/lib/formatters";
 import { exportToCsv } from "@/lib/export";
+import { parseTickersFromCsv, readFileAsText } from "@/lib/import";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 
 import { cn } from "@/lib/utils";
@@ -360,6 +361,23 @@ function AuthenticatedWatchlist() {
         >
           <Download className="h-3.5 w-3.5" />
           CSV
+        </Button>
+        {/* CSV import button }
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".csv"
+          onChange={handleImportCsv}
+          className="hidden"
+        />
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={() => fileInputRef.current?.click()}
+          title={t("importCsv") || "Import CSV"}
+          disabled={!stocks.length}
+        >
+          <Upload className="h-3.5 w-3.5" />
         </Button>
         {/* Quick add button - only show when there are stocks available */}
         {stocks.length > 0 && (
@@ -808,6 +826,52 @@ function LocalWatchlist() {
     toast.success(t("toast.exported"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
   };
 
+  // Hidden file input ref for CSV import
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImportCsv = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const content = await readFileAsText(file);
+      const tickers = parseTickersFromCsv(content);
+
+      if (tickers.length === 0) {
+        toast.error(t("toast.importEmpty") || "No valid tickers found in CSV", { icon: <AlertCircle className="h-4 w-4 text-red-500" /> });
+        return;
+      }
+
+      // Find valid tickers (those that exist in stocks data)
+      const validTickers = tickers.filter((t) => stocks.some((s) => s.ticker === t));
+      const invalidTickers = tickers.filter((t) => !stocks.some((s) => s.ticker === t));
+
+      // Add each valid ticker to watchlist
+      let added = 0;
+      for (const ticker of validTickers) {
+        if (!items.some((i) => i.ticker === ticker)) {
+          addItem(ticker);
+          added++;
+        }
+      }
+
+      // Show results
+      if (added > 0) {
+        toast.success(t("toast.imported", { count: added, invalid: invalidTickers.length }) || `Added ${added} ticker${added !== 1 ? "s" : ""}${invalidTickers.length > 0 ? ` (${invalidTickers.length} not found)` : ""}`, { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
+      } else if (invalidTickers.length > 0) {
+        toast.warning(t("toast.importNotFound", { count: invalidTickers.length, invalid: invalidTickers.join(", ") }) || `${invalidTickers.length} tickers not found on ZSE: ${invalidTickers.join(", ")}`, { icon: <AlertCircle className="h-4 w-4 text-amber-500" /> });
+      } else {
+        toast.info(t("toast.importAlready") || "All tickers already in watchlist", { icon: <CheckCircle2 className="h-4 w-4" /> });
+      }
+    } catch (error) {
+      console.error("CSV import error:", error);
+      toast.error(t("toast.importError") || "Failed to import CSV", { icon: <AlertCircle className="h-4 w-4 text-red-500" /> });
+    } finally {
+      // Reset file input so same file can be selected again
+      e.target.value = "";
+    }
+  }, [stocks, items, addItem, t]);
+
   // Track loading and error states for conditional rendering (moved before any hooks for React compliance)
   const showLoadingSkeleton = !stocksResult;
 
@@ -924,6 +988,23 @@ function LocalWatchlist() {
         >
           <Download className="h-3.5 w-3.5" />
           CSV
+        </Button>
+        {/* CSV import button for local watchlist */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".csv"
+          onChange={handleImportCsv}
+          className="hidden"
+        />
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={() => fileInputRef.current?.click()}
+          title={t("importCsv") || "Import CSV"}
+          disabled={!stocks.length}
+        >
+          <Upload className="h-3.5 w-3.5" />
         </Button>
         {/* Quick add button for local watchlist */}
         {stocks.length > 0 && (

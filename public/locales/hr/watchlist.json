@@ -27,6 +27,7 @@
   "searchPlaceholder": "Pretraži dionice...",
   "browseAction": "Pregledaj dionice",
   "exportCsv": "Izvezi u CSV",
+  "importCsv": "Uvezi iz CSV",
   "table": {
     "ticker": "Dionica",
     "name": "Naziv",
@@ -57,6 +58,11 @@
     "addFailed": "Neuspjelo dodavanje u listu praćenja",
     "removeFailed": "Neuspjelo uklanjanje iz liste praćenja",
     "exported": "Izvezeno u CSV",
+    "imported": "Dodano {{count}} dionica{{invalid}} ({{count}} dodano, {{invalid}} nije pronađeno)",
+    "importEmpty": "Nije pronađena niti jedna valjana dionica u CSV datoteci",
+    "importNotFound": "{{invalid}} dionica nije pronađeno na ZSE: {{invalid}}",
+    "importAlready": "Sve dionice već postoje u listi praćenja",
+    "importError": "Neuspjeli uvoz CSV datoteke",
     "copied": "Kopirano: {{ticker}}",
     "priceCopied": "Kopirana cijena: {{price}}",
     "cleared": "Lista praćenja obrisana"
