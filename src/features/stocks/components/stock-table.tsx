@@ -273,7 +273,7 @@ export function StockTable() {
           aria-pressed={changeFilter === "all"}
         >
           <TrendingUp className="h-3 w-3" />
-          <span className="hidden sm:inline">{t("filters.all") || "Sve"}</span>
+          <span className="hidden sm:inline">📊 {t("filters.all") || "Sve"}</span>
         </button>
         <button
           type="button"
@@ -287,7 +287,7 @@ export function StockTable() {
           aria-pressed={changeFilter === "gainers"}
         >
           <TrendingUp className="h-3 w-3" />
-          <span className="hidden sm:inline">{t("filters.gainers") || "Rastu"}</span>
+          <span className="hidden sm:inline">📈 {t("filters.gainers") || "Rastu"}</span>
         </button>
         <button
           type="button"
@@ -301,7 +301,7 @@ export function StockTable() {
           aria-pressed={changeFilter === "losers"}
         >
           <TrendingDown className="h-3 w-3" />
-          <span className="hidden sm:inline">{t("filters.losers") || "Padaju"}</span>
+          <span className="hidden sm:inline">📉 {t("filters.losers") || "Padaju"}</span>
         </button>
         <button
           type="button"
@@ -315,7 +315,7 @@ export function StockTable() {
           aria-pressed={changeFilter === "unchanged"}
         >
           <Minus className="h-3 w-3" />
-          <span className="hidden sm:inline">{t("filters.unchanged") || "Bez promjene"}</span>
+          <span className="hidden sm:inline">➡️ {t("filters.unchanged") || "Bez promjene"}</span>
         </button>
         {/* Dividend yield filter - from premium Screener for all users */}
         <button
@@ -329,7 +329,8 @@ export function StockTable() {
           )}
           aria-pressed={yieldFilter === "all"}
         >
-          <span className="hidden sm:inline">{t("filters.allYields") || "Svi prinosi"}</span>
+          <TrendingUp className="h-3 w-3" />
+          <span className="hidden sm:inline">📊 {t("filters.allYields") || "Svi prinosi"}</span>
         </button>
         <button
           type="button"
@@ -342,7 +343,8 @@ export function StockTable() {
           )}
           aria-pressed={yieldFilter === "gt3"}
         >
-          <span className="hidden sm:inline">{t("filters.gt3")}</span>
+          <TrendingUp className="h-3 w-3" />
+          <span className="hidden sm:inline">💰 {t("filters.gt3")}</span>
         </button>
         <button
           type="button"
@@ -355,7 +357,8 @@ export function StockTable() {
           )}
           aria-pressed={yieldFilter === "gt5"}
         >
-          <span className="hidden sm:inline">{t("filters.gt5")}</span>
+          <TrendingUp className="h-3 w-3" />
+          <span className="hidden sm:inline">💰💰 {t("filters.gt5")}</span>
         </button>
         <button
           type="button"
@@ -368,7 +371,8 @@ export function StockTable() {
           )}
           aria-pressed={yieldFilter === "gt8"}
         >
-          <span className="hidden sm:inline">{t("filters.gt8")}</span>
+          <TrendingUp className="h-3 w-3" />
+          <span className="hidden sm:inline">💰💰💰 {t("filters.gt8")}</span>
         </button>
         {/* Sector filter dropdown */}
         {availableSectors.length > 0 && (
