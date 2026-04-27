@@ -433,11 +433,22 @@ export function StockTable() {
                 label={t("table.change")}
                 onClick={toggleSort}
                 sortIcon={<SortIcon field="changePct" />}
-                className="w-24 text-right"
+                className="w-20 text-right"
                 currentField={sortField}
                 currentDir={sortDir}
                 tooltip={t("table.tooltips.change")}
               />
+              {/* Sparkline column - trend visualization */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <th className="w-16 px-2 py-3 text-center font-medium text-muted-foreground">
+                    <span className="text-[10px] uppercase tracking-wider">{t("table.trend")}</span>
+                  </th>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  <p className="text-xs">{t("table.tooltips.trend") || "Cijena 7 dana (indikativno)"}</p>
+                </TooltipContent>
+              </Tooltip>
               <ColumnHeader
                 field="volume"
                 label={t("table.volume")}

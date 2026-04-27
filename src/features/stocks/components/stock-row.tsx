@@ -1,10 +1,12 @@
-import { memo, useState, useCallback, useRef, useEffect } from "react";
+import { memo, useState, useCallback, useRef, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 import { formatPrice, formatVolume } from "@/lib/formatters";
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { WatchlistToggle } from "@/features/watchlist/components/watchlist-toggle";
 import { Highlight } from "@/components/shared/highlight";
+import { Sparkline } from "@/components/shared/sparkline";
+import { getMockPriceHistory } from "@/lib/mock-data";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
 import { useAuth } from "@/hooks/use-auth";
 import { useAddToWatchlist, useRemoveFromWatchlist, useWatchlistTickers } from "@/features/watchlist/api/watchlist-queries";
@@ -30,10 +32,12 @@ interface StockRowProps {
   rowIndex?: number;
   /** Callback when this row receives keyboard focus */
   onFocus?: (ticker: string) => void;
+  /** Optional price history for sparkline */
+  priceHistory?: number[];
 }
 
 // Click-to-copy state for tickers and prices
-const StockRowBase = ({ stock, flash, searchQuery, rowIndex, onFocus }: StockRowProps) => {
+const StockRowBase = ({ stock, flash, searchQuery, rowIndex, onFocus, priceHistory }: StockRowProps) => {
   const { t } = useTranslation("stocks");
   const { selectedTicker, select } = useSelectedStock();
   const { isAuthenticated } = useAuth();
@@ -46,6 +50,12 @@ const StockRowBase = ({ stock, flash, searchQuery, rowIndex, onFocus }: StockRow
     ? watchlistTickers.has(stock.ticker)
     : localItems.some((item) => item.ticker === stock.ticker);
   const [copiedField, setCopiedField] = useState<string | null>(null);
+
+  // Generate price history if not provided (use mock data for sparkline)
+  const sparklineData = useMemo(() => {
+    if (priceHistory && priceHistory.length > 1) return priceHistory;
+    return getMockPriceHistory(stock.ticker, "1W").map((p) => p.close);
+  }, [stock.ticker, priceHistory]);
 
   // Keyboard navigation — ref for programmatic focus
   const rowRef = useRef<HTMLTableRowElement>(null);
@@ -209,6 +219,15 @@ const StockRowBase = ({ stock, flash, searchQuery, rowIndex, onFocus }: StockRow
         <ChangeBadge value={stock.changePct} showIcon={false} className="text-sm" />
       </td>
 
+      {/* Sparkline - trend visualization */}
+      <td className="w-16 px-2 py-3 text-center">
+        {sparklineData && sparklineData.length > 1 ? (
+          <Sparkline data={sparklineData} width={44} height={18} />
+        ) : (
+          <span className="text-[9px] text-muted-foreground/40">—</span>
+        )}
+      </td>
+
       {/* Volume */}
       <td className="hidden px-3 py-3 text-right lg:table-cell">
         <button
@@ -268,6 +287,7 @@ const StockRowBase = ({ stock, flash, searchQuery, rowIndex, onFocus }: StockRow
 export const StockRow = memo(StockRowBase, (prev, next) => {
   // Re-render only if stock data, flash state, search query, or navigation index changed
   // Using loose equality for searchQuery since it's debounced (can be same object reference or string)
+  // priceHistory comparison included for completeness (though typically derived from ticker)
   return (
     prev.stock.ticker === next.stock.ticker &&
     prev.stock.price === next.stock.price &&
@@ -280,6 +300,7 @@ export const StockRow = memo(StockRowBase, (prev, next) => {
     prev.stock.turnover === next.stock.turnover &&
     prev.flash === next.flash &&
     prev.searchQuery === next.searchQuery &&
-    prev.rowIndex === next.rowIndex
+    prev.rowIndex === next.rowIndex &&
+    prev.priceHistory === next.priceHistory
   );
 });

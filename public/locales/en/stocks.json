@@ -49,7 +49,8 @@
       "sector": "Industry sector of the issuer",
       "dividendYield": "Annual dividend yield as percentage of share price",
       "peRatio": "Price to earnings ratio - lower means cheaper relative to earnings",
-      "marketCap": "Total market value of all issuer shares"
+      "marketCap": "Total market value of all issuer shares",
+      "trend": "Last 7 days price (indicative, simulated)"
     }
   },
   "detail": {
