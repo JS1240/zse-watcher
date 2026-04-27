@@ -1,12 +1,15 @@
 import { useMemo, useState, memo, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { Keyboard } from "lucide-react";
+import { Keyboard, Download, CheckCircle2 } from "lucide-react";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
 import { HeatmapSkeleton } from "@/features/market/components/heatmap-skeleton";
 import { ErrorState } from "@/components/shared/error-state";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { formatPercent, formatCurrency } from "@/lib/formatters";
+import { exportToCsv } from "@/lib/export";
+import { toast } from "sonner";
 import { SectorDrawer } from "@/features/market/components/sector-drawer";
 import { HeatmapEmptyIllustration } from "@/components/shared/empty-illustrations";
 import { EmptyState } from "@/components/shared/empty-state";
@@ -96,6 +99,20 @@ export function Heatmap() {
     setTooltip({ sector, x: e.clientX - rect.left, y: e.clientY - rect.top });
   }, []);
 
+  // CSV export handler for sector performance data
+  const handleExport = useCallback(() => {
+    if (!sectors.length) return;
+    const headers = ["Sektor", "Prosječna promjena (%)", "Broj dionica", "Ukupni promet (EUR)"];
+    const rows = sectors.map((s) => [
+      s.sector,
+      s.avgChange.toFixed(2),
+      s.stocks.length.toString(),
+      s.totalTurnover.toFixed(2),
+    ]);
+    exportToCsv(`zse-sektori-${new Date().toISOString().split("T")[0]}`, headers, rows);
+    toast.success("Sektori izvezeni u CSV", { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
+  }, [sectors]);
+
   return (
     <div ref={containerRef} className="relative space-y-3">
       <div
@@ -160,6 +177,16 @@ export function Heatmap() {
           <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Space</kbd>
           <span>pregled sektora</span>
         </span>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleExport}
+          disabled={!sectors.length}
+          className="ml-auto text-[9px]"
+        >
+          <Download className="h-3 w-3" />
+          CSV
+        </Button>
       </div>
 
       <SectorDrawer
