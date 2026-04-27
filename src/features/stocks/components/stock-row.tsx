@@ -112,7 +112,7 @@ const StockRowBase = ({ stock, flash, searchQuery, rowIndex, onFocus }: StockRow
         rows[prevIdx].focus();
         onFocus?.(rows[prevIdx].getAttribute(ROW_TICKER_ATTR) ?? "");
       }
-    } else if (e.key === "s" || e.key === "S") {
+    } else if ((e.key === "s" || e.key === "S") || (e.key === "w" || e.key === "W")) {
       e.preventDefault();
       if (isAuthenticated) {
         if (isWatched) {
@@ -148,7 +148,7 @@ const StockRowBase = ({ stock, flash, searchQuery, rowIndex, onFocus }: StockRow
       onClick={() => select(stock.ticker)}
       onKeyDown={handleKeyDown}
       onFocus={handleRowFocus}
-      aria-label={`${stock.ticker} — ${stock.name}: ${stock.price} EUR, ${stock.changePct > 0 ? "+" : ""}${stock.changePct}%. Enter selects, S toggles watchlist, C copies ticker, Arrow keys navigate`}
+      aria-label={`${stock.ticker} — ${stock.name}: ${stock.price} EUR, ${stock.changePct > 0 ? "+" : ""}${stock.changePct}%. Enter selects, W/S toggles watchlist, C copies ticker, Arrow keys navigate`}
       className={cn(
         "group cursor-pointer border-b border-border/50 transition-all duration-150 hover:bg-accent/40 hover:border-primary/30",
         "last:border-b-0",
