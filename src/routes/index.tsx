@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
-import { Newspaper } from "lucide-react";
+import { useCallback } from "react";
+import { Newspaper, Download } from "lucide-react";
 import { MarketOverview } from "@/features/market/components/market-overview";
 import { MarketStatus } from "@/features/market/components/market-status";
 import { MarketMovers } from "@/features/market/components/market-movers";
@@ -9,6 +10,10 @@ import { NewsFeed } from "@/features/news/components/news-feed";
 import { LiveDataIndicator } from "@/components/shared/live-data-indicator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
+import { toast } from "sonner";
+import { CheckCircle2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { exportToCsv } from "@/lib/export";
 
 export const Route = createFileRoute("/")({
   component: StocksPage,
@@ -16,16 +21,51 @@ export const Route = createFileRoute("/")({
 
 function StocksPage() {
   const { t } = useTranslation("common");
-  const { dataUpdatedAt, isFetching } = useStocksLive();
+  const { data: stocksResult, dataUpdatedAt, isFetching } = useStocksLive();
+
+  // CSV export handler - exports all stocks with fundamentals for Croatian retail investors
+  const handleExportCsv = useCallback(() => {
+    const stocks = stocksResult?.stocks;
+    if (!stocks || stocks.length === 0) return;
+
+    const headers = ["Ticker", "Name", "Sector", "Price (EUR)", "Change (%)", "Volume", "Turnover (EUR)", "Dividend Yield (%)", "P/E Ratio", "Market Cap (MEUR)"];
+    const rows = stocks.map((s) => [
+      s.ticker,
+      s.name,
+      s.sector,
+      s.price.toFixed(2),
+      s.changePct.toFixed(2),
+      s.volume.toString(),
+      s.turnover.toFixed(2),
+      s.dividendYield ? s.dividendYield.toFixed(2) : "",
+      s.peRatio ? s.peRatio.toFixed(2) : "",
+      s.marketCapM ? s.marketCapM.toFixed(1) : "",
+    ]);
+    exportToCsv(`zse-stocks-${new Date().toISOString().split("T")[0]}`, headers, rows);
+    toast.success(t("toast.exported") || "Exported to CSV", { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
+  }, [stocksResult, t]);
 
   return (
     <div className="flex h-full">
       {/* Main content */}
       <div className="flex flex-1 flex-col gap-3 overflow-auto p-4">
         {/* Market status + overview */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-2">
           <h1 className="font-data text-lg font-bold">{t("nav.stocks")}</h1>
-          <MarketStatus />
+          <div className="flex items-center gap-2">
+            {stocksResult?.stocks && stocksResult.stocks.length > 0 && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleExportCsv}
+                title={t("exportCsv") || "Export to CSV"}
+              >
+                <Download className="h-3.5 w-3.5" />
+                CSV
+              </Button>
+            )}
+            <MarketStatus />
+          </div>
         </div>
         <MarketOverview />
 
