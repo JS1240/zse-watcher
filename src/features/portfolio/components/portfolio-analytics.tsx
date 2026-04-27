@@ -141,8 +141,17 @@ export function PortfolioAnalytics() {
             />
             {/* Tooltip for hovered sector */}
             {hoveredSector && (
-              <div className="mt-2 animate-fade-in rounded bg-card px-2 py-1 text-[10px] font-medium shadow-lg ring-1 ring-border">
-                {hoveredSector}
+              <div className="mt-2 animate-fade-in rounded-md border border-border bg-card px-3 py-2 text-center shadow-lg ring-1 ring-border">
+                <div className="text-[10px] font-semibold text-foreground">{hoveredSector}</div>
+                {(() => {
+                  const s = analytics.sectors.find((x) => x.name === hoveredSector);
+                  return s ? (
+                    <>
+                      <div className="mt-0.5 text-xs font-bold tabular-nums text-primary">{s.pct.toFixed(1)}%</div>
+                      <div className="text-[9px] text-muted-foreground">{formatCurrency(s.value)}</div>
+                    </>
+                  ) : null;
+                })()}
               </div>
             )}
           </div>
@@ -229,7 +238,7 @@ function MetricCard({
   );
 }
 
-function DonutChart({ sectors, size, onHover }: { sectors: { name: string; pct: number; color: string }[]; size: number; onHover?: (name: string | null) => void }) {
+function DonutChart({ sectors, size, onHover }: { sectors: { name: string; pct: number; color: string; value: number }[]; size: number; onHover?: (name: string | null) => void }) {
   const [hoveredArc, setHoveredArc] = useState<string | null>(null);
   const radius = size / 2 - 10;
   const center = size / 2;
