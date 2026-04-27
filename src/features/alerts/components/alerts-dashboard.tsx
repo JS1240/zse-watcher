@@ -1204,6 +1204,11 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
                 <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
                 {t("tickerNotFound")}
               </p>
+            ) : isEditTickerValid && editTickerCurrentPrice ? (
+              <p className="mt-1.5 flex items-center gap-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
+                <TrendingUp className="h-3.5 w-3.5 flex-shrink-0" />
+                {editTickerCurrentPrice.toFixed(2)} EUR
+              </p>
             ) : isEditTickerValid ? (
               <p className="mt-1.5 flex items-center gap-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
                 <CheckCircle2 className="h-3.5 w-3.5 flex-shrink-0" />
