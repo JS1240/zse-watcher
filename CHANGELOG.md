@@ -4,6 +4,11 @@
 
 ### Added
 
+- **Keyboard Shortcuts on Portfolio Empty States** — always-visible keyboard shortcut hints for Croatian retail investors
+  - Added "N" (add position) and "/" (search) shortcut hints
+  - Shows on both search no-results and initial empty states
+  - Matches watchlist empty state polish pattern for discoverability
+
 - **Quick Add Ticker Shortcut Visibility** — always-visible keyboard shortcut hint for search focus in watchlist
   - Added keyboard shortcut hint (/  icon) next to Quick Add ticker button
   - Matches stocks/watchlist/portfolio/alerts pattern for discoverability
