@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { memo, useCallback, useState, useMemo } from "react";
-import { TrendingUp, TrendingDown, Clock, Star, Keyboard, Download, CheckCircle2, ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
+import { TrendingUp, TrendingDown, Clock, Star, Keyboard, Download, CheckCircle2, ArrowUp, ArrowDown, ArrowUpDown, ListPlus } from "lucide-react";
 import { useMovers } from "@/features/market/api/market-queries";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
 import { useAuth } from "@/hooks/use-auth";
@@ -65,6 +65,9 @@ export function MarketMovers() {
   const { data, isLoading, isError, refetch, dataUpdatedAt } = useMovers();
   const { t } = useTranslation("stocks");
   const { t: tc } = useTranslation("common");
+  const { isAuthenticated } = useAuth();
+  const addMutation = useAddToWatchlist();
+  const { items: localItems, addItem } = useLocalWatchlist();
 
   // Sort state for gainers and losers
   const [gainersSort, setGainersSort] = useState<{ column: SortColumn; direction: SortDirection }>({
@@ -75,6 +78,39 @@ export function MarketMovers() {
     column: "changePct",
     direction: "asc",
   });
+
+  // Check if ticker is already watched
+  const isWatched = useCallback((ticker: string) => {
+    return isAuthenticated ? false : localItems.some((item) => item.ticker === ticker);
+  }, [isAuthenticated, localItems]);
+
+  // Bulk add all gainers to watchlist
+  const handleBulkAddGainers = useCallback(() => {
+    if (!data) return;
+    const newTickers = data.gainers.filter(m => !isWatched(m.ticker)).map(m => m.ticker);
+    if (isAuthenticated) {
+      newTickers.forEach(ticker => addMutation.mutate(ticker));
+    } else {
+      newTickers.forEach(ticker => addItem(ticker));
+    }
+    toast.success(tc("toast.bulkAdded", { count: newTickers.length, type: t("movers.gainers") }), { 
+      icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> 
+    });
+  }, [data, isAuthenticated, isWatched, addMutation, addItem, tc, t]);
+
+  // Bulk add all losers to watchlist
+  const handleBulkAddLosers = useCallback(() => {
+    if (!data) return;
+    const newTickers = data.losers.filter(m => !isWatched(m.ticker)).map(m => m.ticker);
+    if (isAuthenticated) {
+      newTickers.forEach(ticker => addMutation.mutate(ticker));
+    } else {
+      newTickers.forEach(ticker => addItem(ticker));
+    }
+    toast.success(tc("toast.bulkAdded", { count: newTickers.length, type: t("movers.losers") }), { 
+      icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> 
+    });
+  }, [data, isAuthenticated, isWatched, addMutation, addItem, tc, t]);
 
   // Sort movers by selected column
   const sortedGainers = useMemo(() => {
@@ -154,8 +190,8 @@ export function MarketMovers() {
       <h3 className="flex items-center gap-2 text-xs font-semibold text-foreground">
         <TrendingUp className="h-3.5 w-3.5 text-price-up" />
         {t("movers.gainers")}
-        {/* Sort controls for gainers */}
-        <div className="ml-auto flex items-center gap-0.5">
+        {/* Sort controls + bulk add for gainers */}
+        <div className="ml-auto flex items-center gap-1">
           <SortHeader
             column="ticker"
             label="Ticker"
@@ -186,6 +222,15 @@ export function MarketMovers() {
               direction: prev.column === col && prev.direction === "desc" ? "asc" : "desc",
             }))}
           />
+          <button
+            type="button"
+            onClick={handleBulkAddGainers}
+            className="flex items-center gap-1 rounded px-1.5 py-0.5 text-[9px] text-amber transition-colors hover:bg-amber/10"
+            title={tc("toast.bulkAddAll") || "Add all gainers to watchlist"}
+          >
+            <ListPlus className="h-2.5 w-2.5" />
+            <span className="hidden sm:inline">{tc("toast.addAll") || "Svi"}</span>
+          </button>
         </div>
       </h3>
       <div className="space-y-0.5">
@@ -197,8 +242,8 @@ export function MarketMovers() {
       <h3 className="flex items-center gap-2 text-xs font-semibold text-foreground">
         <TrendingDown className="h-3.5 w-3.5 text-price-down" />
         {t("movers.losers")}
-        {/* Sort controls for losers */}
-        <div className="ml-auto flex items-center gap-0.5">
+        {/* Sort controls + bulk add for losers */}
+        <div className="ml-auto flex items-center gap-1">
           <SortHeader
             column="ticker"
             label="Ticker"
@@ -229,6 +274,15 @@ export function MarketMovers() {
               direction: prev.column === col && prev.direction === "desc" ? "asc" : "desc",
             }))}
           />
+          <button
+            type="button"
+            onClick={handleBulkAddLosers}
+            className="flex items-center gap-1 rounded px-1.5 py-0.5 text-[9px] text-amber transition-colors hover:bg-amber/10"
+            title={tc("toast.bulkAddAll") || "Add all losers to watchlist"}
+          >
+            <ListPlus className="h-2.5 w-2.5" />
+            <span className="hidden sm:inline">{tc("toast.addAll") || "Svi"}</span>
+          </button>
         </div>
       </h3>
       <div className="space-y-0.5">

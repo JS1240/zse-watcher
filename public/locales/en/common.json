@@ -67,7 +67,10 @@
     "copied": "Copied: {{value}}",
     "copiedTarget": "Copied: {{value}}",
     "exported": "Data exported to CSV",
-    "exportCsv": "Export to CSV"
+    "exportCsv": "Export to CSV",
+    "bulkAdded": "{{count}} {{type}} added to watchlist",
+    "bulkAddAll": "Add all to watchlist",
+    "addAll": "All"
   },
   "empty": {
     "noData": "No data available",
