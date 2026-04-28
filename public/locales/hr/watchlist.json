@@ -58,6 +58,8 @@
     "addFailed": "Neuspjelo dodavanje u listu praćenja",
     "removeFailed": "Neuspjelo uklanjanje iz liste praćenja",
     "exported": "Izvezeno u CSV",
+    "exportJson": "Izvoz u JSON",
+    "exportedJson": "Izvezeno u JSON",
     "imported": "Dodano {{count}} dionica{{invalid}} ({{count}} dodano, {{invalid}} nije pronađeno)",
     "importEmpty": "Nije pronađena niti jedna valjana dionica u CSV datoteci",
     "importNotFound": "{{invalid}} dionica nije pronađeno na ZSE: {{invalid}}",

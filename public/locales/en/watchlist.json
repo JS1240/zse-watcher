@@ -58,6 +58,7 @@
     "addFailed": "Failed to add to watchlist",
     "removeFailed": "Failed to remove from watchlist",
     "exported": "Exported to CSV",
+    "exportedJson": "Exported to JSON",
     "imported": "Added {{count}} ticker(s){{invalid}}",
     "importEmpty": "No valid tickers found in CSV file",
     "importNotFound": "{{count}} tickers not found on ZSE: {{invalid}}",

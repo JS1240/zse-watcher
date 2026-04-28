@@ -22,7 +22,7 @@ import { Highlight } from "@/components/shared/highlight";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { formatPrice, formatVolume } from "@/lib/formatters";
-import { exportToCsv } from "@/lib/export";
+import { exportToCsv, exportToJson } from "@/lib/export";
 import { parseTickersFromCsv, readFileAsText } from "@/lib/import";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 
@@ -323,6 +323,50 @@ function AuthenticatedWatchlist() {
   // Track focus for search input accessibility
   const [searchFocused, setSearchFocused] = useState(false);
 
+  // Export format toggle (CSV/JSON)
+  const [exportFormat, setExportFormat] = useState<"csv" | "json">("csv");
+
+  // Export handler that respects format choice
+  const handleExport = () => {
+    const timestamp = new Date().toISOString().split("T")[0];
+    
+    if (exportFormat === "json") {
+      // JSON export - include all data fields
+      const jsonData = filtered.map((s) => ({
+        ticker: s.ticker,
+        name: s.name,
+        sector: s.sector,
+        price: s.price,
+        changePct: s.changePct,
+        volume: s.volume,
+        turnover: s.turnover,
+        dividendYield: s.dividendYield,
+        peRatio: s.peRatio,
+        marketCapM: s.marketCapM,
+      }));
+      
+      exportToJson(`zse-watchlist-${timestamp}`, jsonData);
+      toast.success(t("toast.exportedJson"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
+    } else {
+      // CSV export (existing code)
+      const headers = ["Ticker", "Name", "Sector", "Price (EUR)", "Change (%)", "Volume", "Turnover (EUR)", "Dividend Yield (%)", "P/E Ratio", "Market Cap (MEUR)"];
+      const rows = filtered.map((s) => [
+        s.ticker,
+        s.name,
+        s.sector,
+        s.price.toFixed(2),
+        s.changePct.toFixed(2),
+        s.volume.toString(),
+        s.turnover.toFixed(2),
+        s.dividendYield ? s.dividendYield.toFixed(2) : "",
+        s.peRatio ? s.peRatio.toFixed(2) : "",
+        s.marketCapM ? s.marketCapM.toFixed(1) : "",
+      ]);
+      exportToCsv(`zse-watchlist-${timestamp}`, headers, rows);
+      toast.success(t("toast.exported"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
+    }
+  };
+
   // Render loading skeleton or error state
   if (isLoading) {
     return <WatchlistSkeleton />;
@@ -402,12 +446,21 @@ function AuthenticatedWatchlist() {
         <Button
           size="sm"
           variant="outline"
-          onClick={handleExportCsv}
+          onClick={handleExport}
           disabled={filtered.length === 0}
-          title={t("exportCsv")}
+          title={exportFormat === "json" ? t("exportJson") : t("exportCsv")}
         >
           <Download className="h-3.5 w-3.5" />
-          CSV
+          <span className="ml-1">{exportFormat.toUpperCase()}</span>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setExportFormat((prev) => (prev === "csv" ? "json" : "csv"));
+            }}
+            className="ml-1 rounded px-1 py-0.5 text-[9px] hover:bg-primary/20"
+          >
+            {exportFormat === "json" ? "CSV" : "JSON"}
+          </button>
         </Button>
         {/* CSV import button for authenticated watchlist */}
         <input
