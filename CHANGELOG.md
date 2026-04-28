@@ -47,7 +47,10 @@
   - Consistent with stocks table, watchlist, and alerts dashboard
 
 ### Changed
-- **NotificationCenter Badge Colors** — normalize triggered alert badge to match codebase amber patterns
+- **Market Movers Focus Visibility** — enhance focus rings for Croatian retail investors with visual impairments
+  - Changed focus-visible ring from ring-1 to ring-2 with ring-offset (consistent with stocks/watchlist/portfolio pattern)
+  - Applied to sort buttons, CSV export button, mover rows, and star toggle buttons
+  - Makes keyboard navigation more visible and accessible
   - Replaced hardcoded amber-500/20, amber-700, amber-900/50 with standard bg-amber
   - Consistent with triggered status badge in alerts-dashboard.tsx
   - Croatian retail investors get consistent visual language throughout the app

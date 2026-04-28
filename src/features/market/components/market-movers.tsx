@@ -52,7 +52,7 @@ function SortHeader({
     <button
       onClick={() => onSort(column)}
       className={cn(
-        "flex items-center gap-1 rounded px-1.5 py-0.5 text-[9px] font-medium transition-colors hover:bg-accent",
+        "flex items-center gap-1 rounded px-1.5 py-0.5 text-[9px] font-medium transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
         isActive ? "text-foreground" : "text-muted-foreground"
       )}
       title={`Sortiraj po ${label.toLowerCase()}`}
@@ -181,7 +181,7 @@ export function MarketMovers() {
         <button
           type="button"
           onClick={handleExportCsv}
-          className="flex items-center gap-1 rounded-sm px-2 py-1 text-[10px] text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+          className="flex items-center gap-1 rounded-sm px-2 py-1 text-[10px] text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background"
           title={tc("toast.exportCsv") || "Izvoz u CSV"}
         >
           <Download className="h-3 w-3" />
@@ -424,7 +424,7 @@ const MoverRow = memo(function MoverRow({ mover }: { mover: Mover }) {
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       className={cn(
-        "group flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left transition-colors hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary",
+        "group flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left transition-colors hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
         flashDirection === "up" && "price-flash-up",
         flashDirection === "down" && "price-flash-down",
       )}
@@ -434,7 +434,7 @@ const MoverRow = memo(function MoverRow({ mover }: { mover: Mover }) {
         <button
           type="button"
           onClick={handleWatchlistToggle}
-          className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-amber focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-amber focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background"
           title={isWatched ? t("remove") : t("add")}
           aria-label={isWatched ? `${mover.ticker} remove from watchlist` : `${mover.ticker} add to watchlist`}
         >
