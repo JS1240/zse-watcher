@@ -734,6 +734,7 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
               onClick={() => setConditionFilter("all")}
               label={t("filter.allConditions") || "Svi uvjeti"}
               icon={<ArrowUpDown className="h-3 w-3" />}
+              count={alerts.length}
             />
             <FilterChip
               active={conditionFilter === "price"}
@@ -755,6 +756,7 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
               onClick={() => setNearTriggerFilter("all")}
               label={t("filter.allDistances") || "Sve udaljenosti"}
               icon={<ArrowUpDown className="h-3 w-3" />}
+              count={alerts.length}
             />
             <FilterChip
               active={nearTriggerFilter === "near"}
@@ -786,6 +788,38 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
               onClick={() => setNearTriggerFilter("far")}
               label={t("filter.farFromTrigger") || "Daleko od cilja"}
               icon={<TrendingDown className="h-3 w-3" />}
+              // Show count of alerts far from triggering (opposite of near)
+              count={(() => {
+                if (!stocks) return undefined;
+                let count = 0;
+                alerts.forEach((a) => {
+                  // Include everything except those near triggering
+                  if (a.isTriggered || !a.isActive) {
+                    count++;
+                    return;
+                  }
+                  if (a.condition.includes("percent")) {
+                    // Percent alerts count as far
+                    count++;
+                    return;
+                  }
+                  const stock = stocks.find((s) => s.ticker === a.ticker);
+                  const currentPrice = stock?.price;
+                  if (!currentPrice) {
+                    count++;
+                    return;
+                  }
+                  let distancePct: number;
+                  if (a.condition === "above") {
+                    distancePct = ((a.targetValue - currentPrice) / currentPrice) * 100;
+                  } else {
+                    distancePct = ((currentPrice - a.targetValue) / currentPrice) * 100;
+                  }
+                  // Far if not within 5% of triggering
+                  if (distancePct <= 0 || distancePct > 5) count++;
+                });
+                return count || undefined;
+              })()}
             />
           </div>
         )}
