@@ -1580,27 +1580,29 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
         </div>
       </div>
 
-      {/* Actions — visible on hover/focus */}
-      <div className="alert-actions flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
+      {/* Actions — always visible for discoverability and touch devices */}
+      <div className="alert-actions flex items-center gap-0.5">
+        {/* Copy ticker button */}
         {onCopyTicker && (
           <button
             onClick={onCopyTicker}
-            className="flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             title="Copy ticker"
             aria-label={`Copy ${alert.ticker}`}
           >
-            <Copy className="h-3.5 w-3.5" />
+            <Copy className="h-3 w-3" />
           </button>
         )}
-        {/* Always show both edit and duplicate buttons */}
+        {/* Edit button */}
         <button
           onClick={() => setEditing(true)}
-          className="flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           title="Edit alert (E)"
           aria-label={`Edit ${alert.ticker} alert`}
         >
-          <Pencil className="h-3.5 w-3.5" />
+          <Pencil className="h-3 w-3" />
         </button>
+        {/* Duplicate button - copies alert values to create a new one */}
         {onDuplicate && (
           <button
             onClick={() => onDuplicate({
@@ -1608,11 +1610,11 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
               condition: alert.condition,
               targetValue: alert.targetValue,
             })}
-            className="flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             title="Duplicate alert (D)"
             aria-label={`Duplicate ${alert.ticker} alert`}
           >
-            <Copy className="h-3.5 w-3.5 rotate-90" />
+            <Copy className="h-3 w-3" />
           </button>
         )}
         {/* Snooze button - show inline duration dropdown for triggered alerts */}
@@ -1676,7 +1678,7 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
           title={`Delete ${alert.ticker} alert (Del)`}
           aria-label={`Delete ${alert.ticker} alert`}
         >
-          <Trash2 className="h-3.5 w-3.5" />
+          <Trash2 className="h-3 w-3" />
         </button>
       </div>
     </div>
