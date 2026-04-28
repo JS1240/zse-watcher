@@ -1,4 +1,4 @@
-import { Bell, ArrowRight, CheckCheck, X } from "lucide-react";
+import { Bell, ArrowRight, CheckCheck, X, Play, Pause } from "lucide-react";
 import * as Popover from "@radix-ui/react-popover";
 import { useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
@@ -7,7 +7,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { toast } from "sonner";
 
 import { useAuth } from "@/hooks/use-auth";
-import { useTriggeredAlerts, useActiveAlertCount } from "@/features/alerts/api/alerts-queries";
+import { useTriggeredAlerts, useActiveAlertCount, useToggleAlert } from "@/features/alerts/api/alerts-queries";
 import { useLocalAlerts } from "@/features/alerts/hooks/use-local-alerts";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { formatPrice, formatRelativeTime } from "@/lib/formatters";
@@ -17,9 +17,10 @@ import type { AlertCondition } from "@/types/alert";
 export function NotificationCenter() {
   const { t } = useTranslation("alerts");
   const { isAuthenticated } = useAuth();
-  const { alerts: localAlerts } = useLocalAlerts();
+  const { alerts: localAlerts, toggleAlert: toggleLocalAlert } = useLocalAlerts();
   const remoteTriggeredAlerts = useTriggeredAlerts();
   const remoteActiveCount = useActiveAlertCount();
+  const toggleRemoteAlert = useToggleAlert();
   const { data: stocksResult } = useStocksLive();
   const navigate = useNavigate();
 
@@ -81,6 +82,22 @@ export function NotificationCenter() {
   const handleViewAllTriggered = () => {
     navigate({ to: "/alerts", search: { status: "triggered" } });
   };
+
+  // Toggle alert active state (pause/resume)
+  const handleToggleAlert = useCallback(async (alert: { id: string; isActive: boolean }) => {
+    if (alert.id.startsWith("local-")) {
+      const localAlert = localAlerts.find((a) => a.id === alert.id);
+      if (localAlert) {
+        toggleLocalAlert(alert.id);
+        toast.success(localAlert.isActive ? t("toast.paused") : t("toast.activated"), { icon: <CheckCheck className="h-4 w-4 text-emerald-500" /> });
+      }
+    } else {
+      await toggleRemoteAlert.mutateAsync({ alertId: alert.id, isActive: !alert.isActive });
+      toast.success(alert.isActive ? t("toast.paused") : t("toast.activated"), { icon: <CheckCheck className="h-4 w-4 text-emerald-500" /> });
+    }
+    // Refresh the triggered alerts list
+    markRead(alert.id);
+  }, [localAlerts, toggleLocalAlert, toggleRemoteAlert, t, markRead]);
 
   const unreadCount = allTriggeredAlerts.filter((a) => !readIds.has(a.id)).length;
 
@@ -209,6 +226,18 @@ export function NotificationCenter() {
                         aria-label={`Dismiss ${alert.ticker} notification`}
                       >
                         <X className="h-3 w-3" />
+                      </button>
+                      {/* Quick pause/resume action */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleToggleAlert(alert);
+                        }}
+                        className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded text-muted-foreground opacity-0 transition-all hover:bg-accent hover:text-foreground group-hover:opacity-100"
+                        title={alert.isActive ? t("notification.pause") || "Pause alert" : t("notification.resume") || "Resume alert"}
+                        aria-label={`${alert.isActive ? "Pause" : "Resume"} ${alert.ticker} alert`}
+                      >
+                        {alert.isActive ? <Pause className="h-3 w-3" /> : <Play className="h-3 w-3" />}
                       </button>
                     </div>
                   );
