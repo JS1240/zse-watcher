@@ -27,6 +27,7 @@
   },
   "shortcut": {
     "view": "detalji dionice",
+    "navigate": "navigiraj",
     "search": "pretrazi"
   },
   "tickers": {

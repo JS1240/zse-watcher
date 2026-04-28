@@ -27,6 +27,7 @@
   },
   "shortcut": {
     "view": "stock details",
+    "navigate": "navigate",
     "search": "search"
   },
   "tickers": {

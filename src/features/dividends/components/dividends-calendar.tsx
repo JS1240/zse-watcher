@@ -243,10 +243,20 @@ export function DividendsCalendar() {
           action={{ label: t("clear"), onClick: () => setSearchQuery("") }}
           shortcut="/"
         />
-        {/* Search shortcuts hint */}
+        {/* Search shortcuts hint - show same shortcuts as main view for consistency */}
         <div className="flex items-center justify-center gap-4 text-[9px] text-muted-foreground">
-          <kbd className="rounded bg-muted px-1.5 py-0.5 font-sans text-[8px]">/</kbd>
-          <span>{t("shortcut.search") || "pretrazi"}</span>
+          <span className="flex items-center gap-0.5">
+            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
+            <span>{t("shortcut.details") || "detalji"}</span>
+          </span>
+          <span className="flex items-center gap-0.5">
+            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">↑↓</kbd>
+            <span>{t("shortcut.navigate") || "navigiraj"}</span>
+          </span>
+          <span className="flex items-center gap-0.5">
+            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">/</kbd>
+            <span>{t("shortcut.search") || "pretraži"}</span>
+          </span>
         </div>
       </div>
     );
