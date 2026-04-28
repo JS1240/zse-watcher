@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { useNews } from "@/features/news/api/news-queries";
 import { ArticleDrawer } from "@/features/news/components/article-drawer";
 import { EmptyState } from "@/components/shared/empty-state";
+import { NewsEmptyIllustration } from "@/components/shared/empty-illustrations";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { formatPrice, formatMarketCap } from "@/lib/formatters";
@@ -179,7 +180,7 @@ export function StockFundamentals({ stock }: StockFundamentalsProps) {
           ) : (
             <div className="rounded-sm border border-border/50 bg-card py-4">
               <EmptyState
-                icon={<Newspaper className="h-4 w-4" />}
+                icon={<NewsEmptyIllustration className="h-10 w-10" />}
                 title={t("empty.noNews")}
                 description={t("empty.noNewsDescription")}
               />
