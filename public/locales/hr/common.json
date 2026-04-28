@@ -143,5 +143,38 @@
   },
   "validation": {
     "termsRequired": "Morate prihvatiti uvjete korištenja"
+  },
+  "shortcutsOverlay": {
+    "title": "Prečaci tipkovnice",
+    "navigation": "Navigacija",
+    "app": "Aplikacija",
+    "stockTable": "Tablica dionica",
+    "alerts": "Alarmi",
+    "watchlist": "Lista praćenja",
+    "portfolio": "Portfelj",
+    "screener": "Pretraživač",
+    "footer": "Pritisnite Esc ili ? za zatvaranje",
+    "stocks": "Dionice",
+    "macro": "Makro",
+    "heatmap": "Toplinska karta",
+    "dividends": "Dividende",
+    "pricing": "Cijene",
+    "toggleTheme": "Promijeni temu",
+    "commandPalette": "Naredbeni okvir",
+    "showShortcuts": "Prikaži prečace",
+    "openStockDetail": "Otvori detalje dionice",
+    "closeDrawer": "Zatvori ladicu",
+    "navigateRows": "Pregledaj redove",
+    "toggleAlert": "Uključi/isključi alarm",
+    "editAlert": "Uredi alarm",
+    "deleteAlert": "Obriši alarm",
+    "cancelEdit": "Odustani od uređivanja",
+    "toggleWatchlist": "Dodaj/ukloni iz praćenja",
+    "removeFromList": "Ukloni s liste",
+    "editPosition": "Uredi poziciju",
+    "deletePosition": "Obriši poziciju",
+    "addPosition": "Dodaj poziciju",
+    "filter": "Filter",
+    "sort": "Sortiraj"
   }
 }

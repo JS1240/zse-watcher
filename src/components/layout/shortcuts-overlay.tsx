@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { X } from "lucide-react";
 import { useThemeStore } from "@/hooks/use-theme";
 
@@ -6,65 +7,8 @@ interface ShortcutsOverlayProps {
   onClose: () => void;
 }
 
-const SHORTCUTS = [
-  {
-    group: "Navigation",
-    items: [
-      { keys: ["1"], description: "Stocks" },
-      { keys: ["2"], description: "Macro" },
-      { keys: ["3"], description: "Heatmap" },
-      { keys: ["4"], description: "Portfolio" },
-      { keys: ["5"], description: "Dividends" },
-      { keys: ["6"], description: "Alerts" },
-      { keys: ["7"], description: "Screener" },
-      { keys: ["8"], description: "Watchlist" },
-      { keys: ["9"], description: "Pricing" },
-    ],
-  },
-  {
-    group: "App",
-    items: [
-      { keys: ["T"], description: "Toggle theme" },
-      { keys: ["K"], description: "Command palette" },
-      { keys: ["?"], description: "Show shortcuts" },
-    ],
-  },
-  {
-    group: "Stock Table",
-    items: [
-      { keys: ["Enter"], description: "Open stock detail" },
-      { keys: ["Esc"], description: "Close drawer" },
-      { keys: ["↑", "↓"], description: "Navigate rows" },
-    ],
-  },
-  {
-    group: "Alerts",
-    items: [
-      { keys: ["Enter"], description: "Toggle alert on/off" },
-      { keys: ["E"], description: "Edit alert" },
-      { keys: ["Del"], description: "Delete alert" },
-      { keys: ["Esc"], description: "Cancel edit" },
-    ],
-  },
-  {
-    group: "Watchlist",
-    items: [
-      { keys: ["Enter"], description: "Open stock detail" },
-      { keys: ["W"], description: "Toggle watchlist" },
-      { keys: ["Del"], description: "Remove from list" },
-    ],
-  },
-  {
-    group: "Portfolio",
-    items: [
-      { keys: ["Enter"], description: "Open stock detail" },
-      { keys: ["E"], description: "Edit position" },
-      { keys: ["Del"], description: "Delete position" },
-    ],
-  },
-];
-
 export function ShortcutsOverlay({ onClose }: ShortcutsOverlayProps) {
+  const { t } = useTranslation("common");
   const { toggle: toggleTheme } = useThemeStore();
 
   useEffect(() => {
@@ -94,7 +38,7 @@ export function ShortcutsOverlay({ onClose }: ShortcutsOverlayProps) {
       >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
-          <h2 className="font-data text-sm font-bold text-foreground">Keyboard Shortcuts</h2>
+          <h2 className="font-data text-sm font-bold text-foreground">{t("shortcutsOverlay.title")}</h2>
           <button
             onClick={onClose}
             className="rounded-sm p-1 text-muted-foreground hover:bg-accent hover:text-foreground"
@@ -105,36 +49,121 @@ export function ShortcutsOverlay({ onClose }: ShortcutsOverlayProps) {
 
         {/* Shortcuts */}
         <div className="p-4 space-y-4 max-h-[70vh] overflow-auto">
-          {SHORTCUTS.map((group) => (
-            <div key={group.group}>
-              <h3 className="mb-2 text-[9px] font-semibold uppercase tracking-wider text-muted-foreground">
-                {group.group}
-              </h3>
-              <div className="space-y-1">
-                {group.items.map((item) => (
-                  <div key={item.description} className="flex items-center justify-between py-1">
-                    <span className="text-xs text-foreground/80">{item.description}</span>
-                    <div className="flex items-center gap-1">
-                      {item.keys.map((key) => (
-                        <kbd
-                          key={key}
-                          className="inline-flex h-5 min-w-5 items-center justify-center rounded-sm bg-muted px-1.5 font-data text-[10px] font-semibold text-foreground shadow-sm ring-1 ring-inset ring-border/50"
-                        >
-                          {key}
-                        </kbd>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
+          {/* Navigation */}
+          <div>
+            <h3 className="mb-2 text-[9px] font-semibold uppercase tracking-wider text-muted-foreground">
+              {t("shortcutsOverlay.navigation")}
+            </h3>
+            <div className="space-y-1">
+              <ShortcutItem keys={["1"]} description={t("shortcutsOverlay.stocks")} />
+              <ShortcutItem keys={["2"]} description={t("shortcutsOverlay.macro")} />
+              <ShortcutItem keys={["3"]} description={t("shortcutsOverlay.heatmap")} />
+              <ShortcutItem keys={["4"]} description={t("shortcutsOverlay.portfolio")} />
+              <ShortcutItem keys={["5"]} description={t("shortcutsOverlay.dividends")} />
+              <ShortcutItem keys={["6"]} description={t("shortcutsOverlay.alerts")} />
+              <ShortcutItem keys={["7"]} description={t("shortcutsOverlay.screener")} />
+              <ShortcutItem keys={["8"]} description={t("shortcutsOverlay.watchlist")} />
+              <ShortcutItem keys={["9"]} description={t("shortcutsOverlay.pricing")} />
             </div>
-          ))}
+          </div>
+
+          {/* App */}
+          <div>
+            <h3 className="mb-2 text-[9px] font-semibold uppercase tracking-wider text-muted-foreground">
+              {t("shortcutsOverlay.app")}
+            </h3>
+            <div className="space-y-1">
+              <ShortcutItem keys={["T"]} description={t("shortcutsOverlay.toggleTheme")} />
+              <ShortcutItem keys={["K"]} description={t("shortcutsOverlay.commandPalette")} />
+              <ShortcutItem keys={["?"]} description={t("shortcutsOverlay.showShortcuts")} />
+            </div>
+          </div>
+
+          {/* Stock Table */}
+          <div>
+            <h3 className="mb-2 text-[9px] font-semibold uppercase tracking-wider text-muted-foreground">
+              {t("shortcutsOverlay.stockTable")}
+            </h3>
+            <div className="space-y-1">
+              <ShortcutItem keys={["Enter"]} description={t("shortcutsOverlay.openStockDetail")} />
+              <ShortcutItem keys={["Esc"]} description={t("shortcutsOverlay.closeDrawer")} />
+              <ShortcutItem keys={["↑", "↓"]} description={t("shortcutsOverlay.navigateRows")} />
+            </div>
+          </div>
+
+          {/* Alerts */}
+          <div>
+            <h3 className="mb-2 text-[9px] font-semibold uppercase tracking-wider text-muted-foreground">
+              {t("shortcutsOverlay.alerts")}
+            </h3>
+            <div className="space-y-1">
+              <ShortcutItem keys={["Enter"]} description={t("shortcutsOverlay.toggleAlert")} />
+              <ShortcutItem keys={["E"]} description={t("shortcutsOverlay.editAlert")} />
+              <ShortcutItem keys={["Del"]} description={t("shortcutsOverlay.deleteAlert")} />
+              <ShortcutItem keys={["Esc"]} description={t("shortcutsOverlay.cancelEdit")} />
+            </div>
+          </div>
+
+          {/* Watchlist */}
+          <div>
+            <h3 className="mb-2 text-[9px] font-semibold uppercase tracking-wider text-muted-foreground">
+              {t("shortcutsOverlay.watchlist")}
+            </h3>
+            <div className="space-y-1">
+              <ShortcutItem keys={["Enter"]} description={t("shortcutsOverlay.openStockDetail")} />
+              <ShortcutItem keys={["W"]} description={t("shortcutsOverlay.toggleWatchlist")} />
+              <ShortcutItem keys={["Del"]} description={t("shortcutsOverlay.removeFromList")} />
+            </div>
+          </div>
+
+          {/* Portfolio */}
+          <div>
+            <h3 className="mb-2 text-[9px] font-semibold uppercase tracking-wider text-muted-foreground">
+              {t("shortcutsOverlay.portfolio")}
+            </h3>
+            <div className="space-y-1">
+              <ShortcutItem keys={["Enter"]} description={t("shortcutsOverlay.openStockDetail")} />
+              <ShortcutItem keys={["E"]} description={t("shortcutsOverlay.editPosition")} />
+              <ShortcutItem keys={["Del"]} description={t("shortcutsOverlay.deletePosition")} />
+              <ShortcutItem keys={["N"]} description={t("shortcutsOverlay.addPosition")} />
+            </div>
+          </div>
+
+          {/* Screener */}
+          <div>
+            <h3 className="mb-2 text-[9px] font-semibold uppercase tracking-wider text-muted-foreground">
+              {t("shortcutsOverlay.screener")}
+            </h3>
+            <div className="space-y-1">
+              <ShortcutItem keys={["Enter"]} description={t("shortcutsOverlay.openStockDetail")} />
+              <ShortcutItem keys={["F"]} description={t("shortcutsOverlay.filter")} />
+              <ShortcutItem keys={["S"]} description={t("shortcutsOverlay.sort")} />
+            </div>
+          </div>
         </div>
 
         {/* Footer hint */}
         <div className="border-t border-border px-4 py-2 text-center">
-          <p className="text-[10px] text-muted-foreground">Press <kbd className="inline-flex h-4 items-center rounded-sm bg-muted px-1 font-data text-[9px] font-semibold">Esc</kbd> or <kbd className="inline-flex h-4 items-center rounded-sm bg-muted px-1 font-data text-[9px] font-semibold">?</kbd> to close</p>
+          <p className="text-[10px] text-muted-foreground">{t("shortcutsOverlay.footer")}</p>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function ShortcutItem({ keys, description }: { keys: string[]; description: string }) {
+  return (
+    <div className="flex items-center justify-between py-1">
+      <span className="text-xs text-foreground/80">{description}</span>
+      <div className="flex items-center gap-1">
+        {keys.map((key) => (
+          <kbd
+            key={key}
+            className="inline-flex h-5 min-w-5 items-center justify-center rounded-sm bg-muted px-1.5 font-data text-[10px] font-semibold text-foreground shadow-sm ring-1 ring-inset ring-border/50"
+          >
+            {key}
+          </kbd>
+        ))}
       </div>
     </div>
   );

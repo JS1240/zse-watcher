@@ -142,5 +142,38 @@
   },
   "validation": {
     "termsRequired": "You must accept the terms"
+  },
+  "shortcutsOverlay": {
+    "title": "Keyboard Shortcuts",
+    "navigation": "Navigation",
+    "app": "App",
+    "stockTable": "Stock Table",
+    "alerts": "Alerts",
+    "watchlist": "Watchlist",
+    "portfolio": "Portfolio",
+    "screener": "Screener",
+    "footer": "Press Esc or ? to close",
+    "stocks": "Stocks",
+    "macro": "Macro",
+    "heatmap": "Heatmap",
+    "dividends": "Dividends",
+    "pricing": "Pricing",
+    "toggleTheme": "Toggle theme",
+    "commandPalette": "Command palette",
+    "showShortcuts": "Show shortcuts",
+    "openStockDetail": "Open stock detail",
+    "closeDrawer": "Close drawer",
+    "navigateRows": "Navigate rows",
+    "toggleAlert": "Toggle alert on/off",
+    "editAlert": "Edit alert",
+    "deleteAlert": "Delete alert",
+    "cancelEdit": "Cancel edit",
+    "toggleWatchlist": "Toggle watchlist",
+    "removeFromList": "Remove from list",
+    "editPosition": "Edit position",
+    "deletePosition": "Delete position",
+    "addPosition": "Add position",
+    "filter": "Filter",
+    "sort": "Sort"
   }
 }
