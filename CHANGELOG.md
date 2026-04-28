@@ -4,6 +4,15 @@
 
 ### Added
 
+- **JSON Export for Watchlist** — export watchlist data as JSON for external analysis
+  - Added `exportToJson` function in `src/lib/export.ts` for JSON data export
+  - Added export format toggle (CSV↔JSON) in watchlist page toolbar
+  - Updated export button to show current format and allow quick switching
+  - JSON export includes all stock fields: ticker, name, sector, price, change %, volume, turnover, dividend yield, P/E ratio, market cap
+  - Croatian retail investors can now analyze data in external tools (Excel, Python scripts, data notebooks)
+  - Added translation keys: `toast.exportedJson` (HR + EN), `exportJson` (button tooltip)
+  - Works in both authenticated and local watchlist views
+
 - **Keyboard Shortcuts on News Feed Empty States** — always-visible keyboard shortcut hints for Croatian retail investors
   - Added ↑↓ and / shortcut hints to no-results and info empty states
   - Consistent with alerts-dashboard, portfolio, and stocks table empty states
