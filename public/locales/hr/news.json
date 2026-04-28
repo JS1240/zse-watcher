@@ -19,5 +19,9 @@
     "noResults": "Nema rezultata",
     "noResultsDescription": "Pokušajte s drugim ključnim riječima.",
     "clearFilters": "Očisti filtere"
+  },
+  "shortcut": {
+    "close": "zatvori",
+    "readFull": "čitaj cijeli članak"
   }
 }

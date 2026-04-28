@@ -1,5 +1,7 @@
 {
   "title": "News",
+  "live": "Live",
+  "copied": "copied",
   "filter": {
     "all": "All",
     "general": "General",
@@ -13,9 +15,13 @@
   "exportCsv": "Export to CSV",
   "empty": {
     "noData": "No news",
-    "noDataDescription": "There are no news articles available.",
+    "noDataDescription": "No news available at the moment.",
     "noResults": "No results",
-    "noResultsDescription": "Try a different search term.",
+    "noResultsDescription": "Try different keywords.",
     "clearFilters": "Clear filters"
+  },
+  "shortcut": {
+    "close": "close",
+    "readFull": "read full article"
   }
 }

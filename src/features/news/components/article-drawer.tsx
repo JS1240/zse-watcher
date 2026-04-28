@@ -1,5 +1,6 @@
 
 import { X, ExternalLink, Keyboard } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import type { NewsArticle } from "@/types/news";
 import { formatDate, formatTime } from "@/lib/formatters";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
@@ -10,6 +11,7 @@ interface ArticleDrawerProps {
 }
 
 export function ArticleDrawer({ article, onClose }: ArticleDrawerProps) {
+  const { t } = useTranslation("news");
   const { setContainerRef } = useFocusTrap({
     active: !!article,
     onEscape: onClose,
@@ -95,6 +97,22 @@ export function ArticleDrawer({ article, onClose }: ArticleDrawerProps) {
             <ExternalLink className="h-3.5 w-3.5" />
             Read full article on ZSE.hr
           </a>
+        </div>
+
+        {/* Always-visible keyboard shortcuts hint — matching portfolio/stocks/alert drawer pattern */}
+        <div className="flex items-center justify-between border-t border-border/50 bg-muted/30 px-4 py-1.5 text-[9px] text-muted-foreground">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <span className="flex items-center gap-1">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Esc</kbd>
+              <span>{t("shortcut.close") || "zatvori"}</span>
+            </span>
+          </div>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <span className="flex items-center gap-1">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
+              <span>{t("shortcut.readFull") || "citaj cijeli"}</span>
+            </span>
+          </div>
         </div>
       </div>
     </>
