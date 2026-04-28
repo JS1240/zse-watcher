@@ -1,5 +1,5 @@
 
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { X } from "lucide-react";
 import { useSelectedStock } from "@/hooks/use-selected-stock";

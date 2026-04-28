@@ -521,28 +521,54 @@ function AuthenticatedWatchlist() {
       {filtered.length > 0 ? (
         <WatchlistTableMemo stocks={filtered} sort={sort} onSort={handleSort} searchQuery={debouncedSearch} />
       ) : debouncedSearch ? (
-        <EmptyState
-          icon={<SearchEmptyIllustration className="h-8 w-8" />}
-          title={tc("empty.noResults")}
-          description={tc("empty.noResultsDescription")}
-          action={{ label: tc("empty.clearFilters"), onClick: () => setSearch("") }}
-          shortcut="/"
-          variant="no-results"
-        />
+        <>
+          <EmptyState
+            icon={<SearchEmptyIllustration className="h-8 w-8" />}
+            title={tc("empty.noResults")}
+            description={tc("empty.noResultsDescription")}
+            action={{ label: tc("empty.clearFilters"), onClick: () => setSearch("") }}
+            shortcut="/"
+            variant="no-results"
+          />
+          {/* Keyboard shortcuts hint for empty state discoverability */}
+          <div className="flex items-center justify-center gap-4 text-[9px] text-muted-foreground">
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1.5 py-0.5 font-sans text-[8px]">A</kbd>
+              <span>{t("shortcut.add") || "dodaj dionic"}</span>
+            </span>
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1.5 py-0.5 font-sans text-[8px]">/</kbd>
+              <span>{t("shortcut.search") || "pretraži"}</span>
+            </span>
+          </div>
+        </>
       ) : (
-        <EmptyState
-          icon={<WatchlistEmptyIllustration className="h-10 w-10" />}
-          title={t("empty")}
-          description={t("emptyDescription")}
-          steps={[
-            { label: t("quickStart.step1"), description: t("quickStart.step1Desc") },
-            { label: t("quickStart.step2"), description: t("quickStart.step2Desc") },
-            { label: t("quickStart.step3"), description: t("quickStart.step3Desc") },
-          ]}
-          action={{ label: t("browseAction"), onClick: () => { window.location.href = "/"; } }}
-          shortcut="N"
-          variant="action"
-        />
+        <>
+          <EmptyState
+            icon={<WatchlistEmptyIllustration className="h-10 w-10" />}
+            title={t("empty")}
+            description={t("emptyDescription")}
+            steps={[
+              { label: t("quickStart.step1"), description: t("quickStart.step1Desc") },
+              { label: t("quickStart.step2"), description: t("quickStart.step2Desc") },
+              { label: t("quickStart.step3"), description: t("quickStart.step3Desc") },
+            ]}
+            action={{ label: t("browseAction"), onClick: () => { window.location.href = "/"; } }}
+            shortcut="N"
+            variant="action"
+          />
+          {/* Keyboard shortcuts hint for empty state discoverability */}
+          <div className="flex items-center justify-center gap-4 text-[9px] text-muted-foreground">
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1.5 py-0.5 font-sans text-[8px]">N</kbd>
+              <span>{t("shortcut.add") || "dodaj dionic"}</span>
+            </span>
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1.5 py-0.5 font-sans text-[8px]">/</kbd>
+              <span>{t("shortcut.search") || "pretraži"}</span>
+            </span>
+          </div>
+        </>
       )}
 
     </div>

@@ -68,6 +68,7 @@
     "cleared": "Watchlist cleared"
   },
   "shortcut": {
+    "add": "add ticker",
     "search": "search",
     "details": "stock details",
     "toggle": "add/remove",

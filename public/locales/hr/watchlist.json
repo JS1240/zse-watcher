@@ -68,6 +68,7 @@
     "cleared": "Lista praćenja obrisana"
   },
   "shortcut": {
+    "add": "dodaj dionic",
     "search": "pretraži",
     "details": "detalji dionice",
     "toggle": "prati/odustani",
