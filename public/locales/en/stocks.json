@@ -113,7 +113,11 @@
   "movers": {
     "title": "Market Movers",
     "gainers": "Gainers",
-    "losers": "Losers"
+    "losers": "Losers",
+    "noGainers": "No gainers",
+    "noGainersDesc": "Today no stocks have positive price change",
+    "noLosers": "No losers",
+    "noLosersDesc": "Today no stocks have negative price change"
   },
   "screener": {
     "minPrice": "Min Price",

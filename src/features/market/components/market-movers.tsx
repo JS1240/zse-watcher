@@ -1,6 +1,8 @@
 import { useTranslation } from "react-i18next";
 import { memo, useCallback, useState, useMemo } from "react";
 import { TrendingUp, TrendingDown, Clock, Star, Keyboard, Download, CheckCircle2, ArrowUp, ArrowDown, ArrowUpDown, ListPlus } from "lucide-react";
+import { EmptyState } from "@/components/shared/empty-state";
+import { StockListEmptyIllustration } from "@/components/shared/empty-illustrations";
 import { useMovers } from "@/features/market/api/market-queries";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
 import { useAuth } from "@/hooks/use-auth";
@@ -187,6 +189,7 @@ export function MarketMovers() {
         </button>
       </div>
 
+      {/* Gainers section */}
       <h3 className="flex items-center gap-2 text-xs font-semibold text-foreground">
         <TrendingUp className="h-3.5 w-3.5 text-price-up" />
         {t("movers.gainers")}
@@ -222,23 +225,35 @@ export function MarketMovers() {
               direction: prev.column === col && prev.direction === "desc" ? "asc" : "desc",
             }))}
           />
-          <button
-            type="button"
-            onClick={handleBulkAddGainers}
-            className="flex items-center gap-1 rounded px-1.5 py-0.5 text-[9px] text-amber transition-colors hover:bg-amber/10"
-            title={tc("toast.bulkAddAll") || "Add all gainers to watchlist"}
-          >
-            <ListPlus className="h-2.5 w-2.5" />
-            <span className="hidden sm:inline">{tc("toast.addAll") || "Svi"}</span>
-          </button>
+          {sortedGainers.length > 0 && (
+            <button
+              type="button"
+              onClick={handleBulkAddGainers}
+              className="flex items-center gap-1 rounded px-1.5 py-0.5 text-[9px] text-amber transition-colors hover:bg-amber/10"
+              title={tc("toast.bulkAddAll") || "Add all gainers to watchlist"}
+            >
+              <ListPlus className="h-2.5 w-2.5" />
+              <span className="hidden sm:inline">{tc("toast.addAll") || "Svi"}</span>
+            </button>
+          )}
         </div>
       </h3>
-      <div className="space-y-0.5">
-        {sortedGainers.map((m) => (
-          <MoverRow key={m.ticker} mover={m} />
-        ))}
-      </div>
+      {sortedGainers.length === 0 ? (
+        <EmptyState
+          icon={<StockListEmptyIllustration className="h-8 w-8" />}
+          title={t("movers.noGainers") || "Nema dobitnika"}
+          description={t("movers.noGainersDesc") || "Danas nema dionica s pozitivnom promjenom"}
+          className="py-4"
+        />
+      ) : (
+        <div className="space-y-0.5">
+          {sortedGainers.map((m) => (
+            <MoverRow key={m.ticker} mover={m} />
+          ))}
+        </div>
+      )}
 
+      {/* Losers section */}
       <h3 className="flex items-center gap-2 text-xs font-semibold text-foreground">
         <TrendingDown className="h-3.5 w-3.5 text-price-down" />
         {t("movers.losers")}
@@ -274,22 +289,33 @@ export function MarketMovers() {
               direction: prev.column === col && prev.direction === "desc" ? "asc" : "desc",
             }))}
           />
-          <button
-            type="button"
-            onClick={handleBulkAddLosers}
-            className="flex items-center gap-1 rounded px-1.5 py-0.5 text-[9px] text-amber transition-colors hover:bg-amber/10"
-            title={tc("toast.bulkAddAll") || "Add all losers to watchlist"}
-          >
-            <ListPlus className="h-2.5 w-2.5" />
-            <span className="hidden sm:inline">{tc("toast.addAll") || "Svi"}</span>
-          </button>
+          {sortedLosers.length > 0 && (
+            <button
+              type="button"
+              onClick={handleBulkAddLosers}
+              className="flex items-center gap-1 rounded px-1.5 py-0.5 text-[9px] text-amber transition-colors hover:bg-amber/10"
+              title={tc("toast.bulkAddAll") || "Add all losers to watchlist"}
+            >
+              <ListPlus className="h-2.5 w-2.5" />
+              <span className="hidden sm:inline">{tc("toast.addAll") || "Svi"}</span>
+            </button>
+          )}
         </div>
       </h3>
-      <div className="space-y-0.5">
-        {sortedLosers.map((m) => (
-          <MoverRow key={m.ticker} mover={m} />
-        ))}
-      </div>
+      {sortedLosers.length === 0 ? (
+        <EmptyState
+          icon={<StockListEmptyIllustration className="h-8 w-8" />}
+          title={t("movers.noLosers") || "Nema gubitnika"}
+          description={t("movers.noLosersDesc") || "Danas nema dionica s negativnom promjenom"}
+          className="py-4"
+        />
+      ) : (
+        <div className="space-y-0.5">
+          {sortedLosers.map((m) => (
+            <MoverRow key={m.ticker} mover={m} />
+          ))}
+        </div>
+      )}
 
       {/* Always-visible keyboard shortcuts hint for discoverability */}
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-sm border border-border/50 bg-muted/30 px-3 py-1.5 text-[9px] text-muted-foreground">

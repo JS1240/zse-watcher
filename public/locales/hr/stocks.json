@@ -112,7 +112,11 @@
   "movers": {
     "title": "Pokretaci trzista",
     "gainers": "Dobitnici",
-    "losers": "Gubitnici"
+    "losers": "Gubitnici",
+    "noGainers": "Nema dobitnika",
+    "noGainersDesc": "Danas nema dionica s pozitivnom promjenom cijene",
+    "noLosers": "Nema gubitnika",
+    "noLosersDesc": "Danas nema dionica s negativnom promjenom cijene"
   },
   "screener": {
     "minPrice": "Min cijena",
