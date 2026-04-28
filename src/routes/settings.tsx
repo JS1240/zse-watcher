@@ -224,6 +224,22 @@ function SettingsPage() {
     { value: "en", label: t("language.en") },
   ];
 
+  // Handle theme button keyboard navigation (Enter/Space to select)
+  const handleThemeKeyDown = useCallback((e: React.KeyboardEvent, value: ThemeMode) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      setMode(value);
+    }
+  }, [setMode]);
+
+  // Handle language button keyboard navigation (Enter/Space to select)
+  const handleLanguageKeyDown = useCallback((e: React.KeyboardEvent, lang: string) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      i18n.changeLanguage(lang);
+    }
+  }, [i18n]);
+
   return (
     <div className="flex h-full flex-col gap-4 overflow-auto p-4" onScroll={(e) => setScrollTop((e.target as HTMLDivElement).scrollTop > 200)}>
       <div className="flex flex-col gap-1">
@@ -300,13 +316,17 @@ function SettingsPage() {
             return (
               <button
                 key={opt.value}
+                tabIndex={0}
                 onClick={() => setMode(opt.value)}
+                onKeyDown={(e) => handleThemeKeyDown(e, opt.value)}
                 className={cn(
-                  "flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-md border px-3 py-2.5 text-xs transition-colors",
+                  "flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-md border px-3 py-2.5 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
                   mode === opt.value
                     ? "border-primary bg-primary/10 text-foreground"
                     : "border-border text-muted-foreground hover:bg-accent",
                 )}
+                aria-pressed={mode === opt.value}
+                aria-label={`${opt.label} ${t("theme.select") || "tema"}. ${t("shortcut.pressEnter") || "Pritisnite Enter za odabir"}`}
               >
                 <Icon className="h-4 w-4 flex-shrink-0" />
                 <span className="hidden sm:inline">{opt.label}</span>
@@ -325,13 +345,17 @@ function SettingsPage() {
           {languageOptions.map((opt) => (
             <button
               key={opt.value}
+              tabIndex={0}
               onClick={() => i18n.changeLanguage(opt.value)}
+              onKeyDown={(e) => handleLanguageKeyDown(e, opt.value)}
               className={cn(
-                "flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-md border px-3 py-2.5 text-xs transition-colors",
+                "flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-md border px-3 py-2.5 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
                 i18n.language === opt.value
                   ? "border-primary bg-primary/10 text-foreground"
                   : "border-border text-muted-foreground hover:bg-accent",
               )}
+              aria-pressed={i18n.language === opt.value}
+              aria-label={`${opt.label} ${t("language.select") || "jezik"}. ${t("shortcut.pressEnter") || "Pritisnite Enter za odabir"}`}
             >
               <Globe className="h-4 w-4 flex-shrink-0" />
               <span className="hidden sm:inline">{opt.label}</span>
