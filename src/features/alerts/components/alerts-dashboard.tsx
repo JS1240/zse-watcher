@@ -804,6 +804,10 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
       {/* Results count */}
       {alerts && alerts.length > 0 && (
         <div className="flex items-center justify-between">
+          {/* aria-live region announces result count changes to screen readers - helps visually impaired Croatian investors understand filter results */}
+          <span className="sr-only" aria-live="polite" aria-atomic="true">
+            {filteredAlerts.length} {filteredAlerts.length === 1 ? "alert" : "alerta"}
+          </span>
           <span className="text-[10px] text-muted-foreground">
             {filteredAlerts.length} {filteredAlerts.length === 1 ? "alert" : "alerta"}
           </span>

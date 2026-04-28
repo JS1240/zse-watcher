@@ -211,6 +211,12 @@ export function StockTable() {
           isFetching={isFetching}
         />
         {/* Results count badge */}
+        {/* aria-live region announces result count changes - helps screen reader users after filtering */}
+        {filtered.length > 0 && (
+          <span className="sr-only" aria-live="polite" aria-atomic="true">
+            {filtered.length} {filtered.length === 1 ? "dionica" : "dionica"}
+          </span>
+        )}
         {filtered.length > 0 && (
           <span className="flex items-center gap-1 rounded-full bg-muted/60 px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
             {filtered.length}
