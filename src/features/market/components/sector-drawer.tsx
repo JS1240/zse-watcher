@@ -1,4 +1,5 @@
 
+import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { X } from "lucide-react";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
@@ -24,6 +25,15 @@ export function SectorDrawer({ sector, onClose }: SectorDrawerProps) {
     active: !!sector,
     onEscape: onClose,
   });
+
+  // Handle keyboard navigation for stocks list
+  const handleKeyDown = useCallback((e: React.KeyboardEvent, ticker: string) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      selectTicker(ticker);
+      onClose();
+    }
+  }, [selectTicker, onClose]);
 
   const sectorStocks = stocks
     ? stocks
@@ -103,7 +113,11 @@ export function SectorDrawer({ sector, onClose }: SectorDrawerProps) {
                 sectorStocks.map((stock) => (
                 <tr
                   key={stock.ticker}
-                  className="border-b border-border/50 last:border-b-0 hover:bg-accent/50"
+                  className="border-b border-border/50 last:border-b-0 hover:bg-accent/50 focus-visible:bg-accent/50"
+                  tabIndex={0}
+                  role="rowbutton"
+                  aria-label={`${stock.ticker}, ${formatPrice(stock.price)}, ${formatPercent(stock.changePct)} change`}
+                  onKeyDown={(e) => handleKeyDown(e, stock.ticker)}
                 >
                   <td className="px-3 py-2">
                     <button
@@ -141,7 +155,9 @@ export function SectorDrawer({ sector, onClose }: SectorDrawerProps) {
         {/* Footer */}
         <div className="border-t border-border px-4 py-2">
           <p className="text-[10px] text-muted-foreground">
-            Click a ticker to open the stock detail drawer
+            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>{" "}
+            or <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Space</kbd> opens stock detail ·{" "}
+            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Esc</kbd> closes
           </p>
         </div>
       </div>
