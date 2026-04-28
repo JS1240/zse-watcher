@@ -602,6 +602,76 @@ export function StockScreener() {
           </div>
         )}
 
+        {/* Active filter chips — show each active filter as a dismissible pill */}
+        {activeFilterCount > 0 && (
+          <div className="mb-2 flex flex-wrap items-center gap-1.5">
+            {filters.sector && (
+              <button
+                onClick={() => updateFilter("sector", "")}
+                className="flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-medium text-primary transition-colors hover:bg-primary/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                aria-label={t("table.sector") + ": " + filters.sector}
+              >
+                <span>{filters.sector}</span>
+                <X className="h-3 w-3" />
+              </button>
+            )}
+            {(filters.minPrice || filters.maxPrice) && (
+              <button
+                onClick={() => { updateFilter("minPrice", ""); updateFilter("maxPrice", ""); }}
+                className="flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-medium text-primary transition-colors hover:bg-primary/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                aria-label="Cijena filter"
+              >
+                <span>
+                  {t("screener.minPrice")}: {filters.minPrice || "—"} – {filters.maxPrice || "—"}
+                </span>
+                <X className="h-3 w-3" />
+              </button>
+            )}
+            {(filters.minChange || filters.maxChange) && (
+              <button
+                onClick={() => { updateFilter("minChange", ""); updateFilter("maxChange", ""); }}
+                className="flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-medium text-primary transition-colors hover:bg-primary/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                aria-label="Promjena filter"
+              >
+                <span>
+                  {t("screener.minChange")}: {filters.minChange || "—"} – {filters.maxChange || "—"}%
+                </span>
+                <X className="h-3 w-3" />
+              </button>
+            )}
+            {filters.minTurnover && (
+              <button
+                onClick={() => updateFilter("minTurnover", "")}
+                className="flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-medium text-primary transition-colors hover:bg-primary/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                aria-label={t("screener.minTurnover") + ": " + filters.minTurnover}
+              >
+                <span>{t("screener.minTurnover")}: {filters.minTurnover}</span>
+                <X className="h-3 w-3" />
+              </button>
+            )}
+            {(filters.minDividend || filters.maxDividend) && (
+              <button
+                onClick={() => { updateFilter("minDividend", ""); updateFilter("maxDividend", ""); }}
+                className="flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-medium text-primary transition-colors hover:bg-primary/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                aria-label="Dividend filter"
+              >
+                <span>
+                  {t("screener.minDividend")}: {filters.minDividend || "—"} – {filters.maxDividend || "—"}%
+                </span>
+                <X className="h-3 w-3" />
+              </button>
+            )}
+            {activeFilterCount > 1 && (
+              <button
+                onClick={() => setFilters(INITIAL_FILTERS)}
+                className="ml-1 text-[10px] text-muted-foreground underline transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                {t("screener.clearAll")}
+              </button>
+            )}
+          </div>
+        )}
+
         {/* Cross-field range error with field highlighting */}
         {rangeError && (
           <div className="mb-2 flex items-center gap-2 rounded-md border border-destructive/60 bg-destructive/10 px-3 py-2 text-[11px] text-destructive">

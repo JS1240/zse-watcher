@@ -130,6 +130,7 @@
     "noResults": "No stocks match the current filters",
     "noStocks": "No stocks to display",
     "results": "{{count}} results from {{total}} stocks",
+    "clearAll": "Clear all",
     "validation": {
       "mustBeNumber": "Must be a number",
       "notNegative": "Cannot be negative",
