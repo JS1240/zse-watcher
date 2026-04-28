@@ -477,21 +477,47 @@ export function NewsFeed({ ticker: propsTicker, category, limit }: NewsFeedProps
         )}
         {/* Empty states: no-results for filtered empty, info for first-visit empty */}
         {totalCount > 0 ? (
-          <EmptyState
-            icon={<SearchEmptyIllustration className="h-8 w-8" />}
-            title={t("empty.noResults")}
-            description={t("empty.noResultsDescription")}
-            variant="no-results"
-            action={{ label: tn("empty.clearFilters") || t("empty.clearFilters"), onClick: handleClearSearch }}
-            shortcut="/"
-          />
+          <>
+            <EmptyState
+              icon={<SearchEmptyIllustration className="h-8 w-8" />}
+              title={t("empty.noResults")}
+              description={t("empty.noResultsDescription")}
+              variant="no-results"
+              action={{ label: tn("empty.clearFilters") || t("empty.clearFilters"), onClick: handleClearSearch }}
+              shortcut="/"
+            />
+            {/* Always-visible keyboard shortcuts hint for discoverability — consistent with alerts/portfolio/stocks pattern */}
+            <div className="flex items-center justify-center gap-4 text-[9px] text-muted-foreground">
+              <span className="flex items-center gap-0.5">
+                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">↑↓</kbd>
+                <span>navigiraj</span>
+              </span>
+              <span className="flex items-center gap-0.5">
+                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">/</kbd>
+                <span>traži</span>
+              </span>
+            </div>
+          </>
         ) : (
-          <EmptyState
-            icon={<NewsEmptyIllustration className="h-10 w-10" />}
-            title={tn("empty") || t("empty.noData")}
-            description={tn("emptyDescription") || t("empty.noDataDescription")}
-            variant="info"
-          />
+          <>
+            <EmptyState
+              icon={<NewsEmptyIllustration className="h-10 w-10" />}
+              title={tn("empty") || t("empty.noData")}
+              description={tn("emptyDescription") || t("empty.noDataDescription")}
+              variant="info"
+            />
+            {/* Always-visible keyboard shortcuts hint for discoverability — consistent with alerts/portfolio/stocks pattern */}
+            <div className="flex items-center justify-center gap-4 text-[9px] text-muted-foreground">
+              <span className="flex items-center gap-0.5">
+                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">↑↓</kbd>
+                <span>navigiraj</span>
+              </span>
+              <span className="flex items-center gap-0.5">
+                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">/</kbd>
+                <span>traži</span>
+              </span>
+            </div>
+          </>
         )}
       </div>
     );
