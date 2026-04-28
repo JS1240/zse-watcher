@@ -481,7 +481,7 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
   // CSV export for alerts - enhanced with current price and distance to target for Croatian retail investors
   const handleExport = () => {
     if (!filteredAlerts || filteredAlerts.length === 0) return;
-    const headers = ["Ticker", "Condition", "Target", "Current Price", "Distance (%)", "Status", "Active", "Created"];
+    const headers = ["Ticker", "Condition", "Target", "Current Price", "Distance (%)", "Status", "Active", "Created", "Triggered At"];
     
     // Build stock price map once for O(1) lookups instead of O(n) per alert
     const stockPriceMap = new Map<string, number>();
@@ -520,6 +520,7 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
         a.isTriggered ? t("status.triggered") : "—",
         a.isActive ? "✓" : "—",
         formatDate(a.createdAt),
+        a.triggeredAt ? formatDate(a.triggeredAt) : "—",
       ];
     });
     exportToCsv(`zse-alerts-${new Date().toISOString().split("T")[0]}`, headers, rows);

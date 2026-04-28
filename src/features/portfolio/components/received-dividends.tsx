@@ -85,7 +85,7 @@ export function ReceivedDividends() {
   };
 
   const handleExportCsv = () => {
-    const headers = ["Ticker", "Shares", "Per Share", "Total Amount", "Currency", "Date Paid", "Notes"];
+    const headers = ["Ticker", "Shares", "Per Share", "Total Amount", "Currency", "Date Paid", "Notes", "Created At"];
     const rows = sortedDividends
       .map((d) => [
         d.ticker,
@@ -95,6 +95,7 @@ export function ReceivedDividends() {
         d.currency,
         d.payDate,
         d.notes ?? "",
+        new Date(d.createdAt).toISOString().replace("T", " ").substring(0, 19),
       ]);
     exportToCsv(`zse-dividends-${new Date().toISOString().split("T")[0]}`, headers, rows);
     toast.success(t("toast.exported"));

@@ -479,7 +479,7 @@ export function LocalPortfolioDashboard() {
       dividend: t("types.dividend"),
     };
 
-    const headers = ["Date", "Ticker", "Type", "Shares", "Price (EUR)", "Total (EUR)", "Notes"];
+    const headers = ["Date", "Ticker", "Type", "Shares", "Price (EUR)", "Total (EUR)", "Notes", "Created At"];
     const rows = [...transactions]
       .sort((a, b) => new Date(b.transactionDate).getTime() - new Date(a.transactionDate).getTime())
       .map((tx) => [
@@ -490,6 +490,7 @@ export function LocalPortfolioDashboard() {
         tx.pricePerShare.toFixed(2),
         tx.totalAmount.toFixed(2),
         tx.notes ?? "",
+        new Date(tx.createdAt).toISOString().replace("T", " ").substring(0, 19),
       ]);
     exportToCsv(
       `zse-transactions-local-${new Date().toISOString().split("T")[0]}`,

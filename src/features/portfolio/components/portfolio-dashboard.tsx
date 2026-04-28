@@ -348,16 +348,21 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
       dividend: t("types.dividend"),
     };
 
-    const headers = ["Date", "Ticker", "Type", "Shares", "Price (EUR)", "Total (EUR)", "Notes"];
-    const rows = allTransactions.map((tx) => [
-      new Date(tx.date).toISOString().split("T")[0],
-      tx.ticker,
-      typeLabels[tx.type] || tx.type,
-      tx.shares.toString(),
-      tx.price.toFixed(2),
-      tx.total.toFixed(2),
-      tx.notes,
-    ]);
+    const headers = ["Date", "Ticker", "Type", "Shares", "Price (EUR)", "Total (EUR)", "Notes", "Created At"];
+    const rows = allTransactions.map((tx) => {
+      // TypeScript needs help understanding the createdAt field may exist
+      const txAny = tx as unknown as { createdAt?: string };
+      return [
+        new Date(tx.date).toISOString().split("T")[0],
+        tx.ticker,
+        typeLabels[tx.type] || tx.type,
+        tx.shares.toString(),
+        tx.price.toFixed(2),
+        tx.total.toFixed(2),
+        tx.notes,
+        txAny.createdAt ? new Date(txAny.createdAt).toISOString().replace("T", " ").substring(0, 19) : "",
+      ];
+    });
     exportToCsv(
       `zse-transactions-${new Date().toISOString().split("T")[0]}`,
       headers,
