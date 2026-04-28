@@ -4,6 +4,11 @@
 
 ### Added
 
+- **Keyboard Shortcuts on News Feed Empty States** — always-visible keyboard shortcut hints for Croatian retail investors
+  - Added ↑↓ and / shortcut hints to no-results and info empty states
+  - Consistent with alerts-dashboard, portfolio, and stocks table empty states
+  - Helps Croatian retail investors discover navigation and search shortcuts
+
 - **Keyboard Shortcuts on Portfolio Empty States** — always-visible keyboard shortcut hints for Croatian retail investors
   - Added "N" (add position) and "/" (search) shortcut hints
   - Shows on both search no-results and initial empty states
