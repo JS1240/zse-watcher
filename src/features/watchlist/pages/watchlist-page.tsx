@@ -235,23 +235,6 @@ function AuthenticatedWatchlist() {
     });
   };
 
-  const handleExportCsv = () => {
-    const headers = ["Ticker", "Name", "Sector", "Price (EUR)", "Change (%)", "Volume", "Turnover (EUR)", "Dividend Yield (%)", "P/E Ratio", "Market Cap (MEUR)"];
-    const rows = filtered.map((s) => [
-      s.ticker,
-      s.name,
-      s.sector,
-      s.price.toFixed(2),
-      s.changePct.toFixed(2),
-      s.volume.toString(),
-      s.turnover.toFixed(2),
-      s.dividendYield ? s.dividendYield.toFixed(2) : "",
-      s.peRatio ? s.peRatio.toFixed(2) : "",
-      s.marketCapM ? s.marketCapM.toFixed(1) : "",
-    ]);
-    exportToCsv(`zse-watchlist-${new Date().toISOString().split("T")[0]}`, headers, rows);
-    toast.success(t("toast.exported"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
-  };
 
   // Hidden file input ref for CSV import
   const fileInputRef = useRef<HTMLInputElement>(null);
