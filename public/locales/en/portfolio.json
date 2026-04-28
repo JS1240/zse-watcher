@@ -146,5 +146,8 @@
     "aboveMarketDesc": "Buying above market — check why (premium, limit order...)",
     "belowMarket": "{{pct}}% below market",
     "belowMarketDesc": "Buying below market — good opportunity!"
+  },
+  "quickPrice": {
+    "market": "Market"
   }
 }

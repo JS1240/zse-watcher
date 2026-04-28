@@ -133,9 +133,11 @@ export function InlineTransactionForm({
 
   // Quick fill buttons using current price
   const quickPricePcts = [
-    { pct: 0, label: "Market" },
+    { pct: 0, label: t("quickPrice.market") || "Market" },
     { pct: -5, label: "-5%" },
     { pct: +5, label: "+5%" },
+    { pct: -10, label: "-10%" },
+    { pct: +10, label: "+10%" },
   ];
 
   const handleQuickPrice = useCallback((pct: number) => {

@@ -146,5 +146,8 @@
     "aboveMarketDesc": "Kupujete skuplje od tržišta — provjerite zašto (premium, limit order...)",
     "belowMarket": "{{pct}}% ispod tržišta",
     "belowMarketDesc": "Kupujete jeftinije od tržišta — dobra prilika!"
+  },
+  "quickPrice": {
+    "market": "Tržište"
   }
 }
