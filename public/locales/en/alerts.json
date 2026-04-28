@@ -60,6 +60,8 @@
   "useSuggested": "Use {{value}}",
   "pressEnter": "Enter to save",
   "cancelHint": "Esc to cancel",
+  "saveAlert": "save",
+  "navigateFields": "fields",
   "empty": "No alerts configured",
   "emptyDescription": "Create an alert to get notified when a stock reaches your target price.",
   "demoAlert": "Try a sample alert",

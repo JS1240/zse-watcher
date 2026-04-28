@@ -1452,6 +1452,22 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
         </div>
           </div>
         </div>
+
+        {/* Always-visible keyboard shortcuts hint for discoverability — consistent with app pattern */}
+        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-sm border border-border/30 bg-muted/20 px-2 py-1.5 text-[9px] text-muted-foreground">
+          <span className="flex items-center gap-1">
+            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
+            <span>{t("saveAlert") || "spremi"}</span>
+          </span>
+          <span className="flex items-center gap-1">
+            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Esc</kbd>
+            <span>{t("cancelHint") || "odustani"}</span>
+          </span>
+          <span className="flex items-center gap-1">
+            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Tab</kbd>
+            <span>{t("navigateFields") || "polja"}</span>
+          </span>
+        </div>
           </div>
     );
   }

@@ -60,6 +60,8 @@
   "useSuggested": "Koristi {{value}}",
   "pressEnter": "Enter za spremanje",
   "cancelHint": "Esc za odustanak",
+  "saveAlert": "spremi",
+  "navigateFields": "polja",
   "empty": "Nemate postavljenih alarma",
   "emptyDescription": "Postavite alarm i primajte obavijesti kada cijena doseze određenu razinu.",
   "demoAlert": "Isprobaj primjer alarma",
