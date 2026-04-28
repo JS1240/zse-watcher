@@ -858,6 +858,7 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
           )}
         </div>
       ) : filteredHoldings.length === 0 && search ? (
+        <>
         <EmptyState
           icon={<SearchEmptyIllustration className="h-8 w-8" />}
           title={t("searchNoResults") || "No results found"}
@@ -865,6 +866,18 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
           action={{ label: t("clearSearch") || "Clear search", onClick: () => setSearch("") }}
           shortcut="/"
         />
+        {/* Keyboard shortcuts hint for discoverability */}
+        <div className="flex items-center justify-center gap-4 text-[9px] text-muted-foreground">
+          <span className="flex items-center gap-0.5">
+            <kbd className="rounded bg-muted px-1.5 py-0.5 font-sans text-[8px]">N</kbd>
+            <span>{t("shortcut.add") || "dodaj poziciju"}</span>
+          </span>
+          <span className="flex items-center gap-0.5">
+            <kbd className="rounded bg-muted px-1.5 py-0.5 font-sans text-[8px]">/</kbd>
+            <span>{t("shortcut.search") || "pretraži"}</span>
+          </span>
+        </div>
+        </>
       ) : (
         <div className="rounded-md border border-border bg-card">
           <EmptyState
@@ -880,6 +893,17 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
             shortcut="N"
             variant="action"
           />
+          {/* Keyboard shortcuts hint for empty state discoverability */}
+          <div className="flex items-center justify-center gap-4 text-[9px] text-muted-foreground">
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1.5 py-0.5 font-sans text-[8px]">N</kbd>
+              <span>{t("shortcut.add") || "dodaj poziciju"}</span>
+            </span>
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1.5 py-0.5 font-sans text-[8px]">/</kbd>
+              <span>{t("shortcut.search") || "pretraži"}</span>
+            </span>
+          </div>
         </div>
       )}
 

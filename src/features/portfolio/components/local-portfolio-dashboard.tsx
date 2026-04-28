@@ -933,6 +933,17 @@ export function LocalPortfolioDashboard() {
             shortcut="N"
             variant="action"
           />
+          {/* Keyboard shortcuts hint for empty state discoverability */}
+          <div className="flex items-center justify-center gap-4 text-[9px] text-muted-foreground">
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1.5 py-0.5 font-sans text-[8px]">N</kbd>
+              <span>{t("shortcut.add") || "dodaj poziciju"}</span>
+            </span>
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1.5 py-0.5 font-sans text-[8px]">/</kbd>
+              <span>{t("shortcut.search") || "pretraži"}</span>
+            </span>
+          </div>
         </div>
       )}
 
