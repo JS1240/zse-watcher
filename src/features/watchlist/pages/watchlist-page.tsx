@@ -1294,7 +1294,7 @@ function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort, dragEnable
     <div
       ref={tableRef}
       onScroll={(e) => setScrollTop((e.target as HTMLDivElement).scrollTop > 200)}
-      className="relative overflow-auto rounded-md border border-border max-h-[75vh] scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted-foreground/30 hover:scrollbar-thumb-muted-foreground/50"
+      className="relative overflow-x-auto rounded-md border border-border max-h-[75vh] [-webkit-overflow-scrolling:touch] [scrollbar-gutter:stable] scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted-foreground/30 hover:scrollbar-thumb-muted-foreground/50"
     >
       <table className="w-full text-xs">
         <thead className="sticky top-0 z-10 bg-card">

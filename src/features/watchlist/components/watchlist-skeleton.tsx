@@ -11,7 +11,7 @@ export function WatchlistSkeleton({ className, rows = 5 }: WatchlistSkeletonProp
   const { t } = useTranslation("watchlist");
 
   return (
-    <div className={cn("overflow-hidden rounded-md border border-border", className)}>
+    <div className={cn("overflow-x-auto rounded-md border border-border [-webkit-overflow-scrolling:touch] [scrollbar-gutter:stable]", className)}>
       <table className="w-full text-xs">
         <thead>
           <tr className="border-b border-border bg-muted/50 text-[10px] uppercase tracking-wider text-muted-foreground">

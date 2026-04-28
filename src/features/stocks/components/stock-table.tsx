@@ -400,7 +400,7 @@ export function StockTable() {
       <div
         ref={tableRef}
         onScroll={(e) => setScrollTop((e.target as HTMLDivElement).scrollTop > 200)}
-        className="overflow-auto rounded-md border border-border max-h-[70vh] scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted-foreground/30 hover:scrollbar-thumb-muted-foreground/50"
+        className="overflow-x-auto rounded-md border border-border max-h-[70vh] [-webkit-overflow-scrolling:touch] [scrollbar-gutter:stable] scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted-foreground/30 hover:scrollbar-thumb-muted-foreground/50"
       >
         <table aria-label={t("table.label")} className="w-full text-sm">
           <thead className="sticky top-0 z-10 bg-muted/95 backdrop-blur supports-[backdrop-filter]:bg-muted/80">
