@@ -41,8 +41,16 @@
     "MAIS-R-A": "Maistra d.d."
   },
   "empty": {
-    "noData": "No dividend data",
-    "noDataDescription": "Dividends will be announced after shareholder approval."
+    "noData": "No scheduled dividends",
+    "noDataDescription": "Check the calendar for upcoming ZSE stock dividends.",
+    "quickStart": {
+      "step1": "Track ex-div dates",
+      "step1Desc": "The ex-div date is when you lose dividend rights if you sell the stock",
+      "step2": "Check expected yield",
+      "step2Desc": "Yield (%) shows what percentage of the stock price the dividend represents",
+      "step3": "Add to portfolio",
+      "step3Desc": "Use 'Dividends Received' to record actual dividend payments"
+    }
   },
   "toast": {
     "exported": "Dividends exported to CSV"

@@ -227,7 +227,12 @@ export function DividendsCalendar() {
         icon={<DividendsCalendarEmptyIllustration className="h-10 w-10" />}
         title={td("empty.noData")}
         description={td("empty.noDataDescription")}
-        variant="info"
+        variant="action"
+        steps={[
+          { label: td("empty.quickStart.step1"), description: td("empty.quickStart.step1Desc") },
+          { label: td("empty.quickStart.step2"), description: td("empty.quickStart.step2Desc") },
+          { label: td("empty.quickStart.step3"), description: td("empty.quickStart.step3Desc") },
+        ]}
       />
     );
   }

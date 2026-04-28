@@ -41,8 +41,16 @@
     "MAIS-R-A": "Maistra d.d."
   },
   "empty": {
-    "noData": "Nema podataka o dividendama",
-    "noDataDescription": "Dividende ce biti objavljene nakon odobrene skupstine dionicara."
+    "noData": "Nema zakazanih dividenda",
+    "noDataDescription": "Pregledajte kalendar za nadolazece dividende ZSE dionica.",
+    "quickStart": {
+      "step1": "Pratite ex-div datume",
+      "step1Desc": "Ex-div datum je dan kada gubite pravo na dividendu ako prodate dionicu",
+      "step2": "Pogledajte očekivani prinos",
+      "step2Desc": "Prinos (%) pokazuje koliki postotak cijene dionice iznosi dividenda",
+      "step3": "Dodajte u portfelj",
+      "step3Desc": "Koristite 'Primljene dividende' za biljezenje stvarnih isplata"
+    }
   },
   "toast": {
     "exported": "Dividende izvezene u CSV"
