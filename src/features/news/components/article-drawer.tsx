@@ -1,5 +1,6 @@
 
-import { X, ExternalLink, Keyboard } from "lucide-react";
+import { useState } from "react";
+import { X, ExternalLink, Keyboard, ArrowUp as ScrollTop } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { NewsArticle } from "@/types/news";
 import { formatDate, formatTime } from "@/lib/formatters";
@@ -16,6 +17,11 @@ export function ArticleDrawer({ article, onClose }: ArticleDrawerProps) {
     active: !!article,
     onEscape: onClose,
   });
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  const scrollToTop = () => {
+    document.getElementById("article-drawer-body")?.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   if (!article) return null;
 
@@ -69,7 +75,21 @@ export function ArticleDrawer({ article, onClose }: ArticleDrawerProps) {
         </div>
 
         {/* Body */}
-        <div className="flex-1 overflow-auto p-4">
+        <div
+          id="article-drawer-body"
+          onScroll={(e) => setShowScrollTop((e.target as HTMLDivElement).scrollTop > 200)}
+          className="flex-1 overflow-auto p-4 relative"
+        >
+          {/* Scroll-to-top floating button — appears after scrolling for Croatian investors reading long articles */}
+          {showScrollTop && (
+            <button
+              onClick={scrollToTop}
+              aria-label="Scroll to top"
+              className="absolute bottom-4 right-4 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md transition-all hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <ScrollTop className="h-3.5 w-3.5" />
+            </button>
+          )}
           <h2 className="mb-2 font-data text-base font-bold leading-snug text-foreground">
             {article.title}
           </h2>
