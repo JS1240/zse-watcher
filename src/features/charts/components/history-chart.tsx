@@ -5,6 +5,8 @@ import { ChartSkeleton } from "@/features/charts/components/chart-skeleton";
 import { useStockHistory } from "@/features/stocks/api/stock-detail-queries";
 import { CHART_RANGES, type ChartRange } from "@/config/constants";
 import { ErrorState } from "@/components/shared/error-state";
+import { EmptyState } from "@/components/shared/empty-state";
+import { ChartEmptyIllustration } from "@/components/shared/empty-illustrations";
 import { cn } from "@/lib/utils";
 import { exportToCsv } from "@/lib/export";
 import { Download, CheckCircle2 } from "lucide-react";
@@ -98,12 +100,14 @@ export function HistoryChart({
           height={height}
         />
       ) : (
-        <div
-          className="flex items-center justify-center rounded-md border border-border bg-card text-xs text-muted-foreground"
+        <EmptyState
+          icon={<ChartEmptyIllustration className="h-8 w-8" />}
+          title={t("chart.noData")}
+          description={t("chart.emptyDescription")}
+          variant="info"
+          className="rounded-md border border-border"
           style={{ height: `${height}px` }}
-        >
-          {t("chart.noData")}
-        </div>
+        />
       )}
     </div>
   );

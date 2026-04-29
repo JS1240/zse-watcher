@@ -75,6 +75,7 @@
   },
   "chart": {
     "noData": "No chart data available",
+    "emptyDescription": "Price chart is not available for this stock",
     "loadError": "Failed to load chart data",
     "exportHistory": "Export price history",
     "historyExported": "Price history exported"

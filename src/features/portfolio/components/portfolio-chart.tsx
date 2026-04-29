@@ -13,7 +13,8 @@ import {
 import { usePortfolioHistory } from "@/features/portfolio/hooks/use-portfolio-history";
 import { CHART_RANGES, type ChartRange } from "@/config/constants";
 import { formatCurrency } from "@/lib/formatters";
-import { Skeleton } from "@/components/ui/skeleton";
+import { EmptyState } from "@/components/shared/empty-state";
+import { ChartEmptyIllustration } from "@/components/shared/empty-illustrations";
 import { cn } from "@/lib/utils";
 
 interface PortfolioChartProps {
@@ -78,7 +79,13 @@ export function PortfolioChart({ className }: PortfolioChartProps) {
             </button>
           ))}
         </div>
-        <Skeleton className="h-[200px] w-full" />
+        <EmptyState
+          icon={<ChartEmptyIllustration className="h-8 w-8" />}
+          title={t("chart.noData")}
+          description={t("chart.emptyDescription")}
+          variant="info"
+          className="rounded-md border border-border py-6"
+        />
       </div>
     );
   }

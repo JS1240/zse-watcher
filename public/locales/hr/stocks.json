@@ -75,6 +75,7 @@
   },
   "chart": {
     "noData": "Nema podataka za graf",
+    "emptyDescription": "Graf cijene nije dostupan za ovu dionicu",
     "exportHistory": "Izvoz cijene povijesti",
     "historyExported": "Povijest cijena izvezena"
   },
