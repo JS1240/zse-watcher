@@ -38,6 +38,7 @@ export function StockTable() {
   const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [scrollTop, setScrollTop] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
+  const [rowFocused, setRowFocused] = useState(false); // true when any stock row has keyboard focus
   const tableRef = useRef<HTMLDivElement>(null);
 
   // Compute unique sectors
@@ -125,7 +126,11 @@ export function StockTable() {
     return result;
   }, [stocks, debouncedSearch, changeFilter, yieldFilter, sectorFilter, sortField, sortDir]);
 
-  const handleRowFocus = useCallback((ticker: string) => { select(ticker); focusedTickerRef.current = ticker; }, [select]);
+  const handleRowFocus = useCallback((ticker: string) => {
+    select(ticker);
+    focusedTickerRef.current = ticker;
+    setRowFocused(true);
+  }, [select]);
 
   const toggleSort = useCallback((field: SortField) => {
     if (sortField === field) {
@@ -261,6 +266,29 @@ export function StockTable() {
           </Button>
         )}
       </div>
+
+      {/* Focused row keyboard shortcut context hint — appears below search bar when a row is keyboard-focused, matching alerts-dashboard pattern */}
+      {rowFocused && focusedTickerRef.current && (
+        <div className="flex items-center gap-2 rounded-sm bg-primary/5 border border-primary/20 px-3 py-1.5 text-[9px] text-foreground">
+          <span className="flex items-center gap-0.5">
+            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">W</kbd>
+            <span>{t("shortcut.watch")}</span>
+          </span>
+          <span className="text-muted-foreground">·</span>
+          <span className="flex items-center gap-0.5">
+            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
+            <span>{t("shortcut.view")}</span>
+          </span>
+          <span className="text-muted-foreground">·</span>
+          <span className="flex items-center gap-0.5">
+            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">C</kbd>
+            <span>{t("shortcut.copy")}</span>
+          </span>
+          <span className="ml-auto text-muted-foreground">
+            {focusedTickerRef.current} — {t("shortcut.focusedRowHint") || "odaberi dionicu"}
+          </span>
+        </div>
+      )}
 
       {/* Quick filters: gainers / losers / unchanged - keyboard navigable */}
       <div
