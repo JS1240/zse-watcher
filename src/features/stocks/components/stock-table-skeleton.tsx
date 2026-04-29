@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { Keyboard } from "lucide-react";
 
 interface StockTableSkeletonProps {
   className?: string;
@@ -100,6 +101,28 @@ export function StockTableSkeleton({ className }: StockTableSkeletonProps) {
           <Skeleton className="h-3 w-12 animate-shimmer" />
           <Skeleton className="h-3 w-14 animate-shimmer" />
         </div>
+      </div>
+      {/* Always-visible keyboard shortcuts hint — matches main stocks table pattern */}
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-sm border border-border/50 bg-muted/30 px-3 py-1.5 text-[9px] text-muted-foreground">
+        <span className="flex items-center gap-0.5">
+          <Keyboard className="h-2.5 w-2.5" />
+        </span>
+        <span className="flex items-center gap-0.5">
+          <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
+          <span>detalji</span>
+        </span>
+        <span className="flex items-center gap-0.5">
+          <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">W</kbd>
+          <span>prati</span>
+        </span>
+        <span className="flex items-center gap-0.5">
+          <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">↑↓</kbd>
+          <span>navigiraj</span>
+        </span>
+        <span className="flex items-center gap-0.5">
+          <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">/</kbd>
+          <span>pretraži</span>
+        </span>
       </div>
     </div>
   );

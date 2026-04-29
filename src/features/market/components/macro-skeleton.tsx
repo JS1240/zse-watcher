@@ -1,4 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import { Keyboard } from "lucide-react";
 
 /** Polished loading skeleton for Macro page */
 export function MacroSkeleton() {
@@ -28,6 +29,25 @@ export function MacroSkeleton() {
             <FactorSkeleton key={i} />
           ))}
         </div>
+      </div>
+
+      {/* Always-visible keyboard shortcuts hint — matches market-overview-skeleton pattern */}
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-sm border border-border/50 bg-muted/30 px-3 py-1.5 text-[9px] text-muted-foreground">
+        <span className="flex items-center gap-0.5">
+          <Keyboard className="h-2.5 w-2.5" />
+        </span>
+        <span className="flex items-center gap-0.5">
+          <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Cmd+K</kbd>
+          <span>izbornik</span>
+        </span>
+        <span className="flex items-center gap-0.5">
+          <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">?</kbd>
+          <span>prečaci</span>
+        </span>
+        <span className="flex items-center gap-0.5">
+          <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">T</kbd>
+          <span>tema</span>
+        </span>
       </div>
     </div>
   );
