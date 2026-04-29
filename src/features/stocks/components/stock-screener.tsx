@@ -270,10 +270,16 @@ const ScreenerRow = memo(function ScreenerRow({
       <td className="hidden px-1 py-2 text-right font-data tabular-nums text-muted-foreground lg:table-cell">
         {stock.dividendYield !== null ? `${stock.dividendYield.toFixed(1)}%` : "—"}
       </td>
+      <td className="hidden px-1 py-2 text-right font-data tabular-nums text-muted-foreground xl:table-cell">
+        {stock.peRatio != null ? stock.peRatio.toFixed(1) : "—"}
+      </td>
+      <td className="hidden px-1 py-2 text-right font-data tabular-nums text-muted-foreground xl:table-cell">
+        {stock.marketCapM != null ? `${stock.marketCapM.toFixed(0)} M` : "—"}
+      </td>
       <td className="hidden px-1 py-2 text-right font-data tabular-nums text-muted-foreground lg:table-cell">
         {formatVolume(stock.volume)}
       </td>
-      <td className="hidden px-3 py-2 text-center xl:table-cell">
+      <td className="hidden px-3 py-2 text-center 2xl:table-cell">
         {sparkline && sparkline.length > 1 && (
           <Sparkline data={sparkline} width={50} height={18} />
         )}
@@ -890,6 +896,12 @@ export function StockScreener() {
               <th className="hidden px-1 py-2 text-right font-medium lg:table-cell">
                 {t("table.dividendYield")}
               </th>
+              <th className="hidden px-1 py-2 text-right font-medium xl:table-cell">
+                {t("table.peRatio")}
+              </th>
+              <th className="hidden px-1 py-2 text-right font-medium xl:table-cell">
+                {t("table.marketCap")}
+              </th>
               <th className="hidden px-1 py-2 text-right font-medium lg:table-cell">
                 <SortHeader
                   column="volume"
@@ -898,7 +910,7 @@ export function StockScreener() {
                   onSort={handleSort}
                 />
               </th>
-              <th className="hidden px-3 py-2 text-center font-medium xl:table-cell" title="1W trend">
+              <th className="hidden px-3 py-2 text-center font-medium 2xl:table-cell" title="1W trend">
                 {t("table.trend") || "Trend"}
               </th>
             </tr>
