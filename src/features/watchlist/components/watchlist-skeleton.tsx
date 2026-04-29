@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Keyboard } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface WatchlistSkeletonProps {
@@ -67,6 +68,25 @@ export function WatchlistSkeleton({ className, rows = 5 }: WatchlistSkeletonProp
           ))}
         </tbody>
       </table>
+
+      {/* Always-visible keyboard shortcuts hint — matches stock/portfolio/heatmap pattern */}
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-border/50 bg-muted/30 px-3 py-1.5 text-[9px] text-muted-foreground">
+        <span className="flex items-center gap-0.5">
+          <Keyboard className="h-2.5 w-2.5" />
+        </span>
+        <span className="flex items-center gap-0.5">
+          <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">↑↓</kbd>
+          <span>navigiraj</span>
+        </span>
+        <span className="flex items-center gap-0.5">
+          <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
+          <span>otvori</span>
+        </span>
+        <span className="flex items-center gap-0.5">
+          <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">/</kbd>
+          <span>pretraži</span>
+        </span>
+      </div>
     </div>
   );
 }
