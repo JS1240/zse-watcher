@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod/v4";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
-import { X, CheckCircle2, AlertCircle, AlertTriangle, Keyboard } from "lucide-react";
+import { X, CheckCircle2, AlertCircle, AlertTriangle, Keyboard, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -145,6 +145,42 @@ export function InlineTransactionForm({
     setValue("pricePerShare", formatPrice(newPrice).replace("EUR", "").trim(), { shouldValidate: true });
   }, [currentPrice, setValue]);
 
+  // P&L preview: compare input price vs current market price
+  // Helps investors understand if they're over/underpaying before committing
+  const plPreview = useMemo((): {
+    diff: number;
+    diffPct: number;
+    direction: "up" | "down" | "neutral";
+    label: string;
+    color: string;
+    bgColor: string;
+    barColor: string;
+    barWidth: string;
+  } | null => {
+    if (!currentPrice || !priceValue) return null;
+    const inputPrice = parseLocalizedNumber(priceValue);
+    if (isNaN(inputPrice) || inputPrice <= 0) return null;
+    const diff = inputPrice - currentPrice;
+    const diffPct = (diff / currentPrice) * 100;
+    const direction: "up" | "down" | "neutral" = Math.abs(diffPct) < 0.1 ? "neutral" : diff > 0 ? "up" : "down";
+    let label: string;
+    if (direction === "neutral") {
+      label = t("plPreview.atMarket") || "At market price";
+    } else if (direction === "up") {
+      label = t("plPreview.aboveMarket", { pct: diffPct.toFixed(1) }) || `+${diffPct.toFixed(1)}% above market`;
+    } else {
+      label = t("plPreview.belowMarket", { pct: Math.abs(diffPct).toFixed(1) }) || `${Math.abs(diffPct).toFixed(1)}% below market`;
+    }
+    const color = direction === "neutral" ? "text-muted-foreground" : direction === "up" ? "text-red-600 dark:text-red-400" : "text-emerald-600 dark:text-emerald-400";
+    const bgColor = direction === "neutral" ? "bg-muted/30" : direction === "up" ? "bg-red-500/5" : "bg-emerald-500/5";
+    const barColor = direction === "neutral" ? "bg-muted-foreground/40" : direction === "up" ? "bg-red-500/60" : "bg-emerald-500/60";
+    const barWidth = direction === "neutral" ? "50%" : direction === "up" ? `${Math.min(100, 50 + Math.min(diffPct * 2, 50))}%` : `${Math.max(0, 50 - Math.min(Math.abs(diffPct) * 2, 50))}%`;
+    return { diff, diffPct, direction, label, color, bgColor, barColor, barWidth };
+  }, [currentPrice, priceValue, t]);
+
+  // Show P&L preview bar between quick price buttons and submit row
+  const showPlPreview = plPreview && transactionType === "buy";
+
   return (
     <div className="rounded-md border border-primary/30 bg-primary/5 p-3">
       <div className="mb-2.5 flex items-center justify-between">
@@ -251,6 +287,29 @@ export function InlineTransactionForm({
             </button>
           ))}
         </div>
+
+
+        {/* P&L preview bar — shows how input price compares to market */}
+        {showPlPreview && (
+          <div className={cn("flex items-center gap-2 rounded px-2 py-1.5", plPreview.bgColor)}>
+            <span className={cn("flex items-center gap-1 text-[9px] font-semibold", plPreview.color)}>
+              {plPreview.direction === "up" ? (
+                <TrendingUp className="h-3 w-3" />
+              ) : plPreview.direction === "down" ? (
+                <TrendingDown className="h-3 w-3" />
+              ) : (
+                <Minus className="h-3 w-3" />
+              )}
+              {plPreview.label}
+            </span>
+            <div className="flex-1 overflow-hidden rounded-full bg-border/50">
+              <div
+                className={cn("h-1 rounded-full transition-all duration-300", plPreview.barColor)}
+                style={{ width: plPreview.barWidth }}
+              />
+            </div>
+          </div>
+        )}
 
         {/* Total + Submit */}
         <div className="flex items-center justify-between">
