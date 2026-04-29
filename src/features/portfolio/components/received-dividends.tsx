@@ -1,10 +1,11 @@
 import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, Trash2, Download, ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
+import { Plus, Trash2, Download, ArrowUp, ArrowDown, ArrowUpDown, Search, X } from "lucide-react";
 import { toast } from "sonner";
 import { exportToCsv } from "@/lib/export";
 import { useReceivedDividends } from "@/features/portfolio/hooks/use-received-dividends";
 import { usePortfolioHoldings } from "@/features/portfolio/api/portfolio-queries";
+import { useDebounce } from "@/hooks/use-debounce";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { EmptyState } from "@/components/shared/empty-state";
@@ -17,6 +18,8 @@ export function ReceivedDividends() {
   const { dividends, addDividend, removeDividend, hasDividends } = useReceivedDividends();
   const holdings = usePortfolioHoldings();
   const [showForm, setShowForm] = useState(false);
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 150);
   const [sort, setSort] = useState<{ column: "ticker" | "amount" | "date"; direction: "asc" | "desc" } | null>({ column: "date", direction: "desc" });
   const [form, setForm] = useState({
     ticker: "",
@@ -60,7 +63,7 @@ export function ReceivedDividends() {
     if (!sort) return [...dividends].sort((a, b) => b.payDate.localeCompare(a.payDate));
     return [...dividends].sort((a, b) => {
       if (sort.column === "ticker") {
-        return sort.direction === "asc" 
+        return sort.direction === "asc"
           ? a.ticker.localeCompare(b.ticker)
           : b.ticker.localeCompare(a.ticker);
       }
@@ -70,11 +73,22 @@ export function ReceivedDividends() {
         return sort.direction === "asc" ? aAmt - bAmt : bAmt - aAmt;
       }
       // date
-      return sort.direction === "asc" 
+      return sort.direction === "asc"
         ? a.payDate.localeCompare(b.payDate)
         : b.payDate.localeCompare(a.payDate);
     });
   }, [dividends, sort]);
+
+  const filteredDividends = useMemo(() => {
+    if (!debouncedSearch) return sortedDividends;
+    const q = debouncedSearch.toLowerCase();
+    return sortedDividends.filter(
+      (d) =>
+        d.ticker.toLowerCase().includes(q) ||
+        (d.notes ?? "").toLowerCase().includes(q) ||
+        d.payDate.includes(q),
+    );
+  }, [sortedDividends, debouncedSearch]);
 
   const handleSort = (col: "ticker" | "amount" | "date") => {
     setSort((prev) => {
@@ -104,7 +118,7 @@ export function ReceivedDividends() {
   return (
     <div className="space-y-3">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2 flex-wrap">
         <div className="flex items-center gap-2">
           <DividendsCalendarEmptyIllustration className="h-4 w-4 text-muted-foreground" />
           <span className="text-xs font-semibold text-foreground">{t("dividendsReceived")}</span>
@@ -116,12 +130,32 @@ export function ReceivedDividends() {
             </span>
           )}
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
           {hasDividends && (
-            <Button size="sm" variant="outline" onClick={handleExportCsv} className="h-6 text-[10px]">
-              <Download className="h-3 w-3" />
-              CSV
-            </Button>
+            <>
+              <div className="relative">
+                <Search className="absolute left-2 top-1.5 h-3 w-3 text-muted-foreground" />
+                <Input
+                  placeholder="/"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Escape") { setSearch(""); (e.target as HTMLInputElement).blur(); }}}
+                  className="h-6 pl-7 pr-6 text-[10px] w-32"
+                />
+                {search && (
+                  <button
+                    onClick={() => setSearch("")}
+                    className="absolute right-1 top-1 text-muted-foreground/40 hover:text-foreground"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                )}
+              </div>
+              <Button size="sm" variant="outline" onClick={handleExportCsv} className="h-6 text-[10px]">
+                <Download className="h-3 w-3" />
+                CSV
+              </Button>
+            </>
           )}
           <Button
             size="sm"
@@ -219,6 +253,14 @@ export function ReceivedDividends() {
           action={{ label: t("dividends.recordAction", "Record"), onClick: () => setShowForm(true) }}
           className="rounded-md border border-border"
         />
+      ) : filteredDividends.length === 0 && debouncedSearch ? (
+        <EmptyState
+          icon={<DividendsCalendarEmptyIllustration className="h-8 w-8" />}
+          title={t("dividends.noSearchResults", "No dividends match your search")}
+          description={t("dividends.noSearchResultsDesc", "Try a different ticker, date, or note.")}
+          action={{ label: t("dividends.clearSearch", "Clear search"), onClick: () => setSearch("") }}
+          className="rounded-md border border-border"
+        />
       ) : (
         <div className="rounded-md border border-border bg-card overflow-hidden">
           <table className="w-full text-xs">
@@ -273,7 +315,7 @@ export function ReceivedDividends() {
               </tr>
             </thead>
             <tbody>
-              {sortedDividends.map((d) => {
+              {filteredDividends.map((d) => {
                 const eurAmount = d.currency === "HRK" ? d.totalAmount / 7.5 : d.totalAmount;
                 return (
                   <tr key={d.id} className="border-b border-border/50 hover:bg-accent/30">
