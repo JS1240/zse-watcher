@@ -1,5 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { Keyboard } from "lucide-react";
 
 interface ChartSkeletonProps {
   height?: number;
@@ -53,9 +54,9 @@ export function ChartSkeleton({ height = 300, className }: ChartSkeletonProps) {
           {Array.from({ length: 12 }).map((_, i) => {
             // Vary heights for realistic skeleton
             const heights = [45, 65, 35, 80, 55, 70, 40, 85, 60, 50, 75, 45];
-            const height = heights[i % heights.length];
+            const candleHeight = heights[i % heights.length];
             const isGreen = i % 2 === 0;
-            
+
             return (
               <div
                 key={i}
@@ -63,7 +64,7 @@ export function ChartSkeleton({ height = 300, className }: ChartSkeletonProps) {
                   "w-full rounded-sm",
                   isGreen ? "bg-emerald-500/30" : "bg-red-500/30"
                 )}
-                style={{ height: `${height}%` }}
+                style={{ height: `${candleHeight}%` }}
               />
             );
           })}
@@ -72,6 +73,19 @@ export function ChartSkeleton({ height = 300, className }: ChartSkeletonProps) {
 
       {/* Subtle pulse animation */}
       <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-transparent via-background/20 to-transparent opacity-30" />
+
+      {/* Always-visible keyboard shortcuts hint — matches main chart pattern */}
+      <div className="absolute bottom-2 right-2 flex items-center gap-2 text-[9px] text-muted-foreground">
+        <Keyboard className="h-2.5 w-2.5" />
+        <span className="flex items-center gap-0.5">
+          <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Cmd+K</kbd>
+          <span>izbornik</span>
+        </span>
+        <span className="flex items-center gap-0.5">
+          <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">T</kbd>
+          <span>tema</span>
+        </span>
+      </div>
     </div>
   );
 }
