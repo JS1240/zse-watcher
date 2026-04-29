@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, Trash2, Download, Keyboard, ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
+import { Plus, Trash2, Download, ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import { toast } from "sonner";
 import { exportToCsv } from "@/lib/export";
 import { useReceivedDividends } from "@/features/portfolio/hooks/use-received-dividends";
@@ -310,16 +310,30 @@ export function ReceivedDividends() {
         </div>
       )}
 
-      {/* Always-visible keyboard shortcuts hint for discoverability - matching stocks/watchlist/portfolio pattern */}
+      {/* Always-visible keyboard shortcuts hint bar — matching stocks/portfolio/alerts premium pattern */}
       {dividends.length > 0 && (
-        <div className="flex items-center justify-between rounded-md border-t border-border/50 px-3 py-2 text-[9px] text-muted-foreground">
-          <span className="flex items-center gap-2">
-            <kbd className="rounded bg-muted px-1.5 py-0.5 font-sans text-[8px]">Del</kbd>
-            <span className="hidden sm:inline">{t("shortcut.delete") || "obriši"}</span>
+        <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border/50 bg-muted/20 px-3 py-2 text-[9px] text-muted-foreground">
+          <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Del</kbd>
+              <span className="hidden sm:inline">{t("shortcut.delete") || "obri\u0161i"}</span>
+            </span>
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
+              <span className="hidden sm:inline">dionicu</span>
+            </span>
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">↑↓</kbd>
+              <span className="hidden sm:inline">navigiraj</span>
+            </span>
+            <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">/</kbd>
+              <span className="hidden sm:inline">tra\u017ei</span>
+            </span>
           </span>
-          <span className="flex items-center gap-1">
-            <Keyboard className="h-2.5 w-2.5" />
-            <span>N {t("shortcut.new") || "novi unos"}</span>
+          <span className="flex items-center gap-0.5">
+            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">N</kbd>
+            <span className="hidden sm:inline">{t("dividends.buttons.record") || "novi unos"}</span>
           </span>
         </div>
       )}

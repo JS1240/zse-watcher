@@ -515,19 +515,19 @@ export function DividendsCalendar() {
         </Button>
       </div>
 
-      {/* Results count + always-visible keyboard shortcuts hint */}
-      <div className="flex items-center justify-between">
+      {/* Results count + always-visible keyboard shortcuts hint bar */}
+      <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border/50 bg-muted/20 px-3 py-2">
         <span className="text-[10px] text-muted-foreground">
           {sortedDividends.length} {sortedDividends.length === 1 ? "dividend" : "dividendi"}
           {selectedYear && (
             <span className="ml-1 text-primary">({selectedYear})</span>
           )}
         </span>
-        {/* Always-visible keyboard shortcuts hint for discoverability */}
-        <div className="flex items-center gap-2 text-[9px] text-muted-foreground">
+        {/* Always-visible keyboard shortcuts hint for discoverability — matching stocks/portfolio/alerts pattern */}
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[9px] text-muted-foreground">
           <span className="flex items-center gap-0.5">
             <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
-            <span className="hidden sm:inline">{td("shortcut.view")}</span>
+            <span className="hidden sm:inline">{td("shortcut.view") || "detalji"}</span>
           </span>
           <span className="flex items-center gap-0.5">
             <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">↑↓</kbd>
@@ -535,7 +535,11 @@ export function DividendsCalendar() {
           </span>
           <span className="flex items-center gap-0.5">
             <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">/</kbd>
-            <span className="hidden sm:inline">{td("shortcut.search")}</span>
+            <span className="hidden sm:inline">{td("shortcut.search") || "pretrazi"}</span>
+          </span>
+          <span className="flex items-center gap-0.5">
+            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">N</kbd>
+            <span className="hidden sm:inline">{t("shortcut.new") || "novi unos"}</span>
           </span>
         </div>
       </div>
