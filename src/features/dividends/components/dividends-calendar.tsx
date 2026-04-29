@@ -541,57 +541,57 @@ export function DividendsCalendar() {
       </div>
 
           {/* Dividends list — always rendered for consistent scroll tracking */}
-          <div
-            ref={dividendsListRef}
-            onScroll={(e) => setScrollTop((e.target as HTMLDivElement).scrollTop > 200)}
-            className="max-h-[calc(100vh-360px)] space-y-4 overflow-y-auto pr-1"
-          >
-            {grouped.length > 0 ? (
-              grouped.map((group) => (
-                <div key={group.month}>
-                  <h3 className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    {group.label}
-                  </h3>
-                  <div className="space-y-1">
-                    {group.items?.map((d, idx) => (
-                      <DividendRow
-                        key={`${d.ticker}-${d.exDivDate}`}
-                        dividend={d}
-                        rowIndex={idx}
-                        searchQuery={searchQuery}
-                        labels={{ exDiv: td('calendar.exDiv'), pay: td('calendar.pay') }}
-                        copiedField={copiedField}
-                        onCopyTicker={handleCopyTicker}
-                        onCopyAmount={handleCopyAmount}
-                        onCopyYield={handleCopyYield}
-                        onSelect={select}
-                        highlight={debouncedSearch}
-                      />
-                    ))}
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p className="py-8 text-center text-xs text-muted-foreground">
-                {td('empty.noData') || "No dividend data available"}
-              </p>
-            )}
-          </div>
+      <div
+        ref={dividendsListRef}
+        onScroll={(e) => setScrollTop((e.target as HTMLDivElement).scrollTop > 200)}
+        className="max-h-[calc(100vh-360px)] space-y-4 overflow-y-auto pr-1"
+      >
+        {grouped.length > 0 ? (
+          grouped.map((group) => (
+            <div key={group.month}>
+              <h3 className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                {group.label}
+              </h3>
+              <div className="space-y-1">
+                {group.items?.map((d, idx) => (
+                  <DividendRow
+                    key={`${d.ticker}-${d.exDivDate}`}
+                    dividend={d}
+                    rowIndex={idx}
+                    searchQuery={searchQuery}
+                    labels={{ exDiv: td('calendar.exDiv'), pay: td('calendar.pay') }}
+                    copiedField={copiedField}
+                    onCopyTicker={handleCopyTicker}
+                    onCopyAmount={handleCopyAmount}
+                    onCopyYield={handleCopyYield}
+                    onSelect={select}
+                    highlight={debouncedSearch}
+                  />
+                ))}
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="py-8 text-center text-xs text-muted-foreground">
+            {td('empty.noData') || "No dividend data available"}
+          </p>
+        )}
+      </div>
 
-          {/* Scroll to top — only visible when there are grouped items */}
-          {grouped.length > 0 && (
-            <button
-              onClick={() => dividendsListRef.current?.scrollTo({ top: 0, behavior: "smooth" })}
-              className={cn(
-                "fixed bottom-6 right-6 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-all duration-200 hover:bg-primary/90",
-                scrollTop ? "opacity-100 translate-y-0" : "pointer-events-none opacity-0 translate-y-2"
-              )}
-              aria-label={t("scrollToTop") || "Povratak na vrh"}
-              title={t("scrollToTop") || "Povratak na vrh"}
-            >
-              <ArrowUp className="h-4 w-4" />
-            </button>
+      {/* Scroll to top — only visible when there are grouped items */}
+      {grouped.length > 0 && (
+        <button
+          onClick={() => dividendsListRef.current?.scrollTo({ top: 0, behavior: "smooth" })}
+          className={cn(
+            "fixed bottom-6 right-6 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-all duration-200 hover:bg-primary/90",
+            scrollTop ? "opacity-100 translate-y-0" : "pointer-events-none opacity-0 translate-y-2"
           )}
+          aria-label={t("scrollToTop") || "Povratak na vrh"}
+          title={t("scrollToTop") || "Povratak na vrh"}
+        >
+          <ArrowUp className="h-4 w-4" />
+        </button>
+      )}
 
       {/* Stock detail drawer from dividend row click */}
       <StockDetailDrawer
