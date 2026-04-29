@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { EmptyState } from "@/components/shared/empty-state";
 import { DividendsCalendarEmptyIllustration } from "@/components/shared/empty-illustrations";
-import { DividendsSkeleton } from "@/features/dividends/components/dividends-skeleton";
+import { ReceivedDividendsSkeleton } from "./received-dividends-skeleton";
 import { formatCurrency, formatDate } from "@/lib/formatters";
 
 export function ReceivedDividends() {
@@ -108,13 +108,12 @@ export function ReceivedDividends() {
         <div className="flex items-center gap-2">
           <DividendsCalendarEmptyIllustration className="h-4 w-4 text-muted-foreground" />
           <span className="text-xs font-semibold text-foreground">{t("dividendsReceived")}</span>
-          {hasDividends && !isHoldingsLoading && (
+          {isHoldingsLoading ? (
+            <ReceivedDividendsSkeleton rows={2} />
+          ) : (
             <span className="font-data text-[10px] text-muted-foreground">
               {t("dividends.form.total")} {formatCurrency(totalReceived)} EUR
             </span>
-          )}
-          {isHoldingsLoading && (
-            <DividendsSkeleton rows={2} />
           )}
         </div>
         <div className="flex gap-2">
