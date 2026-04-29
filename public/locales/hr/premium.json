@@ -36,7 +36,12 @@
     "annual": "Godišnje",
     "toggleCycle": "mjesečno/godišnje",
     "loading": "Preusmjeravanje...",
-    "close": "Zatvori"
+    "close": "Zatvori",
+    "perMonthDirect": "po mjesecu",
+    "perYear": "godišnje",
+    "saveEur": "Štediš {{amount}} EUR",
+    "monthlyEquivalent": "mjesečni ekvivalent",
+    "twelveMonthsNote": "12 mjeseci plaćeno godišnje = 2 mjeseca besplatno"
   },
   "premiumGate": {
     "defaultTitle": "Premium funkcija",

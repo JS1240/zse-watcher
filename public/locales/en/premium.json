@@ -36,7 +36,12 @@
     "annual": "Annual",
     "toggleCycle": "monthly/annual",
     "loading": "Redirecting...",
-    "close": "Close"
+    "close": "Close",
+    "perMonthDirect": "per month",
+    "perYear": "yearly",
+    "saveEur": "Save {{amount}} EUR",
+    "monthlyEquivalent": "monthly equivalent",
+    "twelveMonthsNote": "12 months paid annually = 2 months free"
   },
   "premiumGate": {
     "defaultTitle": "Premium Feature",

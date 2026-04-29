@@ -115,6 +115,90 @@ export function UpgradeModal({ open, onClose, featureContext }: UpgradeModalProp
           </span>
         </div>
 
+        {/* Live price comparison breakdown */}
+        <div className={cn(
+          "mt-4 rounded-md border px-3 py-3",
+          cycle === "annual"
+            ? "border-amber-500/20 bg-amber-500/5"
+            : "border-border bg-muted/30"
+        )}>
+          <div className="flex items-center justify-between">
+            {/* Monthly breakdown */}
+            <div className="flex-1">
+              <p className={cn(
+                "text-[10px] font-semibold",
+                cycle === "monthly" ? "text-foreground" : "text-muted-foreground"
+              )}>
+                {t("upgradeModal.monthly")}
+              </p>
+              <p className="mt-0.5 font-data text-lg font-bold text-foreground">
+                {premiumPlan?.monthlyPrice.toFixed(2)} EUR
+              </p>
+              <p className="text-[9px] text-muted-foreground">
+                {t("upgradeModal.perMonthDirect") || "po mjesecu"}
+              </p>
+            </div>
+
+            {/* Divider */}
+            <div className="mx-3 flex h-10 flex-col items-center justify-center">
+              <div className="h-px w-6 bg-border" />
+              <span className="my-1 text-[9px] text-muted-foreground">ili</span>
+              <div className="h-px w-6 bg-border" />
+            </div>
+
+            {/* Annual breakdown */}
+            <div className="flex-1 text-right">
+              <p className={cn(
+                "text-[10px] font-semibold",
+                cycle === "annual" ? "text-foreground" : "text-muted-foreground"
+              )}>
+                {t("upgradeModal.annual")}
+              </p>
+              <p className="mt-0.5 font-data text-lg font-bold text-foreground">
+                {premiumPlan?.annualPrice.toFixed(2)} EUR
+              </p>
+              <p className="text-[9px] text-muted-foreground">
+                / {t("upgradeModal.perYear") || "godišnje"}
+              </p>
+              {premiumPlan && premiumPlan.annualPrice > 0 && (
+                <p className="mt-0.5 text-[9px] font-medium text-emerald-600 dark:text-emerald-400">
+                  {t("upgradeModal.saveEur", {
+                    amount: ((premiumPlan.monthlyPrice * 12) - premiumPlan.annualPrice).toFixed(2)
+                  }) || `Štediš ${((premiumPlan.monthlyPrice * 12) - premiumPlan.annualPrice).toFixed(2)} EUR`}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Monthly equivalent bar for annual */}
+          {cycle === "annual" && premiumPlan && (
+            <div className="mt-3 pt-2 border-t border-border/50">
+              <div className="flex items-center justify-between text-[9px] text-muted-foreground">
+                <span>{t("upgradeModal.monthlyEquivalent") || "mjesečni ekvivalent"}</span>
+                <span className="font-data font-semibold text-foreground">
+                  {(premiumPlan.annualPrice / 12).toFixed(2)} EUR
+                </span>
+              </div>
+              <div className="mt-2 flex items-center gap-2">
+                <div className="flex-1 overflow-hidden rounded-full bg-border">
+                  <div
+                    className="h-1.5 rounded-full bg-amber transition-all duration-300"
+                    style={{
+                      width: `${Math.round((premiumPlan.annualPrice / 12 / premiumPlan.monthlyPrice) * 100)}%`
+                    }}
+                  />
+                </div>
+                <span className="text-[9px] font-medium text-amber">
+                  −{Math.round((1 - (premiumPlan.annualPrice / 12 / premiumPlan.monthlyPrice)) * 100)}%
+                </span>
+              </div>
+              <p className="mt-1.5 text-[9px] text-muted-foreground/70">
+                {t("upgradeModal.twelveMonthsNote") || "12 mjeseci plaćeno godišnje = 2 mjeseca besplatno"}
+              </p>
+            </div>
+          )}
+        </div>
+
         {/* CTA buttons */}
         <div className="mt-4 space-y-2">
           <Button
