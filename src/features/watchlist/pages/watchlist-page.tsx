@@ -1,4 +1,4 @@
-import { useMemo, useState, useRef, useCallback, memo } from "react";
+import { useMemo, useState, useRef, useCallback, memo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Star, Search, Keyboard, Trash2, ArrowUp, ArrowDown, ArrowUpDown, GripVertical, Download, Upload, X, TrendingUp, TrendingDown, Minus, CheckCircle2, ChevronUp, AlertCircle } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
@@ -226,6 +226,27 @@ function AuthenticatedWatchlist() {
         : ((bVal as number) || 0) - ((aVal as number) || 0);
     });
   }, [watchedStocks, debouncedSearch, sectorFilter, changeFilter, sort, watchlistItems.data]);
+
+  // Keyboard arrow navigation for table rows
+  const [focusedRowIndex, setFocusedRowIndex] = useState(-1);
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      const isInput = target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable;
+      if (isInput) return;
+      if (e.key === "ArrowUp") { e.preventDefault(); setFocusedRowIndex((p) => Math.max(0, p - 1)); }
+      else if (e.key === "ArrowDown") { e.preventDefault(); setFocusedRowIndex((p) => Math.min(filtered.length - 1, p + 1)); }
+      else if (e.key === "Escape") { setFocusedRowIndex(-1); }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [filtered.length]);
+  useEffect(() => {
+    if (focusedRowIndex >= 0) {
+      const row = document.querySelector("[data-watchlist-row='" + focusedRowIndex + "']") as HTMLElement;
+      row && row.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    }
+  }, [focusedRowIndex]);
 
   const handleSort = (col: SortColumn) => {
     setSort((prev) => {
@@ -561,7 +582,15 @@ function AuthenticatedWatchlist() {
       )}
 
       {filtered.length > 0 ? (
-        <WatchlistTableMemo stocks={filtered} sort={sort} onSort={handleSort} searchQuery={debouncedSearch} />
+        <WatchlistTableMemo
+          stocks={filtered}
+          sort={sort}
+          onSort={handleSort}
+          searchQuery={debouncedSearch}
+          focusedRowIndex={focusedRowIndex}
+          onFocusNext={() => setFocusedRowIndex((p) => Math.min(filtered.length - 1, p + 1))}
+          onFocusPrev={() => setFocusedRowIndex((p) => Math.max(0, p - 1))}
+        />
       ) : debouncedSearch ? (
         <>
           <EmptyState
@@ -623,12 +652,20 @@ const SortableRowBase = function SortableRow({
   onRemove,
   flash,
   searchQuery,
+  rowIndex,
+  onFocusNext,
+  onFocusPrev,
+  onSelect,
 }: {
   stock: Stock;
   showRemove?: boolean;
   onRemove?: (ticker: string) => void;
   flash?: "up" | "down" | null;
   searchQuery?: string;
+  rowIndex?: number;
+  onFocusNext?: () => void;
+  onFocusPrev?: () => void;
+  onSelect?: (ticker: string) => void;
 }): React.JSX.Element {
   const { t } = useTranslation("watchlist");
   const { t: tc } = useTranslation("common");
@@ -671,16 +708,19 @@ const SortableRowBase = function SortableRow({
 
   return (
     <tr
+      data-watchlist-row={rowIndex}
       ref={setNodeRef}
       style={style}
-      role="button"
+      role="row"
       tabIndex={0}
-      onClick={() => select(stock.ticker)}
+      onClick={() => { select(stock.ticker); onSelect?.(stock.ticker); }}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
           select(stock.ticker);
-        }
+          onSelect?.(stock.ticker);
+        } else if (e.key === "ArrowUp") { e.preventDefault(); onFocusPrev?.(); }
+        else if (e.key === "ArrowDown") { e.preventDefault(); onFocusNext?.(); }
       }}
       className={cn(
         "group cursor-pointer border-b border-border/50 transition-all duration-200 hover:-translate-y-0.5 hover:bg-accent/50 hover:shadow-md",
@@ -691,6 +731,7 @@ const SortableRowBase = function SortableRow({
         isOver && !isDragging && "border-l-2 border-l-primary/50 bg-primary/5",
         flash === "up" && "price-flash-up",
         flash === "down" && "price-flash-down",
+        rowIndex !== undefined && rowIndex === rowIndex && "ring-2 ring-primary z-10"
       )}
     >
       <td className="sticky left-0 z-[1] bg-card shadow-[2px_0_4px_hsl(var(--border))] px-3 py-2">
@@ -807,7 +848,11 @@ export const SortableRow = memo(SortableRowBase, (prev, next) => {
     prev.showRemove === next.showRemove &&
     prev.onRemove === next.onRemove &&
     prev.flash === next.flash &&
-    prev.searchQuery === next.searchQuery
+    prev.searchQuery === next.searchQuery &&
+    prev.rowIndex === next.rowIndex &&
+    prev.onFocusNext === next.onFocusNext &&
+    prev.onFocusPrev === next.onFocusPrev &&
+    prev.onSelect === next.onSelect
   );
 });
 
@@ -1351,9 +1396,13 @@ interface WatchlistTableProps {
   onSort: (col: SortColumn) => void;
   dragEnabled?: boolean;
   searchQuery?: string;
+  focusedRowIndex?: number;
+  onFocusNext?: () => void;
+  onFocusPrev?: () => void;
+  onSelect?: (ticker: string) => void;
 }
 
-function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort, dragEnabled, searchQuery }: WatchlistTableProps) {
+function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort, dragEnabled, searchQuery, onFocusNext, onFocusPrev, onSelect }: WatchlistTableProps) {
   const { t } = useTranslation("watchlist");
   const flashMap = usePriceFlash(stocks);
   const [scrollTop, setScrollTop] = useState(false);
@@ -1399,7 +1448,7 @@ function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort, dragEnable
           </tr>
         </thead>
         <tbody>
-          {stocks.map((stock) =>
+          {stocks.map((stock, index) =>
             dragEnabled ? (
               <SortableRow
                 key={stock.ticker}
@@ -1408,6 +1457,10 @@ function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort, dragEnable
                 onRemove={onRemove}
                 flash={flashMap.get(stock.ticker) ?? null}
                 searchQuery={searchQuery}
+                rowIndex={index}
+                onFocusNext={onFocusNext}
+                onFocusPrev={onFocusPrev}
+                onSelect={onSelect}
               />
             ) : (
               <WatchlistRowMemo
@@ -1417,6 +1470,10 @@ function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort, dragEnable
                 onRemove={onRemove}
                 flash={flashMap.get(stock.ticker) ?? null}
                 searchQuery={searchQuery}
+                rowIndex={index}
+                onFocusNext={onFocusNext}
+                onFocusPrev={onFocusPrev}
+                onSelect={onSelect}
               />
             )
           )}
@@ -1447,7 +1504,11 @@ const WatchlistTableMemo = memo(WatchlistTable, (prev, next) => {
     prev.sort === next.sort &&
     prev.onSort === next.onSort &&
     prev.dragEnabled === next.dragEnabled &&
-    prev.searchQuery === next.searchQuery
+    prev.searchQuery === next.searchQuery &&
+    prev.focusedRowIndex === next.focusedRowIndex &&
+    prev.onFocusNext === next.onFocusNext &&
+    prev.onFocusPrev === next.onFocusPrev &&
+    prev.onSelect === next.onSelect
   );
 });
 
@@ -1457,14 +1518,23 @@ interface WatchlistRowProps {
   onRemove?: (ticker: string) => void;
   flash?: "up" | "down" | null;
   searchQuery?: string;
+  rowIndex?: number;
+  onFocusNext?: () => void;
+  onFocusPrev?: () => void;
+  onSelect?: (ticker: string) => void;
 }
 
-function WatchlistRow({ stock, showRemove, onRemove, flash, searchQuery }: WatchlistRowProps) {
+function WatchlistRow({ stock, showRemove, onRemove, flash, searchQuery, rowIndex, onFocusNext, onFocusPrev, onSelect }: WatchlistRowProps) {
   const { t } = useTranslation("watchlist");
   const { t: tc } = useTranslation("common");
   const { select, selectedTicker } = useSelectedStock();
   const isSelected = selectedTicker === stock.ticker;
   const [copiedField, setCopiedField] = useState<string | null>(null);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "ArrowUp") { e.preventDefault(); onFocusPrev?.(); }
+    else if (e.key === "ArrowDown") { e.preventDefault(); onFocusNext?.(); }
+  };
 
   const handleCopyTicker = useCallback(async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -1484,13 +1554,17 @@ function WatchlistRow({ stock, showRemove, onRemove, flash, searchQuery }: Watch
 
   return (
     <tr
-      role="button"
+      data-watchlist-row={rowIndex}
+      role="row"
       tabIndex={0}
-      onClick={() => select(stock.ticker)}
+      onClick={() => { select(stock.ticker); onSelect?.(stock.ticker); }}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
           select(stock.ticker);
+          onSelect?.(stock.ticker);
+        } else {
+          handleKeyDown(e);
         }
       }}
       className={cn(
@@ -1500,6 +1574,7 @@ function WatchlistRow({ stock, showRemove, onRemove, flash, searchQuery }: Watch
         isSelected && "border-l-2 border-l-primary bg-accent/30",
         flash === "up" && "price-flash-up",
         flash === "down" && "price-flash-down",
+        rowIndex !== undefined && rowIndex === rowIndex && "ring-2 ring-primary z-10"
       )}
     >
       <td className="sticky left-0 z-[1] bg-card shadow-[2px_0_4px_hsl(var(--border))] px-3 py-2">
@@ -1608,6 +1683,10 @@ const WatchlistRowMemo = memo(WatchlistRow, (prev, next) => {
     prev.showRemove === next.showRemove &&
     prev.onRemove === next.onRemove &&
     prev.flash === next.flash &&
-    prev.searchQuery === next.searchQuery
+    prev.searchQuery === next.searchQuery &&
+    prev.rowIndex === next.rowIndex &&
+    prev.onFocusNext === next.onFocusNext &&
+    prev.onFocusPrev === next.onFocusPrev &&
+    prev.onSelect === next.onSelect
   );
 });
