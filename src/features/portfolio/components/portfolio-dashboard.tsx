@@ -865,6 +865,7 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
           description={t("searchNoResultsDescription") || "No positions match your search."}
           action={{ label: t("clearSearch") || "Clear search", onClick: () => setSearch("") }}
           shortcut="/"
+          variant="no-results"
         />
         {/* Keyboard shortcuts hint for discoverability */}
         <div className="flex items-center justify-center gap-4 text-[9px] text-muted-foreground">
