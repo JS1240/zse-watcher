@@ -244,6 +244,8 @@ export function MarketMovers() {
           title={t("movers.noGainers") || "Nema dobitnika"}
           description={t("movers.noGainersDesc") || "Danas nema dionica s pozitivnom promjenom"}
           className="py-4"
+          shortcut="/"
+          variant="info"
         />
       ) : (
         <div className="space-y-0.5">
@@ -308,6 +310,8 @@ export function MarketMovers() {
           title={t("movers.noLosers") || "Nema gubitnika"}
           description={t("movers.noLosersDesc") || "Danas nema dionica s negativnom promjenom"}
           className="py-4"
+          shortcut="/"
+          variant="info"
         />
       ) : (
         <div className="space-y-0.5">
