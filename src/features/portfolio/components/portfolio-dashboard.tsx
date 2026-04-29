@@ -94,6 +94,10 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
   const focusSearch = useCallback(() => searchInputRef.current?.focus(), []);
   useKeyboardShortcut({ key: "/", handler: focusSearch, enabled: true });
 
+  // N: open add position form
+  const openAddForm = useCallback(() => setShowAddForm(true), []);
+  useKeyboardShortcut({ key: "n", handler: openAddForm, enabled: true });
+
   // Inline edit handlers
   const handleStartEdit = useCallback((ticker: string, shares: number, price: number, date: string) => {
     setEditingHolding(ticker);

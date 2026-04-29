@@ -537,10 +537,6 @@ export function DividendsCalendar() {
             <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">/</kbd>
             <span className="hidden sm:inline">{td("shortcut.search") || "pretrazi"}</span>
           </span>
-          <span className="flex items-center gap-0.5">
-            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">N</kbd>
-            <span className="hidden sm:inline">{t("shortcut.new") || "novi unos"}</span>
-          </span>
         </div>
       </div>
 

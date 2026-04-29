@@ -11,6 +11,7 @@ import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
 import { usePriceFlash } from "@/hooks/use-price-flash";
 import { useDebounce } from "@/hooks/use-debounce";
+import { useAddToWatchlist } from "@/features/watchlist/api/watchlist-queries";
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { useSubscription } from "@/features/premium/hooks/use-subscription";
 import { exportToCsv } from "@/lib/export";
@@ -64,6 +65,16 @@ export function StockTable() {
   const focusSearch = useCallback(() => searchInputRef.current?.focus(), []);
   useKeyboardShortcut({ key: "/", handler: focusSearch, enabled: true });
 
+  // W: toggle focused stock in watchlist (called after filtered is defined)
+  const focusedTickerRef = useRef<string | null>(null);
+  const addToWatchlist = useAddToWatchlist();
+  const toggleWatchlist = useCallback(() => {
+    const ticker = focusedTickerRef.current;
+    if (!ticker) return;
+    addToWatchlist.mutate(ticker);
+  }, [addToWatchlist]);
+  useKeyboardShortcut({ key: "w", handler: toggleWatchlist, enabled: true });
+
   const filtered = useMemo(() => {
     if (!stocks) return [];
 
@@ -114,7 +125,7 @@ export function StockTable() {
     return result;
   }, [stocks, debouncedSearch, changeFilter, yieldFilter, sectorFilter, sortField, sortDir]);
 
-  const handleRowFocus = useCallback((ticker: string) => select(ticker), [select]);
+  const handleRowFocus = useCallback((ticker: string) => { select(ticker); focusedTickerRef.current = ticker; }, [select]);
 
   const toggleSort = useCallback((field: SortField) => {
     if (sortField === field) {
@@ -547,16 +558,12 @@ export function StockTable() {
         {/* Always-visible keyboard shortcuts hint for discoverability */}
         <div className="flex items-center gap-2 text-[9px] text-muted-foreground">
           <span className="flex items-center gap-0.5">
-            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
-            <span>{t("shortcut.details")}</span>
+            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">↑↓</kbd>
+            <span>{t("shortcut.navigate")}</span>
           </span>
           <span className="flex items-center gap-0.5">
             <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">W</kbd>
             <span>{t("shortcut.watch")}</span>
-          </span>
-          <span className="flex items-center gap-0.5">
-            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">↑↓</kbd>
-            <span>{t("shortcut.navigate")}</span>
           </span>
           <span className="flex items-center gap-0.5">
             <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">/</kbd>
