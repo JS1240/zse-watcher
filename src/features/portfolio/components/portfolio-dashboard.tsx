@@ -1,4 +1,4 @@
-import { useMemo, useState, useRef, useCallback } from "react";
+import { useMemo, useState, useRef, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Plus, Download, ChevronUp, ChevronDown, Search, X, Keyboard, TrendingUp, TrendingDown, Minus, CheckCircle2, ArrowUp as ScrollToTopIcon, Pencil, Trash2, Check, Banknote } from "lucide-react";
 import { Sparkline } from "@/components/shared/sparkline";
@@ -63,6 +63,16 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
   const [editForm, setEditForm] = useState({ shares: "", price: "", date: "" });
   const [deleteTicker, setDeleteTicker] = useState<string | null>(null); // delete confirmation
   const portfolioRef = useRef<HTMLDivElement>(null);
+  // Track focused row index for scroll-into-view on keyboard navigation
+  const [focusedRowIndex, setFocusedRowIndex] = useState(-1);
+
+  // Scroll focused row into view when index changes
+  useEffect(() => {
+    if (focusedRowIndex >= 0) {
+      const row = document.querySelector(`[data-portfolio-row="${focusedRowIndex}"]`) as HTMLElement;
+      row && row.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    }
+  }, [focusedRowIndex]);
 
   // Keyboard shortcut to focus search
   const handleCopyTicker = useCallback(async (e: React.MouseEvent, ticker: string) => {
@@ -147,14 +157,25 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
   const debouncedSearch = useDebounce(search, 200);
 
   // Keyboard navigation for portfolio rows (matching watchlist/stocks pattern)
-  // Supports: Enter=view stock details, Delete=remove position
-  const handleRowKeyDown = useCallback((e: React.KeyboardEvent, ticker: string) => {
-    e.preventDefault();
+  // Supports: Enter=view stock details, Delete=remove position, Arrow keys=navigate
+  // Note: sortedHoldings is used via maxIndex to avoid TS "used before declaration" — it IS declared before use at runtime
+  const handleRowKeyDown = useCallback((e: React.KeyboardEvent, ticker: string, maxIndex: number) => {
+    const target = e.target as HTMLElement;
+    const isInput = target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable;
+    if (isInput) return;
     if (e.key === "Enter" || e.key === " ") {
-      // Navigate to stock details
+      e.preventDefault();
       select(ticker);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setFocusedRowIndex((p) => Math.max(0, p - 1));
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setFocusedRowIndex((p) => Math.min(maxIndex, p + 1));
+    } else if (e.key === "Escape") {
+      setFocusedRowIndex(-1);
     } else if (e.key === "Delete" || e.key === "Backspace") {
-      // Open delete confirmation
+      e.preventDefault();
       setDeleteTicker(ticker);
     }
   }, [select]);
@@ -647,18 +668,21 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
               </tr>
             </thead>
             <tbody>
-              {sortedHoldings.map((h) => {
+              {sortedHoldings.map((h, index) => {
                 const flash = flashMap.get(h.ticker) ?? null;
                 return (
                   <tr
                     key={h.ticker}
+                    data-portfolio-row={index}
                     className={cn(
                       "border-b border-border/50 cursor-pointer transition-all duration-150 hover:bg-accent/70",
+                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                       flash === "up" && "price-flash-up",
                       flash === "down" && "price-flash-down",
+                      focusedRowIndex === index && "ring-2 ring-primary z-10 bg-primary/5",
                     )}
                     onClick={() => select(h.ticker)}
-                    onKeyDown={(e) => handleRowKeyDown(e, h.ticker)}
+                    onKeyDown={(e) => handleRowKeyDown(e, h.ticker, sortedHoldings.length - 1)}
                     tabIndex={0}
                     role="row"
                   >
