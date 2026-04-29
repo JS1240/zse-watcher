@@ -1,7 +1,10 @@
 {
   "calendar": {
     "exDiv": "Ex-div",
-    "pay": "Payment"
+    "pay": "Payment",
+    "countdownPast": "Passed",
+    "countdownToday": "Today",
+    "countdownTooltip": "Days until ex-div date"
   },
   "sort": {
     "newest": "Newest date",

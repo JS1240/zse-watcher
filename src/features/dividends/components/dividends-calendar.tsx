@@ -627,7 +627,27 @@ const DividendRow = memo(function DividendRow({
   onSelect,
   highlight,
 }: DividendRowProps) {
-  const isPast = new Date(d.exDivDate) < new Date();
+  const { t: td } = useTranslation("dividends");
+  const now = new Date();
+  const exDivDate = new Date(d.exDivDate);
+  const isPast = exDivDate < now;
+  const daysToExDiv = Math.ceil((exDivDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+
+  const countdownLabel = isPast
+    ? td("calendar.countdownPast") || "Prošlo"
+    : daysToExDiv === 0
+    ? td("calendar.countdownToday") || "Danas"
+    : `${daysToExDiv}d`;
+
+  const countdownColor = isPast
+    ? "text-muted-foreground bg-muted"
+    : daysToExDiv <= 3
+    ? "text-red-600 dark:text-red-400 bg-red-500/20"
+    : daysToExDiv <= 7
+    ? "text-emerald-600 dark:text-emerald-400 bg-emerald-500/20"
+    : daysToExDiv <= 14
+    ? "text-amber-600 dark:text-amber-400 bg-amber-500/20"
+    : "text-muted-foreground bg-muted/50";
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" || e.key === " ") {
@@ -695,6 +715,15 @@ const DividendRow = memo(function DividendRow({
             <span>
               <span className="text-muted-foreground/60">{labels.pay}: </span>
               {formatDate(d.payDate)}
+            </span>
+            <span
+              className={cn(
+                "rounded px-1.5 py-0.5 font-data text-[9px] font-semibold tabular-nums",
+                countdownColor
+              )}
+              title={td("calendar.countdownTooltip") || `${Math.abs(daysToExDiv)} dana ${isPast ? "nakon ex-div datuma" : "do ex-div datuma"}`}
+            >
+              {countdownLabel}
             </span>
           </div>
         </div>

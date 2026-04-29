@@ -1,7 +1,10 @@
 {
   "calendar": {
     "exDiv": "Ex-div",
-    "pay": "Isplata"
+    "pay": "Isplata",
+    "countdownPast": "Prošlo",
+    "countdownToday": "Danas",
+    "countdownTooltip": "Dana do ex-div datuma"
   },
   "sort": {
     "newest": "Najnoviji datum",
