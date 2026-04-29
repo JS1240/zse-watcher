@@ -1,7 +1,8 @@
 import { useTranslation } from "react-i18next";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Activity, TrendingUp } from "lucide-react";
 import { PriceDisplay } from "@/components/shared/price-display";
 import { ChangeBadge } from "@/components/shared/change-badge";
+import { formatVolume, formatCurrency, formatMarketCap } from "@/lib/formatters";
 import type { StockDetail } from "@/types/stock";
 
 interface StockHeaderProps {
@@ -25,6 +26,26 @@ export function StockHeader({ stock }: StockHeaderProps) {
       <div className="flex items-baseline gap-3" aria-label={`${t("header.priceLabel")}: ${stock.price} EUR`}>
         <PriceDisplay value={stock.price} className="text-2xl" />
         <ChangeBadge value={stock.changePct} />
+      </div>
+
+      {/* Market context — liquidity and size at a glance */}
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[10px] text-muted-foreground">
+        {/* Volume */}
+        <span className="flex items-center gap-1" title={t("header.volumeTooltip")}>
+          <Activity className="h-3 w-3" />
+          <span className="font-data tabular-nums">{formatVolume(stock.volume)}</span>
+        </span>
+        {/* Turnover */}
+        <span className="flex items-center gap-1" title={t("header.turnoverTooltip")}>
+          <TrendingUp className="h-3 w-3" />
+          <span className="font-data tabular-nums">{formatCurrency(stock.turnover)}</span>
+        </span>
+        {/* Market Cap */}
+        {stock.marketCapM != null && stock.marketCapM > 0 && (
+          <span className="flex items-center gap-1 font-medium text-foreground" title={t("header.marketCapTooltip")}>
+            {formatMarketCap(stock.marketCapM)}
+          </span>
+        )}
       </div>
 
       {/* Meta */}
