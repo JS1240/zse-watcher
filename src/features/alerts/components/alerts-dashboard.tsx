@@ -242,13 +242,11 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
   const handleBulkDeleteTriggered = async () => {
     await deleteTriggeredAlerts();
     toast.success(t("bulk.toastDeletedTriggered"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
-    setBulkAction("none");
   };
 
   const handleBulkDeleteAll = async () => {
     await deleteAllAlerts();
     toast.success(t("bulk.toastDeletedAll"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
-    setBulkAction("none");
   };
 
   // Click-to-copy handlers for alert values (matching portfolio UX)
@@ -1000,17 +998,17 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
       <ConfirmationDialog
         open={!!confirmDelete}
         onOpenChange={(open) => !open && setConfirmDelete(null)}
-        title={t("confirmDelete") || "Delete alert?"}
-        description={
-          confirmDelete
-            ? t("confirmDeleteDescription")
-                ?.replace("{ticker}", alerts?.find((a) => a.id === confirmDelete)?.ticker ?? "")
-            : ""
-        }
+        title={t("confirmDelete", {
+          ticker: alerts?.find((a) => a.id === confirmDelete)?.ticker ?? "",
+        }) || "Delete alert?"}
+        description={t("confirmDeleteDescription", {
+          ticker: alerts?.find((a) => a.id === confirmDelete)?.ticker ?? "",
+        }) || "This will permanently delete this alert."}
         confirmLabel={t("actions.delete") || "Delete"}
         cancelLabel={tc("actions.cancel") || "Cancel"}
         variant="danger"
         icon={<Bell className="h-5 w-5 text-amber" />}
+        shortcutsHint={`${tc("shortcutsOverlay.confirmKey") || "Enter"} ${tc("shortcutsOverlay.confirmAction") || "potvrdi"}, ${tc("shortcutsOverlay.cancelKey") || "Esc"} ${tc("shortcutsOverlay.cancelAction") || "odustani"}`}
         onConfirm={() => {
           if (confirmDelete) {
             deleteAlert(confirmDelete);
@@ -1029,6 +1027,7 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
         cancelLabel={tc("actions.cancel") || "Cancel"}
         variant="danger"
         icon={<Trash2 className="h-5 w-5 text-destructive" />}
+        shortcutsHint={`${tc("shortcutsOverlay.confirmKey") || "Enter"} ${tc("shortcutsOverlay.confirmAction") || "potvrdi"}, ${tc("shortcutsOverlay.cancelKey") || "Esc"} ${tc("shortcutsOverlay.cancelAction") || "odustani"}`}
         onConfirm={handleBulkDeleteAll}
       />
 
@@ -1042,6 +1041,7 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
         cancelLabel={tc("actions.cancel") || "Cancel"}
         variant="danger"
         icon={<AlertCircle className="h-5 w-5 text-amber" />}
+        shortcutsHint={`${tc("shortcutsOverlay.confirmKey") || "Enter"} ${tc("shortcutsOverlay.confirmAction") || "potvrdi"}, ${tc("shortcutsOverlay.cancelKey") || "Esc"} ${tc("shortcutsOverlay.cancelAction") || "odustani"}`}
         onConfirm={handleBulkDeleteTriggered}
       />
     </div>

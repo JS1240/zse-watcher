@@ -17,6 +17,11 @@ interface ConfirmationDialogProps {
    */
   icon?: ReactNode;
   onConfirm: () => void;
+  /**
+   * Optional keyboard shortcuts hint text. If omitted, shows default English hint.
+   * Pass localized text like "Enter za potvrdu, Esc za odustanak".
+   */
+  shortcutsHint?: string;
 }
 
 export function ConfirmationDialog({
@@ -29,6 +34,7 @@ export function ConfirmationDialog({
   variant = "danger",
   icon,
   onConfirm,
+  shortcutsHint,
 }: ConfirmationDialogProps) {
   const cancelRef = useRef<HTMLButtonElement>(null);
   const confirmRef = useRef<HTMLButtonElement>(null);
@@ -129,8 +135,12 @@ export function ConfirmationDialog({
         </div>
 
         <p className="mt-2 text-center text-[9px] text-muted-foreground">
-          Press <kbd className="rounded bg-muted px-1">Enter</kbd> to confirm,{" "}
-          <kbd className="rounded bg-muted px-1">Esc</kbd> to cancel
+          {shortcutsHint || (
+            <>
+              Press <kbd className="rounded bg-muted px-1">Enter</kbd> to confirm,{" "}
+              <kbd className="rounded bg-muted px-1">Esc</kbd> to cancel
+            </>
+          )}
         </p>
       </div>
     </div>

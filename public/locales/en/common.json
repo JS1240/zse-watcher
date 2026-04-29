@@ -145,6 +145,10 @@
   },
   "shortcutsOverlay": {
     "title": "Keyboard Shortcuts",
+    "confirmKey": "Enter",
+    "confirmAction": "confirm",
+    "cancelKey": "Esc",
+    "cancelAction": "cancel",
     "navigation": "Navigation",
     "app": "App",
     "stockTable": "Stock Table",

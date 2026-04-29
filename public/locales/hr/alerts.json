@@ -57,6 +57,8 @@
     "targetValid": "Ispravno"
   },
   "edit": "Uređivanje",
+  "confirmDelete": "Obriši alarm {{ticker}}?",
+  "confirmDeleteDescription": "Ovo će trajno obrisati alarm za {{ticker}}. Ova radnja se ne može poništiti.",
   "useSuggested": "Koristi {{value}}",
   "pressEnter": "Enter za spremanje",
   "cancelHint": "Esc za odustanak",
@@ -76,7 +78,8 @@
     "step3Desc": "Primit obavijest kad cijena doseže cilj."
   },
   "toast": {
-    "tickerCopied": "{{ticker}} kopiran",
+    "copied": "Kopirano: {{value}}",
+    "copiedTarget": "Kopirano: {{value}}",
     "created": "Alarm stvoren",
     "deleted": "Alarm obrisan",
     "updated": "Alarm azuriran",

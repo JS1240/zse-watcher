@@ -146,6 +146,10 @@
   },
   "shortcutsOverlay": {
     "title": "Prečaci tipkovnice",
+    "confirmKey": "Enter",
+    "confirmAction": "potvrdi",
+    "cancelKey": "Esc",
+    "cancelAction": "odustani",
     "navigation": "Navigacija",
     "app": "Aplikacija",
     "stockTable": "Tablica dionica",

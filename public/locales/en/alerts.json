@@ -57,6 +57,8 @@
     "targetValid": "Valid"
   },
   "edit": "Edit",
+  "confirmDelete": "Delete {{ticker}} alert?",
+  "confirmDeleteDescription": "This will permanently delete the {{ticker}} alert. This action cannot be undone.",
   "useSuggested": "Use {{value}}",
   "pressEnter": "Enter to save",
   "cancelHint": "Esc to cancel",
@@ -76,7 +78,8 @@
     "step3Desc": "Get notified when the price hits your target."
   },
   "toast": {
-    "tickerCopied": "{{ticker}} copied",
+    "copied": "Copied: {{value}}",
+    "copiedTarget": "Copied: {{value}}",
     "created": "Alert created",
     "deleted": "Alert deleted",
     "updated": "Alert updated",
