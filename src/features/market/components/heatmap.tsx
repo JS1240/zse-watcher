@@ -89,14 +89,18 @@ export function Heatmap() {
 
   const maxTurnover = Math.max(...sectors.map((s) => s.totalTurnover));
 
-  // Tooltip state
+  // Tooltip state — using viewport-relative coordinates (clientX/clientY)
+  // so tooltip stays aligned even when page scrolls
   const [tooltip, setTooltip] = useState<{ sector: SectorGroup; x: number; y: number } | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Track mouse for tooltip positioning (smooth follow)
+  const [mousePos, setMousePos] = useState<{ x: number; y: number } | null>(null);
+
   const handleTooltip = useCallback((sector: SectorGroup, e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = containerRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    setTooltip({ sector, x: e.clientX - rect.left, y: e.clientY - rect.top });
+    // Use viewport-relative coordinates for fixed-positioned tooltip
+    setTooltip({ sector, x: e.clientX, y: e.clientY });
+    setMousePos({ x: e.clientX, y: e.clientY });
   }, []);
 
   // CSV export handler for sector performance data
@@ -131,15 +135,30 @@ export function Heatmap() {
         ))}
       </div>
 
-      {/* Floating tooltip on hover */}
-      {tooltip && (
+      {/* Floating tooltip — fixed positioning, viewport-relative coords */}
+      {tooltip && mousePos && (
         <div
-          className="pointer-events-none fixed z-50 animate-fade-in rounded-md border border-border bg-card px-3 py-2 shadow-lg"
-          style={{ left: tooltip.x + 12, top: tooltip.y - 8, minWidth: 160 }}
+          className="pointer-events-none fixed z-50 animate-fade-in rounded-md border border-border bg-card px-3 py-2 shadow-xl shadow-black/20"
+          style={{
+            left: mousePos.x + 16,
+            top: mousePos.y - 10,
+            maxWidth: 200,
+          }}
           role="tooltip"
+          aria-live="polite"
         >
           <p className="text-[11px] font-semibold text-foreground">{tooltip.sector.sector}</p>
-          <div className="mt-1.5 space-y-1">
+          {/* Mini performance bar */}
+          <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-muted">
+            <div
+              className={cn(
+                "h-full rounded-full transition-all duration-300",
+                tooltip.sector.avgChange > 0 ? "bg-price-up" : tooltip.sector.avgChange < 0 ? "bg-price-down" : "bg-muted-foreground"
+              )}
+              style={{ width: `${Math.min(100, Math.abs(tooltip.sector.avgChange) * 20 + 50)}%` }}
+            />
+          </div>
+          <div className="mt-2 space-y-1">
             <div className="flex justify-between gap-4">
               <span className="text-[10px] text-muted-foreground">Prosjek</span>
               <span className={cn(
@@ -156,14 +175,25 @@ export function Heatmap() {
               <span className="font-data text-[10px] font-semibold tabular-nums text-foreground">{formatCurrency(tooltip.sector.totalTurnover)}</span>
             </div>
           </div>
-          <p className="mt-2 text-[9px] text-muted-foreground">Klikni za pregled dionica</p>
+          <p className="mt-2 flex items-center gap-1 text-[9px] text-muted-foreground">
+            <span>Enter</span>
+            <span className="text-muted-foreground/50">pregled dionica</span>
+          </p>
         </div>
       )}
 
       <HeatmapLegend />
 
-      {/* Always-visible keyboard shortcuts hint — consistent with stocks/watchlist/portfolio pattern */}
+      {/* Always-visible keyboard shortcuts hint — consistent with stocks/watchlist/portfolio/alerts pattern */}
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-sm border border-border/50 bg-muted/30 px-3 py-1.5 text-[9px] text-muted-foreground">
+        <span className="flex items-center gap-0.5">
+          <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Tab</kbd>
+          <span>navigiraj</span>
+        </span>
+        <span className="flex items-center gap-0.5">
+          <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
+          <span>pregled</span>
+        </span>
         <span className="flex items-center gap-0.5">
           <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Cmd+K</kbd>
           <span>izbornik</span>
@@ -171,10 +201,6 @@ export function Heatmap() {
         <span className="flex items-center gap-0.5">
           <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">?</kbd>
           <span>prečaci</span>
-        </span>
-        <span className="flex items-center gap-0.5">
-          <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">T</kbd>
-          <span>tema</span>
         </span>
         <Button
           variant="ghost"
