@@ -238,14 +238,25 @@ const ScreenerRow = memo(function ScreenerRow({
   flash?: "up" | "down" | null;
   sparkline?: number[];
 }) {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onSelect(stock.ticker);
+    }
+  };
+
   return (
     <tr
+      tabIndex={0}
+      role="row"
+      onClick={() => onSelect(stock.ticker)}
+      onKeyDown={handleKeyDown}
+      aria-label={`${stock.ticker} — ${stock.name}. Pritisni Enter za detalje.`}
       className={cn(
-        "border-b border-border/50 cursor-pointer transition-all duration-150 hover:bg-accent/70",
+        "border-b border-border/50 cursor-pointer transition-all duration-150 hover:bg-accent/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         flash === "up" && "price-flash-up",
         flash === "down" && "price-flash-down",
       )}
-      onClick={() => onSelect(stock.ticker)}
     >
       <td className="px-3 py-2 font-data font-semibold text-foreground">
         <Highlight text={stock.ticker} highlight={search} />
