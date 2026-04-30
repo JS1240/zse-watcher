@@ -161,6 +161,12 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
           e.preventDefault();
           handleCopyLink();
           break;
+        case "?":
+          if (e.shiftKey) {
+            e.preventDefault();
+            window.dispatchEvent(new CustomEvent("open-shortcuts-overlay"));
+          }
+          break;
       }
     };
 
@@ -269,17 +275,25 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
                 <span>{ta("create") || "alarm"}</span>
               </span>
               <span className="flex items-center gap-1">
+                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">W</kbd>
+                <span>{t("watchlist.add") || "praćenje"}</span>
+              </span>
+              <span className="flex items-center gap-1">
                 <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">L</kbd>
                 <span>{t("toast.linkCopied") || "kopiraj"}</span>
               </span>
               <span className="flex items-center gap-1">
-                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">D</kbd>
-                <span>{t("exportCsv") || "CSV"}</span>
+                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">/</kbd>
+                <span>{tc("navigate") || "pretrazi"}</span>
+              </span>
+              <span className="flex items-center gap-1">
+                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">?</kbd>
+                <span>{tc("shortcutsOverlay.showShortcuts") || "prečaci"}</span>
               </span>
             </div>
             <span className="flex items-center gap-1">
-              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">W</kbd>
-              <span>{t("watchlist.add") || "praćenje"}</span>
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">D</kbd>
+              <span>{t("exportCsv") || "CSV"}</span>
             </span>
           </div>
         )}

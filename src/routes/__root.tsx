@@ -1,5 +1,5 @@
 import { createRootRoute, Outlet, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AppShell } from "@/components/layout/app-shell";
 import { CommandPalette } from "@/components/layout/command-palette";
 import { ShortcutsOverlay } from "@/components/layout/shortcuts-overlay";
@@ -32,7 +32,14 @@ function RootLayout() {
   // Theme toggle: T
   useKeyboardShortcut({ key: "t", handler: toggleTheme });
 
-  // Shortcuts overlay: ?
+  // Shortcuts overlay: ? (also responds to custom event from stock-detail-drawer)
+  useEffect(() => {
+    const handler = () => setShowShortcuts(true);
+    window.addEventListener("open-shortcuts-overlay", handler);
+    return () => window.removeEventListener("open-shortcuts-overlay", handler);
+  }, []);
+
+  // Shortcuts overlay: ? key
   useKeyboardShortcut({ key: "?", shift: true, handler: () => setShowShortcuts(true) });
 
   // Command palette: Cmd+K / Ctrl+K
