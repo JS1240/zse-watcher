@@ -85,9 +85,11 @@ interface OverviewCardProps {
   value: string;
   changePct: number;
   accent?: boolean;
+  /** Called when Enter/Space pressed — opens detailed macro view for this index */
+  onSelect?: () => void;
 }
 
-function OverviewCardBase({ icon: Icon, label, value, changePct, accent }: OverviewCardProps) {
+function OverviewCardBase({ icon: Icon, label, value, changePct, accent, onSelect }: OverviewCardProps) {
   const { i18n } = useTranslation("common");
   const isCroatian = i18n.language === "hr";
 
@@ -98,11 +100,20 @@ function OverviewCardBase({ icon: Icon, label, value, changePct, accent }: Overv
       ? isCroatian ? `pad ${Math.abs(changePct).toFixed(2)}%` : `down ${Math.abs(changePct).toFixed(2)}%`
       : isCroatian ? "nema promjene" : "no change";
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if ((e.key === "Enter" || e.key === " ") && onSelect) {
+      e.preventDefault();
+      onSelect();
+    }
+  };
+
   return (
     <div
       className={`rounded-md border p-3 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-border/80 ${accent ? "border-primary/30 bg-primary/5" : "border-border bg-card"}`}
-      role="group"
-      aria-label={`${label}: ${value}, ${changeLabel}`}
+      role={onSelect ? "button" : "group"}
+      tabIndex={onSelect ? 0 : undefined}
+      onKeyDown={onSelect ? handleKeyDown : undefined}
+      aria-label={`${label}: ${value}, ${changeLabel}${onSelect ? ". Enter to view details" : ""}`}
     >
       <div className="flex items-center gap-2">
         <Icon className={`h-3.5 w-3.5 ${accent ? "text-primary" : "text-muted-foreground"}`} />
@@ -127,6 +138,7 @@ const OverviewCard = memo(OverviewCardBase, (prev, next) => {
     prev.label === next.label &&
     prev.value === next.value &&
     prev.changePct === next.changePct &&
-    prev.accent === next.accent
+    prev.accent === next.accent &&
+    prev.onSelect === next.onSelect
   );
 });
