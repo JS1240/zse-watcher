@@ -26,7 +26,8 @@
     "openDetail": "Open stock details",
     "volumeTooltip": "Number of shares traded today",
     "turnoverTooltip": "Total transaction value in EUR",
-    "marketCapTooltip": "Total market capitalization in millions EUR"
+    "marketCapTooltip": "Total market capitalization in millions EUR",
+    "sparklineTooltip": "7-day price trend (simulated)"
   },
   "table": {
     "label": "ZSE stock listing",

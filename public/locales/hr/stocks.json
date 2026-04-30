@@ -26,7 +26,8 @@
     "openDetail": "Otvori detalje dionice",
     "volumeTooltip": "Broj prodanih dionica danas",
     "turnoverTooltip": "Ukupna vrijednost transakcija u EUR",
-    "marketCapTooltip": "Ukupna tržišna kapitalizacija u milijunima EUR"
+    "marketCapTooltip": "Ukupna tržišna kapitalizacija u milijunima EUR",
+    "sparklineTooltip": "7-dnevni trend cijene (simulirano)"
   },
   "table": {
     "label": "Popis dionica ZSE",

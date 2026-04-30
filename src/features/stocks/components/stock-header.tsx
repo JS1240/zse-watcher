@@ -1,7 +1,10 @@
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { ExternalLink, Activity, TrendingUp } from "lucide-react";
 import { PriceDisplay } from "@/components/shared/price-display";
 import { ChangeBadge } from "@/components/shared/change-badge";
+import { Sparkline } from "@/components/shared/sparkline";
+import { getMockPriceHistory } from "@/lib/mock-data";
 import { formatVolume, formatCurrency, formatMarketCap } from "@/lib/formatters";
 import type { StockDetail } from "@/types/stock";
 
@@ -11,6 +14,18 @@ interface StockHeaderProps {
 
 export function StockHeader({ stock }: StockHeaderProps) {
   const { t } = useTranslation("stocks");
+
+  // Generate 1-week mock price history for sparkline (deterministic per ticker)
+  const sparklineData = useMemo(() => {
+    const history = getMockPriceHistory(stock.ticker, "1W");
+    // Sample ~7 points for the mini sparkline (last 7 days of the 1W view)
+    const step = Math.max(1, Math.floor(history.length / 7));
+    const sampled = history
+      .filter((_, i) => i % step === 0)
+      .slice(-7)
+      .map((p) => p.close);
+    return sampled;
+  }, [stock.ticker]);
 
   return (
     <div className="space-y-1">
@@ -22,10 +37,29 @@ export function StockHeader({ stock }: StockHeaderProps) {
         <span className="truncate text-xs text-muted-foreground">{stock.name}</span>
       </div>
 
-      {/* Price + Change */}
+      {/* Price + Change + Sparkline */}
       <div className="flex items-baseline gap-3" aria-label={`${t("header.priceLabel")}: ${stock.price} EUR`}>
         <PriceDisplay value={stock.price} className="text-2xl" />
         <ChangeBadge value={stock.changePct} />
+        {/* Performance sparkline — shows 7-day price trend at a glance */}
+        {sparklineData.length >= 2 && (
+          <div className="ml-auto flex items-center gap-1.5" title={t("header.sparklineTooltip") || "7-day performance"}>
+            <Sparkline data={sparklineData} width={48} height={18} />
+            <span
+              className={`text-[10px] font-data font-semibold tabular-nums ${
+                sparklineData[sparklineData.length - 1] >= sparklineData[0]
+                  ? "text-price-up"
+                  : "text-price-down"
+              }`}
+            >
+              {(
+                ((sparklineData[sparklineData.length - 1] - sparklineData[0]) / sparklineData[0]) *
+                100
+              ).toFixed(1)}
+              %
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Market context — liquidity and size at a glance */}
