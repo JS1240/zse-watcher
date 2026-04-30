@@ -432,12 +432,24 @@ export function AlertForm({ onClose, defaultTicker, defaultCondition, defaultTar
           <Button type="submit" className="w-full" loading={isSubmitting}>
             {t("create")}
           </Button>
-          <span className="pointer-events-none absolute bottom-2 flex items-center gap-1 text-[9px] text-muted-foreground">
-            <Keyboard className="h-2.5 w-2.5" />
-            {t("submitHint")}
-          </span>
         </div>
       </form>
+
+      {/* Always-visible keyboard shortcuts bar — helps Croatian retail investors discover shortcuts */}
+      <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-sm border border-border/30 bg-muted/20 px-2 py-1.5 text-[9px] text-muted-foreground">
+        <span className="flex items-center gap-1">
+          <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Tab</kbd>
+          <span>{t("navigateFields") || "polja"}</span>
+        </span>
+        <span className="flex items-center gap-1">
+          <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
+          <span>{t("saveAlert") || "spremi"}</span>
+        </span>
+        <span className="flex items-center gap-1">
+          <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Esc</kbd>
+          <span>{t("cancelHint") || "odustani"}</span>
+        </span>
+      </div>
     </div>
   );
 }
