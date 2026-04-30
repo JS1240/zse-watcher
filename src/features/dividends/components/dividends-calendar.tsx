@@ -585,6 +585,7 @@ export function DividendsCalendar() {
                     onSelect={select}
                     highlight={debouncedSearch}
                     flash={flashMap.get(d.ticker) ?? null}
+                    maxYield={Math.max(...sortedDividends.map(d => d.yield), 10)}
                   />
                 ))}
               </div>
@@ -647,6 +648,7 @@ interface DividendRowProps {
   onSelect: (ticker: string) => void;
   highlight?: string;
   flash?: "up" | "down" | null;
+  maxYield?: number;
 }
 
 const DividendRow = memo(function DividendRow({
@@ -661,6 +663,7 @@ const DividendRow = memo(function DividendRow({
   onSelect,
   highlight,
   flash,
+  maxYield = 10,
 }: DividendRowProps) {
   const { t: td } = useTranslation("dividends");
   const now = new Date();
@@ -793,7 +796,22 @@ const DividendRow = memo(function DividendRow({
             )}
             title="Click to copy yield"
           >
-            {d.yield.toFixed(1)}%
+            <div className="flex items-center gap-1.5">
+              <div className="relative flex h-1.5 w-10 items-center rounded-full bg-muted/40">
+                <div
+                  className={cn(
+                    "h-1.5 rounded-full transition-all",
+                    d.yield >= 4
+                      ? "bg-emerald-500"
+                      : d.yield >= 2
+                        ? "bg-amber-500"
+                        : "bg-muted-foreground/50"
+                  )}
+                  style={{ width: `${Math.min(100, (d.yield / maxYield) * 100)}%` }}
+                />
+              </div>
+              <span>{d.yield.toFixed(1)}%</span>
+            </div>
           </button>
         </div>
 
@@ -815,6 +833,7 @@ const DividendRow = memo(function DividendRow({
   return (
     prev.dividend.ticker === next.dividend.ticker &&
     prev.dividend.exDivDate === next.dividend.exDivDate &&
-    prev.copiedField === next.copiedField
+    prev.copiedField === next.copiedField &&
+    prev.maxYield === next.maxYield
   );
 });

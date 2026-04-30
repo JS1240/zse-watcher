@@ -4,6 +4,14 @@
 
 ### Added
 
+- **Dividend Yield Mini-Bar Chart** — visual yield comparison bar in dividends calendar for Croatian retail investors
+  - Dividend rows now show a relative yield bar alongside the percentage for quick visual comparison
+  - Bar width is proportional to max yield in the current filtered view (context-aware scaling)
+  - Color-coded: emerald (≥4%), amber (≥2%), muted (<2%) — matches dividend quality tier colors
+  - Helps investors quickly spot high-yield dividend opportunities at a glance
+  - Click-to-copy on yield values remains functional (matching portfolio/stocks pattern)
+  - Mini bar: `h-1.5 w-10 rounded-full bg-muted/40` with `w-[N]%` fill proportional to `d.yield / maxYield`
+
 - **Heatmap Tooltip Polish** — fixed flickering and improved info density for Croatian retail investors
   - Tooltip now uses viewport coordinates (clientX/clientY) with fixed positioning — no more flickering when scrolling
   - Added mini performance bar inside tooltip showing sector performance at a glance
@@ -521,7 +529,7 @@
   - 2-column grid with 4 major pairs + EUR/HRK (CNB fixing, semi-fixed at 7.5)
   - Graceful fallback on network failure
 
-- **Related News in Stock Detail Drawer** — latest 5 articles per ticker
+- **Related News in Stock Detail Drawer** — latest 5 articles per ticker for Croatian retail investors
   - StockFundamentals: shows filtered news for the current ticker at bottom of fundamentals section
   - Each item: title, date, source, external link; click to open on ZSE.hr
   - Ties the news feed and stock detail together inline
