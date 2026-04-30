@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { formatPercent, formatCurrency } from "@/lib/formatters";
 import { exportToCsv } from "@/lib/export";
 import { toast } from "sonner";
+import { LiveDataIndicator } from "@/components/shared/live-data-indicator";
 import { SectorDrawer } from "@/features/market/components/sector-drawer";
 import { HeatmapEmptyIllustration } from "@/components/shared/empty-illustrations";
 import { EmptyState } from "@/components/shared/empty-state";
@@ -22,7 +23,7 @@ export interface SectorGroup {
 }
 
 export function Heatmap() {
-  const { data: result, isLoading, isError, refetch } = useStocksLive();
+  const { data: result, isLoading, isError, refetch, dataUpdatedAt, isFetching } = useStocksLive();
   const stocks = result?.stocks ?? null;
   const { t } = useTranslation("heatmap");
   const { t: tc } = useTranslation("common");
@@ -119,6 +120,10 @@ export function Heatmap() {
 
   return (
     <div ref={containerRef} className="relative space-y-3">
+      {/* Live data freshness indicator — consistent with MarketMovers, MarketOverview pattern */}
+      <div className="flex items-center justify-between">
+        <LiveDataIndicator updatedAt={dataUpdatedAt ?? 0} isFetching={isFetching} />
+      </div>
       <div
         className="grid gap-1.5"
         style={{ gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))" }}
