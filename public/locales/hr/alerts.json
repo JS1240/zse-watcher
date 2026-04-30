@@ -12,6 +12,7 @@
   "create": "Stvori alarm",
   "submitHint": "Enter za spremanje",
   "exportCsv": "CSV",
+  "exportJson": "JSON",
   "filter": {
     "all": "Sve",
     "active": "Aktivne",
@@ -89,6 +90,7 @@
     "deleteFailed": "Neuspjelo brisanje alarma",
     "updateFailed": "Neuspjelo azuriranje alarma",
     "exported": "Alarmi izvezeni u CSV",
+    "exportedJson": "Alarmi izvezeni u JSON",
     "duplicateHint": "Vrijednosti alarma popunjene - prilagodi i spremi"
   },
   "bulk": {

@@ -23,7 +23,7 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { SearchEmptyIllustration, AlertEmptyIllustration } from "@/components/shared/empty-illustrations";
 import { ErrorState } from "@/components/shared/error-state";
 import { Highlight } from "@/components/shared/highlight";
-import { exportToCsv } from "@/lib/export";
+import { exportToCsv, exportToJson } from "@/lib/export";
 import { useDebounce } from "@/hooks/use-debounce";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { AlertsSkeleton } from "@/features/alerts/components/alerts-skeleton";
@@ -187,6 +187,9 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
   const [showForm, setShowForm] = useState(false);
   const [search, setSearch] = useState("");
   const [focusedAlertIndex, setFocusedAlertIndex] = useState(-1); // -1 = none focused, 0+ = row index
+
+  // Export format toggle (CSV/JSON) — Croatian retail investors can choose their preferred format
+  const [exportFormat, setExportFormat] = useState<"csv" | "json">("csv");
 
   // Keyboard shortcut to focus search
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -479,50 +482,74 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
   // CSV export for alerts - enhanced with current price and distance to target for Croatian retail investors
   const handleExport = () => {
     if (!filteredAlerts || filteredAlerts.length === 0) return;
-    const headers = ["Ticker", "Condition", "Target", "Current Price", "Distance (%)", "Status", "Active", "Created", "Triggered At"];
-    
+
     // Build stock price map once for O(1) lookups instead of O(n) per alert
     const stockPriceMap = new Map<string, number>();
     stocks?.forEach((s) => stockPriceMap.set(s.ticker, s.price ?? 0));
-    
-    const rows = alerts.map((a) => {
-      const conditionLabels: Record<string, string> = {
-        above: t("condition.above"),
-        below: t("condition.below"),
-        percent_change_up: t("condition.percentUp"),
-        percent_change_down: t("condition.percentDown"),
-      };
-      
-      // Get current price from pre-built map (O(1) instead of O(n) find)
-      const currentPrice = stockPriceMap.get(a.ticker) ?? null;
-      
-      // Calculate distance to target as percentage
-      let distancePct = "";
-      if (currentPrice && a.targetValue) {
-        const isPercentCondition = a.condition.includes("percent");
-        if (!isPercentCondition) {
-          // For absolute price conditions, calculate % distance
-          const diff = a.condition === "above" 
+
+    if (exportFormat === "json") {
+      // JSON export - include all alert data with computed fields for Croatian retail investors
+      const jsonData = alerts.map((a) => {
+        const currentPrice = stockPriceMap.get(a.ticker) ?? null;
+        let distancePct: number | null = null;
+        if (currentPrice && a.targetValue && !a.condition.includes("percent")) {
+          const diff = a.condition === "above"
             ? ((a.targetValue - currentPrice) / currentPrice) * 100
             : ((currentPrice - a.targetValue) / currentPrice) * 100;
-          distancePct = diff > 0 ? `+${diff.toFixed(1)}` : diff.toFixed(1);
+          distancePct = parseFloat(diff.toFixed(2));
         }
-      }
-      
-      return [
-        a.ticker.toUpperCase(),
-        conditionLabels[a.condition] || a.condition,
-        a.condition.includes("percent") ? `${a.targetValue}%` : formatPrice(a.targetValue),
-        currentPrice ? formatPrice(currentPrice) : "—",
-        distancePct,
-        a.isTriggered ? t("status.triggered") : "—",
-        a.isActive ? "✓" : "—",
-        formatDate(a.createdAt),
-        a.triggeredAt ? formatDate(a.triggeredAt) : "—",
-      ];
-    });
-    exportToCsv(`zse-alerts-${new Date().toISOString().split("T")[0]}`, headers, rows);
-    toast.success(t("toast.exported") || "Exported to CSV", { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
+        return {
+          ticker: a.ticker.toUpperCase(),
+          condition: a.condition,
+          targetValue: a.targetValue,
+          isPercentCondition: a.condition.includes("percent"),
+          currentPrice,
+          distancePct,
+          isTriggered: a.isTriggered,
+          isActive: a.isActive,
+          createdAt: a.createdAt,
+          triggeredAt: a.triggeredAt,
+          snoozedUntil: a.snoozedUntil ?? null,
+        };
+      });
+      exportToJson(`zse-alerts-${new Date().toISOString().split("T")[0]}`, jsonData);
+      toast.success(t("toast.exportedJson") || "Exported to JSON", { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
+    } else {
+      // CSV export (existing code)
+      const headers = ["Ticker", "Condition", "Target", "Current Price", "Distance (%)", "Status", "Active", "Created", "Triggered At"];
+      const rows = alerts.map((a) => {
+        const conditionLabels: Record<string, string> = {
+          above: t("condition.above"),
+          below: t("condition.below"),
+          percent_change_up: t("condition.percentUp"),
+          percent_change_down: t("condition.percentDown"),
+        };
+        const currentPrice = stockPriceMap.get(a.ticker) ?? null;
+        let distancePct = "";
+        if (currentPrice && a.targetValue) {
+          const isPercentCondition = a.condition.includes("percent");
+          if (!isPercentCondition) {
+            const diff = a.condition === "above"
+              ? ((a.targetValue - currentPrice) / currentPrice) * 100
+              : ((currentPrice - a.targetValue) / currentPrice) * 100;
+            distancePct = diff > 0 ? `+${diff.toFixed(1)}` : diff.toFixed(1);
+          }
+        }
+        return [
+          a.ticker.toUpperCase(),
+          conditionLabels[a.condition] || a.condition,
+          a.condition.includes("percent") ? `${a.targetValue}%` : formatPrice(a.targetValue),
+          currentPrice ? formatPrice(currentPrice) : "—",
+          distancePct,
+          a.isTriggered ? t("status.triggered") : "—",
+          a.isActive ? "✓" : "—",
+          formatDate(a.createdAt),
+          a.triggeredAt ? formatDate(a.triggeredAt) : "—",
+        ];
+      });
+      exportToCsv(`zse-alerts-${new Date().toISOString().split("T")[0]}`, headers, rows);
+      toast.success(t("toast.exported") || "Exported to CSV", { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
+    }
   };
 
   return (
@@ -610,10 +637,21 @@ export function AlertsDashboard({ initialStatusFilter }: AlertsDashboardProps) {
                     onClick={() => setSort({ column: "targetValue", direction: sort.column === "targetValue" && sort.direction === "desc" ? "asc" : "desc" })}
                   />
                 </div>
-                <Button size="sm" variant="secondary" onClick={handleExport}>
-                  <Download className="h-3.5 w-3.5" />
-                  {t("exportCsv")}
-                </Button>
+                <div className="flex items-center gap-1">
+                  <Button size="sm" variant="secondary" onClick={handleExport}>
+                    <Download className="h-3.5 w-3.5" />
+                    {exportFormat === "json" ? (t("exportJson") || "JSON") : (t("exportCsv") || "CSV")}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setExportFormat((prev) => (prev === "csv" ? "json" : "csv"));
+                      }}
+                      className="ml-1 rounded px-1.5 py-0.5 text-[9px] font-medium hover:bg-primary/20"
+                    >
+                      {exportFormat === "json" ? "CSV" : "JSON"}
+                    </button>
+                  </Button>
+                </div>
               </>
             )}
             <Button size="sm" onClick={() => setShowForm(!showForm)}>
