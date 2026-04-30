@@ -46,6 +46,9 @@
   "empty": {
     "noData": "Nema zakazanih dividenda",
     "noDataDescription": "Pregledajte kalendar za nadolazece dividende ZSE dionica.",
+    "noResults": "Nema rezultata pretrazivanja",
+    "noResultsDescription": "Probajte s drugim uvjetima pretrazivanja ili ocistite filtere.",
+    "clearFilters": "Očisti filtere",
     "quickStart": {
       "step1": "Pratite ex-div datume",
       "step1Desc": "Ex-div datum je dan kada gubite pravo na dividendu ako prodate dionicu",

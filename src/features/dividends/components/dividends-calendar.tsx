@@ -591,9 +591,23 @@ export function DividendsCalendar() {
             </div>
           ))
         ) : (
-          <p className="py-8 text-center text-xs text-muted-foreground">
-            {td('empty.noData') || "No dividend data available"}
-          </p>
+          <div className="flex flex-col gap-4">
+            <EmptyState
+              icon={<SearchEmptyIllustration className="h-8 w-8" />}
+              title={td('empty.noResults') || "No dividends found"}
+              description={td('empty.noResultsDescription') || "No dividends match the current filters."}
+              action={{ label: td('empty.clearFilters') || "Clear filters", onClick: () => { setSearchQuery(""); setTimeFilter("all"); setSelectedYear(availableYears[0] ?? null); } }}
+              shortcut="/"
+              variant="no-results"
+            />
+            {/* Always-visible keyboard shortcuts hint for discoverability */}
+            <div className="flex items-center justify-center gap-4 text-[9px] text-muted-foreground">
+              <span className="flex items-center gap-0.5">
+                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">/</kbd>
+                <span>{td("shortcut.search") || "pretraži"}</span>
+              </span>
+            </div>
+          </div>
         )}
       </div>
 

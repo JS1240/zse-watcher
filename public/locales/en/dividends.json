@@ -46,6 +46,9 @@
   "empty": {
     "noData": "No scheduled dividends",
     "noDataDescription": "Check the calendar for upcoming ZSE stock dividends.",
+    "noResults": "No search results",
+    "noResultsDescription": "Try different search terms or clear the filters.",
+    "clearFilters": "Clear filters",
     "quickStart": {
       "step1": "Track ex-div dates",
       "step1Desc": "The ex-div date is when you lose dividend rights if you sell the stock",
