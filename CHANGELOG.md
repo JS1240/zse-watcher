@@ -4,6 +4,12 @@
 
 ### Added
 
+- **JSON Export for Alerts** — export alerts as JSON for external analysis and automation for Croatian retail investors
+  - Added CSV↔JSON format toggle to alerts dashboard export button (matching watchlist pattern)
+  - JSON export includes all alert data: ticker, condition, target, current price, distance %, trigger status, active status, created date, triggered date, snooze state
+  - Croatian retail investors can now analyze alerts in external tools (Excel, Python scripts, data notebooks)
+  - Added translation keys: `toast.exportedJson` (HR + EN), `exportJson` (HR + EN)
+
 - **LiveDataIndicator on MarketMovers** — data freshness indicator for Croatian retail investors
   - Replaced static Clock + hardcoded timestamp with LiveDataIndicator component
   - Pulsing dot: green when fresh (<1min), amber when stale (>5min), spinning during fetch
