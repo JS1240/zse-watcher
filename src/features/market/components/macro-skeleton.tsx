@@ -7,11 +7,11 @@ export function MacroSkeleton() {
     <div className="flex h-full flex-col gap-4 overflow-auto p-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <Skeleton className="h-6 w-24" />
-        <Skeleton className="h-4 w-20" />
+        <Skeleton className="h-6 w-24 animate-shimmer" />
+        <Skeleton className="h-4 w-20 animate-shimmer" />
       </div>
 
-      <Skeleton className="h-10 w-full" />
+      <Skeleton className="h-10 w-full animate-shimmer" />
 
       {/* Index cards grid */}
       <div className="grid gap-3 md:grid-cols-2">
@@ -23,7 +23,7 @@ export function MacroSkeleton() {
 
       {/* Investment factors */}
       <div className="rounded-md border border-border bg-card p-4">
-        <Skeleton className="h-3 w-32 mb-3" />
+        <Skeleton className="h-3 w-32 mb-3 animate-shimmer" />
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (
             <FactorSkeleton key={i} />
@@ -62,13 +62,13 @@ function IndexCardSkeleton({ primary }: { primary?: boolean }) {
     >
       <div className="flex items-start justify-between gap-2">
         <div>
-          <Skeleton className="h-3 w-24 mb-2" />
-          <Skeleton className="h-8 w-32 mb-2" />
+          <Skeleton className="h-3 w-24 mb-2 animate-shimmer" />
+          <Skeleton className="h-8 w-32 mb-2 animate-shimmer" />
         </div>
         {/* Sparkline skeleton placeholder */}
-        <Skeleton className="h-7 w-16 shrink-0" />
+        <Skeleton className="h-7 w-16 shrink-0 animate-shimmer" />
       </div>
-      <Skeleton className="h-3 w-40" />
+      <Skeleton className="h-3 w-40 animate-shimmer" />
     </div>
   );
 }
@@ -76,18 +76,18 @@ function IndexCardSkeleton({ primary }: { primary?: boolean }) {
 function ForexCardSkeleton() {
   return (
     <div className="rounded-md border border-border bg-card p-4">
-      <Skeleton className="h-3 w-16 mb-3" />
+      <Skeleton className="h-3 w-16 mb-3 animate-shimmer" />
       <div className="mt-3 grid grid-cols-2 gap-3">
         {Array.from({ length: 4 }).map((_, i) => (
           <div key={i} className="flex items-center justify-between">
-            <Skeleton className="h-3 w-10" />
-            <Skeleton className="h-3 w-14" />
+            <Skeleton className="h-3 w-10 animate-shimmer" />
+            <Skeleton className="h-3 w-14 animate-shimmer" />
           </div>
         ))}
         <div className="col-span-2 border-t border-border/50 pt-2">
           <div className="flex items-center justify-between">
-            <Skeleton className="h-3 w-12" />
-            <Skeleton className="h-3 w-20" />
+            <Skeleton className="h-3 w-12 animate-shimmer" />
+            <Skeleton className="h-3 w-20 animate-shimmer" />
           </div>
         </div>
       </div>
@@ -98,8 +98,8 @@ function ForexCardSkeleton() {
 function FactorSkeleton() {
   return (
     <div className="text-center">
-      <Skeleton className="h-3 w-16 mx-auto" />
-      <Skeleton className="h-4 w-12 mx-auto mt-1" />
+      <Skeleton className="h-3 w-16 mx-auto animate-shimmer" />
+      <Skeleton className="h-4 w-12 mx-auto mt-1 animate-shimmer" />
     </div>
   );
 }

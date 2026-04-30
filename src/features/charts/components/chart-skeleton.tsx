@@ -20,33 +20,33 @@ export function ChartSkeleton({ height = 300, className }: ChartSkeletonProps) {
     >
       {/* Title area */}
       <div className="absolute left-4 top-4 flex items-center gap-3">
-        <Skeleton className="h-6 w-24" />
-        <Skeleton className="h-6 w-16" />
+        <Skeleton className="h-6 w-24 animate-shimmer" />
+        <Skeleton className="h-6 w-16 animate-shimmer" />
       </div>
 
       {/* Y-axis labels */}
       <div className="absolute left-2 top-1/2 flex flex-col justify-between h-[60%]">
-        <Skeleton className="h-3 w-10" />
-        <Skeleton className="h-3 w-10" />
-        <Skeleton className="h-3 w-10" />
-        <Skeleton className="h-3 w-10" />
+        <Skeleton className="h-3 w-10 animate-shimmer" />
+        <Skeleton className="h-3 w-10 animate-shimmer" />
+        <Skeleton className="h-3 w-10 animate-shimmer" />
+        <Skeleton className="h-3 w-10 animate-shimmer" />
       </div>
 
       {/* X-axis labels */}
       <div className="absolute bottom-4 left-1/3 flex justify-between w-2/3">
-        <Skeleton className="h-3 w-12" />
-        <Skeleton className="h-3 w-12" />
-        <Skeleton className="h-3 w-12" />
+        <Skeleton className="h-3 w-12 animate-shimmer" />
+        <Skeleton className="h-3 w-12 animate-shimmer" />
+        <Skeleton className="h-3 w-12 animate-shimmer" />
       </div>
 
       {/* Chart area skeleton - fake line/candles */}
       <div className="absolute left-16 right-4 top-12 bottom-10">
         {/* Grid lines */}
         <div className="absolute inset-0 flex flex-col justify-between">
-          <Skeleton className="h-px w-full opacity-30" />
-          <Skeleton className="h-px w-full opacity-30" />
-          <Skeleton className="h-px w-full opacity-30" />
-          <Skeleton className="h-px w-full opacity-30" />
+          <Skeleton className="h-px w-full opacity-30 animate-shimmer" />
+          <Skeleton className="h-px w-full opacity-30 animate-shimmer" />
+          <Skeleton className="h-px w-full opacity-30 animate-shimmer" />
+          <Skeleton className="h-px w-full opacity-30 animate-shimmer" />
         </div>
 
         {/* Fake candlestick shapes */}

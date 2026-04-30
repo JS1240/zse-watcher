@@ -17,28 +17,28 @@ export function NewsSkeleton({ className, rows = 4 }: NewsSkeletonProps) {
         >
           {/* Date column */}
           <div className="flex flex-col items-center gap-1">
-            <Skeleton className="h-3 w-8" />
-            <Skeleton className="h-2 w-6" />
+            <Skeleton className="h-3 w-8 animate-shimmer" />
+            <Skeleton className="h-2 w-6 animate-shimmer" />
           </div>
 
           {/* Content column */}
           <div className="flex flex-1 flex-col gap-2">
             {/* Ticker + Category badges */}
             <div className="flex items-center gap-2">
-              <Skeleton className="h-4 w-10 rounded" />
-              <Skeleton className="h-3 w-14 rounded-full" />
+              <Skeleton className="h-4 w-10 rounded animate-shimmer" />
+              <Skeleton className="h-3 w-14 rounded-full animate-shimmer" />
             </div>
 
             {/* Title */}
-            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-full animate-shimmer" />
 
             {/* Summary line (alternating widths for realism) */}
-            <Skeleton className="h-3 w-3/4" />
+            <Skeleton className="h-3 w-3/4 animate-shimmer" />
           </div>
 
           {/* External link icon placeholder */}
           <div className="flex items-start">
-            <Skeleton className="h-4 w-4 rounded" />
+            <Skeleton className="h-4 w-4 rounded animate-shimmer" />
           </div>
         </div>
       ))}

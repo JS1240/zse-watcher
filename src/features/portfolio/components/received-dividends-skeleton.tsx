@@ -12,12 +12,12 @@ export function ReceivedDividendsSkeleton({ className, rows = 3 }: ReceivedDivid
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Skeleton className="h-4 w-4" />
-          <Skeleton className="h-3 w-28" />
+          <Skeleton className="h-4 w-4 animate-shimmer" />
+          <Skeleton className="h-3 w-28 animate-shimmer" />
         </div>
         <div className="flex gap-2">
-          <Skeleton className="h-6 w-12" />
-          <Skeleton className="h-6 w-24" />
+          <Skeleton className="h-6 w-12 animate-shimmer" />
+          <Skeleton className="h-6 w-24 animate-shimmer" />
         </div>
       </div>
 
@@ -26,9 +26,9 @@ export function ReceivedDividendsSkeleton({ className, rows = 3 }: ReceivedDivid
         {/* Table header */}
         <div className="bg-muted/50 px-3 py-2 border-b border-border">
           <div className="flex items-center justify-between text-[9px] uppercase tracking-wider text-muted-foreground">
-            <Skeleton className="h-2.5 w-16" />
-            <Skeleton className="h-2.5 w-20" />
-            <Skeleton className="h-2.5 w-16" />
+            <Skeleton className="h-2.5 w-16 animate-shimmer" />
+            <Skeleton className="h-2.5 w-20 animate-shimmer" />
+            <Skeleton className="h-2.5 w-16 animate-shimmer" />
           </div>
         </div>
 
@@ -38,20 +38,20 @@ export function ReceivedDividendsSkeleton({ className, rows = 3 }: ReceivedDivid
             <div key={i} className="flex items-center justify-between px-3 py-2.5">
               {/* Ticker + details */}
               <div className="flex items-center gap-2">
-                <Skeleton className="h-5 w-14" />
+                <Skeleton className="h-5 w-14 animate-shimmer" />
                 <div className="space-y-1">
-                  <Skeleton className="h-2.5 w-20" />
-                  <Skeleton className="h-2 w-28" />
+                  <Skeleton className="h-2.5 w-20 animate-shimmer" />
+                  <Skeleton className="h-2 w-28 animate-shimmer" />
                 </div>
               </div>
 
               {/* Amount */}
               <div className="flex items-center gap-3">
                 <div className="flex flex-col items-end gap-0.5">
-                  <Skeleton className="h-3 w-16" />
-                  <Skeleton className="h-2.5 w-12" />
+                  <Skeleton className="h-3 w-16 animate-shimmer" />
+                  <Skeleton className="h-2.5 w-12 animate-shimmer" />
                 </div>
-                <Skeleton className="h-6 w-6 rounded" />
+                <Skeleton className="h-6 w-6 rounded animate-shimmer" />
               </div>
             </div>
           ))}
