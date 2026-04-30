@@ -4,6 +4,13 @@
 
 ### Added
 
+- **LiveDataIndicator on MarketMovers** — data freshness indicator for Croatian retail investors
+  - Replaced static Clock + hardcoded timestamp with LiveDataIndicator component
+  - Pulsing dot: green when fresh (<1min), amber when stale (>5min), spinning during fetch
+  - Shows "Osvježavam..." during refetch, relative time otherwise (e.g. "prije 2 min")
+  - Consistent with stocks table, watchlist, and alerts dashboard pattern
+  - Removed unused formatLastUpdated helper and Clock import
+
 - **Dividend Yield Mini-Bar Chart** — visual yield comparison bar in dividends calendar for Croatian retail investors
   - Dividend rows now show a relative yield bar alongside the percentage for quick visual comparison
   - Bar width is proportional to max yield in the current filtered view (context-aware scaling)
