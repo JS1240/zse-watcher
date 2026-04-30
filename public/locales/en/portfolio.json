@@ -127,7 +127,10 @@
   "shortcut": {
     "view": "stock details",
     "delete": "delete",
-    "search": "search"
+    "search": "search",
+    "holdingsTab": "holdings",
+    "analyticsTab": "analytics",
+    "dividendsTab": "dividends"
   },
   "portfolio": {
     "localIndicator": "Portfolio saved locally — sign in to sync across devices",

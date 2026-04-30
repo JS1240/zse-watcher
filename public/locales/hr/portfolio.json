@@ -127,7 +127,10 @@
   "shortcut": {
     "view": "detalji dionice",
     "delete": "obrisi",
-    "search": "pretraživanje"
+    "search": "pretraživanje",
+    "holdingsTab": "pozicije",
+    "analyticsTab": "analitika",
+    "dividendsTab": "dividende"
   },
   "portfolio": {
     "localIndicator": "Portfelj spremljen lokalno — prijavite se za sinkronizaciju",
