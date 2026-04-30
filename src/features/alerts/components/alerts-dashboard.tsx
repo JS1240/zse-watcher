@@ -14,6 +14,7 @@ import { LiveDataIndicator } from "@/components/shared/live-data-indicator";
 
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import { TickerSelect } from "@/components/shared/ticker-select";
 import { formatPrice, formatDate, formatRelativeTime } from "@/lib/formatters";
 import { normalizeNumberInput, formatInputNumber, parseLocalizedNumber } from "@/lib/format-input";
@@ -1419,17 +1420,16 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
             <label className="mb-0.5 block text-[9px] uppercase tracking-wider text-muted-foreground">
               {t("fields.condition")}
             </label>
-            <select
+            <SegmentedControl
               value={editCondition}
-              onChange={(e) => setEditCondition(e.target.value as AlertCondition)}
-              className="flex h-7 w-full rounded-md border border-input bg-background px-2 py-1 font-data text-xs text-foreground"
-            >
-              {conditionOptions.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
+              onChange={(v) => setEditCondition(v as AlertCondition)}
+              options={[
+                { value: "above", label: t("condition.above"), hint: t("condition.above") },
+                { value: "below", label: t("condition.below"), hint: t("condition.below") },
+                { value: "percent_change_up", label: t("condition.percentUp"), hint: t("condition.percentUp") },
+                { value: "percent_change_down", label: t("condition.percentDown"), hint: t("condition.percentDown") },
+              ]}
+            />
           </div>
           <div>
             <label className="mb-0.5 block text-[9px] uppercase tracking-wider text-muted-foreground">
