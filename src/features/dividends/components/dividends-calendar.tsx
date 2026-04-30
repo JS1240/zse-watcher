@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { CalendarDays, Search, Calendar, Download, ChevronDown, ChevronUp, ArrowUp, ArrowUpDown, Keyboard, TrendingUp, TrendingDown, Copy, X } from "lucide-react";
 import { useDebounce } from "@/hooks/use-debounce";
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
+import { usePriceFlash } from "@/hooks/use-price-flash";
 import { toast } from "sonner";
 import { DividendsCalendarEmptyIllustration, SearchEmptyIllustration } from "@/components/shared/empty-illustrations";
 import { useDividends } from "@/features/dividends/api/dividends-queries";
@@ -14,6 +15,7 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { Highlight } from "@/components/shared/highlight";
 import { ErrorState } from "@/components/shared/error-state";
 import { StockDetailDrawer } from "@/features/stocks/components/stock-detail-drawer";
+import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
 import { formatDate, formatCurrency } from "@/lib/formatters";
 import { exportToCsv } from "@/lib/export";
@@ -26,6 +28,9 @@ export function DividendsCalendar() {
   const { t } = useTranslation("common");
   const { t: td } = useTranslation("dividends");
   const { data: dividends, isLoading, isError, refetch } = useDividends();
+  const { data: stocksResult } = useStocksLive();
+  const stocks = useMemo(() => stocksResult?.stocks ?? [], [stocksResult]);
+  const flashMap = usePriceFlash(stocks);
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = useDebounce(searchQuery, 200);
   const [sortField, setSortField] = useState<"yield" | "amount" | "exDivDate">("exDivDate");
@@ -579,6 +584,7 @@ export function DividendsCalendar() {
                     onCopyYield={handleCopyYield}
                     onSelect={select}
                     highlight={debouncedSearch}
+                    flash={flashMap.get(d.ticker) ?? null}
                   />
                 ))}
               </div>
@@ -626,6 +632,7 @@ interface DividendRowProps {
   onCopyYield: (e: React.MouseEvent, yieldPct: number) => void;
   onSelect: (ticker: string) => void;
   highlight?: string;
+  flash?: "up" | "down" | null;
 }
 
 const DividendRow = memo(function DividendRow({
@@ -639,6 +646,7 @@ const DividendRow = memo(function DividendRow({
   onCopyYield,
   onSelect,
   highlight,
+  flash,
 }: DividendRowProps) {
   const { t: td } = useTranslation("dividends");
   const now = new Date();
@@ -698,6 +706,8 @@ const DividendRow = memo(function DividendRow({
       className={cn(
         "group flex w-full cursor-pointer items-center justify-between rounded-md border border-border bg-card px-3 py-2.5 text-left transition-all hover:bg-accent/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         isPast && "opacity-50",
+        flash === "up" && "price-flash-up",
+        flash === "down" && "price-flash-down",
       )}
       {...{ [ROW_FOCUS_ATTR]: rowIndex }}
     >
