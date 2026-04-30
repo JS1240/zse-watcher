@@ -60,8 +60,14 @@ function IndexCardSkeleton({ primary }: { primary?: boolean }) {
         primary ? "border-primary/30 bg-primary/5" : "border-border bg-card"
       }`}
     >
-      <Skeleton className="h-3 w-24 mb-2" />
-      <Skeleton className="h-8 w-32 mb-2" />
+      <div className="flex items-start justify-between gap-2">
+        <div>
+          <Skeleton className="h-3 w-24 mb-2" />
+          <Skeleton className="h-8 w-32 mb-2" />
+        </div>
+        {/* Sparkline skeleton placeholder */}
+        <Skeleton className="h-7 w-16 shrink-0" />
+      </div>
       <Skeleton className="h-3 w-40" />
     </div>
   );

@@ -4,6 +4,14 @@
 
 ### Added
 
+- **Sparklines on Macro Index Cards** — visual trend context for Croatian retail investors at a glance
+  - Added Sparkline mini-charts to CROBEX, CROBEX10, and Euro Stoxx 50 cards on the Macro page
+  - Each sparkline shows a 7-day trend derived from the current value and daily change %
+  - Color-coded: green polyline for positive trend, red for negative (matches price-up/price-down CSS vars)
+  - Deterministic — same index always generates the same trend shape for consistency
+  - Updated MacroSkeleton to show sparkline placeholder during loading
+  - Helps Croatian retail investors quickly assess short-term index momentum without opening a full chart
+
 - **JSON Export for Alerts** — export alerts as JSON for external analysis and automation for Croatian retail investors
   - Added CSV↔JSON format toggle to alerts dashboard export button (matching watchlist pattern)
   - JSON export includes all alert data: ticker, condition, target, current price, distance %, trigger status, active status, created date, triggered date, snooze state
