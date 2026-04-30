@@ -103,6 +103,8 @@
   "exportCsv": "Izvoz",
   "filters": {
     "label": "Filtraj dionice prema performansi",
+    "performanceLabel": "📈 Promjena cijene",
+    "dividendLabel": "💰 Dividendni prinos",
     "all": "Sve",
     "gainers": "Rastu",
     "losers": "Padaju",

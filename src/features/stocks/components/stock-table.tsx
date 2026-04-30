@@ -290,155 +290,180 @@ export function StockTable() {
         </div>
       )}
 
-      {/* Quick filters: gainers / losers / unchanged - keyboard navigable */}
-      <div
-        className="flex gap-1.5 flex-wrap"
-        role="group"
-        aria-label={t("filters.label") || "Filter stocks by performance"}
-        onKeyDown={(e) => {
-          const filterButtons = Array.from(e.currentTarget.querySelectorAll<HTMLButtonElement>('button[type="button"]'));
-          const currentIndex = filterButtons.findIndex((btn) => document.activeElement === btn);
-          if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
-            e.preventDefault();
-            const direction = e.key === 'ArrowRight' ? 1 : -1;
-            const nextIndex = (currentIndex + direction + filterButtons.length) % filterButtons.length;
-            filterButtons[nextIndex]?.focus();
-          }
-        }}
-      >
-        <button
-          type="button"
-          onClick={() => setChangeFilter("all")}
-          className={cn(
-            "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background btn-press",
-            changeFilter === "all"
-              ? "bg-primary text-primary-foreground shadow-sm shadow-primary/25"
-              : "bg-muted/60 text-muted-foreground hover:bg-muted hover:scale-[1.02]",
-          )}
-          aria-pressed={changeFilter === "all"}
+      {/* Quick filters: two logical groups — performance (gainers/losers) and dividend yield (3%+/5%+/8%+) */}
+      {/* Group 1: Performance filters */}
+      <div className="flex flex-col gap-1">
+        <span className="text-[9px] uppercase tracking-wider text-muted-foreground ml-1 font-medium">{t("filters.performanceLabel") || "📈 Promjena cijene"}</span>
+        <div
+          className="flex gap-1.5 flex-wrap"
+          role="group"
+          aria-label={t("filters.performanceLabel") || "Filter by price change"}
+          onKeyDown={(e) => {
+            const filterButtons = Array.from(e.currentTarget.querySelectorAll<HTMLButtonElement>('button[type="button"]'));
+            const currentIndex = filterButtons.findIndex((btn) => document.activeElement === btn);
+            if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+              e.preventDefault();
+              const direction = e.key === 'ArrowRight' ? 1 : -1;
+              const nextIndex = (currentIndex + direction + filterButtons.length) % filterButtons.length;
+              filterButtons[nextIndex]?.focus();
+            }
+          }}
         >
-          <TrendingUp className="h-3 w-3" />
-          <span className="hidden sm:inline">📊 {t("filters.all") || "Sve"}</span>
-        </button>
-        <button
-          type="button"
-          onClick={() => setChangeFilter("gainers")}
-          className={cn(
-            "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background btn-press",
-            changeFilter === "gainers"
-              ? "bg-primary text-primary-foreground shadow-sm shadow-primary/25"
-              : "bg-muted/60 text-muted-foreground hover:bg-muted hover:scale-[1.02]",
-          )}
-          aria-pressed={changeFilter === "gainers"}
-        >
-          <TrendingUp className="h-3 w-3" />
-          <span className="hidden sm:inline">{t("filters.gainers") || "Rastu"}</span>
-        </button>
-        <button
-          type="button"
-          onClick={() => setChangeFilter("losers")}
-          className={cn(
-            "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background btn-press",
-            changeFilter === "losers"
-              ? "bg-primary text-primary-foreground shadow-sm shadow-primary/25"
-              : "bg-muted/60 text-muted-foreground hover:bg-muted hover:scale-[1.02]",
-          )}
-          aria-pressed={changeFilter === "losers"}
-        >
-          <TrendingDown className="h-3 w-3" />
-          <span className="hidden sm:inline">{t("filters.losers") || "Padaju"}</span>
-        </button>
-        <button
-          type="button"
-          onClick={() => setChangeFilter("unchanged")}
-          className={cn(
-            "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background btn-press",
-            changeFilter === "unchanged"
-              ? "bg-primary text-primary-foreground shadow-sm shadow-primary/25"
-              : "bg-muted/60 text-muted-foreground hover:bg-muted hover:scale-[1.02]",
-          )}
-          aria-pressed={changeFilter === "unchanged"}
-        >
-          <Minus className="h-3 w-3" />
-          <span className="hidden sm:inline">{t("filters.unchanged") || "Bez promjene"}</span>
-        </button>
-        {/* Dividend yield filter - from premium Screener for all users */}
-        <button
-          type="button"
-          onClick={() => setYieldFilter("all")}
-          className={cn(
-            "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background btn-press",
-            yieldFilter === "all"
-              ? "bg-primary text-primary-foreground shadow-sm shadow-primary/25"
-              : "bg-muted/60 text-muted-foreground hover:bg-muted hover:scale-[1.02]",
-          )}
-          aria-pressed={yieldFilter === "all"}
-        >
-          <TrendingUp className="h-3 w-3" />
-          <span className="hidden sm:inline">{t("filters.allYields") || "Svi prinosi"}</span>
-        </button>
-        <button
-          type="button"
-          onClick={() => setYieldFilter("gt3")}
-          className={cn(
-            "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background btn-press",
-            yieldFilter === "gt3"
-              ? "bg-primary text-primary-foreground shadow-sm shadow-primary/25"
-              : "bg-muted/60 text-muted-foreground hover:bg-muted hover:scale-[1.02]",
-          )}
-          aria-pressed={yieldFilter === "gt3"}
-        >
-          <TrendingUp className="h-3 w-3" />
-          <span className="hidden sm:inline">{t("filters.gt3")}</span>
-        </button>
-        <button
-          type="button"
-          onClick={() => setYieldFilter("gt5")}
-          className={cn(
-            "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background btn-press",
-            yieldFilter === "gt5"
-              ? "bg-primary text-primary-foreground shadow-sm shadow-primary/25"
-              : "bg-muted/60 text-muted-foreground hover:bg-muted hover:scale-[1.02]",
-          )}
-          aria-pressed={yieldFilter === "gt5"}
-        >
-          <TrendingUp className="h-3 w-3" />
-          <span className="hidden sm:inline">{t("filters.gt5")}</span>
-        </button>
-        <button
-          type="button"
-          onClick={() => setYieldFilter("gt8")}
-          className={cn(
-            "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background btn-press",
-            yieldFilter === "gt8"
-              ? "bg-primary text-primary-foreground shadow-sm shadow-primary/25"
-              : "bg-muted/60 text-muted-foreground hover:bg-muted hover:scale-[1.02]",
-          )}
-          aria-pressed={yieldFilter === "gt8"}
-        >
-          <TrendingUp className="h-3 w-3" />
-          <span className="hidden sm:inline">{t("filters.gt8")}</span>
-        </button>
-        {/* Sector filter dropdown */}
-        {availableSectors.length > 0 && (
-          <select
-            value={sectorFilter ?? ""}
-            onChange={(e) => setSectorFilter(e.target.value || null)}
+          <button
+            type="button"
+            onClick={() => setChangeFilter("all")}
             className={cn(
-              "rounded-full px-2.5 py-1 text-[10px] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
-              sectorFilter
-                ? "bg-primary text-primary-foreground shadow-sm"
-                : "bg-muted/60 text-muted-foreground hover:bg-muted",
+              "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background btn-press",
+              changeFilter === "all"
+                ? "bg-primary text-primary-foreground shadow-sm shadow-primary/25"
+                : "bg-muted/60 text-muted-foreground hover:bg-muted hover:scale-[1.02]",
             )}
+            aria-pressed={changeFilter === "all"}
           >
-            <option value="">{t("filters.allSectors") || "Svi sektori"}</option>
-            {availableSectors.map((sector) => (
-              <option key={sector} value={sector}>
-                {sector}
-              </option>
-            ))}
-          </select>
-        )}
+            <TrendingUp className="h-3 w-3" />
+            <span className="hidden sm:inline">{t("filters.all") || "Sve"}</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setChangeFilter("gainers")}
+            className={cn(
+              "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background btn-press",
+              changeFilter === "gainers"
+                ? "bg-primary text-primary-foreground shadow-sm shadow-primary/25"
+                : "bg-muted/60 text-muted-foreground hover:bg-muted hover:scale-[1.02]",
+            )}
+            aria-pressed={changeFilter === "gainers"}
+          >
+            <TrendingUp className="h-3 w-3" />
+            <span className="hidden sm:inline">{t("filters.gainers") || "Rastu"}</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setChangeFilter("losers")}
+            className={cn(
+              "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background btn-press",
+              changeFilter === "losers"
+                ? "bg-primary text-primary-foreground shadow-sm shadow-primary/25"
+                : "bg-muted/60 text-muted-foreground hover:bg-muted hover:scale-[1.02]",
+            )}
+            aria-pressed={changeFilter === "losers"}
+          >
+            <TrendingDown className="h-3 w-3" />
+            <span className="hidden sm:inline">{t("filters.losers") || "Padaju"}</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setChangeFilter("unchanged")}
+            className={cn(
+              "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background btn-press",
+              changeFilter === "unchanged"
+                ? "bg-primary text-primary-foreground shadow-sm shadow-primary/25"
+                : "bg-muted/60 text-muted-foreground hover:bg-muted hover:scale-[1.02]",
+            )}
+            aria-pressed={changeFilter === "unchanged"}
+          >
+            <Minus className="h-3 w-3" />
+            <span className="hidden sm:inline">{t("filters.unchanged") || "Bez promjene"}</span>
+          </button>
+
+          {/* Sector filter — grouped with performance filters */}
+          {availableSectors.length > 0 && (
+            <select
+              value={sectorFilter ?? ""}
+              onChange={(e) => setSectorFilter(e.target.value || null)}
+              className={cn(
+                "rounded-full px-2.5 py-1 text-[10px] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
+                sectorFilter
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "bg-muted/60 text-muted-foreground hover:bg-muted",
+              )}
+            >
+              <option value="">{t("filters.allSectors") || "Svi sektori"}</option>
+              {availableSectors.map((sector) => (
+                <option key={sector} value={sector}>
+                  {sector}
+                </option>
+              ))}
+            </select>
+          )}
+        </div>
+      </div>
+
+      {/* Group 2: Dividend yield filters */}
+      <div className="flex flex-col gap-1">
+        <span className="text-[9px] uppercase tracking-wider text-muted-foreground ml-1 font-medium">{t("filters.dividendLabel") || "💰 Dividendni prinos"}</span>
+        <div
+          className="flex gap-1.5 flex-wrap"
+          role="group"
+          aria-label={t("filters.dividendLabel") || "Filter by dividend yield"}
+          onKeyDown={(e) => {
+            const filterButtons = Array.from(e.currentTarget.querySelectorAll<HTMLButtonElement>('button[type="button"]'));
+            const currentIndex = filterButtons.findIndex((btn) => document.activeElement === btn);
+            if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+              e.preventDefault();
+              const direction = e.key === 'ArrowRight' ? 1 : -1;
+              const nextIndex = (currentIndex + direction + filterButtons.length) % filterButtons.length;
+              filterButtons[nextIndex]?.focus();
+            }
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => setYieldFilter("all")}
+            className={cn(
+              "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background btn-press",
+              yieldFilter === "all"
+                ? "bg-primary text-primary-foreground shadow-sm shadow-primary/25"
+                : "bg-muted/60 text-muted-foreground hover:bg-muted hover:scale-[1.02]",
+            )}
+            aria-pressed={yieldFilter === "all"}
+          >
+            <TrendingUp className="h-3 w-3" />
+            <span className="hidden sm:inline">{t("filters.allYields") || "Svi prinosi"}</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setYieldFilter("gt3")}
+            className={cn(
+              "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background btn-press",
+              yieldFilter === "gt3"
+                ? "bg-primary text-primary-foreground shadow-sm shadow-primary/25"
+                : "bg-muted/60 text-muted-foreground hover:bg-muted hover:scale-[1.02]",
+            )}
+            aria-pressed={yieldFilter === "gt3"}
+          >
+            <TrendingUp className="h-3 w-3" />
+            <span className="hidden sm:inline">{t("filters.gt3")}</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setYieldFilter("gt5")}
+            className={cn(
+              "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background btn-press",
+              yieldFilter === "gt5"
+                ? "bg-primary text-primary-foreground shadow-sm shadow-primary/25"
+                : "bg-muted/60 text-muted-foreground hover:bg-muted hover:scale-[1.02]",
+            )}
+            aria-pressed={yieldFilter === "gt5"}
+          >
+            <TrendingUp className="h-3 w-3" />
+            <span className="hidden sm:inline">{t("filters.gt5")}</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setYieldFilter("gt8")}
+            className={cn(
+              "flex h-11 min-w-11 items-center gap-1 rounded-full px-2.5 py-2 text-[10px] font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background btn-press",
+              yieldFilter === "gt8"
+                ? "bg-primary text-primary-foreground shadow-sm shadow-primary/25"
+                : "bg-muted/60 text-muted-foreground hover:bg-muted hover:scale-[1.02]",
+            )}
+            aria-pressed={yieldFilter === "gt8"}
+          >
+            <TrendingUp className="h-3 w-3" />
+            <span className="hidden sm:inline">{t("filters.gt8")}</span>
+          </button>
+        </div>
       </div>
 
       {/* Table */}

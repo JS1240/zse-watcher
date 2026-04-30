@@ -104,6 +104,8 @@
   "exportCsv": "Export",
   "filters": {
     "label": "Filter stocks by performance",
+    "performanceLabel": "📈 Price Change",
+    "dividendLabel": "💰 Dividend Yield",
     "all": "All",
     "gainers": "Gainers",
     "losers": "Losers",
