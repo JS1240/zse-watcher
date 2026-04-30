@@ -60,7 +60,7 @@ export function HeatmapSkeleton({ className }: HeatmapSkeletonProps) {
             </div>
             {/* Ticker chips skeleton */}
             <div className="mt-2 flex flex-wrap gap-0.5">
-              {Array.from({ length: Math.floor(Math.random() * 5) + 3 }).map((_, j) => (
+              {Array.from({ length: i === 0 ? 5 : i === 1 ? 4 : i === 2 ? 6 : i === 3 ? 3 : i === 4 ? 7 : 4 }).map((_, j) => (
                 <Skeleton
                   key={j}
                   className={cn(
