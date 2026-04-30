@@ -1,10 +1,11 @@
-import { useEffect, useState, useCallback, memo } from "react";
+import { useEffect, useState, useCallback, memo, useMemo } from "react";
 import { X, Info, RefreshCw, Download, Bell, Copy } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useStockDetail } from "@/features/stocks/api/stock-detail-queries";
 import { useRecentStocks } from "@/hooks/use-recent-stocks";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
+import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { StockHeader } from "@/features/stocks/components/stock-header";
 import { StockFundamentals } from "@/features/stocks/components/stock-fundamentals";
 import { HistoryChart } from "@/features/charts/components/history-chart";
@@ -34,6 +35,8 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
   const { data: result, isLoading, isError, refetch } = useStockDetail(ticker);
   const stock = result?.stock ?? null;
   const isMockData = result?.isMockData ?? false;
+  const { data: stocksResult } = useStocksLive();
+  const stocks = useMemo(() => stocksResult?.stocks ?? [], [stocksResult]);
   const { addRecentStock } = useRecentStocks();
   const [showAlertForm, setShowAlertForm] = useState(false);
   const [showTransactionForm, setShowTransactionForm] = useState(false);
@@ -351,7 +354,7 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
                   </div>
                 )}
 
-                <StockHeader stock={stock} />
+                <StockHeader stock={stock} stocks={stocks} />
 
                 <Separator />
 

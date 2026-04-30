@@ -6,14 +6,27 @@ import { ChangeBadge } from "@/components/shared/change-badge";
 import { Sparkline } from "@/components/shared/sparkline";
 import { getMockPriceHistory } from "@/lib/mock-data";
 import { formatVolume, formatCurrency, formatMarketCap } from "@/lib/formatters";
+import { usePriceFlash } from "@/hooks/use-price-flash";
 import type { StockDetail } from "@/types/stock";
+import type { Stock } from "@/types/stock";
+import { cn } from "@/lib/utils";
+
+interface StockHeaderProps {
+  stock: StockDetail;
+  /** Stocks list for price flash detection — pass from parent drawer */
+  stocks?: Stock[];
+}
 
 interface StockHeaderProps {
   stock: StockDetail;
 }
 
-export function StockHeader({ stock }: StockHeaderProps) {
+export function StockHeader({ stock, stocks }: StockHeaderProps) {
   const { t } = useTranslation("stocks");
+
+  // Detect price changes for flash animation — only flashes when this ticker's price changes
+  const priceFlashMap = usePriceFlash(stocks ?? null);
+  const flashDirection = priceFlashMap.get(stock.ticker) ?? null;
 
   // Generate 1-week mock price history for sparkline (deterministic per ticker)
   const sparklineData = useMemo(() => {
@@ -39,7 +52,14 @@ export function StockHeader({ stock }: StockHeaderProps) {
 
       {/* Price + Change + Sparkline */}
       <div className="flex items-baseline gap-3" aria-label={`${t("header.priceLabel")}: ${stock.price} EUR`}>
-        <PriceDisplay value={stock.price} className="text-2xl" />
+        <PriceDisplay
+          value={stock.price}
+          className={cn(
+            "text-2xl",
+            flashDirection === "up" && "price-flash-up",
+            flashDirection === "down" && "price-flash-down"
+          )}
+        />
         <ChangeBadge value={stock.changePct} />
         {/* Performance sparkline — shows 7-day price trend at a glance */}
         {sparklineData.length >= 2 && (
