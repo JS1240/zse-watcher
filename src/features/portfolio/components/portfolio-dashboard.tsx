@@ -651,8 +651,8 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
           ref={portfolioRef}
         >
           <table className="min-w-[400px] w-full text-xs">
-            <thead>
-              <tr className="border-b border-border bg-muted/50 text-[10px] uppercase tracking-wider text-muted-foreground">
+            <thead className="sticky top-0 z-10 bg-muted/95 backdrop-blur supports-[backdrop-filter]:bg-muted/80">
+              <tr className="border-b border-border text-[10px] uppercase tracking-wider text-muted-foreground">
                 <SortableTh field="ticker" label={t("fields.ticker")} sortField={sortField} sortDir={sortDir} onSort={handleSort} align="left" />
                 <th className="px-2 py-2 text-center text-[10px] font-medium text-muted-foreground" title="1W trend">
                   <span className="text-[9px]">📈</span>

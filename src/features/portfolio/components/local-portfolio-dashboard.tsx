@@ -745,7 +745,7 @@ export function LocalPortfolioDashboard() {
           ref={portfolioRef}
         >
           <table className="min-w-[400px] w-full text-xs">
-            <thead>
+            <thead className="sticky top-0 z-10 bg-muted/95 backdrop-blur supports-[backdrop-filter]:bg-muted/80">
               <tr className="border-b border-border bg-muted/50 text-[10px] uppercase tracking-wider text-muted-foreground">
                 <th className="px-3 py-2 text-left font-medium">{t("fields.ticker")}</th>
                 <th className="px-3 py-2 text-center font-medium" title="1W trend">

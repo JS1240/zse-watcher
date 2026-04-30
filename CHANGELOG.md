@@ -4,6 +4,13 @@
 
 ### Added
 
+- **Unified Sticky Table Headers** — consistent sticky header behavior across all scrollable tables for Croatian retail investors
+  - Added `sticky top-0 z-10` and `backdrop-blur` to portfolio-dashboard holdings table thead (matching stock-table pattern)
+  - Added `sticky top-0 z-10` and `backdrop-blur` to local-portfolio-dashboard holdings table thead
+  - Both use `bg-muted/95 backdrop-blur supports-[backdrop-filter]:bg-muted/80` for clean transparency during scroll
+  - Watchlist table already had correct pattern, no changes needed
+  - Unified visual language: all tables now behave consistently when scrolling long data lists
+
 - **JSON Export for Watchlist** — export watchlist data as JSON for external analysis
   - Added `exportToJson` function in `src/lib/export.ts` for JSON data export
   - Added export format toggle (CSV↔JSON) in watchlist page toolbar
