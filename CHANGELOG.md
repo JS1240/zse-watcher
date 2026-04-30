@@ -4,6 +4,12 @@
 
 ### Added
 
+- **Unified FilterChip Button Style** — consistent tactile feel across all filter chips for Croatian retail investors
+  - Updated portfolio-dashboard FilterChip to match alerts and stocks table pattern: `h-11 min-w-11`, `px-2.5 py-2`, `shadow-primary/25` on active, `hover:scale-[1.02]` on inactive, `btn-press` for tactile feedback
+  - Previous FilterChip in portfolio used smaller `px-2 py-0.5` sizing and lacked scale animation on hover
+  - All filter chips (gainers/losers/unchanged, sector, status) now feel consistent across every page
+  - Croatian retail investors get a unified tactile experience when filtering and browsing
+
 - **Sparklines on Macro Index Cards** — visual trend context for Croatian retail investors at a glance
   - Added Sparkline mini-charts to CROBEX, CROBEX10, and Euro Stoxx 50 cards on the Macro page
   - Each sparkline shows a 7-day trend derived from the current value and daily change %
