@@ -16,7 +16,7 @@ export function PortfolioAnalyticsSkeleton({ className }: PortfolioAnalyticsSkel
     <div className={cn("space-y-4", className)}>
       {/* Loading label */}
       <div className="flex items-center justify-between">
-        <Skeleton className="h-3 w-32 animate-shimmer" />
+        <Skeleton className="h-3 w-20 animate-shimmer" />
         <Skeleton className="h-2 w-16 animate-shimmer" />
       </div>
 

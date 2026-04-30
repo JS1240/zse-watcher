@@ -12,7 +12,7 @@ export function PricingSkeleton({ className }: PricingSkeletonProps) {
       {/* Header skeleton */}
       <div className="text-center">
         <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-          <Skeleton className="h-6 w-6 rounded-full" />
+          <Skeleton className="h-6 w-6 rounded-full animate-shimmer" />
         </div>
         <Skeleton className="mx-auto mt-2 h-6 w-32 animate-shimmer" />
         <Skeleton className="mx-auto mt-2 h-4 w-48 animate-shimmer" />
@@ -58,7 +58,7 @@ export function PricingSkeleton({ className }: PricingSkeletonProps) {
             <div className="mt-4 space-y-2">
               {Array.from({ length: 8 }).map((_, featIndex) => (
                 <div key={featIndex} className="flex items-center gap-2">
-                  <Skeleton className="h-3 w-3 shrink-0 rounded-full" />
+                  <Skeleton className="h-3 w-3 shrink-0 rounded-full animate-shimmer" />
                   <Skeleton className="h-3 w-32 animate-shimmer" />
                 </div>
               ))}

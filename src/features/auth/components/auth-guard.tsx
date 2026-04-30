@@ -11,26 +11,26 @@ function AuthLoadingSkeleton() {
     <div className="flex h-full flex-col items-center justify-center gap-6 p-8">
       {/* Logo area */}
       <div className="flex items-center gap-2">
-        <Skeleton className="h-6 w-6 rounded-md" />
-        <Skeleton className="h-6 w-32 rounded-md" />
+        <Skeleton className="h-6 w-6 rounded-md animate-shimmer" />
+        <Skeleton className="h-6 w-32 rounded-md animate-shimmer" />
       </div>
 
       {/* Description */}
-      <Skeleton className="h-3 w-48 rounded-md" />
+      <Skeleton className="h-3 w-48 rounded-md animate-shimmer" />
 
       {/* Form skeleton */}
       <div className="w-full max-w-sm space-y-3">
-        <Skeleton className="h-10 w-full rounded-md" />
-        <Skeleton className="h-10 w-full rounded-md" />
-        <Skeleton className="h-9 w-full rounded-md" />
+        <Skeleton className="h-10 w-full rounded-md animate-shimmer" />
+        <Skeleton className="h-10 w-full rounded-md animate-shimmer" />
+        <Skeleton className="h-9 w-full rounded-md animate-shimmer" />
 
         {/* Divider */}
         <div className="relative flex py-2">
           <div className="h-px w-full" />
-          <Skeleton className="absolute left-1/2 top-1/2 h-3 w-8 -translate-x-1/2 -translate-y-1/2 rounded-md" />
+          <Skeleton className="absolute left-1/2 top-1/2 h-3 w-8 -translate-x-1/2 -translate-y-1/2 rounded-md animate-shimmer" />
         </div>
 
-        <Skeleton className="h-9 w-full rounded-md" />
+        <Skeleton className="h-9 w-full rounded-md animate-shimmer" />
       </div>
     </div>
   );
