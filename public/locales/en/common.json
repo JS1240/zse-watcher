@@ -128,7 +128,15 @@
   "shortcuts": {
     "title": "Keyboard Shortcuts",
     "closeDrawer": "Close drawer",
-    "showAll": "Press ? for all shortcuts"
+    "showAll": "Press ? for all shortcuts",
+    "navigate": "navigate",
+    "open": "open",
+    "search": "search",
+    "toggle": "toggle on/off",
+    "edit": "edit",
+    "duplicate": "duplicate",
+    "delete": "delete",
+    "clear": "clear"
   },
   "tickerSelect": {
     "navigate": "navigate",

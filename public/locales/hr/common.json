@@ -129,7 +129,15 @@
   "shortcuts": {
     "title": "Tipkovnicke kratice",
     "closeDrawer": "Zatvori plocu",
-    "showAll": "Pritisni ? za sve tipkovnice"
+    "showAll": "Pritisni ? za sve tipkovnice",
+    "navigate": "navigiraj",
+    "open": "otvori",
+    "search": "traži",
+    "toggle": "aktiviraj/pauziraj",
+    "edit": "uredi",
+    "duplicate": "kopiraj",
+    "delete": "obriši",
+    "clear": "poništi"
   },
   "tickerSelect": {
     "navigate": "navigiraj",
