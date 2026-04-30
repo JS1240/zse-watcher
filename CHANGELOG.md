@@ -4,6 +4,15 @@
 
 ### Added
 
+- **PerformanceBar Component** — reusable relative performance bar for visual metric comparison
+  - New `PerformanceBar` component in `src/components/shared/` for showing relative position vs range/ceiling
+  - Supports 52w range mode (floor → ceiling → fill), positive/negative comparison mode, and manual fill
+  - Color modes: `auto` (green/red by direction), `positive` (always green), `negative` (always red), `neutral` (muted)
+  - Compact mode for inline use, optional click-to-copy on value, full ARIA progressbar accessibility
+  - Integrated into stock detail fundamentals: P/E ratio (neutral bar, 0-30 range) and Dividend Yield (positive bar, 0-10% range)
+  - Helps Croatian retail investors quickly assess if a stock's P/E or dividend yield is high/low relative to common ranges
+  - Storybook stories covering: 52w range bar, positive/negative performance, compact inline, click-to-copy, multiple comparison
+
 - **Unified FilterChip Button Style** — consistent tactile feel across all filter chips for Croatian retail investors
   - Updated portfolio-dashboard FilterChip to match alerts and stocks table pattern: `h-11 min-w-11`, `px-2.5 py-2`, `shadow-primary/25` on active, `hover:scale-[1.02]` on inactive, `btn-press` for tactile feedback
   - Previous FilterChip in portfolio used smaller `px-2 py-0.5` sizing and lacked scale animation on hover

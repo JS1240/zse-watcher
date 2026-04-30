@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Newspaper, HelpCircle, Check } from "lucide-react";
+import { PerformanceBar } from "@/components/shared/performance-bar";
 import { toast } from "sonner";
 import { useNews } from "@/features/news/api/news-queries";
 import { ArticleDrawer } from "@/features/news/components/article-drawer";
@@ -80,6 +81,10 @@ export function StockFundamentals({ stock }: StockFundamentalsProps) {
             onCopy={handleCopy}
             copiedField={copiedField}
             t={t}
+            barValue={stock.peRatio ?? undefined}
+            barCeiling={30}
+            barFloor={0}
+            barColorMode="neutral"
           />
           <MetricItem
             label={t("detail.dividendYield")}
@@ -90,6 +95,10 @@ export function StockFundamentals({ stock }: StockFundamentalsProps) {
             onCopy={handleCopy}
             copiedField={copiedField}
             t={t}
+            barValue={stock.dividendYield ?? undefined}
+            barCeiling={10}
+            barFloor={0}
+            barColorMode="positive"
           />
           <MetricItem
             label={t("detail.shares")}
@@ -207,6 +216,10 @@ function MetricItem({
   onCopy,
   copiedField,
   t: translate,
+  barValue,
+  barCeiling,
+  barFloor = 0,
+  barColorMode = "auto",
 }: {
   label: string;
   value: string;
@@ -217,6 +230,14 @@ function MetricItem({
   onCopy?: (field: string, value: string, label: string) => void;
   copiedField?: string | null;
   t?: (key: string) => string;
+  /** Numeric value for optional PerformanceBar overlay */
+  barValue?: number;
+  /** Ceiling for PerformanceBar (max in range) */
+  barCeiling?: number;
+  /** Floor for PerformanceBar (min in range) */
+  barFloor?: number;
+  /** Color mode for PerformanceBar */
+  barColorMode?: "auto" | "positive" | "negative" | "neutral";
 }) {
   const isCopied = copyField && copiedField === copyField;
   const t = translate ?? ((k: string) => k);
@@ -262,6 +283,21 @@ function MetricItem({
                 value
               )}
             </div>
+            {/* Performance bar overlay — shows relative position/range */}
+            {barValue !== undefined && barCeiling !== undefined && (
+              <div className="mt-1.5">
+                <PerformanceBar
+                  value={barValue}
+                  baseline={barFloor}
+                  ceiling={barCeiling}
+                  floor={barFloor}
+                  showValue={false}
+                  compact
+                  colorMode={barColorMode}
+                  ariaLabel={`${label}: ${value}`}
+                />
+              </div>
+            )}
           </div>
         </TooltipTrigger>
         <TooltipContent side="top" className="max-w-xs">
