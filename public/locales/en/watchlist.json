@@ -66,7 +66,9 @@
     "importError": "Failed to import CSV file",
     "copied": "Copied: {{ticker}}",
     "priceCopied": "Price copied: {{price}}",
-    "cleared": "Watchlist cleared"
+    "cleared": "Watchlist cleared",
+    "copyAll": "Copy all tickers",
+    "copiedAll": "Copied: {{count}} tickers"
   },
   "shortcut": {
     "add": "add ticker",

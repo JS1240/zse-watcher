@@ -1,6 +1,6 @@
 import { useMemo, useState, useRef, useCallback, memo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Star, Search, Keyboard, Trash2, ArrowUp, ArrowDown, ArrowUpDown, GripVertical, Download, Upload, X, TrendingUp, TrendingDown, Minus, CheckCircle2, ChevronUp, AlertCircle } from "lucide-react";
+import { Star, Search, Keyboard, Trash2, ArrowUp, ArrowDown, ArrowUpDown, GripVertical, Download, Upload, X, TrendingUp, TrendingDown, Minus, CheckCircle2, ChevronUp, AlertCircle, Copy } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
@@ -327,6 +327,13 @@ function AuthenticatedWatchlist() {
   // Track focus for search input accessibility
   const [searchFocused, setSearchFocused] = useState(false);
 
+  const handleCopyAllTickers = useCallback(() => {
+    if (filtered.length === 0) return;
+    const tickers = filtered.map((s) => s.ticker).join(", ");
+    navigator.clipboard.writeText(tickers);
+    toast.success(t("toast.copiedAll", { count: filtered.length }), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
+  }, [filtered, t]);
+
   // Export format toggle (CSV/JSON)
   const [exportFormat, setExportFormat] = useState<"csv" | "json">("csv");
 
@@ -447,6 +454,15 @@ function AuthenticatedWatchlist() {
             <span className="text-[9px]">rezultat{filtered.length !== 1 ? "a" : ""}</span>
           </span>
         )}
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={handleCopyAllTickers}
+          disabled={filtered.length === 0}
+          title={t("toast.copyAll")}
+        >
+          <Copy className="h-3.5 w-3.5" />
+        </Button>
         <Button
           size="sm"
           variant="outline"

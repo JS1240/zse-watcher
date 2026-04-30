@@ -67,7 +67,9 @@
     "importError": "Neuspjeli uvoz CSV datoteke",
     "copied": "Kopirano: {{ticker}}",
     "priceCopied": "Kopirana cijena: {{price}}",
-    "cleared": "Lista praćenja obrisana"
+    "cleared": "Lista praćenja obrisana",
+    "copyAll": "Kopiraj sve dionice",
+    "copiedAll": "Kopirano: {{count}} dionica"
   },
   "shortcut": {
     "add": "dodaj dionic",
