@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useMarketStatus } from "@/features/market/api/market-queries";
 import { cn } from "@/lib/utils";
+import { MarketStatusSkeleton } from "./market-status-skeleton";
 
 /** Get Croatian trading hours context */
 function getTradingPhase(): { phase: "pre" | "open" | "after" | "closed"; label: string; timeUntil?: string } {
@@ -42,8 +43,13 @@ function getTradingPhase(): { phase: "pre" | "open" | "after" | "closed"; label:
 }
 
 export function MarketStatus() {
-  const { data: status } = useMarketStatus();
+  const { data: status, isLoading } = useMarketStatus();
   const { t, i18n } = useTranslation("common");
+
+  // Show skeleton while loading — consistent with other pages (PortfolioSkeleton, MacroSkeleton, etc.)
+  if (isLoading) {
+    return <MarketStatusSkeleton />;
+  }
 
   const isOpen = status?.isOpen ?? false;
   const isCroatian = i18n.language === "hr";
