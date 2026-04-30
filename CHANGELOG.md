@@ -4,6 +4,14 @@
 
 ### Added
 
+- **Heatmap Tooltip Polish** — fixed flickering and improved info density for Croatian retail investors
+  - Tooltip now uses viewport coordinates (clientX/clientY) with fixed positioning — no more flickering when scrolling
+  - Added mini performance bar inside tooltip showing sector performance at a glance
+  - Added Enter key shortcut hint in tooltip (consistent with app pattern)
+  - Always-visible keyboard shortcuts bar: `Tab` navigate, `Enter` preview, `Cmd+K` menu, `?` shortcuts
+  - Previous shortcuts bar only showed generic app shortcuts (Cmd+K, ?, T) which weren't specific to heatmap interactions
+  - Now matches stocks table, alerts dashboard, portfolio empty state patterns for discoverability
+
 - **Copy All Tickers Button** — copy comma-separated ticker list to clipboard for Croatian retail investors
   - Added Copy icon button to authenticated watchlist toolbar (next to CSV/JSON export)
   - Copies all visible tickers as comma-separated list with one click
