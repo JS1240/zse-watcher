@@ -369,19 +369,20 @@ export function AddPositionForm({ holdings, onClose, onSuccess }: AddPositionFor
             }}
             placeholder="KOEI-R-A"
             error={!!showTickerError}
+            aria-describedby={showTickerError ? "position-ticker-error" : showTickerNotFound ? "position-ticker-notfound" : undefined}
             className={cn(
               showTickerError && "ring-1 ring-destructive border-destructive",
-              isTickerValid && !showTickerError && "ring-1 ring-emerald-500 border-emerald-500",
+              isTickerValid && !showTickerError && !showTickerNotFound && "ring-1 ring-emerald-500 border-emerald-500",
               showTickerNotFound && "ring-1 ring-amber-400 border-amber-400"
             )}
           />
           {showTickerError ? (
-            <p className="mt-1.5 flex items-center gap-1.5 rounded-md border border-destructive/30 bg-destructive/15 px-2.5 py-1.5 text-xs font-semibold text-red-600 dark:text-red-400">
+            <p id="position-ticker-error" className="mt-1.5 flex items-center gap-1.5 rounded-md border border-destructive/30 bg-destructive/15 px-2.5 py-1.5 text-xs font-semibold text-red-600 dark:text-red-400" role="alert">
               <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
               {tickerErrorMessage}
             </p>
           ) : showTickerNotFound ? (
-            <p className="mt-1.5 flex items-center gap-1.5 rounded-md border border-amber-400/30 bg-amber-50 px-2.5 py-1.5 text-xs font-semibold text-amber-700 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-700/30">
+            <p id="position-ticker-notfound" className="mt-1.5 flex items-center gap-1.5 rounded-md border border-amber-400/30 bg-amber-50 px-2.5 py-1.5 text-xs font-semibold text-amber-700 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-700/30" role="alert">
               <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
               {tickerErrorMessage}
             </p>
@@ -439,9 +440,12 @@ export function AddPositionForm({ holdings, onClose, onSuccess }: AddPositionFor
                 setFocused((prev) => ({ ...prev, shares: true }));
               },
             })}
+            error={!!showSharesError}
+            aria-describedby={showSharesError ? "position-shares-error" : hasInsufficientShares ? "position-shares-warning" : undefined}
+            aria-invalid={showSharesError || hasInsufficientShares ? "true" : undefined}
             className={cn(
               showSharesError && "ring-1 ring-destructive border-destructive",
-              isSharesValid && !focused.shares && !showSharesError && "ring-1 ring-emerald-500 border-emerald-500"
+              isSharesValid && !focused.shares && !showSharesError && !hasInsufficientShares && "ring-1 ring-emerald-500 border-emerald-500"
             )}
           />
           {/* Quick-fill investment amount buttons */}
@@ -475,12 +479,12 @@ export function AddPositionForm({ holdings, onClose, onSuccess }: AddPositionFor
             </div>
           )}
           {showSharesError ? (
-            <p className="flex items-center gap-1.5 text-xs font-medium text-destructive">
+            <p id="position-shares-error" className="flex items-center gap-1.5 text-xs font-medium text-destructive" role="alert">
               <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
               {translateError(errors.shares?.message, t) || t("validation.positiveNumber")}
             </p>
           ) : hasInsufficientShares ? (
-            <p className="flex items-center gap-1.5 text-xs font-medium text-amber-600 dark:text-amber-400">
+            <p id="position-shares-warning" className="flex items-center gap-1.5 text-xs font-medium text-amber-600 dark:text-amber-400" role="alert">
               <AlertTriangle className="h-3.5 w-3.5 flex-shrink-0" />
               {t("validation.exceedsShares")} — {t("validation.maxSell", { max: ownedShares })}
             </p>
@@ -517,6 +521,8 @@ export function AddPositionForm({ holdings, onClose, onSuccess }: AddPositionFor
               },
             })}
             error={!!showPriceError}
+            aria-describedby={showPriceError ? "position-price-error" : undefined}
+            aria-invalid={showPriceError ? "true" : undefined}
             className={cn(
               showPriceError && "ring-1 ring-destructive border-destructive",
               isPriceValid && !focused.price && !showPriceError && "ring-1 ring-emerald-500 border-emerald-500"
@@ -542,7 +548,7 @@ export function AddPositionForm({ holdings, onClose, onSuccess }: AddPositionFor
             </div>
           )}
           {showPriceError ? (
-            <p className="mt-1.5 flex items-center gap-1.5 rounded-md bg-destructive/10 px-2.5 py-1.5 text-xs font-medium text-destructive">
+            <p id="position-price-error" className="mt-1.5 flex items-center gap-1.5 rounded-md bg-destructive/10 px-2.5 py-1.5 text-xs font-medium text-destructive" role="alert">
               <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
               {translateError(errors.pricePerShare?.message, t) || t("validation.positiveNumber")}
             </p>

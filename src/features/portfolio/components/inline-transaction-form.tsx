@@ -227,18 +227,20 @@ export function InlineTransactionForm({
               placeholder="100"
               {...register("shares")}
               error={!!errors.shares || hasInsufficientShares}
+              aria-describedby={errors.shares ? "inline-shares-error" : hasInsufficientShares ? "inline-shares-warning" : undefined}
+              aria-invalid={errors.shares || hasInsufficientShares ? "true" : undefined}
               className={cn(
                 "h-7 text-[11px]",
                 hasInsufficientShares && "ring-1 ring-amber-500 border-amber-500"
               )}
             />
             {errors.shares ? (
-              <p className="mt-0.5 flex items-center gap-1 text-[9px] text-destructive">
+              <p id="inline-shares-error" className="mt-0.5 flex items-center gap-1 text-[9px] text-destructive" role="alert">
                 <AlertCircle className="h-3 w-3" />
                 {t("validation.positiveNumber")}
               </p>
             ) : hasInsufficientShares ? (
-              <p className="mt-0.5 flex items-center gap-1 text-[9px] text-amber-600 dark:text-amber-400">
+              <p id="inline-shares-warning" className="mt-0.5 flex items-center gap-1 text-[9px] text-amber-600 dark:text-amber-400" role="alert">
                 <AlertTriangle className="h-3 w-3" />
                 {t("validation.exceedsShares")} — {t("validation.maxSell", { max: ownedShares })}
               </p>
@@ -253,10 +255,13 @@ export function InlineTransactionForm({
               inputMode="decimal"
               placeholder={formatPrice(currentPrice).replace("EUR", "").trim()}
               {...register("pricePerShare", { onBlur: handlePriceBlur })}
+              error={!!errors.pricePerShare}
+              aria-describedby={errors.pricePerShare ? "inline-price-error" : undefined}
+              aria-invalid={errors.pricePerShare ? "true" : undefined}
               className="h-7 text-[11px]"
             />
             {errors.pricePerShare && (
-              <p className="mt-0.5 flex items-center gap-1 text-[9px] text-destructive">
+              <p id="inline-price-error" className="mt-0.5 flex items-center gap-1 text-[9px] text-destructive" role="alert">
                 <AlertCircle className="h-3 w-3" />
                 {t("validation.positiveNumber")}
               </p>
