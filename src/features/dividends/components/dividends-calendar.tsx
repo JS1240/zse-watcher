@@ -223,17 +223,30 @@ export function DividendsCalendar() {
 
   if (!dividends?.length) {
     return (
-      <EmptyState
-        icon={<DividendsCalendarEmptyIllustration className="h-10 w-10" />}
-        title={td("empty.noData")}
-        description={td("empty.noDataDescription")}
-        variant="action"
-        steps={[
-          { label: td("empty.quickStart.step1"), description: td("empty.quickStart.step1Desc") },
-          { label: td("empty.quickStart.step2"), description: td("empty.quickStart.step2Desc") },
-          { label: td("empty.quickStart.step3"), description: td("empty.quickStart.step3Desc") },
-        ]}
-      />
+      <div className="flex flex-col gap-6">
+        <EmptyState
+          icon={<DividendsCalendarEmptyIllustration className="h-10 w-10" />}
+          title={td("empty.noData")}
+          description={td("empty.noDataDescription")}
+          variant="action"
+          steps={[
+            { label: td("empty.quickStart.step1"), description: td("empty.quickStart.step1Desc") },
+            { label: td("empty.quickStart.step2"), description: td("empty.quickStart.step2Desc") },
+            { label: td("empty.quickStart.step3"), description: td("empty.quickStart.step3Desc") },
+          ]}
+        />
+        {/* Always-visible keyboard shortcuts hint for discoverability — consistent with stocks/portfolio/alerts pattern */}
+        <div className="flex items-center justify-center gap-4 text-[9px] text-muted-foreground">
+          <span className="flex items-center gap-0.5">
+            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">↑↓</kbd>
+            <span>{td("shortcut.navigate") || "navigiraj"}</span>
+          </span>
+          <span className="flex items-center gap-0.5">
+            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">/</kbd>
+            <span>{td("shortcut.search") || "pretraži"}</span>
+          </span>
+        </div>
+      </div>
     );
   }
 
