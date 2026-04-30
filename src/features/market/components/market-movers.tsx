@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { memo, useCallback, useState, useMemo } from "react";
-import { TrendingUp, TrendingDown, Clock, Star, Keyboard, Download, CheckCircle2, ArrowUp, ArrowDown, ArrowUpDown, ListPlus } from "lucide-react";
+import { TrendingUp, TrendingDown, Star, Download, CheckCircle2, ArrowUp, ArrowDown, ArrowUpDown, ListPlus, Keyboard } from "lucide-react";
 import { EmptyState } from "@/components/shared/empty-state";
 import { StockListEmptyIllustration } from "@/components/shared/empty-illustrations";
 import { useMovers } from "@/features/market/api/market-queries";
@@ -13,16 +13,11 @@ import { ChangeBadge } from "@/components/shared/change-badge";
 import { ErrorState } from "@/components/shared/error-state";
 import { formatPrice } from "@/lib/formatters";
 import { exportToCsv } from "@/lib/export";
+import { LiveDataIndicator } from "@/components/shared/live-data-indicator";
 import type { Mover } from "@/types/market";
 import { MoversSkeleton } from "./movers-skeleton";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-
-function formatLastUpdated(timestamp: number | undefined): string {
-  if (!timestamp) return "";
-  const date = new Date(timestamp);
-  return date.toLocaleTimeString("hr-HR", { hour: "2-digit", minute: "2-digit" });
-}
 
 type SortColumn = "changePct" | "price" | "ticker";
 type SortDirection = "asc" | "desc";
@@ -64,7 +59,7 @@ function SortHeader({
 }
 
 export function MarketMovers() {
-  const { data, isLoading, isError, refetch, dataUpdatedAt } = useMovers();
+  const { data, isLoading, isError, refetch, dataUpdatedAt, isFetching } = useMovers();
   const { t } = useTranslation("stocks");
   const { t: tc } = useTranslation("common");
   const { isAuthenticated } = useAuth();
@@ -173,11 +168,11 @@ export function MarketMovers() {
   return (
     <div className="space-y-2">
       {/* Last updated timestamp */}
-      <div className="flex items-center justify-between gap-1 text-[10px] text-muted-foreground">
-        <div className="flex items-center gap-1">
-          <Clock className="h-3 w-3" />
-          <span>Zadnje ažurirano {formatLastUpdated(dataUpdatedAt)}</span>
-        </div>
+      <div className="flex items-center justify-between gap-1">
+        <LiveDataIndicator
+          updatedAt={dataUpdatedAt ?? 0}
+          isFetching={isFetching}
+        />
         <button
           type="button"
           onClick={handleExportCsv}
