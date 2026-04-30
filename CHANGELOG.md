@@ -4,6 +4,13 @@
 
 ### Added
 
+- **Copy All Tickers Button** — copy comma-separated ticker list to clipboard for Croatian retail investors
+  - Added Copy icon button to authenticated watchlist toolbar (next to CSV/JSON export)
+  - Copies all visible tickers as comma-separated list with one click
+  - Toast feedback shows count: "Kopirano: 5 dionica" / "Copied: 5 tickers"
+  - Useful for quick sharing or pasting into other tools
+  - Add Croatian + English translation keys: `copyAll`, `copiedAll`
+
 - **Unified Sticky Table Headers** — consistent sticky header behavior across all scrollable tables for Croatian retail investors
   - Added `sticky top-0 z-10` and `backdrop-blur` to portfolio-dashboard holdings table thead (matching stock-table pattern)
   - Added `sticky top-0 z-10` and `backdrop-blur` to local-portfolio-dashboard holdings table thead
