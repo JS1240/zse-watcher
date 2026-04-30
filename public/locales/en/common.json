@@ -101,7 +101,9 @@
     "noResults": "No results found",
     "loading": "Loading...",
     "hint": "Enter ticker or stock name",
-    "recent": "Recently Viewed"
+    "recent": "Recently Viewed",
+    "marketOpen": "Market Open",
+    "marketClosed": "Market Closed"
   },
   "localData": {
     "title": "Local Data",

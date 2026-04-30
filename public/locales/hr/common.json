@@ -102,7 +102,9 @@
     "noResults": "Nema rezultata",
     "loading": "Ucitavam...",
     "hint": "Upišite ticker ili naziv dionice",
-    "recent": "Nedavno gledano"
+    "recent": "Nedavno gledano",
+    "marketOpen": "Tržište otvoreno",
+    "marketClosed": "Tržište zatvoreno"
   },
   "localData": {
     "title": "Lokalni podaci",

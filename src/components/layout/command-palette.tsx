@@ -15,10 +15,14 @@ import {
   SlidersHorizontal,
   Star,
   TrendingUp,
+  TrendingDown,
   Keyboard,
+  CircleDot,
 } from "lucide-react";
 import { useThemeStore } from "@/hooks/use-theme";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
+import { useMarketStatus } from "@/features/market/api/market-queries";
+import { useMovers } from "@/features/market/api/market-queries";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
 import { useRecentStocks } from "@/hooks/use-recent-stocks";
 import { eventBus } from "@/lib/event-bus";
@@ -32,6 +36,8 @@ export function CommandPalette() {
   const navigate = useNavigate();
   const { mode, toggle: toggleTheme } = useThemeStore();
   const { data: stocksResult, isLoading: stocksLoading } = useStocksLive();
+  const { data: marketStatus } = useMarketStatus();
+  const { data: movers } = useMovers();
   const { select } = useSelectedStock();
   const { recentStocks } = useRecentStocks();
 
@@ -111,6 +117,34 @@ export function CommandPalette() {
           onValueChange={setSearch}
           className="h-11 w-full border-b border-border bg-transparent px-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
         />
+
+        {/* Market status bar */}
+        {search.length < 2 && marketStatus && (
+          <div className="flex items-center justify-between border-b border-border bg-muted/20 px-4 py-2 text-[10px]">
+            <div className="flex items-center gap-1.5">
+              <CircleDot
+                className={`h-2.5 w-2.5 ${marketStatus.isOpen ? "text-emerald-500 animate-pulse" : "text-destructive"}`}
+              />
+              <span className={`font-medium ${marketStatus.isOpen ? "text-emerald-500" : "text-muted-foreground"}`}>
+                {marketStatus.isOpen ? t("commandPalette.marketOpen") : t("commandPalette.marketClosed")}
+              </span>
+            </div>
+            {movers && (
+              <div className="flex items-center gap-3 text-muted-foreground">
+                <span className="flex items-center gap-1">
+                  <TrendingUp className="h-3 w-3 text-emerald-500" />
+                  <span className="font-data font-medium">{movers.gainers[0]?.ticker}</span>
+                  <span className="font-data">{formatPercent(movers.gainers[0]?.changePct ?? 0)}</span>
+                </span>
+                <span className="flex items-center gap-1">
+                  <TrendingDown className="h-3 w-3 text-destructive" />
+                  <span className="font-data font-medium">{movers.losers[0]?.ticker}</span>
+                  <span className="font-data">{formatPercent(movers.losers[0]?.changePct ?? 0)}</span>
+                </span>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Keyboard hints bar */}
         <div className="flex items-center justify-between border-b border-border bg-muted/30 px-4 py-2 text-[10px] text-muted-foreground">

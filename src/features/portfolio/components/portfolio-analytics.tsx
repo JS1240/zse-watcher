@@ -116,13 +116,15 @@ export function PortfolioAnalytics() {
         />
         <MetricCard
           label={t("analytics.bestPerformer")}
-          value={analytics.best?.ticker ?? "-"}
+          value={analytics.best ? `${analytics.best.ticker.split("-")[0]} ${formatCurrency(analytics.best.currentPrice)}` : "—"}
           sub={analytics.best ? <ChangeBadge value={analytics.best.gainPct} showIcon={false} /> : null}
+          color={analytics.best.gainPct >= 0 ? "up" : "down"}
         />
         <MetricCard
           label={t("analytics.worstPerformer")}
-          value={analytics.worst?.ticker ?? "-"}
+          value={analytics.worst ? `${analytics.worst.ticker.split("-")[0]} ${formatCurrency(analytics.worst.currentPrice)}` : "—"}
           sub={analytics.worst ? <ChangeBadge value={analytics.worst.gainPct} showIcon={false} /> : null}
+          color={analytics.worst.gainPct >= 0 ? "up" : "down"}
         />
       </div>
 
