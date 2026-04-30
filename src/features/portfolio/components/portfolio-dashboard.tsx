@@ -1,6 +1,7 @@
 import { useMemo, useState, useRef, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Plus, Download, ChevronUp, ChevronDown, Search, X, Keyboard, TrendingUp, TrendingDown, Minus, CheckCircle2, ArrowUp as ScrollToTopIcon, Pencil, Trash2, Check, Banknote } from "lucide-react";
+import { PerformanceBar } from "@/components/shared/performance-bar";
 import { Sparkline } from "@/components/shared/sparkline";
 import { getMockPriceHistory } from "@/lib/mock-data";
 import { Highlight } from "@/components/shared/highlight";
@@ -806,7 +807,20 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
                       </button>
                     </td>
                     <td className="px-3 py-3 md:py-2 text-right">
-                      <ChangeBadge value={h.gainPct} showIcon={false} />
+                      <div className="flex flex-col items-end gap-0.5">
+                        <ChangeBadge value={h.gainPct} showIcon={false} />
+                        {/* Visual gain/loss bar — shows relative position gain/loss in portfolio context */}
+                        <PerformanceBar
+                          value={h.totalGain}
+                          baseline={0}
+                          ceiling={totalPortfolioValue > 0 ? totalPortfolioValue * 0.5 : 1000}
+                          floor={-Math.abs(totalPortfolioValue > 0 ? totalPortfolioValue * 0.5 : 1000)}
+                          colorMode="auto"
+                          compact
+                          showValue={false}
+                          className="w-12"
+                        />
+                      </div>
                     </td>
                     <td className="px-2 py-3 md:py-2 text-center">
                       {isLocal ? (

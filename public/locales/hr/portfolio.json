@@ -128,6 +128,7 @@
     "view": "detalji dionice",
     "delete": "obrisi",
     "search": "pretraživanje",
+    "add": "dodaj poziciju",
     "holdingsTab": "pozicije",
     "analyticsTab": "analitika",
     "dividendsTab": "dividende"
