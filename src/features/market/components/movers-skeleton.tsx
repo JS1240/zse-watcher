@@ -1,20 +1,23 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { TrendingUp, TrendingDown, Keyboard } from "lucide-react";
+import { LiveDataIndicator } from "@/components/shared/live-data-indicator";
 
-interface MoversSkeletonProps {
-  /** Number of gainers/losers to show (default: 5) */
-  count?: number;
-  className?: string;
-}
-
-export function MoversSkeleton({ count = 5, className }: MoversSkeletonProps) {
+/**
+ * Polished skeleton for MarketMovers component.
+ * Mirrors the actual component structure: LiveDataIndicator header,
+ * sorted gainers/losers sections, and keyboard shortcuts hint.
+ */
+export function MarketMoversSkeleton({ count = 5, className }: MoversSkeletonProps) {
   return (
     <div className={className}>
-      {/* Header timestamp skeleton */}
-      <Skeleton className="h-4 w-32 mb-3 animate-shimmer" />
+      {/* Header timestamp + export button skeleton */}
+      <div className="mb-3 flex items-center justify-between">
+        <LiveDataIndicator updatedAt={0} isFetching={true} />
+        <Skeleton className="h-5 w-10 animate-shimmer" />
+      </div>
 
       {/* Gainers section */}
-      <div className="flex items-center gap-2 mb-2">
+      <div className="mb-2 flex items-center gap-2">
         <TrendingUp className="h-3.5 w-3.5 text-price-up" />
         <Skeleton className="h-4 w-16 animate-shimmer" />
       </div>
@@ -25,7 +28,7 @@ export function MoversSkeleton({ count = 5, className }: MoversSkeletonProps) {
       </div>
 
       {/* Losers section */}
-      <div className="flex items-center gap-2 mt-4 mb-2">
+      <div className="mb-2 mt-4 flex items-center gap-2">
         <TrendingDown className="h-3.5 w-3.5 text-price-down" />
         <Skeleton className="h-4 w-16 animate-shimmer" />
       </div>
@@ -36,10 +39,8 @@ export function MoversSkeleton({ count = 5, className }: MoversSkeletonProps) {
       </div>
 
       {/* Always-visible keyboard shortcuts hint — matches main market movers pattern */}
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-sm border border-border/50 bg-muted/30 px-3 py-1.5 text-[9px] text-muted-foreground">
-        <span className="flex items-center gap-0.5">
-          <Keyboard className="h-2.5 w-2.5" />
-        </span>
+      <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-sm border border-border/50 bg-muted/30 px-3 py-1.5 text-[9px] text-muted-foreground">
+        <Keyboard className="h-2.5 w-2.5" />
         <span className="flex items-center gap-0.5">
           <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">↑↓</kbd>
           <span>navigiraj</span>
@@ -52,9 +53,19 @@ export function MoversSkeleton({ count = 5, className }: MoversSkeletonProps) {
           <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">S</kbd>
           <span>prati</span>
         </span>
+        <span className="flex items-center gap-0.5">
+          <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">C</kbd>
+          <span>kopiraj</span>
+        </span>
       </div>
     </div>
   );
+}
+
+interface MoversSkeletonProps {
+  /** Number of gainers/losers to show (default: 5) */
+  count?: number;
+  className?: string;
 }
 
 function MoverRowSkeleton() {
@@ -75,3 +86,7 @@ function MoverRowSkeleton() {
     </div>
   );
 }
+
+// Alias for backward compatibility with existing imports
+// (market-movers.tsx imports as MoversSkeleton)
+export const MoversSkeleton = MarketMoversSkeleton;
