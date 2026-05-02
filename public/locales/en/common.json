@@ -73,6 +73,8 @@
     "bulkAddAll": "Add all to watchlist",
     "addAll": "All"
   },
+  "switchToJson": "Switch to JSON",
+  "switchToCsv": "Switch to CSV",
   "exportJson": "JSON",
   "empty": {
     "noData": "No data available",

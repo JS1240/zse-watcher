@@ -74,6 +74,8 @@
     "bulkAddAll": "Dodaj sve u praćenje",
     "addAll": "Svi"
   },
+  "switchToJson": "Promijeni u JSON",
+  "switchToCsv": "Promijeni u CSV",
   "exportJson": "JSON",
   "empty": {
     "noData": "Nema podataka",

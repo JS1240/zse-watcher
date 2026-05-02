@@ -15,7 +15,7 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { NewsEmptyIllustration, SearchEmptyIllustration } from "@/components/shared/empty-illustrations";
 import { ErrorState } from "@/components/shared/error-state";
 import { LiveDataIndicator } from "@/components/shared/live-data-indicator";
-import { exportToCsv } from "@/lib/export";
+import { exportToCsv, exportToJson } from "@/lib/export";
 import { cn } from "@/lib/utils";
 import type { NewsArticle } from "@/types/news";
 import { useDebounce } from "@/hooks/use-debounce";
@@ -236,8 +236,11 @@ export function NewsFeed({ ticker: propsTicker, category, limit }: NewsFeedProps
   // Only show search/export when not limited (inline usage)
   const showSearch = !limit && articles && articles.length > 0;
 
+  // Export format toggle (CSV/JSON) — Croatian retail investors can choose their preferred format
+  const [exportFormat, setExportFormat] = useState<"csv" | "json">("csv");
+
   // CSV export handler - memoized to prevent re-renders
-  const handleExport = useCallback(() => {
+  const handleExportCsv = useCallback(() => {
     if (!filtered.length) return;
     const headers = ["Date", "Time", "Ticker", "Title", "Summary", "Source", "Category"];
     const rows = filtered.map((a) => [
@@ -251,6 +254,26 @@ export function NewsFeed({ ticker: propsTicker, category, limit }: NewsFeedProps
     ]);
     exportToCsv(`zse-news-${new Date().toISOString().split("T")[0]}`, headers, rows);
     toast.success(t("toast.exported"));
+  }, [filtered, t]);
+
+  // JSON export handler - memoized to prevent re-renders
+  const handleExportJson = useCallback(() => {
+    if (!filtered.length) return;
+    const timestamp = new Date().toISOString().split("T")[0];
+    const jsonData = filtered.map((a) => ({
+      id: a.id,
+      ticker: a.ticker || null,
+      title: a.title,
+      summary: a.summary || null,
+      source: a.source,
+      category: a.category,
+      publishedAt: a.publishedAt,
+      publishedDate: a.publishedAt.split("T")[0],
+      publishedTime: a.publishedAt.split("T")[1]?.substring(0, 5) || null,
+      url: a.url,
+    }));
+    exportToJson(`zse-news-${timestamp}`, jsonData);
+    toast.success(t("toast.exportedJson"));
   }, [filtered, t]);
 
   // Article click handler - memoized
@@ -462,16 +485,31 @@ export function NewsFeed({ ticker: propsTicker, category, limit }: NewsFeedProps
                 updatedAt={dataUpdatedAt}
                 isFetching={isFetching}
               />
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleExport}
-                disabled={!filtered.length}
-                title={t("exportCsv") || "Export CSV"}
-              >
-                <Download className="h-3.5 w-3.5" />
-                CSV
-              </Button>
+              {/* Export button with CSV/JSON format toggle - matching portfolio/watchlist pattern */}
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setExportFormat((f) => (f === "csv" ? "json" : "csv"))}
+                  className={cn(
+                    "flex h-6 items-center gap-1 rounded px-1.5 py-0.5 text-[9px] font-medium transition-colors",
+                    exportFormat === "csv"
+                      ? "bg-muted text-muted-foreground hover:bg-muted/80"
+                      : "bg-amber-500/20 text-amber-700 dark:text-amber-400"
+                  )}
+                  title={exportFormat === "csv" ? t("switchToJson") || "Switch to JSON" : t("switchToCsv") || "Switch to CSV"}
+                >
+                  {exportFormat.toUpperCase()}
+                </button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={exportFormat === "csv" ? handleExportCsv : handleExportJson}
+                  disabled={!filtered.length}
+                  title={exportFormat === "csv" ? t("exportCsv") : t("exportJson")}
+                >
+                  <Download className="h-3.5 w-3.5" />
+                  {exportFormat.toUpperCase()}
+                </Button>
+              </div>
             </div>
           </div>
         )}
@@ -601,16 +639,29 @@ export function NewsFeed({ ticker: propsTicker, category, limit }: NewsFeedProps
                 updatedAt={dataUpdatedAt}
                 isFetching={isFetching}
               />
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleExport}
-                disabled={!filtered.length}
-                title={t("exportCsv") || "Export CSV"}
-              >
-                <Download className="h-3.5 w-3.5" />
-                CSV
-              </Button>
+              {/* Export button with CSV/JSON format toggle - matching portfolio/watchlist pattern */}
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setExportFormat((f) => (f === "csv" ? "json" : "csv"))}
+                  className={cn(
+                    "flex h-6 items-center gap-1 rounded px-1.5 py-0.5 text-[9px] font-medium transition-colors",
+                    exportFormat === "csv"
+                      ? "bg-muted text-muted-foreground hover:bg-muted/80"
+                      : "bg-amber-500/20 text-amber-700 dark:text-amber-400"
+                  )}
+                >
+                  {exportFormat.toUpperCase()}
+                </button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={exportFormat === "csv" ? handleExportCsv : handleExportJson}
+                  disabled={!filtered.length}
+                >
+                  <Download className="h-3.5 w-3.5" />
+                  {exportFormat.toUpperCase()}
+                </Button>
+              </div>
             </div>
           </div>
         )}
