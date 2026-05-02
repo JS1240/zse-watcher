@@ -73,6 +73,14 @@ export function PortfolioAnalytics() {
     return { enriched, totalValue, totalCost, totalGain, totalGainPct, sectors, best, worst };
   }, [holdings, stocks]);
 
+  // Build sector color map for consistent color across donut + breakdown bars
+  const sectorColorMap = useMemo(() => {
+    if (!analytics) return new Map<string, string>();
+    const map = new Map<string, string>();
+    analytics.sectors.forEach((s) => map.set(s.name, s.color));
+    return map;
+  }, [analytics]);
+
   if (isLoading) {
     return <PortfolioAnalyticsSkeleton />;
   }
@@ -183,16 +191,20 @@ export function PortfolioAnalytics() {
             .sort((a, b) => b.totalValue - a.totalValue)
             .map((h) => {
               const pct = analytics.totalValue > 0 ? (h.totalValue / analytics.totalValue) * 100 : 0;
+              const sectorColor = sectorColorMap.get(h.sector) ?? "hsl(var(--primary))";
               return (
                 <div key={h.ticker} className="flex items-center gap-3">
-                  <span className="w-20 font-data text-[11px] font-semibold text-foreground">
-                    {h.ticker.split("-")[0]}
-                  </span>
+                  <div className="flex items-center gap-1.5 w-24">
+                    <div className="h-2 w-2 rounded-sm shrink-0" style={{ backgroundColor: sectorColor }} />
+                    <span className="font-data text-[11px] font-semibold text-foreground truncate">
+                      {h.ticker.split("-")[0]}
+                    </span>
+                  </div>
                   <div className="flex-1">
                     <div className="h-2 rounded-full bg-muted">
                       <div
-                        className="h-2 rounded-full bg-primary"
-                        style={{ width: `${Math.max(pct, 1)}%` }}
+                        className="h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${Math.max(pct, 1)}%`, backgroundColor: sectorColor }}
                       />
                     </div>
                   </div>
