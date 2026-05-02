@@ -7,4 +7,5 @@ export interface NewsArticle {
   publishedAt: string;
   ticker: string | null;
   category: "general" | "trading";
+  readTimeMinutes: number;
 }

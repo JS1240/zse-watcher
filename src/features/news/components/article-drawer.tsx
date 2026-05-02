@@ -49,6 +49,16 @@ export function ArticleDrawer({ article, onClose }: ArticleDrawerProps) {
                 {article.ticker}
               </span>
             )}
+            {/* Estimated read time badge — helps Croatian investors gauge article length at a glance */}
+            {article.readTimeMinutes > 0 && (
+              <span className="flex items-center gap-1 rounded-sm bg-accent/70 px-1.5 py-0.5 text-[10px] text-foreground">
+                <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
+                {article.readTimeMinutes} min
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-2">
             <span className="hidden items-center gap-1 text-[10px] text-muted-foreground md:flex">
@@ -90,20 +100,21 @@ export function ArticleDrawer({ article, onClose }: ArticleDrawerProps) {
               <ScrollTop className="h-3.5 w-3.5" />
             </button>
           )}
-          <h2 className="mb-2 font-data text-base font-bold leading-snug text-foreground">
+          <h2 className="mb-3 font-data text-base font-bold leading-snug text-foreground">
             {article.title}
           </h2>
 
           <div className="mb-4 flex items-center gap-2 text-[10px] text-muted-foreground">
-            <span>{article.source}</span>
-            <span>·</span>
+            <span className="font-medium text-foreground/70">{article.source}</span>
+            <span className="text-muted-foreground/40">·</span>
             <span>{formatDate(article.publishedAt)}</span>
-            <span>·</span>
+            <span className="text-muted-foreground/40">·</span>
             <span>{formatTime(article.publishedAt)}</span>
           </div>
 
+          {/* Lead paragraph — styled as article opening for Croatian retail investors */}
           {article.summary && (
-            <p className="text-xs leading-relaxed text-foreground/90">
+            <p className="text-xs leading-relaxed text-foreground/80">
               {article.summary}
             </p>
           )}

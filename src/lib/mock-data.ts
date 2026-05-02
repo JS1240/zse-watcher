@@ -63,6 +63,7 @@ export const MOCK_NEWS: NewsArticle[] = [
     publishedAt: new Date().toISOString(),
     ticker: null,
     category: "general",
+    readTimeMinutes: 1,
   },
   {
     id: "2",
@@ -73,6 +74,7 @@ export const MOCK_NEWS: NewsArticle[] = [
     publishedAt: new Date(Date.now() - 3600000).toISOString(),
     ticker: "KOEI-R-A",
     category: "trading",
+    readTimeMinutes: 2,
   },
   {
     id: "3",
@@ -83,6 +85,7 @@ export const MOCK_NEWS: NewsArticle[] = [
     publishedAt: new Date(Date.now() - 7200000).toISOString(),
     ticker: "ADRS-P-A",
     category: "general",
+    readTimeMinutes: 3,
   },
   {
     id: "4",
@@ -93,6 +96,7 @@ export const MOCK_NEWS: NewsArticle[] = [
     publishedAt: new Date(Date.now() - 14400000).toISOString(),
     ticker: "RIVP-R-A",
     category: "trading",
+    readTimeMinutes: 2,
   },
 ];
 
