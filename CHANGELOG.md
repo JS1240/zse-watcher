@@ -4,6 +4,13 @@
 
 ### Added
 
+- **Color-coded Holdings Breakdown Bars** — sector colors from donut chart applied to breakdown bars for visual consistency
+  - `sectorColorMap` useMemo extracts colors from donut chart sector data and reuses them in breakdown bars
+  - Each holding row in the breakdown now shows: colored dot matching donut legend + colored bar fill
+  - Helps Croatian retail investors instantly correlate donut chart legend with breakdown bar chart
+  - Previously all bars used generic primary blue regardless of sector — now visually connected
+  - Fixed stale `analytics.sectors` reference in useMemo dependency array
+
 - **PerformanceBar Component** — reusable relative performance bar for visual metric comparison
   - New `PerformanceBar` component in `src/components/shared/` for showing relative position vs range/ceiling
   - Supports 52w range mode (floor → ceiling → fill), positive/negative comparison mode, and manual fill
