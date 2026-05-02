@@ -1,4 +1,9 @@
 {
+  "errors": {
+    "stocksLoadFailed": "Failed to load stocks",
+    "stocksLoadFailedDesc": "ZSE stock data is currently unavailable. Check your internet connection or try again.",
+    "stocksMarketHoursHint": "ZSE is open Mon–Fri, 8:00–16:00 CET. Outside trading hours, the last closing price is used."
+  },
   "shortcut": {
     "search": "search",
     "details": "details",

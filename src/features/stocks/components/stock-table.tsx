@@ -16,6 +16,7 @@ import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { useSubscription } from "@/features/premium/hooks/use-subscription";
 import { exportToCsv } from "@/lib/export";
 import { EmptyState } from "@/components/shared/empty-state";
+import { ErrorState } from "@/components/shared/error-state";
 import { StockListEmptyIllustration, SearchEmptyIllustration } from "@/components/shared/empty-illustrations";
 import { cn } from "@/lib/utils";
 
@@ -27,7 +28,7 @@ type YieldFilter = "all" | "gt3" | "gt5" | "gt8";
 export function StockTable() {
   const { t } = useTranslation("stocks");
   const { t: tc } = useTranslation("common");
-  const { data: result, isLoading, dataUpdatedAt, isFetching } = useStocksLive();
+  const { data: result, isLoading, isError, dataUpdatedAt, isFetching, refetch } = useStocksLive();
   const stocks = result?.stocks ?? null;
   const { select } = useSelectedStock();
   const [search, setSearch] = useState("");
@@ -182,6 +183,18 @@ export function StockTable() {
   }, []);
 
   if (isLoading) return <StockTableSkeleton />;
+
+  // Error state — shows when ZSE/EOD data fetch fails, with retry and market-hours hint for Croatian investors
+  if (isError) {
+    return (
+      <ErrorState
+        title={t("errors.stocksLoadFailed") || "Greška pri učitavanju dionica"}
+        description={t("errors.stocksLoadFailedDesc") || "Podaci o cijenama na ZSE trenutno nisu dostupni. Provjerite internetsku vezu ili pokušajte ponovo."}
+        hint={t("errors.stocksMarketHoursHint") || "ZSE radi pon–pet, 8:00–16:00 CET. Van radnog vremena, koristi se zadnja zaključna cijena."}
+        retry={{ onRetry: () => refetch(), label: tc("actions.tryAgain") || "Pokušaj ponovo" }}
+      />
+    );
+  }
 
   return (
     <div className="flex flex-col gap-2">

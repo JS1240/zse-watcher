@@ -1,4 +1,9 @@
 {
+  "errors": {
+    "stocksLoadFailed": "Greška pri učitavanju dionica",
+    "stocksLoadFailedDesc": "Podaci o cijenama na ZSE trenutno nisu dostupni. Provjerite internetsku vezu ili pokušajte ponovo.",
+    "stocksMarketHoursHint": "ZSE radi pon–pet, 8:00–16:00 CET. Van radnog vremena, koristi se zadnja zaključna cijena."
+  },
   "shortcut": {
     "search": "pretraži",
     "details": "detalji",
