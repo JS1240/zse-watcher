@@ -1376,7 +1376,7 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-2 animate-form-field">
+        <div className="grid grid-cols-3 gap-2 animate-form-field-instant">
           <div className="animate-form-field">
             <label className="mb-0.5 block text-[9px] uppercase tracking-wider text-muted-foreground">
               {t("fields.ticker")}
