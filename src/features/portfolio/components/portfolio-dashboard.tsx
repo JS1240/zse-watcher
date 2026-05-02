@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button";
 import { LiveDataIndicator } from "@/components/shared/live-data-indicator";
 import { ChangeBadge } from "@/components/shared/change-badge";
 import { formatPrice, formatCurrency } from "@/lib/formatters";
-import { exportToCsv } from "@/lib/export";
+import { exportToCsv, exportToJson } from "@/lib/export";
 import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
@@ -66,6 +66,9 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
   const portfolioRef = useRef<HTMLDivElement>(null);
   // Track focused row index for scroll-into-view on keyboard navigation
   const [focusedRowIndex, setFocusedRowIndex] = useState(-1);
+
+  // Export format toggle (CSV/JSON) — Croatian retail investors can choose their preferred format
+  const [exportFormat, setExportFormat] = useState<"csv" | "json">("csv");
 
   // Scroll focused row into view when index changes
   useEffect(() => {
@@ -340,8 +343,10 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
     toast.success(t("toast.exported"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
   };
 
-  // Export transaction history as CSV for Croatian tax reporting
+  // Export transaction history as CSV or JSON for Croatian tax reporting
   const handleExportTransactions = () => {
+    const timestamp = new Date().toISOString().split("T")[0];
+
     // Combine Supabase and local transactions - properly map each to common format
     const supabaseTxs = (portfolioData?.transactions ?? []).map((tx) => ({
       date: tx.transaction_date,
@@ -351,6 +356,8 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
       price: tx.price_per_share,
       total: tx.total_amount,
       notes: tx.notes ?? "",
+      // createdAt not in TransactionRow type — use Supabase default if available
+      createdAt: (tx as unknown as { created_at?: string }).created_at,
     }));
 
     const localTxsFormatted = localTxs.map((tx) => ({
@@ -361,11 +368,14 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
       price: tx.pricePerShare,
       total: tx.totalAmount,
       notes: tx.notes ?? "",
+      createdAt: tx.createdAt,
     }));
 
     const allTransactions = [...supabaseTxs, ...localTxsFormatted].sort(
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
     );
+
+    if (!allTransactions.length) return;
 
     // Localized type labels for Croatian tax reporting (Porezna uprava)
     const typeLabels: Record<string, string> = {
@@ -374,26 +384,37 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
       dividend: t("types.dividend"),
     };
 
+    if (exportFormat === "json") {
+      // JSON export includes all transaction data for external analysis
+      const jsonData = allTransactions.map((tx) => ({
+        date: new Date(tx.date).toISOString().split("T")[0],
+        ticker: tx.ticker,
+        type: tx.type,
+        typeLabel: typeLabels[tx.type] || tx.type,
+        shares: tx.shares,
+        pricePerShare: tx.price,
+        totalAmount: tx.total,
+        notes: tx.notes || null,
+        createdAt: tx.createdAt ? new Date(tx.createdAt).toISOString() : null,
+      }));
+      exportToJson(`zse-transactions-${timestamp}`, jsonData);
+      toast.success(tc("toast.exportedJson"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
+      return;
+    }
+
+    // CSV export for direct use in spreadsheets
     const headers = ["Date", "Ticker", "Type", "Shares", "Price (EUR)", "Total (EUR)", "Notes", "Created At"];
-    const rows = allTransactions.map((tx) => {
-      // TypeScript needs help understanding the createdAt field may exist
-      const txAny = tx as unknown as { createdAt?: string };
-      return [
-        new Date(tx.date).toISOString().split("T")[0],
-        tx.ticker,
-        typeLabels[tx.type] || tx.type,
-        tx.shares.toString(),
-        tx.price.toFixed(2),
-        tx.total.toFixed(2),
-        tx.notes,
-        txAny.createdAt ? new Date(txAny.createdAt).toISOString().replace("T", " ").substring(0, 19) : "",
-      ];
-    });
-    exportToCsv(
-      `zse-transactions-${new Date().toISOString().split("T")[0]}`,
-      headers,
-      rows,
-    );
+    const rows = allTransactions.map((tx) => [
+      new Date(tx.date).toISOString().split("T")[0],
+      tx.ticker,
+      typeLabels[tx.type] || tx.type,
+      tx.shares.toString(),
+      tx.price.toFixed(2),
+      tx.total.toFixed(2),
+      tx.notes,
+      tx.createdAt ? new Date(tx.createdAt).toISOString().replace("T", " ").substring(0, 19) : "",
+    ]);
+    exportToCsv(`zse-transactions-${timestamp}`, headers, rows);
     toast.success(t("toast.exported"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
   };
 
@@ -545,7 +566,26 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
             disabled={!hasLocalTransactions && !(portfolioData?.transactions?.length)}
           >
             <Download className="h-3.5 w-3.5" />
-            {t("exportTransactions") || "Transactions"}
+            {exportFormat === "json" ? (tc("exportJson") || "JSON") : (t("exportTransactions") || "Transactions")}
+            {/* Format toggle — click to switch CSV/JSON */}
+            <span
+              onClick={(e) => {
+                e.stopPropagation();
+                setExportFormat((prev) => (prev === "csv" ? "json" : "csv"));
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setExportFormat((prev) => (prev === "csv" ? "json" : "csv"));
+                }
+              }}
+              className="ml-1 cursor-pointer rounded bg-muted px-1 py-0.5 text-[9px] font-medium hover:bg-muted/80"
+              role="button"
+              tabIndex={0}
+              aria-label={exportFormat === "csv" ? "Switch to JSON export" : "Switch to CSV export"}
+            >
+              {exportFormat === "json" ? "CSV" : "JSON"}
+            </span>
           </Button>
           <LiveDataIndicator
             updatedAt={dataUpdatedAt}

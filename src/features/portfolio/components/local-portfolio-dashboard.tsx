@@ -25,7 +25,7 @@ import { PortfolioEmptyIllustration, PortfolioSoldIllustration } from "@/compone
 import { LiveDataIndicator } from "@/components/shared/live-data-indicator";
 import { formatPrice, formatCurrency } from "@/lib/formatters";
 import { parseLocalizedNumber } from "@/lib/format-input";
-import { exportToCsv } from "@/lib/export";
+import { exportToCsv, exportToJson } from "@/lib/export";
 import { cn } from "@/lib/utils";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
@@ -148,6 +148,9 @@ export function LocalPortfolioDashboard() {
   const [showHistory, setShowHistory] = useState(false);
   const [savedFlash, setSavedFlash] = useState(false);
   const [confirmClear, setConfirmClear] = useState(false);
+
+  // Export format toggle (CSV/JSON) — Croatian retail investors can choose their preferred format
+  const [exportFormat, setExportFormat] = useState<"csv" | "json">("csv");
 
   // Sort state for transactions
   type TxSortColumn = "transactionDate" | "ticker" | "transactionType" | "shares" | "pricePerShare" | "totalAmount";
@@ -468,9 +471,10 @@ export function LocalPortfolioDashboard() {
     toast.success(t("toast.exported"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
   };
 
-  // Export transaction history as CSV for Croatian tax reporting
+  // Export transaction history as CSV or JSON for Croatian tax reporting
   const handleExportTransactions = () => {
     if (!transactions.length) return;
+    const timestamp = new Date().toISOString().split("T")[0];
 
     // Localized type labels for Croatian tax reporting (Porezna uprava)
     const typeLabels: Record<string, string> = {
@@ -479,21 +483,42 @@ export function LocalPortfolioDashboard() {
       dividend: t("types.dividend"),
     };
 
+    const sortedTx = [...transactions].sort(
+      (a, b) => new Date(b.transactionDate).getTime() - new Date(a.transactionDate).getTime()
+    );
+
+    if (exportFormat === "json") {
+      // JSON export includes all transaction data for external analysis
+      const jsonData = sortedTx.map((tx) => ({
+        date: new Date(tx.transactionDate).toISOString().split("T")[0],
+        ticker: tx.ticker,
+        type: tx.transactionType,
+        typeLabel: typeLabels[tx.transactionType] || tx.transactionType,
+        shares: tx.shares,
+        pricePerShare: tx.pricePerShare,
+        totalAmount: tx.totalAmount,
+        notes: tx.notes ?? null,
+        createdAt: new Date(tx.createdAt).toISOString(),
+      }));
+      exportToJson(`zse-transactions-local-${timestamp}`, jsonData);
+      toast.success(tc("toast.exportedJson"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
+      return;
+    }
+
+    // CSV export for direct use in spreadsheets
     const headers = ["Date", "Ticker", "Type", "Shares", "Price (EUR)", "Total (EUR)", "Notes", "Created At"];
-    const rows = [...transactions]
-      .sort((a, b) => new Date(b.transactionDate).getTime() - new Date(a.transactionDate).getTime())
-      .map((tx) => [
-        new Date(tx.transactionDate).toISOString().split("T")[0],
-        tx.ticker,
-        typeLabels[tx.transactionType] || tx.transactionType,
-        tx.shares.toString(),
-        tx.pricePerShare.toFixed(2),
-        tx.totalAmount.toFixed(2),
-        tx.notes ?? "",
-        new Date(tx.createdAt).toISOString().replace("T", " ").substring(0, 19),
-      ]);
+    const rows = sortedTx.map((tx) => [
+      new Date(tx.transactionDate).toISOString().split("T")[0],
+      tx.ticker,
+      typeLabels[tx.transactionType] || tx.transactionType,
+      tx.shares.toString(),
+      tx.pricePerShare.toFixed(2),
+      tx.totalAmount.toFixed(2),
+      tx.notes ?? "",
+      new Date(tx.createdAt).toISOString().replace("T", " ").substring(0, 19),
+    ]);
     exportToCsv(
-      `zse-transactions-local-${new Date().toISOString().split("T")[0]}`,
+      `zse-transactions-local-${timestamp}`,
       headers,
       rows,
     );
@@ -709,7 +734,26 @@ export function LocalPortfolioDashboard() {
             {transactions.length > 0 && (
               <Button size="sm" variant="outline" onClick={handleExportTransactions}>
                 <Download className="h-3.5 w-3.5" />
-                {t("exportTransactions") || "Transactions"}
+                {exportFormat === "json" ? (tc("exportJson") || "JSON") : (t("exportTransactions") || "Transactions")}
+                {/* Format toggle — click to switch CSV/JSON */}
+                <span
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setExportFormat((prev) => (prev === "csv" ? "json" : "csv"));
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setExportFormat((prev) => (prev === "csv" ? "json" : "csv"));
+                    }
+                  }}
+                  className="ml-1 cursor-pointer rounded bg-muted px-1 py-0.5 text-[9px] font-medium hover:bg-muted/80"
+                  role="button"
+                  tabIndex={0}
+                  aria-label={exportFormat === "csv" ? "Switch to JSON export" : "Switch to CSV export"}
+                >
+                  {exportFormat === "json" ? "CSV" : "JSON"}
+                </span>
               </Button>
             )}
             <LiveDataIndicator

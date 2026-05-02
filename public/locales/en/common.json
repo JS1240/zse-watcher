@@ -67,11 +67,13 @@
     "copied": "Copied: {{value}}",
     "copiedTarget": "Copied: {{value}}",
     "exported": "Data exported to CSV",
+    "exportedJson": "Data exported to JSON",
     "exportCsv": "Export to CSV",
     "bulkAdded": "{{count}} {{type}} added to watchlist",
     "bulkAddAll": "Add all to watchlist",
     "addAll": "All"
   },
+  "exportJson": "JSON",
   "empty": {
     "noData": "No data available",
     "noResults": "No results found",

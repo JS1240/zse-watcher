@@ -68,11 +68,13 @@
     "copied": "Kopirano: {{value}}",
     "copiedTarget": "Kopirano: {{value}}",
     "exported": "Podaci izvezeni u CSV",
+    "exportedJson": "Podaci izvezeni u JSON",
     "exportCsv": "Izvoz u CSV",
     "bulkAdded": "{{count}} {{type}} dodano u praćenje",
     "bulkAddAll": "Dodaj sve u praćenje",
     "addAll": "Svi"
   },
+  "exportJson": "JSON",
   "empty": {
     "noData": "Nema podataka",
     "noResults": "Nema rezultata",
