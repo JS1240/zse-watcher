@@ -4,6 +4,14 @@
 
 ### Added
 
+- **Polished MarketMovers Skeleton** — skeleton now mirrors actual component layout for Croatian investors
+  - `MarketMoversSkeleton` (renamed from `MoversSkeleton`) now shows LiveDataIndicator header with spinning/fetching state
+  - Gainers/losers sections with colored TrendingUp/TrendingDown icons and section label skeletons
+  - Keyboard shortcuts hint bar at bottom matching the real component
+  - Previously showed only row skeletons with no header/footer — investors saw a fundamentally different layout during loading vs after data
+  - `LiveDataIndicator` shows `isFetching={true}` (spinning dot) so loading feels intentional and connected
+  - Both `MarketMoversSkeleton` (canonical) and `MoversSkeleton` (alias) exported for backward compatibility with existing imports
+
 - **Color-coded Holdings Breakdown Bars** — sector colors from donut chart applied to breakdown bars for visual consistency
   - `sectorColorMap` useMemo extracts colors from donut chart sector data and reuses them in breakdown bars
   - Each holding row in the breakdown now shows: colored dot matching donut legend + colored bar fill
