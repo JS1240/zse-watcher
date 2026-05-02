@@ -339,8 +339,33 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
         stock?.dividendYield ? stock.dividendYield.toFixed(2) : "",
       ];
     });
-    exportToCsv(`zse-portfolio-${new Date().toISOString().split("T")[0]}`, headers, rows);
+    exportToCsv(`zse-portfolio-holdings-${new Date().toISOString().split("T")[0]}`, headers, rows);
     toast.success(t("toast.exported"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
+  };
+
+  // JSON export for portfolio holdings — complete data for external analysis and backups
+  const handleExportHoldingsJson = () => {
+    const timestamp = new Date().toISOString().split("T")[0];
+    const jsonData = enrichedHoldings.map((h) => {
+      const stock = stocks?.find((s) => s.ticker === h.ticker);
+      return {
+        ticker: h.ticker,
+        name: h.name,
+        sector: h.sector,
+        shares: h.totalShares,
+        avgPriceEur: parseFloat(h.avgPrice.toFixed(4)),
+        currentPriceEur: parseFloat(h.currentPrice.toFixed(4)),
+        totalValueEur: parseFloat(h.totalValue.toFixed(2)),
+        totalCostEur: parseFloat(h.totalCost.toFixed(2)),
+        totalGainEur: parseFloat(h.totalGain.toFixed(2)),
+        gainPct: parseFloat(h.gainPct.toFixed(2)),
+        peRatio: stock?.peRatio ?? null,
+        dividendYield: stock?.dividendYield ?? null,
+        marketCapM: stock?.marketCapM ?? null,
+      };
+    });
+    exportToJson(`zse-portfolio-holdings-${timestamp}`, jsonData);
+    toast.success(tc("toast.exportedJson"), { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
   };
 
   // Export transaction history as CSV or JSON for Croatian tax reporting
@@ -558,6 +583,16 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
           >
             <Download className="h-3.5 w-3.5" />
             {t("exportCsv")}
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={handleExportHoldingsJson}
+            disabled={sortedHoldings.length === 0}
+            title={tc("exportJson") || "Izvoz u JSON"}
+          >
+            <Download className="h-3.5 w-3.5" />
+            {tc("exportJson") || "JSON"}
           </Button>
           <Button
             size="sm"
