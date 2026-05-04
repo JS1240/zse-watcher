@@ -12,6 +12,12 @@
 
 ### Added
 
+- **Storybook Stories for PortfolioChart and ArticleDrawer** — visual regression coverage for Croatian retail investor app
+  - `PortfolioChart` stories: Uptrend, Downtrend, Flat Trend, Empty State, Tall (320px) variants with mock history data
+  - `ArticleDrawer` stories: Long Article, Short Article, No Ticker (general news), Hidden variants with realistic ZSE content
+  - Both components get full visual regression coverage via @chromatic-com/storybook (Chromatic cloud-based visual testing)
+  - Croatian retail investors benefit from stable component UI through automated visual regression testing
+
 - **Portfolio JSON export**: Dedicated JSON export button for portfolio holdings — exports complete position data (ticker, name, sector, shares, avg price, current price, value, cost, gain/loss, %, P/E, dividend yield, market cap) for offline analysis and backups. Complements the existing CSV export with a structured format for Croatian investors tracking portfolio performance.
 
 ### Added
