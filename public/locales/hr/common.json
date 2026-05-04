@@ -108,7 +108,8 @@
     "hint": "Upišite ticker ili naziv dionice",
     "recent": "Nedavno gledano",
     "marketOpen": "Tržište otvoreno",
-    "marketClosed": "Tržište zatvoreno"
+    "marketClosed": "Tržište zatvoreno",
+    "opensAt": "Otvara"
   },
   "localData": {
     "title": "Lokalni podaci",

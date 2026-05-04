@@ -107,7 +107,8 @@
     "hint": "Enter ticker or stock name",
     "recent": "Recently Viewed",
     "marketOpen": "Market Open",
-    "marketClosed": "Market Closed"
+    "marketClosed": "Market Closed",
+    "opensAt": "Opens at"
   },
   "localData": {
     "title": "Local Data",
