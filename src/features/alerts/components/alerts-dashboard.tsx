@@ -1127,6 +1127,8 @@ interface AlertRowProps {
 export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUpdate, onSnooze, onUnsnooze, onDuplicate, onCopyTicker, onCopyTarget, stocks, searchHighlight, flash, isFocused, onFocusNext, onFocusPrev }: AlertRowProps) {
   const { t } = useTranslation("alerts");
   const [editing, setEditing] = useState(false);
+  const [editingTarget, setEditingTarget] = useState(false);
+  const [inlineTargetValue, setInlineTargetValue] = useState("");
   const [saving, setSaving] = useState(false);
   const rowRef = useRef<HTMLDivElement>(null);
 
@@ -1181,6 +1183,12 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
       case "E":
         e.preventDefault();
         setEditing(true);
+        break;
+      case "t":
+      case "T":
+        e.preventDefault();
+        setInlineTargetValue(alert.targetValue.toString());
+        setEditingTarget(true);
         break;
       case "Delete":
       case "Backspace":

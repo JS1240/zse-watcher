@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { memo, useCallback, useState, useMemo } from "react";
+import { memo, useCallback, useState, useMemo, useRef } from "react";
 import { TrendingUp, TrendingDown, Star, Download, CheckCircle2, ArrowUp, ArrowDown, ArrowUpDown, ListPlus, Keyboard } from "lucide-react";
 import { EmptyState } from "@/components/shared/empty-state";
 import { StockListEmptyIllustration } from "@/components/shared/empty-illustrations";
@@ -350,6 +350,10 @@ const MoverRow = memo(function MoverRow({ mover }: { mover: Mover }) {
   const { t } = useTranslation("watchlist");
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
+  // Track last flash direction per ticker — only animate when direction CHANGES,
+  // not on every render. Prevents re-triggering on background refresh (every ~30s).
+  const lastFlashRef = useRef<{ direction: "up" | "down"; timer: ReturnType<typeof setTimeout> } | null>(null);
+
   // Get live price for flash detection
   const { data: stocksResult } = useStocksLive();
   const stocks = useMemo(() => stocksResult?.stocks ?? [], [stocksResult]);
@@ -358,10 +362,26 @@ const MoverRow = memo(function MoverRow({ mover }: { mover: Mover }) {
     return stock?.price ?? null;
   }, [stocks, mover.ticker]);
 
-  // Determine flash direction based on live price vs mover price
-  const flashDirection = useMemo(() => {
+  // Determine flash direction based on live price vs mover price.
+  // Only trigger flash when direction actually CHANGES — prevents re-triggering
+  // on background refetch (every ~30s) when price stays elevated/depressed.
+  const flashDirection = useMemo((): "up" | "down" | null => {
     if (!livePrice || livePrice === mover.price) return null;
-    return livePrice > mover.price ? "up" : "down";
+    const newDirection = livePrice > mover.price ? "up" : "down";
+    
+    // Only return direction if it changed from last flash
+    if (lastFlashRef.current?.direction === newDirection) return null;
+    
+    // Clear previous timer if direction changed
+    if (lastFlashRef.current) clearTimeout(lastFlashRef.current.timer);
+    
+    // Set new direction with auto-cleanup after 700ms (matches CSS animation duration)
+    const timer = setTimeout(() => {
+      lastFlashRef.current = null;
+    }, 750);
+    lastFlashRef.current = { direction: newDirection, timer };
+    
+    return newDirection;
   }, [livePrice, mover.price]);
 
   const isWatched = isAuthenticated
