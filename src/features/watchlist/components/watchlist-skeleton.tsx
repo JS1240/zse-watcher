@@ -8,6 +8,11 @@ interface WatchlistSkeletonProps {
   rows?: number;
 }
 
+/**
+ * Loading skeleton for the watchlist table.
+ * Mirrors the actual WatchlistTable column structure so loading
+ * state looks like the real UI — including Trend/Sparkline column.
+ */
 export function WatchlistSkeleton({ className, rows = 5 }: WatchlistSkeletonProps) {
   const { t } = useTranslation("watchlist");
 
@@ -20,17 +25,33 @@ export function WatchlistSkeleton({ className, rows = 5 }: WatchlistSkeletonProp
             <th className="hidden px-3 py-2 text-left font-medium md:table-cell">
               {t("table.name")}
             </th>
+            <th className="hidden px-3 py-2 text-left font-medium lg:table-cell">
+              {t("table.sector") || "Sector"}
+            </th>
             <th className="px-3 py-2 text-right font-medium">
               {t("table.price")}
             </th>
             <th className="px-3 py-2 text-right font-medium">
               {t("table.change")}
             </th>
+            {/* Trend column — mirrors actual table's sparkline column */}
+            <th className="w-16 px-2 py-2 text-center font-medium">
+              {t("table.trend") || "Trend"}
+            </th>
             <th className="hidden px-3 py-2 text-right font-medium lg:table-cell">
               {t("table.volume")}
             </th>
             <th className="hidden px-3 py-2 text-right font-medium lg:table-cell">
               {t("table.turnover")}
+            </th>
+            <th className="hidden px-3 py-2 text-right font-medium xl:table-cell">
+              {t("table.dividendYield") || "Div. Yield"}
+            </th>
+            <th className="hidden px-3 py-2 text-right font-medium xl:table-cell">
+              {t("table.peRatio") || "P/E"}
+            </th>
+            <th className="hidden px-3 py-2 text-right font-medium 2xl:table-cell">
+              {t("table.marketCap") || "Mkt Cap"}
             </th>
           </tr>
         </thead>
@@ -48,6 +69,10 @@ export function WatchlistSkeleton({ className, rows = 5 }: WatchlistSkeletonProp
               <td className="hidden px-3 py-2 md:table-cell">
                 <Skeleton className="h-3 w-28 animate-shimmer" />
               </td>
+              {/* Sector */}
+              <td className="hidden px-3 py-2 lg:table-cell">
+                <Skeleton className="h-3 w-16 animate-shimmer" />
+              </td>
               {/* Price */}
               <td className="px-3 py-2 text-right">
                 <Skeleton className="ml-auto h-3.5 w-14 animate-shimmer" />
@@ -56,6 +81,12 @@ export function WatchlistSkeleton({ className, rows = 5 }: WatchlistSkeletonProp
               <td className="px-3 py-2 text-right">
                 <Skeleton className="ml-auto h-4 w-12 rounded-sm animate-shimmer" />
               </td>
+              {/* Trend — mini sparkline placeholder matching the 44x18 SVG in actual component */}
+              <td className="px-2 py-2 text-center">
+                <div className="mx-auto flex justify-center">
+                  <Skeleton className="h-[18px] w-[44px] animate-shimmer rounded-sm" />
+                </div>
+              </td>
               {/* Volume */}
               <td className="hidden px-3 py-2 text-right lg:table-cell">
                 <Skeleton className="ml-auto h-3 w-16 animate-shimmer" />
@@ -63,6 +94,18 @@ export function WatchlistSkeleton({ className, rows = 5 }: WatchlistSkeletonProp
               {/* Turnover */}
               <td className="hidden px-3 py-2 text-right lg:table-cell">
                 <Skeleton className="ml-auto h-3 w-20 animate-shimmer" />
+              </td>
+              {/* Dividend Yield */}
+              <td className="hidden px-3 py-2 text-right xl:table-cell">
+                <Skeleton className="ml-auto h-3 w-10 animate-shimmer" />
+              </td>
+              {/* P/E Ratio */}
+              <td className="hidden px-3 py-2 text-right xl:table-cell">
+                <Skeleton className="ml-auto h-3 w-8 animate-shimmer" />
+              </td>
+              {/* Market Cap */}
+              <td className="hidden px-3 py-2 text-right 2xl:table-cell">
+                <Skeleton className="ml-auto h-3 w-12 animate-shimmer" />
               </td>
             </tr>
           ))}
