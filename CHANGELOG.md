@@ -10,7 +10,20 @@
   - Skeleton footer keyboard hints (↑↓ Enter /) consistent with other skeletons
   - Previously showed 6 columns vs 11 in the real table — investors saw a fundamentally different layout during loading
 
+### Fixed
+
+- **Unified format toggle on watchlist export button** — watchlist export now uses consistent `bg-muted` style with ARIA keyboard support for the CSV↔JSON toggle button (matching portfolio and alerts pattern)
+  - Previous toggle button in watchlist used `hover:bg-primary/20` with no ARIA attributes
+  - Now: `bg-muted px-1 py-0.5`, `role="button"`, `tabIndex={0}`, `onKeyDown` handler, and `aria-label`
+  - Croatian retail investors get a consistent, accessible format toggle across all export buttons
+
 ### Added
+
+- **Live distance indicator in AlertRow inline edit** — shows how far target is from current price for Croatian retail investors
+  - Percent change display (+X.X% or -X.X%) in green/red with TrendingUp icon when target is valid
+  - Direction-aware suggested target presets: +3%, +5%, +10%, -3%, -5%, -10% with condition auto-switching
+  - Removed unused `editingTarget`/`inlineTargetValue` state and T keyboard shortcut (use E for full edit instead)
+  - Both AlertForm (create) and AlertRow (edit) now show live distance feedback when a ticker has known price
 
 - **Storybook Stories for PortfolioChart and ArticleDrawer** — visual regression coverage for Croatian retail investor app
   - `PortfolioChart` stories: Uptrend, Downtrend, Flat Trend, Empty State, Tall (320px) variants with mock history data

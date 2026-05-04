@@ -477,7 +477,16 @@ function AuthenticatedWatchlist() {
               e.stopPropagation();
               setExportFormat((prev) => (prev === "csv" ? "json" : "csv"));
             }}
-            className="ml-1 rounded px-1 py-0.5 text-[9px] hover:bg-primary/20"
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                setExportFormat((prev) => (prev === "csv" ? "json" : "csv"));
+              }
+            }}
+            className="ml-1 cursor-pointer rounded bg-muted px-1 py-0.5 text-[9px] font-medium hover:bg-muted/80"
+            role="button"
+            tabIndex={0}
+            aria-label={exportFormat === "csv" ? "Switch to JSON export" : "Switch to CSV export"}
           >
             {exportFormat === "json" ? "CSV" : "JSON"}
           </button>
