@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback, useState } from "react";
+import { useRef, useEffect, useCallback, useState, useMemo } from "react";
 import {
   createChart,
   type IChartApi,
@@ -168,12 +168,44 @@ export function TradingChart({
       chart.timeScale().fitContent();
     }
 
+    // Subscribe to crosshair move for OHLCV display
+    const handleCrosshairMove = useCallback(
+      (param: { time?: unknown; price?: number; point?: { x: number; y: number } }) => {
+        if (!param.time || !param.point) return;
+        // lightweight-charts uses UTCTimestamp (number) internally
+        const timeKey = param.time as string | number;
+        const dataPoint = data.find((d) => String(d.time) === String(timeKey));
+        if (!dataPoint) return;
+        // Tooltip is handled via container ref + portal — emit event for parent to display
+        const container = containerRef.current;
+        if (!container) return;
+        container.dispatchEvent(
+          new CustomEvent("chart-tooltip", {
+            detail: {
+              time: dataPoint.time,
+              open: dataPoint.open,
+              high: dataPoint.high,
+              low: dataPoint.low,
+              close: dataPoint.close,
+              volume: dataPoint.volume,
+              x: param.point.x,
+              y: param.point.y,
+            },
+            bubbles: true,
+          }),
+        );
+      },
+      [data],
+    );
+
+    chart.subscribeCrosshairMove(handleCrosshairMove);
+
     // Resize observer with responsive height
     const resizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
         const { width } = entry.contentRect;
         chart.applyOptions({ width });
-        
+
         // Adjust height for screen size
         const newHeight = getResponsiveHeight(width, height);
         if (newHeight !== currentHeight) {
@@ -191,6 +223,74 @@ export function TradingChart({
     };
   }, [data, chartType, height, getThemeColors, currentHeight]);
 
+  // OHLCV tooltip state — updated via chart-tooltip custom events from crosshair
+  const [tooltipData, setTooltipData] = useState<{
+    time: string;
+    open: number;
+    high: number;
+    low: number;
+    close: number;
+    volume: number;
+    x: number;
+    y: number;
+  } | null>(null);
+
+  // Subscribe to chart-tooltip events from the container
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleTooltip = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      setTooltipData(detail);
+    };
+
+    const handleMouseLeave = () => setTooltipData(null);
+
+    container.addEventListener("chart-tooltip", handleTooltip);
+    container.addEventListener("mouseleave", handleMouseLeave);
+
+    return () => {
+      container.removeEventListener("chart-tooltip", handleTooltip);
+      container.removeEventListener("mouseleave", handleMouseLeave);
+    };
+  }, []);
+
+  // Format timestamp for display
+  const formatTooltipTime = useCallback(
+    (time: string) => {
+      const ts = Number(time);
+      const date = new Date(ts * 1000);
+      return date.toLocaleString("hr-HR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    },
+    [],
+  );
+
+  // Memoized formatting for OHLCV values to avoid re-renders
+  const ohlcvLabels = useMemo(() => {
+    if (!tooltipData) return null;
+    const { open, high, low, close, volume } = tooltipData;
+    const fmt = (n: number) => n.toFixed(2);
+    const change = close - open;
+    const changePct = open !== 0 ? ((change / open) * 100).toFixed(2) : "0.00";
+    return {
+      O: fmt(open),
+      H: fmt(high),
+      L: fmt(low),
+      C: fmt(close),
+      V: volume >= 1000 ? `${(volume / 1000).toFixed(0)}K` : volume.toFixed(0),
+      change: change >= 0 ? `+${change.toFixed(2)}` : change.toFixed(2),
+      changePct: change >= 0 ? `+${changePct}%` : `${changePct}%`,
+      isUp: change >= 0,
+    };
+  }, [tooltipData]);
+
   // Render empty state when no data is available
   if (!isLoading && !hasData) {
     return (
@@ -207,10 +307,42 @@ export function TradingChart({
   }
 
   return (
-    <div
-      ref={containerRef}
-      className={className}
-      style={{ width: "100%", height: `${currentHeight}px` }}
-    />
+    <div className="relative" style={{ width: "100%", height: `${currentHeight}px` }}>
+      <div
+        ref={containerRef}
+        className={className}
+        style={{ width: "100%", height: "100%" }}
+      />
+
+      {/* OHLCV tooltip overlay — appears on crosshair hover */}
+      {tooltipData && ohlcvLabels && (
+        <div
+          className="pointer-events-none absolute z-20 rounded-md border border-border bg-popover/95 px-2.5 py-1.5 shadow-lg backdrop-blur"
+          style={{
+            left: Math.min(tooltipData.x + 12, 300),
+            top: Math.max(tooltipData.y - 40, 8),
+          }}
+        >
+          <div className="mb-1 flex items-center justify-between gap-3 font-data text-[10px] text-muted-foreground">
+            <span>{formatTooltipTime(tooltipData.time)}</span>
+            <span className={ohlcvLabels.isUp ? "text-price-up" : "text-price-down"}>
+              {ohlcvLabels.change} ({ohlcvLabels.changePct})
+            </span>
+          </div>
+          <div className="grid grid-cols-5 gap-x-2 gap-y-0.5 font-data text-[10px] tabular-nums">
+            <span className="text-muted-foreground">O</span>
+            <span className="text-muted-foreground">H</span>
+            <span className="text-muted-foreground">L</span>
+            <span className="text-muted-foreground">C</span>
+            <span className="text-muted-foreground">V</span>
+            <span className={ohlcvLabels.isUp ? "text-price-up" : "text-price-down"}>{ohlcvLabels.O}</span>
+            <span className={ohlcvLabels.isUp ? "text-price-up" : "text-price-down"}>{ohlcvLabels.H}</span>
+            <span className={ohlcvLabels.isUp ? "text-price-up" : "text-price-down"}>{ohlcvLabels.L}</span>
+            <span className={ohlcvLabels.isUp ? "text-price-up" : "text-price-down"}>{ohlcvLabels.C}</span>
+            <span className="text-foreground">{ohlcvLabels.V}</span>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
