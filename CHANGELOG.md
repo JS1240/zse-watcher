@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- **WatchlistSkeleton column alignment** — skeleton now mirrors actual WatchlistTable column structure for Croatian investors
+  - Added Sector, Trend (sparkline), Dividend Yield, P/E, and Market Cap columns to match real table
+  - Trend column shows 44×18px skeleton placeholder matching actual Sparkline SVG size
+  - Skeleton footer keyboard hints (↑↓ Enter /) consistent with other skeletons
+  - Previously showed 6 columns vs 11 in the real table — investors saw a fundamentally different layout during loading
+
 ### Added
 
 - **Portfolio JSON export**: Dedicated JSON export button for portfolio holdings — exports complete position data (ticker, name, sector, shares, avg price, current price, value, cost, gain/loss, %, P/E, dividend yield, market cap) for offline analysis and backups. Complements the existing CSV export with a structured format for Croatian investors tracking portfolio performance.
