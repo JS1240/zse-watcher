@@ -24,6 +24,8 @@ import { Button } from "@/components/ui/button";
 import { formatPrice, formatVolume } from "@/lib/formatters";
 import { exportToCsv, exportToJson } from "@/lib/export";
 import { parseTickersFromCsv, readFileAsText } from "@/lib/import";
+import { Sparkline } from "@/components/shared/sparkline";
+import { getMockPriceHistory } from "@/lib/mock-data";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 
 import { cn } from "@/lib/utils";
@@ -1445,6 +1447,9 @@ function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort, dragEnable
             <th className="px-3 py-2 text-right font-medium">
               <SortHeader column="changePct" label={t("table.change")} sort={sort} onSort={onSort} tooltip={t("tooltips.change")} />
             </th>
+            <th className="w-14 px-2 py-2 text-center font-medium text-muted-foreground">
+              {t("table.trend") || "Trend"}
+            </th>
             <th className="hidden px-3 py-2 text-right font-medium lg:table-cell">
               <SortHeader column="volume" label={t("table.volume")} sort={sort} onSort={onSort} tooltip={t("tooltips.volume")} />
             </th>
@@ -1546,6 +1551,11 @@ function WatchlistRow({ stock, showRemove, onRemove, flash, searchQuery, rowInde
   const { select, selectedTicker } = useSelectedStock();
   const isSelected = selectedTicker === stock.ticker;
   const [copiedField, setCopiedField] = useState<string | null>(null);
+
+  // Generate sparkline data from mock price history (works offline without extra API calls)
+  const sparklineData = useMemo(() => {
+    return getMockPriceHistory(stock.ticker, "1W").map((p) => p.close);
+  }, [stock.ticker]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowUp") { e.preventDefault(); onFocusPrev?.(); }

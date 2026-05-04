@@ -153,5 +153,12 @@
   },
   "quickPrice": {
     "market": "Market"
+  },
+  "quickShares": {
+    "label": "shares"
+  },
+  "sellAll": "All",
+  "validation": {
+    "sellAll": "Sell all ({{total}} shares)"
   }
 }

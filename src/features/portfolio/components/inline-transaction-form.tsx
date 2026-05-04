@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod/v4";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
-import { X, CheckCircle2, AlertCircle, AlertTriangle, Keyboard, TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { X, CheckCircle2, AlertCircle, AlertTriangle, Keyboard, TrendingUp, TrendingDown, Minus, Layers } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -130,6 +130,13 @@ export function InlineTransactionForm({
       e.target.value = formatPrice(parsed).replace("EUR", "").trim();
     }
   };
+
+  // Quick fill share amount buttons
+  const quickShares = [5, 10, 25, 50, 100];
+
+  const handleQuickShares = useCallback((shares: number) => {
+    setValue("shares", shares.toString(), { shouldValidate: true });
+  }, [setValue]);
 
   // Quick fill buttons using current price
   const quickPricePcts = [
@@ -291,6 +298,33 @@ export function InlineTransactionForm({
               {label} ({formatPrice(currentPrice * (1 + pct / 100)).replace("EUR", "").trim()})
             </button>
           ))}
+        </div>
+
+        {/* Quick share amount buttons — helps investors fill qty without typing */}
+        <div className="flex flex-wrap gap-1">
+          {quickShares.map((shares) => (
+            <button
+              key={shares}
+              type="button"
+              onClick={() => handleQuickShares(shares)}
+              className="rounded-sm bg-muted/60 px-2 py-0.5 text-[9px] font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+            >
+              {shares}
+            </button>
+          ))}
+          {ownedShares != null && transactionType === "sell" && (
+            <button
+              type="button"
+              onClick={() => {
+                setValue("shares", Math.floor(ownedShares).toString(), { shouldValidate: true });
+              }}
+              className="rounded-sm bg-amber-500/10 px-2 py-0.5 text-[9px] font-medium text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 transition-colors"
+              title={t("validation.sellAll", { total: ownedShares }) || "Prodaj sve"}
+            >
+              <Layers className="mr-0.5 inline h-2.5 w-2.5" />
+              {t("sellAll") || "Sve"}
+            </button>
+          )}
         </div>
 
 

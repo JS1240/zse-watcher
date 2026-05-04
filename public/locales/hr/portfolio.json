@@ -153,5 +153,12 @@
   },
   "quickPrice": {
     "market": "Tržište"
+  },
+  "quickShares": {
+    "label": "kom"
+  },
+  "sellAll": "Sve",
+  "validation": {
+    "sellAll": "Prodaj sve ({{total}} kom)"
   }
 }
