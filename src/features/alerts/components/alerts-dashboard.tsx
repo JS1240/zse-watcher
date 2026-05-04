@@ -1520,7 +1520,7 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
                         else setEditCondition("below");
                       }
                     }}
-                    className="flex items-center gap-0.5 rounded bg-muted px-1.5 py-0.5 text-[9px] font-medium text-muted-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
+                    className="rounded-full bg-muted px-1.5 py-0.5 text-[9px] font-medium text-muted-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
                   >
                     {preset.label}
                   </button>
