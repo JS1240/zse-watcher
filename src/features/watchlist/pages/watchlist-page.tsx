@@ -24,8 +24,6 @@ import { Button } from "@/components/ui/button";
 import { formatPrice, formatVolume } from "@/lib/formatters";
 import { exportToCsv, exportToJson } from "@/lib/export";
 import { parseTickersFromCsv, readFileAsText } from "@/lib/import";
-import { Sparkline } from "@/components/shared/sparkline";
-import { getMockPriceHistory } from "@/lib/mock-data";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 
 import { cn } from "@/lib/utils";
@@ -1552,10 +1550,6 @@ function WatchlistRow({ stock, showRemove, onRemove, flash, searchQuery, rowInde
   const isSelected = selectedTicker === stock.ticker;
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
-  // Generate sparkline data from mock price history (works offline without extra API calls)
-  const sparklineData = useMemo(() => {
-    return getMockPriceHistory(stock.ticker, "1W").map((p) => p.close);
-  }, [stock.ticker]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowUp") { e.preventDefault(); onFocusPrev?.(); }

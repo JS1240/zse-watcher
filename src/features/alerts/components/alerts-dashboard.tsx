@@ -1127,8 +1127,6 @@ interface AlertRowProps {
 export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUpdate, onSnooze, onUnsnooze, onDuplicate, onCopyTicker, onCopyTarget, stocks, searchHighlight, flash, isFocused, onFocusNext, onFocusPrev }: AlertRowProps) {
   const { t } = useTranslation("alerts");
   const [editing, setEditing] = useState(false);
-  const [editingTarget, setEditingTarget] = useState(false);
-  const [inlineTargetValue, setInlineTargetValue] = useState("");
   const [saving, setSaving] = useState(false);
   const rowRef = useRef<HTMLDivElement>(null);
 
@@ -1183,12 +1181,6 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
       case "E":
         e.preventDefault();
         setEditing(true);
-        break;
-      case "t":
-      case "T":
-        e.preventDefault();
-        setInlineTargetValue(alert.targetValue.toString());
-        setEditingTarget(true);
         break;
       case "Delete":
       case "Backspace":
@@ -1265,12 +1257,27 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
   // Suggested targets for quick selection (matching AlertForm pattern)
   const editSuggestedTargets = useMemo(() => {
     if (!editTickerCurrentPrice || editCondition.includes("percent")) return null;
-    return {
-      up5: editTickerCurrentPrice * 1.05,
-      up10: editTickerCurrentPrice * 1.10,
-      down5: editTickerCurrentPrice * 0.95,
-      down10: editTickerCurrentPrice * 0.90,
-    };
+    const isPercent = editCondition.includes("percent");
+    if (isPercent) {
+      return [
+        { label: "+3%", value: 3, display: "3", isAbsolute: false },
+        { label: "+5%", value: 5, display: "5", isAbsolute: false },
+        { label: "+10%", value: 10, display: "10", isAbsolute: false },
+        { label: "-3%", value: -3, display: "3", isAbsolute: false },
+        { label: "-5%", value: -5, display: "5", isAbsolute: false },
+        { label: "-10%", value: -10, display: "10", isAbsolute: false },
+      ];
+    }
+    // For absolute price conditions, show percentage bumps based on condition direction
+    const upConditions = editCondition === "above" || editCondition === "percent_change_up";
+    return [
+      { label: "+3%", value: upConditions ? editTickerCurrentPrice * 1.03 : editTickerCurrentPrice * 0.97, display: formatPrice(upConditions ? editTickerCurrentPrice * 1.03 : editTickerCurrentPrice * 0.97).replace("EUR", "").trim(), isAbsolute: true },
+      { label: "+5%", value: upConditions ? editTickerCurrentPrice * 1.05 : editTickerCurrentPrice * 0.95, display: formatPrice(upConditions ? editTickerCurrentPrice * 1.05 : editTickerCurrentPrice * 0.95).replace("EUR", "").trim(), isAbsolute: true },
+      { label: "+10%", value: upConditions ? editTickerCurrentPrice * 1.10 : editTickerCurrentPrice * 0.90, display: formatPrice(upConditions ? editTickerCurrentPrice * 1.10 : editTickerCurrentPrice * 0.90).replace("EUR", "").trim(), isAbsolute: true },
+      { label: "-3%", value: upConditions ? editTickerCurrentPrice * 0.97 : editTickerCurrentPrice * 1.03, display: formatPrice(upConditions ? editTickerCurrentPrice * 0.97 : editTickerCurrentPrice * 1.03).replace("EUR", "").trim(), isAbsolute: true },
+      { label: "-5%", value: upConditions ? editTickerCurrentPrice * 0.95 : editTickerCurrentPrice * 1.05, display: formatPrice(upConditions ? editTickerCurrentPrice * 0.95 : editTickerCurrentPrice * 1.05).replace("EUR", "").trim(), isAbsolute: true },
+      { label: "-10%", value: upConditions ? editTickerCurrentPrice * 0.90 : editTickerCurrentPrice * 1.10, display: formatPrice(upConditions ? editTickerCurrentPrice * 0.90 : editTickerCurrentPrice * 1.10).replace("EUR", "").trim(), isAbsolute: true },
+    ];
   }, [editTickerCurrentPrice, editCondition]);
 
   const conditionOptions: { value: AlertCondition; label: string }[] = [
@@ -1474,55 +1481,52 @@ export const AlertRow = memo(function AlertRow({ alert, onDelete, onToggle, onUp
                 {t("validation.positiveNumber")}
               </p>
             ) : isEditTargetValid && !editFocused.target ? (
-              <p className="mt-1.5 flex items-center gap-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
-                <CheckCircle2 className="h-3.5 w-3.5 flex-shrink-0" />
-                {t("validation.targetValid")}
-              </p>
-            ) : editSuggestedTargets ? (
+              <div className="mt-1.5 flex flex-col gap-1">
+                <p className="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
+                  <CheckCircle2 className="h-3.5 w-3.5 flex-shrink-0" />
+                  {t("validation.targetValid")}
+                </p>
+                {/* Live distance indicator - shows how far target is from current price */}
+                {(() => {
+                  if (!editTickerCurrentPrice || isPercentEdit) return null;
+                  const parsed = parseLocalizedNumber(editTarget);
+                  if (isNaN(parsed) || parsed <= 0) return null;
+                  const diff = parsed - editTickerCurrentPrice;
+                  const percentChange = (diff / editTickerCurrentPrice) * 100;
+                  const direction = diff > 0 ? "up" : "down";
+                  return (
+                    <p className={cn(
+                      "flex items-center gap-1 text-[9px] font-medium",
+                      direction === "up" ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"
+                    )}>
+                      <TrendingUp className={cn("h-2.5 w-2.5", direction === "down" && "rotate-90")} />
+                      <span>{direction === "up" ? "+" : ""}{percentChange.toFixed(1)}% {t("fields.currentPriceHint", { price: formatPrice(editTickerCurrentPrice) })?.split("(")[1] || "od cijene"} ({formatPrice(editTickerCurrentPrice)})</span>
+                    </p>
+                  );
+                })()}
+              </div>
+            ) : editSuggestedTargets && !editFocused.target ? (
               <div className="mt-1.5 flex flex-wrap items-center gap-1">
                 <span className="text-[9px] text-muted-foreground">{t("quickSet") || "Brzo"}: </span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setEditTarget(editSuggestedTargets.up5.toFixed(2));
-                    setEditCondition("above");
-                  }}
-                  className="flex items-center gap-0.5 rounded bg-emerald-500/20 px-1.5 py-0.5 text-[9px] font-medium text-emerald-700 hover:bg-emerald-500/30 dark:text-emerald-300 suggested-chip"
-                >
-                  <TrendingUp className="h-2.5 w-2.5" />+5%
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setEditTarget(editSuggestedTargets.up10.toFixed(2));
-                    setEditCondition("above");
-                  }}
-                  className="flex items-center gap-0.5 rounded bg-emerald-500/20 px-1.5 py-0.5 text-[9px] font-medium text-emerald-700 hover:bg-emerald-500/30 dark:text-emerald-300 suggested-chip"
-                >
-                  <TrendingUp className="h-2.5 w-2.5" />+10%
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setEditTarget(editSuggestedTargets.down5.toFixed(2));
-                    setEditCondition("below");
-                  }}
-                  className="flex items-center gap-0.5 rounded bg-red-500/20 px-1.5 py-0.5 text-[9px] font-medium text-red-700 hover:bg-red-500/30 dark:text-red-300 suggested-chip"
-                >
-                  <TrendingDown className="h-2.5 w-2.5" />-5%
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setEditTarget(editSuggestedTargets.down10.toFixed(2));
-                    setEditCondition("below");
-                  }}
-                  className="flex items-center gap-0.5 rounded bg-red-500/20 px-1.5 py-0.5 text-[9px] font-medium text-red-700 hover:bg-red-500/30 dark:text-red-300 suggested-chip"
-                >
-                  <TrendingDown className="h-2.5 w-2.5" />-10%
-                </button>
+                {editSuggestedTargets.slice(0, 6).map((preset) => (
+                  <button
+                    key={preset.label}
+                    type="button"
+                    onClick={() => {
+                      setEditTarget(preset.isAbsolute ? preset.display : preset.label.replace("%", "").replace("+", ""));
+                      if (!preset.isAbsolute && !editCondition.includes("percent")) {
+                        // For absolute price conditions, set the condition based on direction
+                        if (preset.label.startsWith("+")) setEditCondition("above");
+                        else setEditCondition("below");
+                      }
+                    }}
+                    className="flex items-center gap-0.5 rounded bg-muted px-1.5 py-0.5 text-[9px] font-medium text-muted-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
+                  >
+                    {preset.label}
+                  </button>
+                ))}
               </div>
-            ) : editTickerCurrentPrice != null ? (
+            ) : editTickerCurrentPrice != null && !editFocused.target ? (
               <p className="mt-1.5 flex items-center gap-1.5 text-[9px] font-medium text-muted-foreground">
                 <TrendingUp className="h-3 w-3 flex-shrink-0" />
                 {t("fields.currentPriceHint", { price: formatPrice(editTickerCurrentPrice) }) || `Trenutna cijena: ${formatPrice(editTickerCurrentPrice)}`}
