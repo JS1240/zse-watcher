@@ -1,5 +1,7 @@
 {
   "title": "Makroekonomski pokazatelji",
+  "exportCsv": "Izvozi CSV",
+  "exportJson": "Izvozi JSON",
   "indices": {
     "crobex": "CROBEX",
     "crobex10": "CROBEX10",

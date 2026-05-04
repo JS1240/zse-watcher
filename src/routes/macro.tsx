@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import { Keyboard, ArrowUp, Download } from "lucide-react";
 import { MarketOverview } from "@/features/market/components/market-overview";
 import { MarketStatus } from "@/features/market/components/market-status";
@@ -13,7 +14,7 @@ import { MacroSkeleton } from "@/features/market/components/macro-skeleton";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { ErrorState } from "@/components/shared/error-state";
-import { exportToCsv } from "@/lib/export";
+import { exportToCsv, exportToJson } from "@/lib/export";
 import { cn } from "@/lib/utils";
 import { Sparkline } from "@/components/shared/sparkline";
 
@@ -29,51 +30,96 @@ function MacroPage() {
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [scrollTop, setScrollTop] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
+  const [exportFormat, setExportFormat] = useState<"csv" | "json">("csv");
 
   // Scroll to top handler
   const scrollToTop = () => {
     contentRef.current?.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // Export macro data to CSV
-  const handleExportCsv = useCallback(() => {
-    const rows: string[][] = [];
+  // Export macro data to CSV or JSON
+  const handleExport = useCallback(() => {
+    const timestamp = new Date().toISOString().split("T")[0];
     const now = new Date().toISOString();
 
-    // Add index data
-    if (macro) {
-      rows.push([
-        t("indices.crobex"),
-        macro.crobex.value.toFixed(2),
-        `${macro.crobex.changePct >= 0 ? "+" : ""}${macro.crobex.changePct.toFixed(2)}%`,
-        now,
-      ]);
-      rows.push([
-        t("indices.crobex10"),
-        macro.crobex10.value.toFixed(2),
-        `${macro.crobex10.changePct >= 0 ? "+" : ""}${macro.crobex10.changePct.toFixed(2)}%`,
-        now,
-      ]);
-      rows.push([
-        t("indices.euroStoxx"),
-        macro.euroStoxx50.value.toFixed(2),
-        `${macro.euroStoxx50.changePct >= 0 ? "+" : ""}${macro.euroStoxx50.changePct.toFixed(2)}%`,
-        now,
-      ]);
-    }
+    if (exportFormat === "json") {
+      // JSON export
+      const jsonData: Record<string, unknown>[] = [];
 
-    // Add forex data
-    if (forex) {
-      rows.push(["EUR/USD", forex.eurUsd.toFixed(4), "", now]);
-      rows.push(["USD/HRK", forex.usdHrk.toFixed(4), "", now]);
-      rows.push(["EUR/CHF", forex.eurChf.toFixed(4), "", now]);
-      rows.push(["EUR/GBP", forex.eurGbp.toFixed(4), "", now]);
-      rows.push(["EUR/HRK", forex.eurHrk.toFixed(4), "(CNB fixing)", now]);
-    }
+      // Add index data
+      if (macro) {
+        jsonData.push({
+          indicator: t("indices.crobex"),
+          value: macro.crobex.value,
+          changePct: macro.crobex.changePct,
+          timestamp: now,
+        });
+        jsonData.push({
+          indicator: t("indices.crobex10"),
+          value: macro.crobex10.value,
+          changePct: macro.crobex10.changePct,
+          timestamp: now,
+        });
+        jsonData.push({
+          indicator: t("indices.euroStoxx"),
+          value: macro.euroStoxx50.value,
+          changePct: macro.euroStoxx50.changePct,
+          timestamp: now,
+        });
+      }
 
-    const headers = ["Indicator", "Value", "Change", "Timestamp"];
-    exportToCsv(`zse-macro-${new Date().toISOString().split("T")[0]}`, headers, rows);
-  }, [macro, forex, t]);
+
+      // Add forex data
+      if (forex) {
+        jsonData.push({ indicator: "EUR/USD", value: forex.eurUsd, timestamp: now });
+        jsonData.push({ indicator: "USD/HRK", value: forex.usdHrk, timestamp: now });
+        jsonData.push({ indicator: "EUR/CHF", value: forex.eurChf, timestamp: now });
+        jsonData.push({ indicator: "EUR/GBP", value: forex.eurGbp, timestamp: now });
+        jsonData.push({ indicator: "EUR/HRK", value: forex.eurHrk, note: "CNB fixing", timestamp: now });
+      }
+
+      exportToJson(`zse-macro-${timestamp}`, jsonData);
+      toast.success(tc("exportedJson"));
+    } else {
+      // CSV export
+      const rows: string[][] = [];
+
+      // Add index data
+      if (macro) {
+        rows.push([
+          t("indices.crobex"),
+          macro.crobex.value.toFixed(2),
+          `${macro.crobex.changePct >= 0 ? "+" : ""}${macro.crobex.changePct.toFixed(2)}%`,
+          now,
+        ]);
+        rows.push([
+          t("indices.crobex10"),
+          macro.crobex10.value.toFixed(2),
+          `${macro.crobex10.changePct >= 0 ? "+" : ""}${macro.crobex10.changePct.toFixed(2)}%`,
+          now,
+        ]);
+        rows.push([
+          t("indices.euroStoxx"),
+          macro.euroStoxx50.value.toFixed(2),
+          `${macro.euroStoxx50.changePct >= 0 ? "+" : ""}${macro.euroStoxx50.changePct.toFixed(2)}%`,
+          now,
+        ]);
+      }
+
+      // Add forex data
+      if (forex) {
+        rows.push(["EUR/USD", forex.eurUsd.toFixed(4), "", now]);
+        rows.push(["USD/HRK", forex.usdHrk.toFixed(4), "", now]);
+        rows.push(["EUR/CHF", forex.eurChf.toFixed(4), "", now]);
+        rows.push(["EUR/GBP", forex.eurGbp.toFixed(4), "", now]);
+        rows.push(["EUR/HRK", forex.eurHrk.toFixed(4), "(CNB fixing)", now]);
+      }
+
+      const headers = ["Indicator", "Value", "Change", "Timestamp"];
+      exportToCsv(`zse-macro-${timestamp}`, headers, rows);
+      toast.success(tc("exported"));
+    }
+  }, [macro, forex, t, exportFormat, tc]);
 
   // Combined error state - show error if either macro or forex fails
   const hasError = isError || forexError;
@@ -111,15 +157,32 @@ function MacroPage() {
         <h1 className="font-data text-lg font-bold">{t("title")}</h1>
         <div className="flex items-center gap-2">
           {!isLoading && macro && (
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={handleExportCsv}
-              title={t("exportCsv")}
-            >
-              <Download className="h-3.5 w-3.5" />
-              CSV
-            </Button>
+            <div className="flex items-center gap-1">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleExport}
+                title={exportFormat === "json" ? t("exportJson") : t("exportCsv")}
+              >
+                <Download className="h-3.5 w-3.5" />
+                {exportFormat.toUpperCase()}
+              </Button>
+              <button
+                onClick={() => setExportFormat((prev) => (prev === "csv" ? "json" : "csv"))}
+                className="flex h-8 min-w-8 items-center justify-center rounded-md bg-muted px-1 py-0.5 text-[9px] font-medium text-muted-foreground transition-colors hover:bg-muted/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background"
+                role="button"
+                tabIndex={0}
+                aria-label={exportFormat === "csv" ? "Switch to JSON export" : "Switch to CSV export"}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setExportFormat((prev) => (prev === "csv" ? "json" : "csv"));
+                  }
+                }}
+              >
+                {exportFormat === "json" ? "CSV" : "JSON"}
+              </button>
+            </div>
           )}
           <MarketStatus />
         </div>
