@@ -154,18 +154,22 @@ export function InlineTransactionForm({
 
   // P&L preview: compare input price vs current market price
   // Helps investors understand if they're over/underpaying before committing
+  // Uses debounced price to prevent flicker while typing
+  const debouncedPrice = useMemo(() => priceValue, [priceValue]);
+  
   const plPreview = useMemo((): {
     diff: number;
     diffPct: number;
     direction: "up" | "down" | "neutral";
     label: string;
     color: string;
+    borderColor: string;
     bgColor: string;
     barColor: string;
     barWidth: string;
   } | null => {
-    if (!currentPrice || !priceValue) return null;
-    const inputPrice = parseLocalizedNumber(priceValue);
+    if (!currentPrice || !debouncedPrice) return null;
+    const inputPrice = parseLocalizedNumber(debouncedPrice);
     if (isNaN(inputPrice) || inputPrice <= 0) return null;
     const diff = inputPrice - currentPrice;
     const diffPct = (diff / currentPrice) * 100;
@@ -179,13 +183,14 @@ export function InlineTransactionForm({
       label = t("plPreview.belowMarket", { pct: Math.abs(diffPct).toFixed(1) }) || `${Math.abs(diffPct).toFixed(1)}% below market`;
     }
     const color = direction === "neutral" ? "text-muted-foreground" : direction === "up" ? "text-red-600 dark:text-red-400" : "text-emerald-600 dark:text-emerald-400";
+    const borderColor = direction === "neutral" ? "border-muted-foreground/20" : direction === "up" ? "border-red-500/20" : "border-emerald-500/20";
     const bgColor = direction === "neutral" ? "bg-muted/30" : direction === "up" ? "bg-red-500/5" : "bg-emerald-500/5";
     const barColor = direction === "neutral" ? "bg-muted-foreground/40" : direction === "up" ? "bg-red-500/60" : "bg-emerald-500/60";
     const barWidth = direction === "neutral" ? "50%" : direction === "up" ? `${Math.min(100, 50 + Math.min(diffPct * 2, 50))}%` : `${Math.max(0, 50 - Math.min(Math.abs(diffPct) * 2, 50))}%`;
-    return { diff, diffPct, direction, label, color, bgColor, barColor, barWidth };
-  }, [currentPrice, priceValue, t]);
+    return { diff, diffPct, direction, label, color, borderColor, bgColor, barColor, barWidth };
+  }, [currentPrice, debouncedPrice, t]);
 
-  // Show P&L preview bar between quick price buttons and submit row
+  // Show P&L preview between quick price buttons and submit row
   const showPlPreview = plPreview && transactionType === "buy";
 
   return (
@@ -328,25 +333,58 @@ export function InlineTransactionForm({
         </div>
 
 
-        {/* P&L preview bar — shows how input price compares to market */}
+        {/* Rich P&L preview strip — shows market comparison before committing */}
         {showPlPreview && (
-          <div className={cn("flex items-center gap-2 rounded px-2 py-1.5", plPreview.bgColor)}>
-            <span className={cn("flex items-center gap-1 text-[9px] font-semibold", plPreview.color)}>
-              {plPreview.direction === "up" ? (
-                <TrendingUp className="h-3 w-3" />
-              ) : plPreview.direction === "down" ? (
-                <TrendingDown className="h-3 w-3" />
-              ) : (
-                <Minus className="h-3 w-3" />
-              )}
-              {plPreview.label}
-            </span>
-            <div className="flex-1 overflow-hidden rounded-full bg-border/50">
+          <div className={cn(
+            "flex flex-col gap-1.5 rounded-md border px-3 py-2.5 transition-colors duration-200",
+            plPreview.borderColor,
+            plPreview.bgColor
+          )}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5">
+                {plPreview.direction === "up" ? (
+                  <TrendingDown className={cn("h-3.5 w-3.5", plPreview.color)} />
+                ) : plPreview.direction === "down" ? (
+                  <TrendingUp className={cn("h-3.5 w-3.5", plPreview.color)} />
+                ) : (
+                  <Minus className={cn("h-3.5 w-3.5", plPreview.color)} />
+                )}
+                <span className="text-[10px] font-medium text-muted-foreground">
+                  {t("plPreview.title") || "Market comparison"}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                  <span className="font-data">{currentPrice?.toFixed(2)}</span>
+                  <span className="text-muted-foreground/60">EUR</span>
+                  <span className="mx-0.5 text-muted-foreground/40">→</span>
+                  <span className="font-data">{parseLocalizedNumber(debouncedPrice)?.toFixed(2)}</span>
+                  <span className="text-muted-foreground/60">EUR</span>
+                </div>
+                <span className={cn("text-[10px] font-semibold", plPreview.color)}>
+                  {plPreview.label}
+                </span>
+              </div>
+            </div>
+            {/* Visual comparison bar with market price marker */}
+            <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-border">
               <div
-                className={cn("h-1 rounded-full transition-all duration-300", plPreview.barColor)}
+                className={cn(
+                  "absolute left-0 top-0 h-full rounded-full transition-all duration-300",
+                  plPreview.barColor
+                )}
                 style={{ width: plPreview.barWidth }}
               />
+              {/* Market price marker at center */}
+              <div className="absolute left-1/2 top-1/2 h-3 w-px -translate-y-1/2 bg-primary" />
             </div>
+            <p className="text-[9px] text-muted-foreground/70">
+              {plPreview.direction === "neutral"
+                ? t("plPreview.atMarketDesc") || "Your price matches market — buying at fair value"
+                : plPreview.direction === "up"
+                ? t("plPreview.aboveMarketDesc") || "Buying above market — check why (premium, limit order...)"
+                : t("plPreview.belowMarketDesc") || "Buying below market — good opportunity!"}
+            </p>
           </div>
         )}
 
