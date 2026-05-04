@@ -74,7 +74,7 @@ type Story = StoryObj<typeof ArticleDrawer>;
 
 // We need a wrapper since ArticleDrawer requires onClose
 function ArticleDrawerWrapper({ article }: { article: NewsArticle }) {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+   
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
   return (
     <ArticleDrawer

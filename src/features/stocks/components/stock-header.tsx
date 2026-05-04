@@ -6,27 +6,17 @@ import { ChangeBadge } from "@/components/shared/change-badge";
 import { Sparkline } from "@/components/shared/sparkline";
 import { getMockPriceHistory } from "@/lib/mock-data";
 import { formatVolume, formatCurrency, formatMarketCap } from "@/lib/formatters";
-import { usePriceFlash } from "@/hooks/use-price-flash";
 import type { StockDetail } from "@/types/stock";
-import type { Stock } from "@/types/stock";
 import { cn } from "@/lib/utils";
 
 interface StockHeaderProps {
   stock: StockDetail;
-  /** Stocks list for price flash detection — pass from parent drawer */
-  stocks?: Stock[];
+  /** Optional flash direction from parent (StockDetailDrawer) — avoids duplicate hook calls */
+  flashDirection?: "up" | "down" | null;
 }
 
-interface StockHeaderProps {
-  stock: StockDetail;
-}
-
-export function StockHeader({ stock, stocks }: StockHeaderProps) {
+export function StockHeader({ stock, flashDirection }: StockHeaderProps) {
   const { t } = useTranslation("stocks");
-
-  // Detect price changes for flash animation — only flashes when this ticker's price changes
-  const priceFlashMap = usePriceFlash(stocks ?? null);
-  const flashDirection = priceFlashMap.get(stock.ticker) ?? null;
 
   // Generate 1-week mock price history for sparkline (deterministic per ticker)
   const sparklineData = useMemo(() => {

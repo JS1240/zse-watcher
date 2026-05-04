@@ -6,6 +6,7 @@ import { useStockDetail } from "@/features/stocks/api/stock-detail-queries";
 import { useRecentStocks } from "@/hooks/use-recent-stocks";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
+import { usePriceFlash } from "@/hooks/use-price-flash";
 import { StockHeader } from "@/features/stocks/components/stock-header";
 import { StockFundamentals } from "@/features/stocks/components/stock-fundamentals";
 import { HistoryChart } from "@/features/charts/components/history-chart";
@@ -38,6 +39,8 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
   const { data: stocksResult } = useStocksLive();
   const stocks = useMemo(() => stocksResult?.stocks ?? [], [stocksResult]);
   const { addRecentStock } = useRecentStocks();
+  const priceFlashMap = usePriceFlash(stocks);
+  const flashDirection = ticker ? priceFlashMap.get(ticker) ?? null : null;
   const [showAlertForm, setShowAlertForm] = useState(false);
   const [showTransactionForm, setShowTransactionForm] = useState(false);
 
@@ -354,7 +357,7 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
                   </div>
                 )}
 
-                <StockHeader stock={stock} stocks={stocks} />
+                <StockHeader stock={stock} flashDirection={flashDirection} />
 
                 <Separator />
 
