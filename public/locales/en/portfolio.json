@@ -146,12 +146,18 @@
   },
   "plPreview": {
     "title": "Market comparison",
-    "atMarket": "At market price",
+    "atMarket": "At market",
     "atMarketDesc": "Your price matches market — buying at fair value",
     "aboveMarket": "+{{pct}}% above market",
     "aboveMarketDesc": "Buying above market — check why (premium, limit order...)",
     "belowMarket": "{{pct}}% below market",
     "belowMarketDesc": "Buying below market — good opportunity!"
+  },
+  "pct": {
+    "neg5": "-5%",
+    "pos5": "+5%",
+    "neg10": "-10%",
+    "pos10": "+10%"
   },
   "quickPrice": {
     "market": "Market"

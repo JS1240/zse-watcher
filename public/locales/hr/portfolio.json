@@ -138,12 +138,18 @@
   },
   "plPreview": {
     "title": "Usporedba s tržištem",
-    "atMarket": "Po tržišnoj cijeni",
+    "atMarket": "Po tržišnoj",
     "atMarketDesc": "Vaša cijena odgovara tržišnoj — kupujete po fer vrijednosti",
     "aboveMarket": "+{{pct}}% iznad tržišta",
     "aboveMarketDesc": "Kupujete skuplje od tržišta — provjerite zašto (premium, limit order...)",
     "belowMarket": "{{pct}}% ispod tržišta",
     "belowMarketDesc": "Kupujete jeftinije od tržišta — dobra prilika!"
+  },
+  "pct": {
+    "neg5": "-5%",
+    "pos5": "+5%",
+    "neg10": "-10%",
+    "pos10": "+10%"
   },
   "quickPrice": {
     "market": "Tržište"

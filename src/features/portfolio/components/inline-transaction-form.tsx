@@ -149,12 +149,13 @@ export function InlineTransactionForm({
   }, [currentPrice, setValue]);
 
   // Quick fill buttons using current price
+  // Note: labels use translation keys so they render in Croatian for HR users
   const quickPricePcts = [
-    { pct: 0, label: t("quickPrice.market") || "Market" },
-    { pct: -5, label: "-5%" },
-    { pct: +5, label: "+5%" },
-    { pct: -10, label: "-10%" },
-    { pct: +10, label: "+10%" },
+    { pct: 0, labelKey: "plPreview.atMarket", label: "At market price" },
+    { pct: -5, labelKey: "pct.neg5", label: "-5%" },
+    { pct: 5, labelKey: "pct.pos5", label: "+5%" },
+    { pct: -10, labelKey: "pct.neg10", label: "-10%" },
+    { pct: 10, labelKey: "pct.pos10", label: "+10%" },
   ];
 
   const handleQuickPrice = useCallback((pct: number) => {
@@ -301,16 +302,16 @@ export function InlineTransactionForm({
           </div>
         </div>
 
-        {/* Quick price buttons */}
+        {/* Quick price buttons — labels translated via t(labelKey) for Croatian */}
         <div className="flex flex-wrap gap-1">
-          {quickPricePcts.map(({ pct, label }) => (
+          {quickPricePcts.map(({ pct, labelKey }) => (
             <button
-              key={label}
+              key={labelKey}
               type="button"
               onClick={() => handleQuickPrice(pct)}
               className="rounded-sm bg-muted/60 px-2 py-0.5 text-[9px] font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
             >
-              {label} ({formatPrice(currentPrice * (1 + pct / 100)).replace("EUR", "").trim()})
+              {t(labelKey)} ({formatPrice(currentPrice * (1 + pct / 100)).replace("EUR", "").trim()})
             </button>
           ))}
         </div>

@@ -89,13 +89,13 @@ export function AddPositionForm({ holdings, onClose, onSuccess }: AddPositionFor
   // Quick share amount buttons for fills
   const quickShares = [10, 25, 50, 100, 250];
 
-  // Quick percentage buttons for price
+  // Quick percentage buttons — labels fully translated for Croatian retail investors
   const quickPricePcts = [
-    { pct: -10, label: "-10%" },
-    { pct: -5, label: "-5%" },
-    { pct: 0, label: "0%" },
-    { pct: 5, label: "+5%" },
-    { pct: 10, label: "+10%" },
+    { pct: -10, labelKey: "pct.neg10", label: "-10%" },
+    { pct: -5, labelKey: "pct.neg5", label: "-5%" },
+    { pct: 0, labelKey: "plPreview.atMarket", label: "At market" },
+    { pct: 5, labelKey: "pct.pos5", label: "+5%" },
+    { pct: 10, labelKey: "pct.pos10", label: "+10%" },
   ];
 
   // Calculate total investment value from shares × price
@@ -530,7 +530,7 @@ export function AddPositionForm({ holdings, onClose, onSuccess }: AddPositionFor
           />
           {currentPrice && (
             <div className="mt-1 flex flex-wrap gap-1">
-              {quickPricePcts.map(({ pct, label }) => (
+              {quickPricePcts.map(({ pct, labelKey }) => (
                 <button
                   key={pct}
                   type="button"
@@ -542,7 +542,7 @@ export function AddPositionForm({ holdings, onClose, onSuccess }: AddPositionFor
                       : "bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground"
                   )}
                 >
-                  {label}
+                  {t(labelKey)}
                 </button>
               ))}
             </div>
