@@ -25,7 +25,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { formatPrice, formatVolume } from "@/lib/formatters";
 import { exportToCsv, exportToJson } from "@/lib/export";
-import { parseTickersFromCsv, readFileAsText } from "@/lib/import";
+import { parseTickersFromCsv, readFileAsText, parseJsonWatchlist } from "@/lib/import";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 
 import { cn } from "@/lib/utils";
@@ -262,22 +262,37 @@ function AuthenticatedWatchlist() {
   // Hidden file input ref for CSV import
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleImportCsv = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Unified import handler — supports both CSV and JSON files for Croatian retail investors
+  // CSV: exported from ZSE Watcher or compatible tools
+  // JSON: exported from ZSE Watcher JSON export or custom scripts
+  const handleImport = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    const isJson = file.name.toLowerCase().endsWith(".json");
+
     try {
       const content = await readFileAsText(file);
-      const tickers = parseTickersFromCsv(content);
 
-      if (tickers.length === 0) {
-        toast.error(t("toast.importEmpty") || "No valid tickers found in CSV", { icon: <AlertCircle className="h-4 w-4 text-red-500" /> });
+      let parsedTickers: string[];
+      let warnings: string[] = [];
+
+      if (isJson) {
+        const result = parseJsonWatchlist(content);
+        parsedTickers = result.tickers;
+        warnings = result.warnings;
+      } else {
+        parsedTickers = parseTickersFromCsv(content);
+      }
+
+      if (parsedTickers.length === 0) {
+        toast.error(t("toast.importEmpty") || "No valid tickers found in file", { icon: <AlertCircle className="h-4 w-4 text-red-500" /> });
         return;
       }
 
       // Find valid tickers (those that exist in stocks data)
-      const validTickers = tickers.filter((t) => stocks.some((s) => s.ticker === t));
-      const invalidTickers = tickers.filter((t) => !stocks.some((s) => s.ticker === t));
+      const validTickers = parsedTickers.filter((t) => stocks.some((s) => s.ticker === t));
+      const invalidTickers = parsedTickers.filter((t) => !stocks.some((s) => s.ticker === t));
 
       // Add each valid ticker to authenticated watchlist
       let added = 0;
@@ -290,6 +305,7 @@ function AuthenticatedWatchlist() {
       }
 
       // Show results
+      
       if (added > 0) {
         toast.success(t("toast.imported", { count: added, invalid: invalidTickers.length }) || `Added ${added} ticker${added !== 1 ? "s" : ""}${invalidTickers.length > 0 ? ` (${invalidTickers.length} not found)` : ""}`, { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
       } else if (invalidTickers.length > 0) {
@@ -297,9 +313,14 @@ function AuthenticatedWatchlist() {
       } else {
         toast.info(t("toast.importAlready") || "All tickers already in watchlist", { icon: <CheckCircle2 className="h-4 w-4" /> });
       }
+
+      // Surface JSON parsing warnings as info toasts
+      for (const warning of warnings) {
+        toast.info(warning, { icon: <AlertCircle className="h-4 w-4 text-amber-500" /> });
+      }
     } catch (error) {
-      console.error("CSV import error:", error);
-      toast.error(t("toast.importError") || "Failed to import CSV", { icon: <AlertCircle className="h-4 w-4 text-red-500" /> });
+      console.error("Import error:", error);
+      toast.error(t("toast.importError") || "Failed to import file", { icon: <AlertCircle className="h-4 w-4 text-red-500" /> });
     } finally {
       // Reset file input so same file can be selected again
       e.target.value = "";
@@ -493,19 +514,19 @@ function AuthenticatedWatchlist() {
             {exportFormat === "json" ? "CSV" : "JSON"}
           </button>
         </Button>
-        {/* CSV import button for authenticated watchlist */}
+        {/* Import button for authenticated watchlist — accepts CSV and JSON files */}
         <input
           ref={fileInputRef}
           type="file"
-          accept=".csv"
-          onChange={handleImportCsv}
+          accept=".csv,.json"
+          onChange={handleImport}
           className="hidden"
         />
         <Button
           size="sm"
           variant="ghost"
           onClick={() => fileInputRef.current?.click()}
-          title={t("importCsv") || "Import CSV"}
+          title={t("importFile") || "Import CSV/JSON"}
           disabled={!stocks.length}
         >
           <Upload className="h-3.5 w-3.5" />
@@ -1023,24 +1044,37 @@ function LocalWatchlist() {
   // Hidden file input ref for CSV import
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleImportCsv = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Unified import handler for local watchlist — supports both CSV and JSON files
+  const handleImport = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    const isJson = file.name.toLowerCase().endsWith(".json");
+
     try {
       const content = await readFileAsText(file);
-      const tickers = parseTickersFromCsv(content);
 
-      if (tickers.length === 0) {
-        toast.error(t("toast.importEmpty") || "No valid tickers found in CSV", { icon: <AlertCircle className="h-4 w-4 text-red-500" /> });
+      let parsedTickers: string[];
+      let warnings: string[] = [];
+
+      if (isJson) {
+        const result = parseJsonWatchlist(content);
+        parsedTickers = result.tickers;
+        warnings = result.warnings;
+      } else {
+        parsedTickers = parseTickersFromCsv(content);
+      }
+
+      if (parsedTickers.length === 0) {
+        toast.error(t("toast.importEmpty") || "No valid tickers found in file", { icon: <AlertCircle className="h-4 w-4 text-red-500" /> });
         return;
       }
 
       // Find valid tickers (those that exist in stocks data)
-      const validTickers = tickers.filter((t) => stocks.some((s) => s.ticker === t));
-      const invalidTickers = tickers.filter((t) => !stocks.some((s) => s.ticker === t));
+      const validTickers = parsedTickers.filter((t) => stocks.some((s) => s.ticker === t));
+      const invalidTickers = parsedTickers.filter((t) => !stocks.some((s) => s.ticker === t));
 
-      // Add each valid ticker to watchlist
+      // Add each valid ticker to local watchlist
       let added = 0;
       for (const ticker of validTickers) {
         if (!items.some((i) => i.ticker === ticker)) {
@@ -1050,6 +1084,7 @@ function LocalWatchlist() {
       }
 
       // Show results
+      
       if (added > 0) {
         toast.success(t("toast.imported", { count: added, invalid: invalidTickers.length }) || `Added ${added} ticker${added !== 1 ? "s" : ""}${invalidTickers.length > 0 ? ` (${invalidTickers.length} not found)` : ""}`, { icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" /> });
       } else if (invalidTickers.length > 0) {
@@ -1057,9 +1092,14 @@ function LocalWatchlist() {
       } else {
         toast.info(t("toast.importAlready") || "All tickers already in watchlist", { icon: <CheckCircle2 className="h-4 w-4" /> });
       }
+
+      // Surface JSON parsing warnings as info toasts
+      for (const warning of warnings) {
+        toast.info(warning, { icon: <AlertCircle className="h-4 w-4 text-amber-500" /> });
+      }
     } catch (error) {
-      console.error("CSV import error:", error);
-      toast.error(t("toast.importError") || "Failed to import CSV", { icon: <AlertCircle className="h-4 w-4 text-red-500" /> });
+      console.error("Import error:", error);
+      toast.error(t("toast.importError") || "Failed to import file", { icon: <AlertCircle className="h-4 w-4 text-red-500" /> });
     } finally {
       // Reset file input so same file can be selected again
       e.target.value = "";
@@ -1183,19 +1223,19 @@ function LocalWatchlist() {
           <Download className="h-3.5 w-3.5" />
           CSV
         </Button>
-        {/* CSV import button for local watchlist */}
+        {/* Import button for local watchlist — accepts CSV and JSON files */}
         <input
           ref={fileInputRef}
           type="file"
-          accept=".csv"
-          onChange={handleImportCsv}
+          accept=".csv,.json"
+          onChange={handleImport}
           className="hidden"
         />
         <Button
           size="sm"
           variant="ghost"
           onClick={() => fileInputRef.current?.click()}
-          title={t("importCsv") || "Import CSV"}
+          title={t("importFile") || "Import CSV/JSON"}
           disabled={!stocks.length}
         >
           <Upload className="h-3.5 w-3.5" />
