@@ -1,10 +1,13 @@
 
-import { useState } from "react";
-import { X, ExternalLink, Keyboard, ArrowUp as ScrollTop } from "lucide-react";
+import { useState, useMemo } from "react";
+import { X, ExternalLink, Keyboard, ArrowUp as ScrollTop, TrendingUp } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import type { NewsArticle } from "@/types/news";
-import { formatDate, formatTime } from "@/lib/formatters";
+import { formatDate, formatTime, formatPrice } from "@/lib/formatters";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
+import { useSelectedStock } from "@/hooks/use-selected-stock";
+import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 
 interface ArticleDrawerProps {
   article: NewsArticle | null;
@@ -13,11 +16,32 @@ interface ArticleDrawerProps {
 
 export function ArticleDrawer({ article, onClose }: ArticleDrawerProps) {
   const { t } = useTranslation("news");
+  const { t: tc } = useTranslation("common");
   const { setContainerRef } = useFocusTrap({
     active: !!article,
     onEscape: onClose,
   });
+  const { select } = useSelectedStock();
+  const { data: stocksResult } = useStocksLive();
   const [showScrollTop, setShowScrollTop] = useState(false);
+
+  // Stock price map for clickable ticker price context
+  const stockPriceMap = useMemo(() => {
+    if (!stocksResult?.stocks) return new Map<string, number>();
+    const map = new Map<string, number>();
+    stocksResult.stocks.forEach((s) => map.set(s.ticker, s.price ?? 0));
+    return map;
+  }, [stocksResult]);
+
+  const handleSelectTicker = (ticker: string) => {
+    select(ticker);
+  };
+
+  const handleCopyTicker = async (e: React.MouseEvent, ticker: string) => {
+    e.stopPropagation();
+    await navigator.clipboard.writeText(ticker);
+    toast.success(`${ticker} ${tc("toast.copied") || "kopirano"}`);
+  };
 
   const scrollToTop = () => {
     document.getElementById("article-drawer-body")?.scrollTo({ top: 0, behavior: "smooth" });
@@ -45,9 +69,30 @@ export function ArticleDrawer({ article, onClose }: ArticleDrawerProps) {
               {article.category}
             </span>
             {article.ticker && (
-              <span className="rounded-sm bg-primary/10 px-1.5 py-0.5 font-data text-[10px] font-semibold text-primary">
-                {article.ticker}
-              </span>
+              <>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleSelectTicker(article.ticker!);
+                  }}
+                  onContextMenu={(e) => {
+                    e.preventDefault();
+                    handleCopyTicker(e, article.ticker!);
+                  }}
+                  className="flex items-center gap-1 rounded-sm bg-primary/10 px-1.5 py-0.5 font-data text-[10px] font-semibold text-primary transition-colors hover:bg-primary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  title={tc("toast.copiedTarget", { value: article.ticker }) || `${article.ticker} — click for stock details`}
+                >
+                  {article.ticker}
+                  {stockPriceMap.get(article.ticker) != null && (
+                    <span className="font-data text-[9px] font-medium text-muted-foreground">
+                      {formatPrice(stockPriceMap.get(article.ticker)!)}
+                    </span>
+                  )}
+                </button>
+                {stockPriceMap.get(article.ticker) != null && (
+                  <TrendingUp className="h-3 w-3 text-muted-foreground/50" />
+                )}
+              </>
             )}
             {/* Estimated read time badge — helps Croatian investors gauge article length at a glance */}
             {article.readTimeMinutes > 0 && (
