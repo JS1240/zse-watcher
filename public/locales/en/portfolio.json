@@ -29,6 +29,7 @@
     "sellAll": "Sell all ({{total}} shares)"
   },
   "tickerNotFound": "Ticker not found on ZSE",
+  "close": "Close",
   "useSuggested": "Use {{value}}",
   "totalInvestment": "Total: {{value}}",
   "fields": {

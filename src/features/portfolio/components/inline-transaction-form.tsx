@@ -212,8 +212,8 @@ export function InlineTransactionForm({
         </h4>
         <button
           onClick={onClose}
-          className="text-muted-foreground hover:text-foreground transition-colors"
-          aria-label="Close"
+          className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm btn-press"
+          aria-label={t("close") || "Close"}
         >
           <X className="h-3.5 w-3.5" />
         </button>

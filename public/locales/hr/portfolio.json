@@ -29,6 +29,7 @@
     "sellAll": "Prodaj sve ({{total}} kom)"
   },
   "tickerNotFound": "Ticker nije pronađen na ZSE",
+  "close": "Zatvori",
   "useSuggested": "Koristi {{value}}",
   "totalInvestment": "Ukupna vrijednost: {{value}}",
   "fields": {
