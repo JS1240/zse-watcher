@@ -7,6 +7,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { useLocalWatchlist } from "@/features/watchlist/hooks/use-local-watchlist";
 import { useWatchlistItems, useAddToWatchlist } from "@/features/watchlist/api/watchlist-queries";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
+import { Sparkline } from "@/components/shared/sparkline";
+import { getMockPriceHistory } from "@/lib/mock-data";
 import { LiveDataIndicator } from "@/components/shared/live-data-indicator";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
 import { usePriceFlash } from "@/hooks/use-price-flash";

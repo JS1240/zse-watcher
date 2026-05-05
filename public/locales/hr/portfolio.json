@@ -64,6 +64,7 @@
     "transactionAdded": "Transakcija dodana",
     "transactionAddFailed": "Neuspjelo dodavanje transakcije",
     "exported": "Portfelj izvezen u CSV",
+    "exportedJson": "Dividende izvezene u JSON",
     "positionAdded": "Pozicija dodana",
     "positionUpdated": "Pozicija ažurirana",
     "positionDeleted": "Pozicija obrisana",

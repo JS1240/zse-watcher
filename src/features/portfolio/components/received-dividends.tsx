@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Plus, Trash2, Download, ArrowUp, ArrowDown, ArrowUpDown, Search, X } from "lucide-react";
 import { toast } from "sonner";
-import { exportToCsv } from "@/lib/export";
+import { exportToCsv, exportToJson } from "@/lib/export";
 import { useReceivedDividends } from "@/features/portfolio/hooks/use-received-dividends";
 import { usePortfolioHoldings } from "@/features/portfolio/api/portfolio-queries";
 import { useDebounce } from "@/hooks/use-debounce";
@@ -21,6 +21,7 @@ export function ReceivedDividends() {
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 150);
   const [sort, setSort] = useState<{ column: "ticker" | "amount" | "date"; direction: "asc" | "desc" } | null>({ column: "date", direction: "desc" });
+  const [exportFormat, setExportFormat] = useState<"csv" | "json">("csv");
   const [form, setForm] = useState({
     ticker: "",
     shares: "",
@@ -115,6 +116,22 @@ export function ReceivedDividends() {
     toast.success(t("toast.exported"));
   };
 
+  const handleExportJson = () => {
+    const jsonData = sortedDividends.map((d) => ({
+      ticker: d.ticker,
+      shares: d.shares,
+      amountPerShare: d.amountPerShare,
+      totalAmount: d.totalAmount,
+      totalAmountEur: d.currency === "HRK" ? d.totalAmount / 7.5 : d.totalAmount,
+      currency: d.currency,
+      payDate: d.payDate,
+      notes: d.notes ?? null,
+      createdAt: d.createdAt,
+    }));
+    exportToJson(`zse-dividends-${new Date().toISOString().split("T")[0]}`, jsonData);
+    toast.success(t("toast.exportedJson") || "Exported to JSON");
+  };
+
   return (
     <div className="space-y-3">
       {/* Header */}
@@ -151,9 +168,18 @@ export function ReceivedDividends() {
                   </button>
                 )}
               </div>
-              <Button size="sm" variant="outline" onClick={handleExportCsv} className="h-6 text-[10px]">
+              <Button size="sm" variant="outline" onClick={exportFormat === "csv" ? handleExportCsv : handleExportJson} className="h-6 text-[10px]">
                 <Download className="h-3 w-3" />
-                CSV
+                {exportFormat === "json" ? "JSON" : "CSV"}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setExportFormat((prev) => (prev === "csv" ? "json" : "csv"));
+                  }}
+                  className="ml-1 rounded px-1 py-0.5 text-[9px] font-medium hover:bg-primary/20"
+                >
+                  {exportFormat === "json" ? "CSV" : "JSON"}
+                </button>
               </Button>
             </>
           )}

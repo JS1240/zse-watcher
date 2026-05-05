@@ -64,6 +64,7 @@
     "transactionAdded": "Transaction added",
     "transactionAddFailed": "Failed to add transaction",
     "exported": "Portfolio exported to CSV",
+    "exportedJson": "Dividends exported to JSON",
     "positionAdded": "Position added",
     "positionUpdated": "Position updated",
     "positionDeleted": "Position removed",
