@@ -1,12 +1,11 @@
 /**
  * Skeleton loading state for StockFundamentals.
- * Provides consistent loading UX while news/data is being fetched.
- * For Croatian retail investors.
+ * Provides consistent loading UX while stock fundamentals/data is being fetched.
+ * Mirrors the actual StockFundamentals layout for Croatian retail investors.
  */
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { Keyboard } from "lucide-react";
 
 interface StockFundamentalsSkeletonProps {
   className?: string;
@@ -15,22 +14,37 @@ interface StockFundamentalsSkeletonProps {
 export function StockFundamentalsSkeleton({ className }: StockFundamentalsSkeletonProps) {
   return (
     <div className={cn("space-y-4", className)}>
+      {/* Investment Summary skeleton — matches actual layout with 3-column grid + combined signal */}
+      <div>
+        <Skeleton className="mb-2 h-2 w-20 animate-shimmer" />
+        <div className="rounded-md border border-border bg-card p-3 space-y-2.5">
+          {/* 3-column metrics grid */}
+          <div className="grid grid-cols-3 gap-3">
+            <MetricSkeleton labelWidth="w-16" valueWidth="w-12" />
+            <MetricSkeleton labelWidth="w-10" valueWidth="w-10" />
+            <MetricSkeleton labelWidth="w-20" valueWidth="w-8" />
+          </div>
+          {/* Combined signal badge row */}
+          <div className="flex items-center justify-between pt-1.5 border-t border-border/50">
+            <Skeleton className="h-2 w-12 animate-shimmer" />
+            <Skeleton className="h-4 w-12 rounded-full animate-shimmer" />
+          </div>
+        </div>
+      </div>
+
       {/* Description skeleton */}
-      <div className="space-y-1.5">
+      <div className="space-y-1">
         <Skeleton className="h-2 w-20 animate-shimmer" />
         <Skeleton className="h-3 w-full animate-shimmer" />
         <Skeleton className="h-3 w-4/5 animate-shimmer" />
       </div>
 
-      {/* Key metrics grid skeleton */}
+      {/* Key metrics grid skeleton — 6 items in 2 columns */}
       <div className="grid grid-cols-2 gap-3">
-        {/* Row 1 */}
         <MetricSkeleton />
         <MetricSkeleton />
-        {/* Row 2 */}
         <MetricSkeleton />
         <MetricSkeleton />
-        {/* Row 3 */}
         <MetricSkeleton />
         <MetricSkeleton />
       </div>
@@ -43,7 +57,7 @@ export function StockFundamentalsSkeleton({ className }: StockFundamentalsSkelet
           <Skeleton className="h-2 w-12 animate-shimmer" />
         </div>
         <Skeleton className="h-3 w-full animate-shimmer" />
-        <div className="flex justify-between">
+        <div className="flex items-center justify-between">
           <Skeleton className="h-3 w-20 animate-shimmer" />
           <Skeleton className="h-3 w-12 animate-shimmer" />
         </div>
@@ -67,34 +81,15 @@ export function StockFundamentalsSkeleton({ className }: StockFundamentalsSkelet
           ))}
         </div>
       </div>
-
-      {/* Always-visible keyboard shortcuts hint — matches stock detail drawer pattern */}
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-sm border border-border/50 bg-muted/30 px-3 py-1.5 text-[9px] text-muted-foreground">
-        <span className="flex items-center gap-0.5">
-          <Keyboard className="h-2.5 w-2.5" />
-        </span>
-        <span className="flex items-center gap-0.5">
-          <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Esc</kbd>
-          <span>zatvori</span>
-        </span>
-        <span className="flex items-center gap-0.5">
-          <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">T</kbd>
-          <span>tema</span>
-        </span>
-        <span className="flex items-center gap-0.5">
-          <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">?</kbd>
-          <span>pre\u010daci</span>
-        </span>
-      </div>
     </div>
   );
 }
 
-function MetricSkeleton() {
+function MetricSkeleton({ labelWidth = "w-16", valueWidth = "w-20" }: { labelWidth?: string; valueWidth?: string }) {
   return (
     <div className="space-y-1">
-      <Skeleton className="h-2 w-16 animate-shimmer" />
-      <Skeleton className="h-3 w-20 animate-shimmer" />
+      <Skeleton className={cn("h-2 animate-shimmer", labelWidth)} />
+      <Skeleton className={cn("h-3 animate-shimmer", valueWidth)} />
     </div>
   );
 }
