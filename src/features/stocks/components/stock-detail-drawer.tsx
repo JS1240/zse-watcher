@@ -390,6 +390,39 @@ const DrawerSkeleton = memo(function DrawerSkeleton() {
         <Skeleton className="h-4 w-64 animate-shimmer" />
       </div>
       <Skeleton className="h-px w-full animate-shimmer" />
+      {/* Always-visible keyboard shortcuts hint — matches main drawer pattern */}
+      <div className="flex items-center justify-between border-border/50 bg-muted/30 px-4 py-1.5 text-[9px] text-muted-foreground">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+          <span className="flex items-center gap-1">
+            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Esc</kbd>
+            <span>zatvori</span>
+          </span>
+          <span className="flex items-center gap-1">
+            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">T</kbd>
+            <span>transakcija</span>
+          </span>
+          <span className="flex items-center gap-1">
+            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">A</kbd>
+            <span>alarm</span>
+          </span>
+          <span className="flex items-center gap-1">
+            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">W</kbd>
+            <span>praćenje</span>
+          </span>
+          <span className="flex items-center gap-1">
+            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">/</kbd>
+            <span>pretraži</span>
+          </span>
+          <span className="flex items-center gap-1">
+            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">?</kbd>
+            <span>prečaci</span>
+          </span>
+        </div>
+        <span className="flex items-center gap-1">
+          <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">D</kbd>
+          <span>CSV</span>
+        </span>
+      </div>
       <Skeleton className="h-[260px] w-full animate-shimmer" />
       <Skeleton className="h-px w-full animate-shimmer" />
       <div className="grid grid-cols-2 gap-3">

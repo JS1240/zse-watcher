@@ -1,5 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { Keyboard } from "lucide-react";
 
 interface ReceivedDividendsSkeletonProps {
   className?: string;
@@ -58,29 +59,30 @@ export function ReceivedDividendsSkeleton({ className, rows = 3 }: ReceivedDivid
         </div>
       </div>
 
-      {/* Always-visible keyboard shortcuts hint — matching received-dividends pattern */}
-      <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border/50 bg-muted/20 px-3 py-2 text-[9px] text-muted-foreground">
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-          <span className="flex items-center gap-0.5">
-            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Del</kbd>
-            <span className="hidden sm:inline">briši</span>
-          </span>
-          <span className="flex items-center gap-0.5">
-            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
-            <span className="hidden sm:inline">dionicu</span>
-          </span>
-          <span className="flex items-center gap-0.5">
-            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">↑↓</kbd>
-            <span className="hidden sm:inline">navigiraj</span>
-          </span>
-          <span className="flex items-center gap-0.5">
-            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">/</kbd>
-            <span className="hidden sm:inline">traži</span>
-          </span>
-        </div>
+      {/* Always-visible keyboard shortcuts hint — matches standard skeleton pattern */}
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-sm border border-border/50 bg-muted/30 px-3 py-1.5 text-[9px] text-muted-foreground">
+        <span className="flex items-center gap-0.5">
+          <Keyboard className="h-2.5 w-2.5" />
+        </span>
+        <span className="flex items-center gap-0.5">
+          <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Del</kbd>
+          <span>obri\u0161i</span>
+        </span>
+        <span className="flex items-center gap-0.5">
+          <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
+          <span>detalji</span>
+        </span>
+        <span className="flex items-center gap-0.5">
+          <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">\u2191\u2193</kbd>
+          <span>navigiraj</span>
+        </span>
+        <span className="flex items-center gap-0.5">
+          <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">/</kbd>
+          <span>pretra\u017ei</span>
+        </span>
         <span className="flex items-center gap-0.5">
           <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">N</kbd>
-          <span className="hidden sm:inline">novi unos</span>
+          <span>novi unos</span>
         </span>
       </div>
     </div>
