@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { AlertTriangle, X, Check } from "lucide-react";
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 interface ConfirmationDialogProps {
   open: boolean;
@@ -18,8 +19,7 @@ interface ConfirmationDialogProps {
   icon?: ReactNode;
   onConfirm: () => void;
   /**
-   * Optional keyboard shortcuts hint text. If omitted, shows default English hint.
-   * Pass localized text like "Enter za potvrdu, Esc za odustanak".
+   * Optional keyboard shortcuts hint text. If omitted, shows a localized hint via i18n.
    */
   shortcutsHint?: string;
 }
@@ -29,15 +29,20 @@ export function ConfirmationDialog({
   onOpenChange,
   title,
   description,
-  confirmLabel = "Confirm",
-  cancelLabel = "Cancel",
+  confirmLabel,
+  cancelLabel,
   variant = "danger",
   icon,
   onConfirm,
   shortcutsHint,
 }: ConfirmationDialogProps) {
+  const { t } = useTranslation("common");
   const cancelRef = useRef<HTMLButtonElement>(null);
   const confirmRef = useRef<HTMLButtonElement>(null);
+
+  // Resolve labels from i18n — callers can pass explicit labels or rely on defaults
+  const resolvedConfirmLabel = confirmLabel ?? t("actions.confirm");
+  const resolvedCancelLabel = cancelLabel ?? t("actions.cancel");
 
   // Focus management: ESC focuses cancel, ENTER focuses confirm
   useEffect(() => {
@@ -118,7 +123,7 @@ export function ConfirmationDialog({
             onClick={() => onOpenChange(false)}
           >
             <X className="mr-1.5 h-3.5 w-3.5" />
-            {cancelLabel}
+            {resolvedCancelLabel}
           </Button>
           <Button
             ref={confirmRef}
@@ -130,15 +135,17 @@ export function ConfirmationDialog({
             }}
           >
             <Check className="mr-1.5 h-3.5 w-3.5" />
-            {confirmLabel}
+            {resolvedConfirmLabel}
           </Button>
         </div>
 
         <p className="mt-2 text-center text-[9px] text-muted-foreground">
-          {shortcutsHint || (
+          {shortcutsHint ?? (
             <>
-              Press <kbd className="rounded bg-muted px-1">Enter</kbd> to confirm,{" "}
-              <kbd className="rounded bg-muted px-1">Esc</kbd> to cancel
+              <kbd className="rounded bg-muted px-1">{t("shortcuts.enter") || "Enter"}</kbd>{" "}
+              {t("shortcuts.confirm") || "potvrdi"},{" "}
+              <kbd className="rounded bg-muted px-1">{t("shortcuts.esc") || "Esc"}</kbd>{" "}
+              {t("shortcuts.cancel") || "odustani"}
             </>
           )}
         </p>

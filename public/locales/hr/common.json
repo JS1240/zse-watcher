@@ -47,7 +47,8 @@
     "login": "Prijava",
     "register": "Registracija",
     "logout": "Odjava",
-    "upgrade": "Nadogradi"
+    "upgrade": "Nadogradi",
+    "confirm": "Potvrdi"
   },
   "theme": {
     "dark": "Tamna tema",
@@ -143,7 +144,11 @@
     "edit": "uredi",
     "duplicate": "kopiraj",
     "delete": "obriši",
-    "clear": "poništi"
+    "clear": "poništi",
+    "enter": "Enter",
+    "esc": "Esc",
+    "confirm": "potvrdi",
+    "cancel": "odustani"
   },
   "tickerSelect": {
     "navigate": "navigiraj",

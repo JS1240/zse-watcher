@@ -47,7 +47,8 @@
     "login": "Sign In",
     "register": "Sign Up",
     "logout": "Sign Out",
-    "upgrade": "Upgrade"
+    "upgrade": "Upgrade",
+    "confirm": "Confirm"
   },
   "theme": {
     "dark": "Dark Theme",
@@ -142,7 +143,11 @@
     "edit": "edit",
     "duplicate": "duplicate",
     "delete": "delete",
-    "clear": "clear"
+    "clear": "clear",
+    "enter": "Enter",
+    "esc": "Esc",
+    "confirm": "confirm",
+    "cancel": "cancel"
   },
   "tickerSelect": {
     "navigate": "navigate",
