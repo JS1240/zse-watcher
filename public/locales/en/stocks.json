@@ -7,13 +7,13 @@
   "shortcut": {
     "search": "search",
     "details": "details",
-    "watch": "watch",
+    "watch": "watch stock",
+    "navigate": "navigate",
     "copy": "copy",
     "close": "close",
     "createAlert": "create alert",
     "exportCsv": "export CSV",
     "recordTransaction": "record transaction",
-    "navigate": "navigate",
     "watchlist": "watch stock"
   },
   "shortcuts": "Keyboard Shortcuts",
