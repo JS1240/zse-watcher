@@ -75,6 +75,7 @@
   "shortcut": {
     "add": "dodaj dionic",
     "search": "pretraži",
+    "navigate": "navigiraj",
     "details": "detalji dionice",
     "toggle": "prati/odustani",
     "delete": "ukloni iz pratnje"

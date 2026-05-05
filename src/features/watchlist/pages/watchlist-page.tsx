@@ -1322,20 +1322,24 @@ function LocalWatchlist() {
           {/* Always-visible keyboard shortcuts hint for discoverability */}
           <div className="flex items-center gap-2 text-[9px] text-muted-foreground">
             <span className="flex items-center gap-0.5">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">↑↓</kbd>
+              <span>{t("shortcut.navigate")}</span>
+            </span>
+            <span className="flex items-center gap-0.5">
               <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Enter</kbd>
-              <span className="text-muted-foreground">detalji</span>
+              <span>{t("shortcut.details")}</span>
             </span>
             <span className="flex items-center gap-0.5">
               <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">S</kbd>
-              <span className="text-muted-foreground">prati</span>
+              <span>{t("shortcut.toggle")}</span>
             </span>
             <span className="flex items-center gap-0.5">
               <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Del</kbd>
-              <span className="text-muted-foreground">obriši</span>
+              <span>{t("shortcut.delete")}</span>
             </span>
             <span className="flex items-center gap-0.5">
               <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">/</kbd>
-              <span className="text-muted-foreground">traži</span>
+              <span>{t("shortcut.search")}</span>
             </span>
           </div>
         </div>

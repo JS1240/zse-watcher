@@ -74,6 +74,7 @@
   "shortcut": {
     "add": "add ticker",
     "search": "search",
+    "navigate": "navigate",
     "details": "stock details",
     "toggle": "add/remove",
     "delete": "remove from watchlist"
