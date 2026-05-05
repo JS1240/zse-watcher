@@ -567,6 +567,15 @@ export function NewsFeed({ ticker: propsTicker, category, limit }: NewsFeedProps
             </div>
           </>
         )}
+        {/* Fallback empty state when showSearch=false (e.g., limited widget view with no matching articles) */}
+        {!showSearch && (
+          <EmptyState
+            icon={<NewsEmptyIllustration className="h-10 w-10" />}
+            title={tn("empty") || t("empty.noData")}
+            description={tn("emptyDescription") || t("empty.noDataDescription")}
+            variant="info"
+          />
+        )}
       </div>
     );
   }
