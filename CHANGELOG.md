@@ -19,6 +19,14 @@
 
 ### Added
 
+- **Interactive ticker with live price in ArticleDrawer header** — click ticker to open stock detail drawer for Croatian retail investors
+  - Ticker badge in drawer header now shows current live price next to ticker symbol when price data is available
+  - Click ticker button → opens stock detail drawer (same as clicking ticker in news list or stock table)
+  - Right-click ticker → copies ticker to clipboard with toast confirmation (consistent with news feed and stock table pattern)
+  - Added TrendingUp icon next to price as visual affordance for interactivity
+  - Uses `useSelectedStock` and `useStocksLive` hooks (same data source as stocks page)
+  - Matches the clickable ticker pattern already established in news-feed.tsx ArticleItem
+
 - **Live distance indicator in AlertRow inline edit** — shows how far target is from current price for Croatian retail investors
   - Percent change display (+X.X% or -X.X%) in green/red with TrendingUp icon when target is valid
   - Direction-aware suggested target presets: +3%, +5%, +10%, -3%, -5%, -10% with condition auto-switching
