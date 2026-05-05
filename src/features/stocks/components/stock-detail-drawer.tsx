@@ -265,44 +265,42 @@ export function StockDetailDrawer({ ticker, onClose }: StockDetailDrawerProps) {
         </div>
 
         {/* Always-visible keyboard shortcuts hint — matching portfolio/stocks pattern */}
-        {stock && (
-          <div className="flex items-center justify-between border-b border-border/50 bg-muted/30 px-4 py-1.5 text-[9px] text-muted-foreground">
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-              <span className="flex items-center gap-1">
-                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Esc</kbd>
-                <span>{t("shortcut.close") || "zatvori"}</span>
-              </span>
-              <span className="flex items-center gap-1">
-                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">T</kbd>
-                <span>{t("drawer.recordTransaction") || "transakcija"}</span>
-              </span>
-              <span className="flex items-center gap-1">
-                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">A</kbd>
-                <span>{ta("create") || "alarm"}</span>
-              </span>
-              <span className="flex items-center gap-1">
-                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">W</kbd>
-                <span>{t("watchlist.add") || "praćenje"}</span>
-              </span>
-              <span className="flex items-center gap-1">
-                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">L</kbd>
-                <span>{t("toast.linkCopied") || "kopiraj"}</span>
-              </span>
-              <span className="flex items-center gap-1">
-                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">/</kbd>
-                <span>{tc("navigate") || "pretrazi"}</span>
-              </span>
-              <span className="flex items-center gap-1">
-                <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">?</kbd>
-                <span>{tc("shortcutsOverlay.showShortcuts") || "prečaci"}</span>
-              </span>
-            </div>
+        <div className="flex items-center justify-between border-b border-border/50 bg-muted/30 px-4 py-1.5 text-[9px] text-muted-foreground">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <span className="flex items-center gap-1">
-              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">D</kbd>
-              <span>{t("exportCsv") || "CSV"}</span>
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Esc</kbd>
+              <span>{t("shortcut.close") || "zatvori"}</span>
+            </span>
+            <span className="flex items-center gap-1">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">T</kbd>
+              <span>{t("drawer.recordTransaction") || "transakcija"}</span>
+            </span>
+            <span className="flex items-center gap-1">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">A</kbd>
+              <span>{ta("create") || "alarm"}</span>
+            </span>
+            <span className="flex items-center gap-1">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">W</kbd>
+              <span>{t("watchlist.add") || "praćenje"}</span>
+            </span>
+            <span className="flex items-center gap-1">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">L</kbd>
+              <span>{t("toast.linkCopied") || "kopiraj"}</span>
+            </span>
+            <span className="flex items-center gap-1">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">/</kbd>
+              <span>{tc("navigate") || "pretrazi"}</span>
+            </span>
+            <span className="flex items-center gap-1">
+              <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">?</kbd>
+              <span>{tc("shortcutsOverlay.showShortcuts") || "prečaci"}</span>
             </span>
           </div>
-        )}
+          <span className="flex items-center gap-1">
+            <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">D</kbd>
+            <span>{t("exportCsv") || "CSV"}</span>
+          </span>
+        </div>
 
         {/* Content */}
         <ScrollArea className="flex-1">
@@ -391,7 +389,7 @@ const DrawerSkeleton = memo(function DrawerSkeleton() {
       </div>
       <Skeleton className="h-px w-full animate-shimmer" />
       {/* Always-visible keyboard shortcuts hint — matches main drawer pattern */}
-      <div className="flex items-center justify-between border-border/50 bg-muted/30 px-4 py-1.5 text-[9px] text-muted-foreground">
+      <div className="flex items-center justify-between border-b border-border/50 bg-muted/30 px-4 py-1.5 text-[9px] text-muted-foreground">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
           <span className="flex items-center gap-1">
             <kbd className="rounded bg-muted px-1 py-0.5 font-sans text-[8px]">Esc</kbd>
