@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Search, ArrowUpDown, ArrowUp, ArrowDown, Download, TrendingUp, TrendingDown, Minus, X, ArrowUp as ScrollToTopIcon, Keyboard, RotateCcw } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { SelectInput } from "@/components/ui/select";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { StockRow } from "@/features/stocks/components/stock-row";
 import { StockTableSkeleton } from "./stock-table-skeleton";
@@ -379,25 +380,16 @@ export function StockTable() {
             <span className="hidden sm:inline">{t("filters.unchanged") || "Bez promjene"}</span>
           </button>
 
-          {/* Sector filter — grouped with performance filters */}
+          {/* Sector filter — styled select matching the filter pill design */}
           {availableSectors.length > 0 && (
-            <select
+            <SelectInput
               value={sectorFilter ?? ""}
-              onChange={(e) => setSectorFilter(e.target.value || null)}
-              className={cn(
-                "rounded-full px-2.5 py-1 text-[10px] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
-                sectorFilter
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "bg-muted/60 text-muted-foreground hover:bg-muted",
-              )}
-            >
-              <option value="">{t("filters.allSectors") || "Svi sektori"}</option>
-              {availableSectors.map((sector) => (
-                <option key={sector} value={sector}>
-                  {sector}
-                </option>
-              ))}
-            </select>
+              onChange={(val) => setSectorFilter(val || null)}
+              options={[
+                { value: "", label: t("filters.allSectors") || "Svi sektori" },
+                ...availableSectors.map((s) => ({ value: s, label: s })),
+              ]}
+            />
           )}
         </div>
       </div>
