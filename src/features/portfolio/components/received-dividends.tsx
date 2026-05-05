@@ -276,7 +276,14 @@ export function ReceivedDividends() {
           icon={<DividendsCalendarEmptyIllustration className="h-8 w-8" />}
           title={t("dividends.empty", "No dividends recorded yet")}
           description={t("dividends.emptyDescription", "Record your first dividends to start tracking your investment returns.")}
-          action={{ label: t("dividends.recordAction", "Record"), onClick: () => setShowForm(true) }}
+          steps={[
+            { label: t("dividends.quickStart.step1"), description: t("dividends.quickStart.step1Desc") },
+            { label: t("dividends.quickStart.step2"), description: t("dividends.quickStart.step2Desc") },
+            { label: t("dividends.quickStart.step3"), description: t("dividends.quickStart.step3Desc") },
+          ]}
+          action={{ label: t("dividends.buttons.record"), onClick: () => setShowForm(true) }}
+          shortcut="N"
+          variant="action"
           className="rounded-md border border-border"
         />
       ) : filteredDividends.length === 0 && debouncedSearch ? (

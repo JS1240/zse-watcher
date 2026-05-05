@@ -26,14 +26,7 @@
     "allSectors": "All sectors"
   },
   "validation": {
-    "required": "Required field",
-    "positiveNumber": "Enter a positive number",
-    "tickerValid": "Selected",
-    "targetValid": "Valid",
-    "selectTicker": "Select a stock",
-    "insufficientShares": "You don't have enough shares",
-    "exceedsShares": "Selling more than you own",
-    "maxSell": "Max: {{max}}"
+    "sellAll": "Sell all ({{total}} shares)"
   },
   "tickerNotFound": "Ticker not found on ZSE",
   "useSuggested": "Use {{value}}",
@@ -118,6 +111,14 @@
       "record": "Record",
       "save": "Save",
       "cancel": "Cancel"
+    },
+    "quickStart": {
+      "step1": "Dividends are profit distributions",
+      "step1Desc": "Companies share a portion of profits with shareholders",
+      "step2": "Record received dividends",
+      "step2Desc": "Enter the ticker, number of shares and amount per share",
+      "step3": "Track total returns",
+      "step3Desc": "Review annual yields and tax benefits"
     }
   },
   "errors": {
@@ -158,8 +159,5 @@
   "quickShares": {
     "label": "shares"
   },
-  "sellAll": "All",
-  "validation": {
-    "sellAll": "Sell all ({{total}} shares)"
-  }
+  "sellAll": "All"
 }

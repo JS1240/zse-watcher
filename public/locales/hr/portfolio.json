@@ -26,14 +26,7 @@
     "allSectors": "Svi sektori"
   },
   "validation": {
-    "required": "Obavezno polje",
-    "positiveNumber": "Unesite pozitivan broj",
-    "tickerValid": "Odabrano",
-    "targetValid": "Ispravno",
-    "selectTicker": "Odaberite dionicu",
-    "insufficientShares": "Nemate dovoljno dionica",
-    "exceedsShares": "Prodajete više nego što imate",
-    "maxSell": "Maksimum: {{max}} kom"
+    "sellAll": "Prodaj sve ({{total}} kom)"
   },
   "tickerNotFound": "Ticker nije pronađen na ZSE",
   "useSuggested": "Koristi {{value}}",
@@ -78,14 +71,6 @@
   "exportTransactions": "Transakcije",
   "empty": "Nemate pozicija u portfelju",
   "emptyDescription": "Dodajte svoju prvu poziciju kako biste pratili vrijednost i dobit.",
-  "quickStart": {
-    "step1": "Dodajte svoju prvu dionicu",
-    "step1Desc": "Kliknite gumb 'Dodaj poziciju' za unos kupnje",
-    "step2": "Unesite oznaku i broj komada",
-    "step2Desc": "Odaberite dionicu s burze i unesite koliko komada ste kupili",
-    "step3": "Pratite dobitak i alokaciju",
-    "step3Desc": "Gledajte sektore, izvedbu i ukupnu vrijednost portfelja"
-  },
   "searchPlaceholder": "Pretraži oznaku ili ime...",
   "searchNoResults": "Nema rezultata",
   "clearSearch": "Očisti pretraživanje",
@@ -118,6 +103,14 @@
       "record": "Zabilježi",
       "save": "Spremi",
       "cancel": "Odustani"
+    },
+    "quickStart": {
+      "step1": "Dividende su isplate dobiti",
+      "step1Desc": "Tvrtke dijele dio profita s dioničarima",
+      "step2": "Zabilježite primljenu dividendu",
+      "step2Desc": "Unesite oznaku dionice, broj dionica i iznos po dionici",
+      "step3": "Pratite ukupne prinose",
+      "step3Desc": "Pregledajte godišnje prinose i porezne olakšice"
     }
   },
   "errors": {
@@ -159,7 +152,12 @@
     "label": "kom"
   },
   "sellAll": "Sve",
-  "validation": {
-    "sellAll": "Prodaj sve ({{total}} kom)"
+  "quickStart": {
+    "step1": "Dodajte svoju prvu dionicu",
+    "step1Desc": "Kliknite gumb 'Dodaj poziciju' za unos kupnje",
+    "step2": "Unesite oznaku i broj komada",
+    "step2Desc": "Odaberite dionicu s burze i unesite koliko komada ste kupili",
+    "step3": "Pratite dobitak i alokaciju",
+    "step3Desc": "Gledajte sektore, izvedbu i ukupnu vrijednost portfelja"
   }
 }
