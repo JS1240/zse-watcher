@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+### Added
+
+- **JSON import for watchlist** — Croatian retail investors can now import watchlists exported as JSON, enabling full export/backup/restore cycle
+  - `parseJsonWatchlist()` supports: array of tickers (`["ATGR", "HPB"]`), array of objects with ticker field (`[{ ticker: "ATGR" }]`), or objects with stocks/watched/items/data keys
+  - Unified `handleImport()` for both authenticated and local watchlist views — auto-detects CSV vs JSON from file extension
+  - Import button now accepts both `.csv` and `.json` files (updated `accept=".csv,.json"`)
+  - JSON parsing warnings surfaced as toast messages instead of silent failures
+  - Updated HR/EN translations: `importFile` button label, generic `importEmpty`/`importError` toast messages
+  - Croatian investors can now: export watchlist as JSON → edit in Python/Excel → re-import, or restore from a backup
+
 ### Fixed
 
 - **WatchlistSkeleton column alignment** — skeleton now mirrors actual WatchlistTable column structure for Croatian investors
