@@ -1574,12 +1574,18 @@ function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort, dragEnable
 }
 
 const WatchlistTableMemo = memo(WatchlistTable, (prev, next) => {
+  // Shallow compare arrays by length + first/last ticker to avoid deep equals cost
+  const stocksEqual =
+    prev.stocks.length === next.stocks.length &&
+    prev.stocks.every((s, i) => s.ticker === next.stocks[i]?.ticker) &&
+    prev.stocks[0]?.ticker === next.stocks[0]?.ticker &&
+    prev.stocks[prev.stocks.length - 1]?.ticker === next.stocks[next.stocks.length - 1]?.ticker;
   return (
-    prev.stocks === next.stocks &&
+    stocksEqual &&
     prev.showRemove === next.showRemove &&
     prev.onRemove === next.onRemove &&
-    prev.sort === next.sort &&
-    prev.onSort === next.onSort &&
+    prev.sort?.column === next.sort?.column &&
+    prev.sort?.direction === next.sort?.direction &&
     prev.dragEnabled === next.dragEnabled &&
     prev.searchQuery === next.searchQuery &&
     prev.focusedRowIndex === next.focusedRowIndex &&
@@ -1754,17 +1760,20 @@ function WatchlistRow({ stock, showRemove, onRemove, flash, searchQuery, rowInde
 }
 
 const WatchlistRowMemo = memo(WatchlistRow, (prev, next) => {
+  // Inline comparison to avoid deep stock object equality cost
+  const s1 = prev.stock;
+  const s2 = next.stock;
   return (
-    prev.stock.ticker === next.stock.ticker &&
-    prev.stock.price === next.stock.price &&
-    prev.stock.changePct === next.stock.changePct &&
-    prev.stock.name === next.stock.name &&
-    prev.stock.sector === next.stock.sector &&
-    prev.stock.volume === next.stock.volume &&
-    prev.stock.turnover === next.stock.turnover &&
-    prev.stock.dividendYield === next.stock.dividendYield &&
-    prev.stock.peRatio === next.stock.peRatio &&
-    prev.stock.marketCapM === next.stock.marketCapM &&
+    s1.ticker === s2.ticker &&
+    s1.price === s2.price &&
+    s1.changePct === s2.changePct &&
+    s1.name === s2.name &&
+    s1.sector === s2.sector &&
+    s1.volume === s2.volume &&
+    s1.turnover === s2.turnover &&
+    s1.dividendYield === s2.dividendYield &&
+    s1.peRatio === s2.peRatio &&
+    s1.marketCapM === s2.marketCapM &&
     prev.showRemove === next.showRemove &&
     prev.onRemove === next.onRemove &&
     prev.flash === next.flash &&
