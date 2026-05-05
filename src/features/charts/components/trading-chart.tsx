@@ -5,6 +5,7 @@ import {
   CandlestickSeries,
   AreaSeries,
   HistogramSeries,
+  LineSeries,
   ColorType,
   CrosshairMode,
 } from "lightweight-charts";
@@ -12,6 +13,18 @@ import { useTranslation } from "react-i18next";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ChartEmptyIllustration } from "@/components/shared/empty-illustrations";
 import type { PricePoint } from "@/types/stock";
+
+/** Compute Simple Moving Average for a given period */
+function computeSma(data: PricePoint[], period: number): Array<{ time: string; value: number }> {
+  if (data.length < period) return [];
+  const result: Array<{ time: string; value: number }> = [];
+  for (let i = period - 1; i < data.length; i++) {
+    const slice = data.slice(i - period + 1, i + 1);
+    const avg = slice.reduce((sum, d) => sum + d.close, 0) / period;
+    result.push({ time: data[i].time, value: avg });
+  }
+  return result;
+}
 
 /** Get responsive chart height based on container width */
 function getResponsiveHeight(containerWidth: number, requestedHeight?: number): number {
@@ -27,6 +40,13 @@ function getResponsiveHeight(containerWidth: number, requestedHeight?: number): 
   return baseHeight;
 }
 
+/** SMA overlay definition */
+export interface SmaIndicator {
+  type: "sma";
+  period: number;
+  color: string;
+}
+
 interface TradingChartProps {
   data: PricePoint[];
   chartType?: "area" | "candlestick";
@@ -36,6 +56,8 @@ interface TradingChartProps {
   onRetry?: () => void;
   /** Whether data is currently loading */
   isLoading?: boolean;
+  /** Optional SMA overlays (e.g., [{ type: 'sma', period: 20, color: '#f59e0b' }]) */
+  indicators?: SmaIndicator[];
 }
 
 export function TradingChart({
@@ -45,6 +67,7 @@ export function TradingChart({
   className,
   onRetry,
   isLoading,
+  indicators,
 }: TradingChartProps) {
   const { t } = useTranslation("common");
   const containerRef = useRef<HTMLDivElement>(null);
@@ -142,6 +165,24 @@ export function TradingChart({
       }
     }
 
+    // Add SMA overlays as line series
+    if (indicators && indicators.length > 0 && data.length > 0) {
+      for (const indicator of indicators) {
+        if (indicator.type !== "sma") continue;
+        const smaData = computeSma(data, indicator.period);
+        if (smaData.length === 0) continue;
+
+        const smaSeries = chart.addSeries(LineSeries, {
+          color: indicator.color,
+          lineWidth: 1,
+          priceLineVisible: false,
+          lastValueVisible: false,
+          crosshairMarkerVisible: false,
+        });
+        smaSeries.setData(smaData);
+      }
+    }
+
     // Volume histogram
     const isDark = document.documentElement.classList.contains("dark");
     const volumeColor = isDark ? "rgba(130, 138, 151, 0.2)" : "rgba(113, 113, 122, 0.15)";
@@ -221,7 +262,7 @@ export function TradingChart({
       chart.remove();
       chartRef.current = null;
     };
-  }, [data, chartType, height, getThemeColors, currentHeight]);
+  }, [data, chartType, height, getThemeColors, currentHeight, indicators]);
 
   // OHLCV tooltip state — updated via chart-tooltip custom events from crosshair
   const [tooltipData, setTooltipData] = useState<{

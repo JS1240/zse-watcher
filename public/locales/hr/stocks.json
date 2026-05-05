@@ -107,6 +107,12 @@
     "exportHistory": "Izvoz cijene povijesti",
     "historyExported": "Povijest cijena izvezena"
   },
+  "sma": {
+    "show": "MA",
+    "hide": "MA",
+    "toggleTooltip": "Prikaži/sakrij MA linije (20 i 50)",
+    "toggleAria": "Uključi/isključi MA overlay za kratkoročni i srednjoročni trend"
+  },
   "ranges": {
     "1D": "1D",
     "1W": "1T",

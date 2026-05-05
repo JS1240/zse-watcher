@@ -9,8 +9,9 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { ChartEmptyIllustration } from "@/components/shared/empty-illustrations";
 import { cn } from "@/lib/utils";
 import { exportToCsv } from "@/lib/export";
-import { Download, CheckCircle2 } from "lucide-react";
+import { Download, CheckCircle2, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
+import type { SmaIndicator } from "@/features/charts/components/trading-chart";
 
 interface HistoryChartProps {
   ticker: string;
@@ -26,8 +27,19 @@ export function HistoryChart({
   showExport = true,
 }: HistoryChartProps) {
   const [range, setRange] = useState<ChartRange>("1M");
+  const [showMA, setShowMA] = useState(false);
   const { t } = useTranslation("stocks");
   const { data: history, isLoading, isError, refetch } = useStockHistory(ticker, range);
+
+  // SMA overlay definitions — shown when MA toggle is active
+  const indicators: SmaIndicator[] = useMemo(() => {
+    if (!showMA || !history || history.length === 0) return [];
+    // SMA20: short-term trend (amber), SMA50: medium-term trend (violet)
+    return [
+      { type: "sma", period: 20, color: "#f59e0b" },
+      { type: "sma", period: 50, color: "#a78bfa" },
+    ];
+  }, [showMA, history]);
 
   if (isError) {
     return (
@@ -88,6 +100,31 @@ export function HistoryChart({
             <span className="hidden sm:inline">CSV</span>
           </button>
         )}
+        {/* MA overlay toggle — helps Croatian investors identify short/medium-term trends */}
+        <button
+          onClick={() => setShowMA((prev) => !prev)}
+          className={cn(
+            "flex items-center gap-1 rounded-sm px-2 py-1 font-data text-[10px] font-medium transition-colors",
+            showMA
+              ? "bg-amber-500/20 text-amber-600 dark:text-amber-400"
+              : "text-muted-foreground hover:bg-accent hover:text-foreground",
+          )}
+          title={t("sma.toggleTooltip") || "Prikaži/prikaži MA linije"}
+          aria-label={t("sma.toggleAria") || "Toggle MA overlays"}
+          aria-pressed={showMA}
+        >
+          <TrendingUp className="h-3 w-3" />
+          <span className="hidden sm:inline">
+            {showMA ? t("sma.hide") || "MA" : t("sma.show") || "MA"}
+          </span>
+          {showMA && (
+            <span className="hidden lg:inline">
+              <span style={{ color: "#f59e0b" }}>20</span>
+              <span className="mx-0.5 opacity-50">/</span>
+              <span style={{ color: "#a78bfa" }}>50</span>
+            </span>
+          )}
+        </button>
       </div>
 
       {/* Chart */}
@@ -98,6 +135,7 @@ export function HistoryChart({
           data={history}
           chartType={chartType}
           height={height}
+          indicators={indicators}
         />
       ) : (
         <EmptyState

@@ -108,6 +108,12 @@
     "exportHistory": "Export price history",
     "historyExported": "Price history exported"
   },
+  "sma": {
+    "show": "MA",
+    "hide": "MA",
+    "toggleTooltip": "Show/hide MA lines (20 and 50)",
+    "toggleAria": "Toggle MA overlay for short-term and medium-term trend analysis"
+  },
   "ranges": {
     "1D": "1D",
     "1W": "1W",
