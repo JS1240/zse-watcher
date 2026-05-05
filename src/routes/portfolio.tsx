@@ -24,6 +24,17 @@ function PortfolioPage() {
   const [tab, setTab] = useState<Tab>("holdings");
   const { isAuthenticated } = useAuth();
 
+  // Controlled: opens the add-position form in the holdings tab
+  // Lifted so PortfolioAnalytics empty-state CTA can trigger it via onAddPositionRequest
+  const [showAddForm, setShowAddForm] = useState(false);
+
+  // Switch to holdings tab AND open the add-position form
+  // Called when analytics empty state CTA is clicked — eliminates document.getElementById hack
+  const handleAddPositionRequest = useCallback(() => {
+    setTab("holdings");
+    setShowAddForm(true);
+  }, []);
+
   // Keyboard navigation: 1/2/3 to switch tabs
   const switchToTab = useCallback(
     (target: Tab) => {
@@ -109,7 +120,10 @@ function PortfolioPage() {
         className="min-h-0 flex-1"
       >
         {tab === "holdings" ? (
-          <PortfolioDashboard isLocal={!isAuthenticated} />
+          <PortfolioDashboard
+            isLocal={!isAuthenticated}
+            initialShowAddForm={showAddForm}
+          />
         ) : tab === "dividends" ? (
           <ReceivedDividends />
         ) : (
@@ -127,7 +141,7 @@ function PortfolioPage() {
               fallbackTitle="Portfolio Analytics"
               fallbackDescription="Sector allocation, performance breakdown, and risk metrics. Upgrade to Premium."
             >
-              <PortfolioAnalytics />
+              <PortfolioAnalytics onAddPositionRequest={handleAddPositionRequest} />
             </PremiumGate>
           </AuthGuard>
         )}

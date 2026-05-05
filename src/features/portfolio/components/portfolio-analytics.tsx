@@ -22,7 +22,12 @@ const SECTOR_COLORS = [
   "hsl(60, 70%, 45%)",   // yellow
 ];
 
-export function PortfolioAnalytics() {
+interface PortfolioAnalyticsProps {
+  /** Called when the empty state CTA is clicked — parent switches to holdings tab and opens add form */
+  onAddPositionRequest?: () => void;
+}
+
+export function PortfolioAnalytics({ onAddPositionRequest }: PortfolioAnalyticsProps) {
   const { t } = useTranslation("portfolio");
   const { isLoading: isPortfolioLoading } = usePortfolio();
   const holdings = usePortfolioHoldings();
@@ -97,7 +102,10 @@ export function PortfolioAnalytics() {
           { label: t("quickStart.step3"), description: t("quickStart.step3Desc") ?? "" },
         ]}
         variant="action"
-        action={{ label: t("analytics.addAction"), onClick: () => document.getElementById("add-position-btn")?.click() }}
+        action={{
+          label: t("analytics.addAction"),
+          onClick: () => onAddPositionRequest?.(),
+        }}
         className="rounded-md border border-border"
       />
     );

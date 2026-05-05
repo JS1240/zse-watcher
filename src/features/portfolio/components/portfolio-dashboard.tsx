@@ -43,9 +43,11 @@ type SectorFilter = string | null;
 
 interface PortfolioDashboardProps {
   isLocal?: boolean;
+  /** When true, the add position form is shown on mount (used when navigating from analytics empty state) */
+  initialShowAddForm?: boolean;
 }
 
-export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps) {
+export function PortfolioDashboard({ isLocal = false, initialShowAddForm = false }: PortfolioDashboardProps) {
   const { t } = useTranslation("portfolio");
   const { t: tc } = useTranslation("common");
   const { isLoading, data: portfolioData } = usePortfolio();
@@ -55,7 +57,7 @@ export function PortfolioDashboard({ isLocal = false }: PortfolioDashboardProps)
   const { dividends: receivedDividends } = useReceivedDividends();
   const { select } = useSelectedStock();
 
-  const [showAddForm, setShowAddForm] = useState(false);
+  const [showAddForm, setShowAddForm] = useState(initialShowAddForm);
   const [search, setSearch] = useState("");
   const [searchFocused, setSearchFocused] = useState(false);
   const [copiedField, setCopiedField] = useState<string | null>(null);
