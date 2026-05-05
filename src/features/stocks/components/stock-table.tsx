@@ -598,12 +598,20 @@ export function StockTable() {
               description={tc("empty.noResultsDescription")}
               variant="no-results"
               action={{ label: tc("empty.clearFilters"), onClick: () => setSearch("") }}
+              shortcut="/"
             />
           ) : (
             <EmptyState
               icon={<StockListEmptyIllustration className="h-16 w-16" />}
               title={t("noStocks")}
               description={tc("empty.noDataDescription")}
+              steps={[
+                { label: t("quickStart.step1"), description: t("quickStart.step1Desc") ?? undefined },
+                { label: t("quickStart.step2"), description: t("quickStart.step2Desc") ?? undefined },
+                { label: t("quickStart.step3"), description: t("quickStart.step3Desc") ?? undefined },
+              ]}
+              shortcut="W"
+              variant="action"
             />
           )
         )}

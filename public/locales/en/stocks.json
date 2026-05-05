@@ -47,7 +47,7 @@
     "dividendYield": "Div. %",
     "peRatio": "P/E",
     "marketCap": "Mkt Cap",
-  "trend": "1W Trend",
+    "trend": "1W Trend",
     "tooltips": {
       "ticker": "Unique stock ticker symbol on the exchange",
       "name": "Full issuer company name",
@@ -184,5 +184,13 @@
     "buyZone": "buy zone",
     "sellZone": "sell zone",
     "midZone": "mid range"
+  },
+  "quickStart": {
+    "step1": "Browse stocks",
+    "step1Desc": "Go to the stocks page and find a stock you want to track.",
+    "step2": "Filter and search",
+    "step2Desc": "Use the filter controls or search bar to narrow down your choices.",
+    "step3": "Save to watchlist",
+    "step3Desc": "Click ☆ next to the stock to add it to your watchlist."
   }
 }

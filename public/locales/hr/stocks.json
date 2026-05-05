@@ -47,7 +47,7 @@
     "dividendYield": "Div. %",
     "peRatio": "P/E",
     "marketCap": "Trz. kap.",
-  "trend": "Trend 1T",
+    "trend": "Trend 1T",
     "tooltips": {
       "ticker": "Jedinstvena oznaka dionice na burzi",
       "name": "Puno ime izdavatelja",
@@ -183,5 +183,13 @@
     "buyZone": "zona kupnje",
     "sellZone": "zona prodaje",
     "midZone": "sredina raspona"
+  },
+  "quickStart": {
+    "step1": "Pregledaj dionice",
+    "step1Desc": "Idi na stranicu dionica i pronađi dionicu koju želiš pratiti.",
+    "step2": "Filtriraj i pretraži",
+    "step2Desc": "Koristi filtere ili traku za pretraživanje za sužavanje izbora.",
+    "step3": "Spremi u pratnju",
+    "step3Desc": "Klikni ☆ pokraj dionice da je dodaš u listu pratnje."
   }
 }

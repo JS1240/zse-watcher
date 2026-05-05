@@ -934,19 +934,39 @@ export function StockScreener() {
         </table>
 
         {results.length === 0 && stocks && (
-          <EmptyState
-            icon={<SearchEmptyIllustration className="h-8 w-8" />}
-            title={t("screener.noResults")}
-            description={tc("empty.noResultsDescription")}
-            action={{
-              label: tc("common:actions.reset"),
-              onClick: () => {
-                setFilters(INITIAL_FILTERS);
-                setSort({ column: "turnover", direction: "desc" });
-              },
-            }}
-            variant="no-results"
-          />
+          debouncedSearch ? (
+            <EmptyState
+              icon={<SearchEmptyIllustration className="h-8 w-8" />}
+              title={tc("screener.noResults")}
+              description={tc("empty.noResultsDescription")}
+              action={{
+                label: tc("common:actions.reset"),
+                onClick: () => {
+                  setFilters(INITIAL_FILTERS);
+                  setSort({ column: "turnover", direction: "desc" });
+                },
+              }}
+              variant="no-results"
+              shortcut="/"
+            />
+          ) : (
+            <EmptyState
+              icon={<SearchEmptyIllustration className="h-8 w-8" />}
+              title={tc("screener.noStocks")}
+              description={tc("empty.noDataDescription")}
+              steps={[
+                { label: tc("quickStart.step1"), description: tc("quickStart.step1Desc") ?? undefined },
+                { label: tc("quickStart.step2"), description: tc("quickStart.step2Desc") ?? undefined },
+                { label: tc("quickStart.step3"), description: tc("quickStart.step3Desc") ?? undefined },
+              ]}
+              action={{
+                label: tc("common:actions.browse") || tc("watchlist:browseAction") || t("browseAction"),
+                onClick: () => { window.location.href = "/"; },
+              }}
+              shortcut="W"
+              variant="action"
+            />
+          )
         )}
 
         {/* Scroll to top — absolute inside the table container for reliable positioning */}

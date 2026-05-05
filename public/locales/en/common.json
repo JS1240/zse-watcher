@@ -43,6 +43,7 @@
     "close": "Close",
     "filter": "Filter",
     "reset": "Reset",
+    "browse": "Browse stocks",
     "login": "Sign In",
     "register": "Sign Up",
     "logout": "Sign Out",
