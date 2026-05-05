@@ -133,10 +133,20 @@ export function InlineTransactionForm({
 
   // Quick fill share amount buttons
   const quickShares = [5, 10, 25, 50, 100];
+  // Quick fill investment amount buttons — helps investors fill by total investment and auto-calculate shares
+  const quickAmounts = [500, 1000, 2500, 5000, 10000];
 
   const handleQuickShares = useCallback((shares: number) => {
     setValue("shares", shares.toString(), { shouldValidate: true });
   }, [setValue]);
+
+  // Handle investment amount → calculate shares using current market price
+  const handleQuickAmount = useCallback((amount: number) => {
+    if (currentPrice && currentPrice > 0) {
+      const shares = Math.floor(amount / currentPrice);
+      setValue("shares", shares.toString(), { shouldValidate: true });
+    }
+  }, [currentPrice, setValue]);
 
   // Quick fill buttons using current price
   const quickPricePcts = [
@@ -331,6 +341,26 @@ export function InlineTransactionForm({
             </button>
           )}
         </div>
+
+        {/* Investment amount quick-fill buttons — auto-calculate shares from total investment */}
+        {currentPrice && (
+          <div className="flex flex-wrap gap-1">
+            {quickAmounts.map((amount) => {
+              const sharesFromAmount = Math.floor(amount / currentPrice);
+              return (
+                <button
+                  key={amount}
+                  type="button"
+                  onClick={() => handleQuickAmount(amount)}
+                  className="rounded-sm bg-muted/60 px-2 py-0.5 text-[9px] font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                  title={`€${amount.toLocaleString("de-DE")} → ~${sharesFromAmount} dionica`}
+                >
+                  €{amount.toLocaleString("de-DE")}
+                </button>
+              );
+            })}
+          </div>
+        )}
 
 
         {/* Rich P&L preview strip — shows market comparison before committing */}
