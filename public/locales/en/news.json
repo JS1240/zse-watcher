@@ -6,7 +6,10 @@
     "all": "All",
     "general": "General",
     "trading": "Trading",
-    "allTickers": "All tickers"
+    "allTickers": "All tickers",
+    "tickerFiltered": "Filter by ticker",
+    "searchTicker": "Search ticker or name...",
+    "noTickersFound": "No tickers found"
   },
   "sort": {
     "date": "Date",

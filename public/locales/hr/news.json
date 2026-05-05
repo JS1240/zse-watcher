@@ -6,7 +6,10 @@
     "all": "Sve",
     "general": "Generalne",
     "trading": "Trgovanje",
-    "allTickers": "Sve dionice"
+    "allTickers": "Sve dionice",
+    "tickerFiltered": "Filtriraj po dionici",
+    "searchTicker": "Pretraži ticker ili ime...",
+    "noTickersFound": "Nema dionica pronađenih"
   },
   "sort": {
     "date": "Datum",

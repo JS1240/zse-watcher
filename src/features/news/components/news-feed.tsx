@@ -7,6 +7,7 @@ import { useNews } from "@/features/news/api/news-queries";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { ArticleDrawer } from "@/features/news/components/article-drawer";
 import { NewsSkeleton } from "@/features/news/components/news-skeleton";
+import { NewsTickerFilter } from "@/features/news/components/news-ticker-filter";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { formatDate, formatTime, formatRelativeTime } from "@/lib/formatters";
@@ -96,10 +97,23 @@ export function NewsFeed({ ticker: propsTicker, category, limit }: NewsFeedProps
   const debouncedSearch = useDebounce(search, 200);
 
   // Get unique tickers from articles
+  // Get unique tickers from articles (sorted alphabetically)
   const availableTickers = useMemo((): string[] => {
     if (!articles) return [];
     const tickerSet = new Set(articles.map((a) => a.ticker).filter(Boolean) as string[]);
     return Array.from(tickerSet).sort();
+  }, [articles]);
+
+  // Count articles per ticker for display in the filter dropdown
+  const tickerCounts = useMemo((): Map<string, number> => {
+    if (!articles) return new Map();
+    const counts = new Map<string, number>();
+    for (const article of articles) {
+      if (article.ticker) {
+        counts.set(article.ticker, (counts.get(article.ticker) ?? 0) + 1);
+      }
+    }
+    return counts;
   }, [articles]);
 
   // Keyboard shortcut to focus search
@@ -465,16 +479,12 @@ export function NewsFeed({ ticker: propsTicker, category, limit }: NewsFeedProps
                   icon={TrendingUp}
                 />
                 {availableTickers.length > 0 && (
-                  <select
+                  <NewsTickerFilter
+                    availableTickers={availableTickers}
                     value={tickerFilter}
-                    onChange={(e) => setTickerFilter(e.target.value)}
-                    className="rounded-full px-2.5 py-1 text-[10px] font-medium bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                  >
-                    <option value="">{tn("filter.allTickers") || "Sve dionice"}</option>
-                    {availableTickers.map((t) => (
-                      <option key={t} value={t}>{t}</option>
-                    ))}
-                  </select>
+                    onChange={setTickerFilter}
+                    tickerCounts={tickerCounts}
+                  />
                 )}
               </div>
             )}
@@ -619,16 +629,12 @@ export function NewsFeed({ ticker: propsTicker, category, limit }: NewsFeedProps
                   icon={TrendingUp}
                 />
                 {availableTickers.length > 0 && (
-                  <select
+                  <NewsTickerFilter
+                    availableTickers={availableTickers}
                     value={tickerFilter}
-                    onChange={(e) => setTickerFilter(e.target.value)}
-                    className="rounded-full px-2.5 py-1 text-[10px] font-medium bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                  >
-                    <option value="">{tn("filter.allTickers") || "Sve dionice"}</option>
-                    {availableTickers.map((t) => (
-                      <option key={t} value={t}>{t}</option>
-                    ))}
-                  </select>
+                    onChange={setTickerFilter}
+                    tickerCounts={tickerCounts}
+                  />
                 )}
               </div>
             )}
