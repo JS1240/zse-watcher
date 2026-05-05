@@ -18,6 +18,12 @@ interface StockTableSkeletonProps {
 export function StockTableSkeleton({ className }: StockTableSkeletonProps) {
   const { t } = useTranslation("stocks");
 
+  // Column count per breakpoint — must match live stock-row.tsx:
+  // sm:  Ticker | Price | Change | Sparkline | Volume
+  // lg:  Ticker | Name | Price | Change | Sparkline | Volume | Turnover
+  // xl+: Ticker | Name | Price | Change | Sparkline | Volume | Turnover | Div.Yield | P/E | M.Cap
+  // → skeleton shows sm columns (most visible) with xl+ additions for wide screens
+
   return (
     <div className={cn("space-y-3", className)}>
       {/* Search bar row */}
@@ -28,6 +34,8 @@ export function StockTableSkeleton({ className }: StockTableSkeletonProps) {
         </div>
         {/* LiveDataIndicator skeleton */}
         <Skeleton className="h-7 w-20 rounded-full animate-shimmer" />
+        {/* Results count badge */}
+        <Skeleton className="h-5 w-10 rounded-full animate-shimmer" />
         {/* CSV button skeleton */}
         <Skeleton className="h-8 w-14 rounded-md animate-shimmer" />
       </div>
@@ -37,11 +45,15 @@ export function StockTableSkeleton({ className }: StockTableSkeletonProps) {
         <Skeleton className="h-11 w-16 rounded-full animate-shimmer" />
         <Skeleton className="h-11 w-20 rounded-full animate-shimmer" />
         <Skeleton className="h-11 w-20 rounded-full animate-shimmer" />
+        <Skeleton className="h-11 w-20 rounded-full animate-shimmer" />
         <Skeleton className="h-11 w-28 rounded-full animate-shimmer" />
         <Skeleton className="h-11 w-28 rounded-full animate-shimmer" />
       </div>
 
-      {/* Table skeleton */}
+      {/* Table skeleton — mirrors live stock-row.tsx columns:
+           sm:  Ticker | Price | Change | Sparkline | Volume
+           lg+: Ticker | Name  | Price | Change | Sparkline | Volume | Turnover
+           xl+: adds Dividend Yield | P/E | Market Cap */}
       <div className="overflow-hidden rounded-md border border-border">
         <table className="w-full text-sm">
           <thead>
@@ -50,8 +62,12 @@ export function StockTableSkeleton({ className }: StockTableSkeletonProps) {
               <th className="hidden px-3 py-3 text-left font-medium md:table-cell">{t("table.name")}</th>
               <th className="px-3 py-3 text-right font-medium">{t("table.price")}</th>
               <th className="px-3 py-3 text-right font-medium">{t("table.change")}</th>
+              <th className="w-16 px-2 py-3 text-center font-medium">{t("table.trend") || "Trend"}</th>
               <th className="hidden px-3 py-3 text-right font-medium lg:table-cell">{t("table.volume")}</th>
               <th className="hidden px-3 py-3 text-right font-medium lg:table-cell">{t("table.turnover")}</th>
+              <th className="hidden px-3 py-3 text-right font-medium xl:table-cell">{t("table.dividendYield") || "Div.%"}</th>
+              <th className="hidden px-3 py-3 text-right font-medium xl:table-cell">{t("table.pe") || "P/E"}</th>
+              <th className="hidden px-3 py-3 text-right font-medium xl:table-cell">{t("table.marketCap") || "M.Cap"}</th>
             </tr>
           </thead>
           <tbody>
@@ -63,6 +79,8 @@ export function StockTableSkeleton({ className }: StockTableSkeletonProps) {
                 {/* Ticker + Name */}
                 <td className="px-3 py-3">
                   <div className="flex items-center gap-2">
+                    {/* Star toggle placeholder */}
+                    <Skeleton className="h-4 w-4 rounded-sm animate-shimmer" />
                     <Skeleton className="h-4 w-12 animate-shimmer" />
                     <Skeleton className="h-4 w-16 animate-shimmer hidden md:inline-block" />
                   </div>
@@ -77,7 +95,13 @@ export function StockTableSkeleton({ className }: StockTableSkeletonProps) {
                 </td>
                 {/* Change */}
                 <td className="px-3 py-3 text-right">
-                  <Skeleton className="ml-auto h-5 w-14 rounded-sm animate-shimmer" />
+                  <div className="ml-auto flex items-center justify-end gap-1">
+                    <Skeleton className="h-5 w-14 rounded-sm animate-shimmer" />
+                  </div>
+                </td>
+                {/* Sparkline (Trend) — matches stock-row.tsx w-16 column */}
+                <td className="w-16 px-2 py-3 text-center">
+                  <Skeleton className="mx-auto h-[18px] w-[44px] animate-shimmer" />
                 </td>
                 {/* Volume (lg+) */}
                 <td className="hidden px-3 py-3 text-right lg:table-cell">
@@ -86,6 +110,18 @@ export function StockTableSkeleton({ className }: StockTableSkeletonProps) {
                 {/* Turnover (lg+) */}
                 <td className="hidden px-3 py-3 text-right lg:table-cell">
                   <Skeleton className="ml-auto h-4 w-20 animate-shimmer" />
+                </td>
+                {/* Dividend Yield (xl+) */}
+                <td className="hidden px-3 py-3 text-right xl:table-cell">
+                  <Skeleton className="ml-auto h-4 w-12 animate-shimmer" />
+                </td>
+                {/* P/E Ratio (xl+) */}
+                <td className="hidden px-3 py-3 text-right xl:table-cell">
+                  <Skeleton className="ml-auto h-4 w-10 animate-shimmer" />
+                </td>
+                {/* Market Cap (xl+) */}
+                <td className="hidden px-3 py-3 text-right xl:table-cell">
+                  <Skeleton className="ml-auto h-4 w-14 animate-shimmer" />
                 </td>
               </tr>
             ))}
