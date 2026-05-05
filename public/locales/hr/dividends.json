@@ -59,7 +59,9 @@
     }
   },
   "toast": {
-    "exported": "Dividende izvezene u CSV"
+    "exported": "Dividende izvezene u CSV",
+    "exportedJson": "Dividende izvezene u JSON"
   },
-  "exportCsv": "CSV"
+  "exportCsv": "CSV",
+  "exportJson": "JSON"
 }

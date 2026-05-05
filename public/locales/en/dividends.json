@@ -59,7 +59,9 @@
     }
   },
   "toast": {
-    "exported": "Dividends exported to CSV"
+    "exported": "Dividends exported to CSV",
+    "exportedJson": "Dividends exported to JSON"
   },
-  "exportCsv": "CSV"
+  "exportCsv": "CSV",
+  "exportJson": "JSON"
 }

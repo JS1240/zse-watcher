@@ -18,7 +18,7 @@ import { StockDetailDrawer } from "@/features/stocks/components/stock-detail-dra
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
 import { formatDate, formatCurrency } from "@/lib/formatters";
-import { exportToCsv } from "@/lib/export";
+import { exportToCsv, exportToJson } from "@/lib/export";
 import { cn } from "@/lib/utils";
 import type { DividendEntry } from "@/features/dividends/api/dividends-queries";
 
@@ -41,6 +41,8 @@ export function DividendsCalendar() {
   const [scrollTop, setScrollTop] = useState(false);
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [timeFilter, setTimeFilter] = useState<"all" | "upcoming" | "past">("all");
+  // Export format toggle (CSV/JSON) — Croatian retail investors can choose their preferred format for tax reporting
+  const [exportFormat, setExportFormat] = useState<"csv" | "json">("csv");
   const dividendsListRef = useRef<HTMLDivElement>(null);
   const { select, selectedTicker } = useSelectedStock();
 
@@ -315,6 +317,28 @@ export function DividendsCalendar() {
     toast.success(td("toast.exported"));
   };
 
+  // Export dividends to JSON — structured format for external analysis and backup
+  const handleExportJson = () => {
+    if (!sortedDividends.length) return;
+    const now = new Date();
+    const jsonData = sortedDividends.map((d) => {
+      const exDivDate = new Date(d.exDivDate);
+      const daysToExDiv = Math.ceil((exDivDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+      return {
+        ticker: d.ticker,
+        name: d.name,
+        exDivDate: d.exDivDate,
+        payDate: d.payDate,
+        daysToExDiv: daysToExDiv > 0 ? daysToExDiv : (daysToExDiv === 0 ? 0 : null),
+        amountEur: d.amountEur,
+        yield: d.yield,
+        year: new Date(d.exDivDate).getFullYear(),
+      };
+    });
+    exportToJson(`zse-dividends-${selectedYear ?? "all"}-${new Date().toISOString().split("T")[0]}`, jsonData);
+    toast.success(td("toast.exportedJson") || "Dividendi izvezeni u JSON");
+  };
+
   return (
     <div className="space-y-4">
       {/* Summary cards for quick stats */}
@@ -524,12 +548,21 @@ export function DividendsCalendar() {
         <Button
           size="sm"
           variant="outline"
-          onClick={handleExportCsv}
+          onClick={exportFormat === "json" ? handleExportJson : handleExportCsv}
           disabled={sortedDividends.length === 0}
           title={td("exportCsv")}
         >
           <Download className="h-3.5 w-3.5" />
-          CSV
+          {exportFormat === "json" ? "JSON" : "CSV"}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setExportFormat((prev) => (prev === "csv" ? "json" : "csv"));
+            }}
+            className="ml-1 rounded bg-muted px-1.5 py-0.5 text-[9px] font-medium hover:bg-primary/20"
+          >
+            {exportFormat === "json" ? "CSV" : "JSON"}
+          </button>
         </Button>
       </div>
 
