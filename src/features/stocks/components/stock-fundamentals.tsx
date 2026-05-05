@@ -48,6 +48,137 @@ export function StockFundamentals({ stock }: StockFundamentalsProps) {
   return (
     <>
       <div className="space-y-4">
+        {/* Investment Summary — quick at-a-glance quality signals for Croatian retail investors */}
+        <div>
+          <h4 className="mb-2 text-[10px] uppercase tracking-wider text-muted-foreground">
+            {t("summary.title") || "Sažetak"}
+          </h4>
+          <div className="rounded-md border border-border bg-card p-3 space-y-2.5">
+            <div className="grid grid-cols-3 gap-3">
+              {/* Dividend Yield quality */}
+              <div className="flex flex-col gap-1">
+                <span className="text-[9px] uppercase tracking-wider text-muted-foreground">
+                  {t("summary.dividendYield") || "Dividenda"}
+                </span>
+                <div className="flex items-center gap-1.5">
+                  <PerformanceBar
+                    value={stock.dividendYield ?? 0}
+                    baseline={0}
+                    ceiling={10}
+                    floor={0}
+                    showValue={false}
+                    compact
+                    colorMode="positive"
+                    ariaLabel={stock.dividendYield != null ? `${stock.dividendYield.toFixed(2)}% dividend yield` : "No dividend data"}
+                  />
+                  <span className={cn(
+                    "font-data text-[11px] font-semibold tabular-nums",
+                    (stock.dividendYield ?? 0) >= 4 ? "text-emerald-500" :
+                    (stock.dividendYield ?? 0) >= 2 ? "text-amber-500" : "text-muted-foreground"
+                  )}>
+                    {stock.dividendYield != null ? `${stock.dividendYield.toFixed(1)}%` : "—"}
+                  </span>
+                </div>
+                <span className={cn(
+                  "text-[9px] font-medium",
+                  (stock.dividendYield ?? 0) >= 4 ? "text-emerald-600 dark:text-emerald-400" :
+                  (stock.dividendYield ?? 0) >= 2 ? "text-amber-600 dark:text-amber-400" : "text-muted-foreground/60"
+                )}>
+                  {(stock.dividendYield ?? 0) >= 4 ? t("summary.yieldHigh") :
+                   (stock.dividendYield ?? 0) >= 2 ? t("summary.yieldMedium") : t("summary.yieldLow")}
+                </span>
+              </div>
+
+              {/* P/E ratio vs market */}
+              <div className="flex flex-col gap-1">
+                <span className="text-[9px] uppercase tracking-wider text-muted-foreground">
+                  {t("summary.peRatio") || "P/E"}
+                </span>
+                <div className="flex items-center gap-1.5">
+                  <PerformanceBar
+                    value={stock.peRatio ?? 0}
+                    baseline={0}
+                    ceiling={30}
+                    floor={0}
+                    showValue={false}
+                    compact
+                    colorMode="neutral"
+                    ariaLabel={stock.peRatio != null ? `P/E ratio ${stock.peRatio.toFixed(1)}` : "No P/E data"}
+                  />
+                  <span className={cn(
+                    "font-data text-[11px] font-semibold tabular-nums",
+                    (stock.peRatio ?? 0) < 15 ? "text-emerald-500" :
+                    (stock.peRatio ?? 0) < 25 ? "text-amber-500" : "text-red-500"
+                  )}>
+                    {stock.peRatio != null ? stock.peRatio.toFixed(1) : "—"}
+                  </span>
+                </div>
+                <span className={cn(
+                  "text-[9px] font-medium",
+                  (stock.peRatio ?? 0) < 15 ? "text-emerald-600 dark:text-emerald-400" :
+                  (stock.peRatio ?? 0) < 25 ? "text-amber-600 dark:text-amber-400" : "text-red-600 dark:text-red-400"
+                )}>
+                  {(stock.peRatio ?? 0) < 15 ? t("summary.peAttractive") :
+                   (stock.peRatio ?? 0) < 25 ? t("summary.peFair") : t("summary.peExpensive")}
+                </span>
+              </div>
+
+              {/* 52w range zone */}
+              <div className="flex flex-col gap-1">
+                <span className="text-[9px] uppercase tracking-wider text-muted-foreground">
+                  {t("summary.range52w") || "52W raspon"}
+                </span>
+                <div className="flex items-center gap-1.5">
+                  <PerformanceBar
+                    value={stock.price}
+                    baseline={stock.low52w}
+                    ceiling={stock.high52w}
+                    floor={stock.low52w}
+                    showValue={false}
+                    compact
+                    colorMode="auto"
+                    ariaLabel={`52-week range: current price at ${pricePosition.toFixed(0)}%`}
+                  />
+                  <span className={cn(
+                    "font-data text-[11px] font-semibold tabular-nums",
+                    pricePosition < 30 ? "text-emerald-500" :
+                    pricePosition > 70 ? "text-red-500" : "text-amber-500"
+                  )}>
+                    {pricePosition.toFixed(0)}%
+                  </span>
+                </div>
+                <span className={cn(
+                  "text-[9px] font-medium",
+                  pricePosition < 30 ? "text-emerald-600 dark:text-emerald-400" :
+                  pricePosition > 70 ? "text-red-600 dark:text-red-400" : "text-amber-600 dark:text-amber-400"
+                )}>
+                  {pricePosition < 30 ? t("summary.nearLow") :
+                   pricePosition > 70 ? t("summary.nearHigh") : t("summary.midRange")}
+                </span>
+              </div>
+            </div>
+
+            {/* Combined signal badge */}
+            <div className="pt-1.5 border-t border-border/50">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] text-muted-foreground">
+                  {t("summary.overallSignal") || "Signal"}
+                </span>
+                <span className={cn(
+                  "rounded px-2 py-0.5 text-[10px] font-semibold",
+                  getOverallSignal(stock.dividendYield ?? 0, stock.peRatio ?? 0, pricePosition) === "buy" && "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400",
+                  getOverallSignal(stock.dividendYield ?? 0, stock.peRatio ?? 0, pricePosition) === "hold" && "bg-amber-500/20 text-amber-600 dark:text-amber-400",
+                  getOverallSignal(stock.dividendYield ?? 0, stock.peRatio ?? 0, pricePosition) === "sell" && "bg-red-500/20 text-red-600 dark:text-red-400"
+                )}>
+                  {getOverallSignal(stock.dividendYield ?? 0, stock.peRatio ?? 0, pricePosition) === "buy" && t("summary.signalBuy")}
+                  {getOverallSignal(stock.dividendYield ?? 0, stock.peRatio ?? 0, pricePosition) === "hold" && t("summary.signalHold")}
+                  {getOverallSignal(stock.dividendYield ?? 0, stock.peRatio ?? 0, pricePosition) === "sell" && t("summary.signalSell")}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Description */}
         {stock.description && (
           <div>
@@ -320,6 +451,21 @@ function MetricItem({
       </div>
     </div>
   );
+}
+
+function getOverallSignal(dividendYield: number, peRatio: number, pricePosition: number): "buy" | "hold" | "sell" {
+  // Simple signal logic based on dividend yield, P/E, and 52w range position
+  // CROBEX stocks typically range 2-8% dividend yield and 8-20 P/E
+  let score = 0;
+  if (dividendYield >= 4) score += 2;
+  else if (dividendYield >= 2) score += 1;
+  if (peRatio > 0 && peRatio < 15) score += 1;
+  else if (peRatio >= 25) score -= 1;
+  if (pricePosition < 30) score += 1;
+  else if (pricePosition > 70) score -= 1;
+  if (score >= 2) return "buy";
+  if (score <= -1) return "sell";
+  return "hold";
 }
 
 interface RangeBarProps {

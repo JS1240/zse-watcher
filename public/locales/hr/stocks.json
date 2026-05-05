@@ -62,6 +62,25 @@
       "trend": "Cijena zadnjih 7 dana (indikativno, simulirano)"
     }
   },
+  "summary": {
+    "title": "Sažetak ulaganja",
+    "dividendYield": "Dividenda",
+    "peRatio": "P/E",
+    "range52w": "52T raspon",
+    "yieldHigh": "Visoka (4%+)",
+    "yieldMedium": "Srednja (2-4%)",
+    "yieldLow": "Niska",
+    "peAttractive": "Privlačan",
+    "peFair": "Fer",
+    "peExpensive": "Skup",
+    "nearLow": "Blizu dna",
+    "midRange": "Sredina",
+    "nearHigh": "Blizu vrha",
+    "overallSignal": "Opći signal",
+    "signalBuy": "KUPI",
+    "signalHold": "DRŽI",
+    "signalSell": "PRODULJI"
+  },
   "detail": {
     "demoData": "Priključak na ZSE nije dostupan — prikazujem ogledne podatke.",
     "fundamentals": "Temeljni podaci",

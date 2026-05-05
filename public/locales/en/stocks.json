@@ -62,6 +62,25 @@
       "trend": "Last 7 days price (indicative, simulated)"
     }
   },
+  "summary": {
+    "title": "Investment Summary",
+    "dividendYield": "Dividend",
+    "peRatio": "P/E",
+    "range52w": "52W Range",
+    "yieldHigh": "High (4%+)",
+    "yieldMedium": "Medium (2-4%)",
+    "yieldLow": "Low",
+    "peAttractive": "Attractive",
+    "peFair": "Fair",
+    "peExpensive": "Expensive",
+    "nearLow": "Near Low",
+    "midRange": "Mid Range",
+    "nearHigh": "Near High",
+    "overallSignal": "Overall Signal",
+    "signalBuy": "BUY",
+    "signalHold": "HOLD",
+    "signalSell": "SELL"
+  },
   "detail": {
     "demoData": "ZSE feed unavailable — showing demo data.",
     "fundamentals": "Fundamentals",
