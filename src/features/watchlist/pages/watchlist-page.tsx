@@ -1,14 +1,14 @@
 import { useMemo, useState, useRef, useCallback, memo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Star, Search, Keyboard, Trash2, ArrowUp, ArrowDown, ArrowUpDown, GripVertical, Download, Upload, X, TrendingUp, TrendingDown, Minus, CheckCircle2, ChevronUp, AlertCircle, Copy } from "lucide-react";
+import { Sparkline } from "@/components/shared/sparkline";
+import { getMockPriceHistory } from "@/lib/mock-data";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocalWatchlist } from "@/features/watchlist/hooks/use-local-watchlist";
 import { useWatchlistItems, useAddToWatchlist } from "@/features/watchlist/api/watchlist-queries";
 import { useStocksLive } from "@/features/stocks/api/stocks-queries";
-import { Sparkline } from "@/components/shared/sparkline";
-import { getMockPriceHistory } from "@/lib/mock-data";
 import { LiveDataIndicator } from "@/components/shared/live-data-indicator";
 import { useSelectedStock } from "@/hooks/use-selected-stock";
 import { usePriceFlash } from "@/hooks/use-price-flash";
@@ -823,6 +823,13 @@ const SortableRowBase = function SortableRow({
       </td>
       <td className="px-3 py-2 text-right">
         <ChangeBadge value={stock.changePct} showIcon={false} />
+      </td>
+      <td className="hidden px-3 py-2 lg:table-cell">
+        <Sparkline
+          data={getMockPriceHistory(stock.ticker, "1W").map((p) => p.close)}
+          width={44}
+          height={18}
+        />
       </td>
       <td className="hidden px-3 py-2 text-right lg:table-cell">
         <span className="font-data text-xs tabular-nums text-muted-foreground">
@@ -1662,6 +1669,13 @@ function WatchlistRow({ stock, showRemove, onRemove, flash, searchQuery, rowInde
       </td>
       <td className="px-3 py-2 text-right">
         <ChangeBadge value={stock.changePct} showIcon={false} />
+      </td>
+      <td className="hidden px-3 py-2 lg:table-cell">
+        <Sparkline
+          data={getMockPriceHistory(stock.ticker, "1W").map((p) => p.close)}
+          width={44}
+          height={18}
+        />
       </td>
       <td className="hidden px-3 py-2 text-right lg:table-cell">
         <span className="font-data text-xs tabular-nums text-muted-foreground">
