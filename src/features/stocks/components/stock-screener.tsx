@@ -857,7 +857,7 @@ export function StockScreener() {
         </div>
       </div>
 
-      {/* Results table */}
+      {/* Results table — button is inside for absolute positioning relative to table */}
       <div
         ref={tableRef}
         onScroll={(e) => setScrollTop((e.target as HTMLDivElement).scrollTop > 200)}
@@ -948,20 +948,20 @@ export function StockScreener() {
             variant="no-results"
           />
         )}
-      </div>
 
-      {/* Scroll to top button */}
-      <button
-        onClick={() => tableRef.current?.scrollTo({ top: 0, behavior: "smooth" })}
-        className={cn(
-          "absolute bottom-6 right-6 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-border bg-card text-muted-foreground shadow-md transition-all hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-          scrollTop ? "opacity-100 translate-y-0" : "pointer-events-none opacity-0 translate-y-2"
-        )}
-        aria-label="Povratak na vrh"
-        title="Povratak na vrh"
-      >
-        <ChevronUp className="h-4 w-4" />
-      </button>
+        {/* Scroll to top — absolute inside the table container for reliable positioning */}
+        <button
+          onClick={() => tableRef.current?.scrollTo({ top: 0, behavior: "smooth" })}
+          className={cn(
+            "absolute bottom-4 right-4 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-border/60 bg-card/90 text-muted-foreground shadow-md backdrop-blur transition-all duration-200 hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+            scrollTop ? "opacity-100 translate-y-0" : "pointer-events-none opacity-0 translate-y-2"
+          )}
+          aria-label="Povratak na vrh"
+          title="Povratak na vrh"
+        >
+          <ChevronUp className="h-4 w-4" />
+        </button>
+      </div>
     </div>
   );
 }
