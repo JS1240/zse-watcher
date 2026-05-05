@@ -694,7 +694,7 @@ function AuthenticatedWatchlist() {
   );
 }
 
-const SortableRowBase = function SortableRow({
+const SortableRowBase = function SortableRowBase({
   stock,
   showRemove,
   onRemove,
@@ -704,6 +704,7 @@ const SortableRowBase = function SortableRow({
   onFocusNext,
   onFocusPrev,
   onSelect,
+  focusedRowIndex,
 }: {
   stock: Stock;
   showRemove?: boolean;
@@ -714,6 +715,7 @@ const SortableRowBase = function SortableRow({
   onFocusNext?: () => void;
   onFocusPrev?: () => void;
   onSelect?: (ticker: string) => void;
+  focusedRowIndex?: number;
 }): React.JSX.Element {
   const { t } = useTranslation("watchlist");
   const { t: tc } = useTranslation("common");
@@ -779,7 +781,7 @@ const SortableRowBase = function SortableRow({
         isOver && !isDragging && "border-l-2 border-l-primary/50 bg-primary/5",
         flash === "up" && "price-flash-up",
         flash === "down" && "price-flash-down",
-        rowIndex !== undefined && rowIndex === rowIndex && "ring-2 ring-primary z-10"
+        rowIndex !== undefined && rowIndex === focusedRowIndex && "ring-2 ring-primary z-10"
       )}
     >
       <td className="sticky left-0 z-[1] bg-card shadow-[2px_0_4px_hsl(var(--border))] px-3 py-2">
@@ -905,6 +907,7 @@ export const SortableRow = memo(SortableRowBase, (prev, next) => {
     prev.flash === next.flash &&
     prev.searchQuery === next.searchQuery &&
     prev.rowIndex === next.rowIndex &&
+    prev.focusedRowIndex === next.focusedRowIndex &&
     prev.onFocusNext === next.onFocusNext &&
     prev.onFocusPrev === next.onFocusPrev &&
     prev.onSelect === next.onSelect
@@ -1476,7 +1479,7 @@ interface WatchlistTableProps {
   onSelect?: (ticker: string) => void;
 }
 
-function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort, dragEnabled, searchQuery, onFocusNext, onFocusPrev, onSelect }: WatchlistTableProps) {
+function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort, dragEnabled, searchQuery, focusedRowIndex, onFocusNext, onFocusPrev, onSelect }: WatchlistTableProps) {
   const { t } = useTranslation("watchlist");
   const flashMap = usePriceFlash(stocks);
   const [scrollTop, setScrollTop] = useState(false);
@@ -1538,6 +1541,7 @@ function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort, dragEnable
                 onFocusNext={onFocusNext}
                 onFocusPrev={onFocusPrev}
                 onSelect={onSelect}
+                focusedRowIndex={focusedRowIndex}
               />
             ) : (
               <WatchlistRowMemo
@@ -1551,6 +1555,7 @@ function WatchlistTable({ stocks, showRemove, onRemove, sort, onSort, dragEnable
                 onFocusNext={onFocusNext}
                 onFocusPrev={onFocusPrev}
                 onSelect={onSelect}
+                focusedRowIndex={focusedRowIndex}
               />
             )
           )}
@@ -1605,9 +1610,10 @@ interface WatchlistRowProps {
   onFocusNext?: () => void;
   onFocusPrev?: () => void;
   onSelect?: (ticker: string) => void;
+  focusedRowIndex?: number;
 }
 
-function WatchlistRow({ stock, showRemove, onRemove, flash, searchQuery, rowIndex, onFocusNext, onFocusPrev, onSelect }: WatchlistRowProps) {
+function WatchlistRow({ stock, showRemove, onRemove, flash, searchQuery, rowIndex, onFocusNext, onFocusPrev, onSelect, focusedRowIndex }: WatchlistRowProps) {
   const { t } = useTranslation("watchlist");
   const { t: tc } = useTranslation("common");
   const { select, selectedTicker } = useSelectedStock();
@@ -1658,7 +1664,7 @@ function WatchlistRow({ stock, showRemove, onRemove, flash, searchQuery, rowInde
         isSelected && "border-l-2 border-l-primary bg-accent/30",
         flash === "up" && "price-flash-up",
         flash === "down" && "price-flash-down",
-        rowIndex !== undefined && rowIndex === rowIndex && "ring-2 ring-primary z-10"
+        rowIndex !== undefined && rowIndex === focusedRowIndex && "ring-2 ring-primary z-10"
       )}
     >
       <td className="sticky left-0 z-[1] bg-card shadow-[2px_0_4px_hsl(var(--border))] px-3 py-2">
