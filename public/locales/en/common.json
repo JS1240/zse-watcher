@@ -199,6 +199,10 @@
     "deletePosition": "Delete position",
     "addPosition": "Add position",
     "filter": "Filter",
-    "sort": "Sort"
+    "sort": "Sort",
+    "searchPlaceholder": "Search shortcuts...",
+    "resultsCount": "{{count}} shortcuts",
+    "noResults": "No shortcuts found",
+    "noResultsHint": "Try a key name (e.g. Enter, Del) or a description (e.g. alert, theme)"
   }
 }

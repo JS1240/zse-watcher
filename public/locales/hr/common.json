@@ -200,6 +200,10 @@
     "deletePosition": "Obriši poziciju",
     "addPosition": "Dodaj poziciju",
     "filter": "Filter",
-    "sort": "Sortiraj"
+    "sort": "Sortiraj",
+    "searchPlaceholder": "Pretrazi prečace...",
+    "resultsCount": "{{count}} prečaca",
+    "noResults": "Nema prečaca za taj pojam",
+    "noResultsHint": "Pokušajte s imenom tipke (npr. Enter, Del) ili opisom (npr. alarm, tema)"
   }
 }
