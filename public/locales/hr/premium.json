@@ -37,6 +37,7 @@
     "toggleCycle": "mjesečno/godišnje",
     "loading": "Preusmjeravanje...",
     "close": "Zatvori",
+    "comparePlans": "Usporedi planove",
     "perMonthDirect": "po mjesecu",
     "perYear": "godišnje",
     "saveEur": "Štediš {{amount}} EUR",

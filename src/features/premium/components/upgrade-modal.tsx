@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { Crown, X, Check, Zap } from "lucide-react";
+import { Crown, X, Check, Zap, BarChart3 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
@@ -86,8 +86,17 @@ export function UpgradeModal({ open, onClose, featureContext }: UpgradeModalProp
           ))}
         </div>
 
+        {/* Compare Plans button */}
+        <button
+          onClick={() => window.location.href = "/pricing"}
+          className="mt-4 flex w-full items-center justify-center gap-2 rounded-md border border-border bg-muted/30 px-3 py-2 text-xs text-muted-foreground transition-all hover:border-primary/40 hover:bg-muted/50 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <BarChart3 className="h-3.5 w-3.5" />
+          {t("upgradeModal.comparePlans")}
+        </button>
+
         {/* Toggle */}
-        <div className="mt-5 flex items-center justify-center gap-3">
+        <div className="mt-4 flex items-center justify-center gap-3">
           <span className={cn("text-xs font-medium", cycle === "monthly" ? "text-foreground" : "text-muted-foreground")}>
             {t("upgradeModal.monthly")}
           </span>

@@ -37,6 +37,7 @@
     "toggleCycle": "monthly/annual",
     "loading": "Redirecting...",
     "close": "Close",
+    "comparePlans": "Compare plans",
     "perMonthDirect": "per month",
     "perYear": "yearly",
     "saveEur": "Save {{amount}} EUR",
